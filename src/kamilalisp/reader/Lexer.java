@@ -2,7 +2,7 @@ package kamilalisp.reader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Lexer {
@@ -27,7 +27,7 @@ public class Lexer {
     }
 
     public List<Token> getTokens() throws IOException {
-        List<Token> tokens = new ArrayList<Token>();
+        List<Token> tokens = new LinkedList<Token>();
 
         while(input.available() > 0 || buffer != -1) {
             int c;

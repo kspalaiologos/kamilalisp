@@ -1,11 +1,12 @@
 package kamilalisp.data;
 
 import java.math.BigDecimal;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Atom {
-    public Atom() { this.content = null; this.type = Type.NIL; }
+    public Atom() { this.content = new LbcSupplier<>(() -> new LinkedList<Atom>()); this.type = Type.LIST; }
     public Atom(BigDecimal atom) { this.content = new LbcSupplier<>(() -> atom); this.type = Type.NUMBER; }
     public Atom(String atom) { this.content = new LbcSupplier<>(() -> atom); this.type = Type.STRING; }
     public Atom(StringConstant atom) { this.content = new LbcSupplier<>(() -> atom); this.type = Type.STRING_CONSTANT; }
@@ -26,28 +27,24 @@ public class Atom {
         if(type != null)
             return type;
 
-        if(content == null) {
-            type = Type.NIL;
-        } else {
-            Object data = content.get();
+        Object data = content.get();
 
-            if (data instanceof BigDecimal)
-                type = Type.NUMBER;
-            else if (data instanceof String)
-                type = Type.STRING;
-            else if (data instanceof StringConstant)
-                type = Type.STRING_CONSTANT;
-            else if (data instanceof List)
-                type = Type.LIST;
-            else if (data instanceof Closure)
-                type = Type.CLOSURE;
-            else if (data instanceof Macro)
-                type = Type.MACRO;
-            else
-                throw new Error("Unknown type: " + data.getClass().getSimpleName());
+        if (data instanceof BigDecimal)
+            type = Type.NUMBER;
+        else if (data instanceof String)
+            type = Type.STRING;
+        else if (data instanceof StringConstant)
+            type = Type.STRING_CONSTANT;
+        else if (data instanceof List)
+            type = Type.LIST;
+        else if (data instanceof Closure)
+            type = Type.CLOSURE;
+        else if (data instanceof Macro)
+            type = Type.MACRO;
+        else
+            throw new Error("Unknown type: " + data.getClass().getSimpleName());
 
-            content = new LbcSupplier<>(() -> data);
-        }
+        content = new LbcSupplier<>(() -> data);
 
         return type;
     }
@@ -83,8 +80,7 @@ public class Atom {
                 || (getType() == Type.STRING && other.getString().get().equals(getString().get()))
                 || (getType() == Type.NUMBER && other.getNumber().get().compareTo(getNumber().get()) == 0)
                 || (getType() == Type.CLOSURE && other.getClosure().get().equals(getClosure().get()))
-                || (getType() == Type.MACRO && other.getMacro().get().equals(getMacro().get()))
-                || getType() == Type.NIL)
+                || (getType() == Type.MACRO && other.getMacro().get().equals(getMacro().get())))
             return true;
         else if(getType() == Type.LIST && other.getList().get().size() == getList().get().size()) {
             List<Atom> l1 = other.getList().get(), l2 = getList().get();
@@ -97,8 +93,6 @@ public class Atom {
     }
 
     public boolean coerceBool() {
-        if(this.getType() == Type.NIL)
-            return false;
         return (this.getType() == Type.NUMBER && this.getNumber().get().compareTo(BigDecimal.ZERO) != 0)
             || (this.getType() == Type.STRING_CONSTANT && this.getStringConstant().get().get().length() > 0);
     }

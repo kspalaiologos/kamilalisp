@@ -51,4 +51,11 @@ public class Environment {
         env.ancestor = this;
         return env;
     }
+
+    public Environment getTopmostAncestor() {
+        Environment cur = this;
+        while(cur.ancestor != null)
+            cur = cur.ancestor;
+        return cur;
+    }
 }

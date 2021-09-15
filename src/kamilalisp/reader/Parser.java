@@ -4,7 +4,7 @@ import kamilalisp.data.Atom;
 import kamilalisp.data.StringConstant;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Parser {
@@ -16,7 +16,7 @@ public class Parser {
     }
 
     private List<Atom> parseList(TokenType t) {
-        List<Atom> data = new ArrayList<Atom>();
+        List<Atom> data = new LinkedList<Atom>();
         while(input.get(inputOffset).type != t)
             data.add(parse());
         inputOffset++;

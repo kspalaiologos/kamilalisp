@@ -28,4 +28,12 @@ public class Lambda {
     void monadicLambda() {
         assertTrue(Evaluation.evalString("((monad [x + x]) 5)").get(0).getNumber().get().compareTo(BigDecimal.valueOf(10)) == 0);
     }
+
+    @Test
+    void exampleFunction() {
+        assertTrue(Evaluation.evalString(
+                "(defun square1 (x) (* x x))" +
+                     "(def square2 (monad (* x x)))" +
+                     "(= (square1 5) (square2 5))").get(2).coerceBool());
+    }
 }

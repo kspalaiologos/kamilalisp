@@ -13,7 +13,7 @@ import kamilalisp.reader.Token;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +27,7 @@ public class Evaluation {
             e.printStackTrace();
         }
         Parser p = new Parser(tokens);
-        List<Atom> atoms = new ArrayList<>();
+        List<Atom> atoms = new LinkedList<>();
         while(p.hasMore())
             atoms.add(p.parse());
         Environment globEnv = new Environment("Global scope");
@@ -48,7 +48,7 @@ public class Evaluation {
             e.printStackTrace();
         }
         Parser p = new Parser(tokens);
-        List<Atom> atoms = new ArrayList<>();
+        List<Atom> atoms = new LinkedList<>();
         while(p.hasMore())
             atoms.add(p.parse());
         Executor executor = new Executor(globEnv);
