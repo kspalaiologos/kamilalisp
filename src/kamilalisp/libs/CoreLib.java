@@ -64,5 +64,23 @@ public class CoreLib {
                 return arguments.get(0);
             }
         }));
+
+        env.push("monad", new Atom(new Macro() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'monad'.");
+                return env.evaluate(new Atom(List.of(new Atom("lambda"), new Atom(List.of(new Atom("x"))), arguments.get(0))));
+            }
+        }));
+
+        env.push("dyad", new Atom(new Macro() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'dyad'.");
+                return env.evaluate(new Atom(List.of(new Atom("lambda"), new Atom(List.of(new Atom("x"), new Atom("y"))), arguments.get(0))));
+            }
+        }));
     }
 }
