@@ -11,6 +11,10 @@ public class Executor {
     }
 
     public Atom evaluate(Atom a) {
+        return evaluate(a, true);
+    }
+
+    public Atom evaluate(Atom a, boolean eval_params) {
         if(a.getType() != Type.LIST && a.getType() != Type.STRING)
             return a;
         if(a.getType() == Type.STRING) {
@@ -26,7 +30,10 @@ public class Executor {
         Atom head = evaluate(sexpr.get(0));
         switch(head.getType()) {
             case CLOSURE:
-                return head.getClosure().get().apply(this, sexpr.stream().skip(1).map(x -> evaluate(x)).collect(Collectors.toList()));
+                if(eval_params)
+                    return head.getClosure().get().apply(this, sexpr.stream().skip(1).map(x -> evaluate(x)).collect(Collectors.toList()));
+                else
+                    return head.getClosure().get().apply(this, sexpr.stream().skip(1).collect(Collectors.toList()));
             case MACRO:
                 return head.getMacro().get().apply(this, sexpr.stream().skip(1).collect(Collectors.toList()));
             default:

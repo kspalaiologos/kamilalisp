@@ -163,5 +163,38 @@ public class MathLib {
                 }).orElse(IDENTITY).get().get()));
             }
         }));
+
+        env.push("~", new Atom(new Closure() {
+            public String reverseCase(String text) {
+                return text.chars()
+                        .map(c -> Character.isUpperCase(c) ?
+                                Character.toLowerCase(c) :
+                                Character.toUpperCase(c))
+                        .collect(
+                                StringBuilder::new,
+                                StringBuilder::appendCodePoint,
+                                StringBuilder::append)
+                        .toString();
+            }
+
+            public Atom neg1(Atom a) {
+                if(a.getType() == Type.NUMBER) {
+                    return new Atom(BigDecimal.valueOf(a.getNumber().get().compareTo(BigDecimal.ZERO) == 0 ? 1 : 0));
+                } else if(a.getType() == Type.STRING_CONSTANT) {
+                    return new Atom(new StringConstant(reverseCase(a.getStringConstant().get().get())));
+                } else
+                    throw new Error("Invalid invocation to '~', unexpected value of type " + a.getType().name());
+            }
+
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() == 0)
+                    throw new Error("Invalid invocation to '~'.");
+                if(arguments.size() == 1)
+                    return new Atom(new LbcSupplier(() -> neg1(arguments.get(0)).get().get()));
+                else
+                    return new Atom(new LbcSupplier(() -> arguments.stream().map(this::neg1).collect(Collectors.toList())));
+            }
+        }));
     }
 }

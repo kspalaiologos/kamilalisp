@@ -26,6 +26,18 @@ class ArithmeticTest {
     }
 
     @Test
+    void gcdLcm() {
+        assertTrue(Evaluation.evalString("(gcd 13 43)").get(0).getNumber().get().compareTo(BigDecimal.valueOf(1)) == 0);
+        assertTrue(Evaluation.evalString("(lcm 13 43)").get(0).getNumber().get().compareTo(BigDecimal.valueOf(559)) == 0);
+    }
+
+    @Test
+    void equality() {
+        assertTrue(Evaluation.evalString("(= 2 2)").get(0).coerceBool());
+        assertFalse(Evaluation.evalString("(= 2 3)").get(0).coerceBool());
+    }
+
+    @Test
     void stringConcat() {
         assertTrue(Evaluation.evalString("(+ \"hello, \" \"world\")").get(0).getStringConstant().get().get().equals("hello, world"));
     }

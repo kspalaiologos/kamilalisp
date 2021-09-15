@@ -2,6 +2,7 @@ package kamilalisp.libs;
 
 import kamilalisp.data.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -101,6 +102,39 @@ public class CoreLib {
                 for(int i = 0; i < depth; i++)
                     currentEnv = currentEnv.ancestor;
                 return currentEnv.owner;
+            }
+        }));
+
+        env.push("if", new Atom(new Macro() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 3)
+                    throw new Error("invalid invocation to 'if'.");
+                Atom cond = arguments.get(0);
+                Atom iftrue = arguments.get(1);
+                Atom iffalse = arguments.get(2);
+                if(env.evaluate(cond).coerceBool())
+                    return new Atom(new LbcSupplier(() -> env.evaluate(iftrue).get().get()));
+                else
+                    return new Atom(new LbcSupplier(() -> env.evaluate(iffalse).get().get()));
+            }
+        }));
+
+        env.push("=", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("invalid invocation to '='.");
+                return new Atom(new LbcSupplier(() -> arguments.get(0).equals(arguments.get(1)) ? BigDecimal.ONE : BigDecimal.ZERO));
+            }
+        }));
+
+        env.push("/=", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("invalid invocation to '='.");
+                return new Atom(new LbcSupplier(() -> arguments.get(0).equals(arguments.get(1)) ? BigDecimal.ZERO : BigDecimal.ONE));
             }
         }));
     }

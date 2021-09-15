@@ -95,4 +95,11 @@ public class Atom {
         }
         return false;
     }
+
+    public boolean coerceBool() {
+        if(this.getType() == Type.NIL)
+            return false;
+        return (this.getType() == Type.NUMBER && this.getNumber().get().compareTo(BigDecimal.ZERO) != 0)
+            || (this.getType() == Type.STRING_CONSTANT && this.getStringConstant().get().get().length() > 0);
+    }
 }
