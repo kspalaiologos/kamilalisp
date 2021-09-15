@@ -6,6 +6,7 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 public class MathLib {
@@ -120,6 +121,46 @@ public class MathLib {
                 if(arguments.size() == 1)
                     return mul1(arguments.get(0));
                 return new Atom(new LbcSupplier<>(() -> arguments.stream().reduce(this::mul2).orElse(IDENTITY).get().get()));
+            }
+        }));
+
+        env.push("gcd", new Atom(new Closure() {
+            private Atom IDENTITY = new Atom(BigDecimal.ZERO);
+
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() == 0)
+                    throw new Error("Invalid 'gcd' invocation.");
+                if(arguments.size() == 1)
+                    return arguments.get(0);
+                return new Atom(new LbcSupplier<>(() -> arguments.stream().reduce(new BinaryOperator<Atom>() {
+                    @Override
+                    public Atom apply(Atom atom, Atom atom2) {
+                        if(atom.getType() != Type.NUMBER || atom2.getType() != Type.NUMBER)
+                            throw new Error("Invalid argument to 'gcd'.");
+                        return new Atom(new BigDecimal(atom.getNumber().get().toBigInteger().gcd(atom2.getNumber().get().toBigInteger())));
+                    }
+                }).orElse(IDENTITY).get().get()));
+            }
+        }));
+
+        env.push("lcm", new Atom(new Closure() {
+            private Atom IDENTITY = new Atom(BigDecimal.ZERO);
+
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() == 0)
+                    throw new Error("Invalid 'lcm' invocation.");
+                if(arguments.size() == 1)
+                    return arguments.get(0);
+                return new Atom(new LbcSupplier<>(() -> arguments.stream().reduce(new BinaryOperator<Atom>() {
+                    @Override
+                    public Atom apply(Atom atom, Atom atom2) {
+                        if(atom.getType() != Type.NUMBER || atom2.getType() != Type.NUMBER)
+                            throw new Error("Invalid argument to 'lcm'.");
+                        return new Atom(atom.getNumber().get().multiply(atom2.getNumber().get()).divide(new BigDecimal(atom.getNumber().get().toBigInteger().gcd(atom2.getNumber().get().toBigInteger()))));
+                    }
+                }).orElse(IDENTITY).get().get()));
             }
         }));
     }
