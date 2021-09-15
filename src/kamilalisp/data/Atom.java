@@ -79,17 +79,12 @@ public class Atom {
         Atom other = (Atom) o;
         if(!getType().equals(other.getType()))
             return false;
-        if(getType() == Type.STRING_CONSTANT && other.getStringConstant().get().get().equals(getStringConstant().get().get()))
-            return true;
-        else if(getType() == Type.STRING && other.getString().get().equals(getString().get()))
-            return true;
-        else if(getType() == Type.NUMBER && other.getNumber().get().compareTo(getNumber().get()) == 0)
-            return true;
-        else if(getType() == Type.CLOSURE && other.getClosure().get().equals(getClosure().get()))
-            return true;
-        else if(getType() == Type.MACRO && other.getMacro().get().equals(getMacro().get()))
-            return true;
-        else if(getType() == Type.NIL)
+        if((getType() == Type.STRING_CONSTANT && other.getStringConstant().get().get().equals(getStringConstant().get().get()))
+                || (getType() == Type.STRING && other.getString().get().equals(getString().get()))
+                || (getType() == Type.NUMBER && other.getNumber().get().compareTo(getNumber().get()) == 0)
+                || (getType() == Type.CLOSURE && other.getClosure().get().equals(getClosure().get()))
+                || (getType() == Type.MACRO && other.getMacro().get().equals(getMacro().get()))
+                || getType() == Type.NIL)
             return true;
         else if(getType() == Type.LIST && other.getList().get().size() == getList().get().size()) {
             List<Atom> l1 = other.getList().get(), l2 = getList().get();
