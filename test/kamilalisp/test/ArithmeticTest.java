@@ -21,6 +21,11 @@ class ArithmeticTest {
     }
 
     @Test
+    void multiplication() {
+        assertTrue(Evaluation.evalString("(* 13 43)").get(0).getNumber().get().compareTo(BigDecimal.valueOf(13 * 43)) == 0);
+    }
+
+    @Test
     void stringConcat() {
         assertTrue(Evaluation.evalString("(+ \"hello, \" \"world\")").get(0).getStringConstant().get().get().equals("hello, world"));
     }
@@ -35,6 +40,12 @@ class ArithmeticTest {
     void stringSubtract() {
         assertTrue(Evaluation.evalString("(- 2 \"world\")").get(0).getStringConstant().get().get().equals("rld"));
         assertTrue(Evaluation.evalString("(- \"world\" 2)").get(0).getStringConstant().get().get().equals("wor"));
+    }
+
+    @Test
+    void stringMultiply() {
+        assertTrue(Evaluation.evalString("(* 2 \"world\")").get(0).getStringConstant().get().get().equals("worldworld"));
+        assertTrue(Evaluation.evalString("(* \"world\" 2)").get(0).getStringConstant().get().get().equals("worldworld"));
     }
 
     @Test
