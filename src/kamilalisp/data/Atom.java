@@ -60,8 +60,8 @@ public class Atom {
     @Override
     public String toString() {
         switch(getType()) {
-            case CLOSURE: return "lambda/syn";
-            case MACRO: return "macro/syn";
+            case CLOSURE: return getClosure().get().representation();
+            case MACRO: return getMacro().get().representation();
             case STRING_CONSTANT: return "\"" + getStringConstant().get().get() + "\"";
             case NUMBER: return getNumber().get().toPlainString();
             case STRING: return getString().get();

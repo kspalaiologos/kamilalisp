@@ -6,6 +6,7 @@ public class Environment {
     public HashMap<String, Atom> data = new HashMap<>();
     public Environment ancestor;
     public String name;
+    public Atom owner;
 
     public Environment(String name) {
         this.name = name;

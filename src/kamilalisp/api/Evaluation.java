@@ -31,6 +31,7 @@ public class Evaluation {
         while(p.hasMore())
             atoms.add(p.parse());
         Environment globEnv = new Environment("Global scope");
+        globEnv.owner = null;
         IOLib.install(globEnv);
         MathLib.install(globEnv);
         CoreLib.install(globEnv);
@@ -59,6 +60,7 @@ public class Evaluation {
         IOLib.install(globEnv);
         MathLib.install(globEnv);
         CoreLib.install(globEnv);
+        globEnv.owner = null;
         return globEnv;
     }
 }

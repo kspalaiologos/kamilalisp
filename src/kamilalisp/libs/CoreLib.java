@@ -3,6 +3,7 @@ package kamilalisp.libs;
 import kamilalisp.data.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CoreLib {
     public static void install(Environment env) {
@@ -16,7 +17,12 @@ public class CoreLib {
                 if(params.stream().anyMatch(x -> x.getType() != Type.STRING))
                     throw new Error("Invalid lambda argument name.");
                 Environment newEnv = outerEnv.env.descendant("Lambda expression");
-                return new Atom(new Closure() {
+                Atom result = new Atom(new Closure() {
+                    @Override
+                    public String representation() {
+                        return "(λ " + params.stream().map(x -> x.getString().get()).collect(Collectors.joining(" ")) + "." + code.toString() + ")";
+                    }
+
                     @Override
                     public Atom apply(Executor env, List<Atom> innerArgs) {
                         if(innerArgs.size() != params.size())
@@ -27,6 +33,8 @@ public class CoreLib {
                         return lambdaExecutor.evaluate(code);
                     }
                 });
+                newEnv.owner = result;
+                return result;
             }
         }));
 
@@ -80,6 +88,19 @@ public class CoreLib {
                 if(arguments.size() != 1)
                     throw new Error("Invalid invocation to 'dyad'.");
                 return env.evaluate(new Atom(List.of(new Atom("lambda"), new Atom(List.of(new Atom("x"), new Atom("y"))), arguments.get(0))));
+            }
+        }));
+
+        env.push("bruijn", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'bruijn'.");
+                int depth = arguments.get(0).getNumber().get().intValue();
+                Environment currentEnv = env.env;
+                for(int i = 0; i < depth; i++)
+                    currentEnv = currentEnv.ancestor;
+                return currentEnv.owner;
             }
         }));
     }
