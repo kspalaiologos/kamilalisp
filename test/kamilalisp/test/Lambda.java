@@ -1,6 +1,7 @@
 package kamilalisp.test;
 
 import kamilalisp.api.Evaluation;
+import kamilalisp.data.Environment;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -35,5 +36,12 @@ public class Lambda {
                 "(defun square1 (x) (* x x))" +
                      "(def square2 (monad (* x x)))" +
                      "(= (square1 5) (square2 5))").get(2).coerceBool());
+    }
+
+    @Test
+    void functionAcrossEnvs() {
+        Environment env = Evaluation.createDefaultEnv();
+        Evaluation.evalString(env, "(defun caar (x) (car (car x)))");
+        assertTrue(Evaluation.evalString(env, "(caar '((1 2) (3 4) 5 6))").get(0).getNumber().get().compareTo(BigDecimal.ONE) == 0);
     }
 }

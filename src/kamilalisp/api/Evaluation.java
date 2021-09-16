@@ -30,11 +30,7 @@ public class Evaluation {
         List<Atom> atoms = new LinkedList<>();
         while(p.hasMore())
             atoms.add(p.parse());
-        Environment globEnv = new Environment("Global scope");
-        globEnv.owner = null;
-        IOLib.install(globEnv);
-        MathLib.install(globEnv);
-        CoreLib.install(globEnv);
+        Environment globEnv = createDefaultEnv();
         Executor executor = new Executor(globEnv);
         return atoms.stream().map(executor::evaluate).collect(Collectors.toList());
     }

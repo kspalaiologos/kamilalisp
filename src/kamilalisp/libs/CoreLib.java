@@ -30,7 +30,7 @@ public class CoreLib {
                         if(innerArgs.size() != params.size())
                             throw new Error("Invalid invocation to a lambda expression.");
                         for(int i = 0; i < params.size(); i++)
-                            newEnv.push(params.get(i).getString().get(), env.evaluate(innerArgs.get(i)));
+                            newEnv.push(params.get(i).getString().get(), innerArgs.get(i));
                         Executor lambdaExecutor = new Executor(newEnv);
                         return lambdaExecutor.evaluate(code);
                     }
@@ -233,6 +233,28 @@ public class CoreLib {
                         l.addAll(arguments.stream().skip(1).collect(Collectors.toList()));
                         return l;
                     }));
+            }
+        }));
+
+        env.push("car", new Atom(new Closure() {
+            private Atom car(Atom l) {
+                if(l.getType() != Type.LIST)
+                    throw new Error("Invalid invocation of 'car': trying to take the head of an empty list.");
+                List<Atom> data = l.getList().get();
+                if(data.isEmpty())
+                    return Atom.NULL;
+                else
+                    return data.get(0);
+            }
+
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() == 1) {
+                    return new Atom(new LbcSupplier(() -> car(arguments.get(0)).get().get()));
+                } else if(arguments.size() >= 2) {
+                    return new Atom(new LbcSupplier(() -> arguments.stream().map(x -> car(x)).collect(Collectors.toList())));
+                } else
+                    throw new Error("Invalid invocation to 'car'.");
             }
         }));
     }
