@@ -79,4 +79,12 @@ class ArithmeticTest {
         assertTrue(Evaluation.evalString("(< \"hi\" 3)").get(0).coerceBool());
         assertFalse(Evaluation.evalString("(< \"hello\" 2)").get(0).coerceBool());
     }
+
+    @Test
+    void greaterThan() {
+        assertTrue(Evaluation.evalString("(> 3 2)").get(0).coerceBool());
+        assertFalse(Evaluation.evalString("(> 2 3)").get(0).coerceBool());
+        assertTrue(Evaluation.evalString("(> \"hello\" 2)").get(0).coerceBool());
+        assertFalse(Evaluation.evalString("(> \"hi\" 3)").get(0).coerceBool());
+    }
 }

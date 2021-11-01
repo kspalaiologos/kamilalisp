@@ -336,5 +336,39 @@ public class MathLib {
                     throw new Error("Invalid invocation to '&'. Expected two numbers, two strings or two lists.");
             }
         }));
+
+        env.push(">=", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to '>='.");
+                Atom a1 = arguments.get(0);
+                Atom a2 = arguments.get(1);
+                return new Atom(new LbcSupplier<>(() ->
+                        env.evaluate(new Atom(List.of(
+                                new Atom("|"),
+                                new Atom(List.of(new Atom("="), a1, a2)),
+                                new Atom(List.of(new Atom(">"), a1, a2))
+                        )))
+                ));
+            }
+        }));
+
+        env.push("<=", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to '<='.");
+                Atom a1 = arguments.get(0);
+                Atom a2 = arguments.get(1);
+                return new Atom(new LbcSupplier<>(() ->
+                        env.evaluate(new Atom(List.of(
+                                new Atom("|"),
+                                new Atom(List.of(new Atom("="), a1, a2)),
+                                new Atom(List.of(new Atom("<"), a1, a2))
+                        )))
+                ));
+            }
+        }));
     }
 }
