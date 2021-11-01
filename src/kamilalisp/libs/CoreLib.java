@@ -2,7 +2,9 @@ package kamilalisp.libs;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
+import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
+import kamilalisp.reader.Parser;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -280,13 +282,15 @@ public class CoreLib {
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 2)
                     throw new Error("Invalid invocation to 'map'.");
-                arguments.get(0).guardType("First argument to 'map'", Type.CLOSURE);
-                arguments.get(1).guardType("Second argument to 'map'", Type.LIST);
-                return new Atom(new LbcSupplier<>(() -> arguments.get(1).getList().get().stream().map(x ->
-                        new Atom(new LbcSupplier<>(() ->
-                                arguments.get(0).getClosure().get().apply(env, Collections.singletonList(x))
-                        ))
-                ).collect(Collectors.toList())));
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'map'", Type.CLOSURE);
+                    arguments.get(1).guardType("Second argument to 'map'", Type.LIST);
+                    return arguments.get(1).getList().get().stream().map(x ->
+                            new Atom(new LbcSupplier<>(() ->
+                                    arguments.get(0).getClosure().get().apply(env, Collections.singletonList(x))
+                            ))
+                    ).collect(Collectors.toList());
+                }));
             }
         }));
 
@@ -295,11 +299,13 @@ public class CoreLib {
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 2)
                     throw new Error("Invalid invocation to 'filter'.");
-                arguments.get(0).guardType("First argument to 'filter'", Type.CLOSURE);
-                arguments.get(1).guardType("Second argument to 'filter'", Type.LIST);
-                return new Atom(new LbcSupplier<>(() -> arguments.get(1).getList().get().stream().filter(x ->
-                        arguments.get(0).getClosure().get().apply(env, Collections.singletonList(x)).coerceBool()
-                ).collect(Collectors.toList())));
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'filter'", Type.CLOSURE);
+                    arguments.get(1).guardType("Second argument to 'filter'", Type.LIST);
+                    return arguments.get(1).getList().get().stream().filter(x ->
+                            arguments.get(0).getClosure().get().apply(env, Collections.singletonList(x)).coerceBool()
+                    ).collect(Collectors.toList());
+                }));
             }
         }));
 
@@ -308,20 +314,22 @@ public class CoreLib {
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 2)
                     throw new Error("Invalid invocation to 'count'.");
-                arguments.get(0).guardType("First argument to 'count'", Type.CLOSURE);
-                arguments.get(1).guardType("Second argument to 'count'", Type.LIST);
-                return new Atom(new LbcSupplier<>(() -> new BigDecimal(arguments.get(1).getList().get().stream().filter(x ->
-                        arguments.get(0).getClosure().get().apply(env, Collections.singletonList(x)).coerceBool()
-                ).count())));
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'count'", Type.CLOSURE);
+                    arguments.get(1).guardType("Second argument to 'count'", Type.LIST);
+                    return new BigDecimal(arguments.get(1).getList().get().stream().filter(x ->
+                            arguments.get(0).getClosure().get().apply(env, Collections.singletonList(x)).coerceBool()
+                    ).count());
+                }));
             }
         }));
 
         env.push("cdr", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'cdr'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    if(arguments.size() != 1)
-                        throw new Error("Invalid invocation to 'cdr'.");
                     arguments.get(0).guardType("Argument to 'cdr'", Type.LIST);
                     List<Atom> data = arguments.get(0).getList().get();
                     if(data.isEmpty())
@@ -337,9 +345,9 @@ public class CoreLib {
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 3)
                     throw new Error("Invalid invocation to 'foldl'.");
-                arguments.get(0).guardType("First argument to 'foldl'", Type.CLOSURE);
-                arguments.get(2).guardType("Third argument to 'foldl'", Type.LIST);
                 return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'foldl'", Type.CLOSURE);
+                    arguments.get(2).guardType("Third argument to 'foldl'", Type.LIST);
                     List<Atom> data = arguments.get(2).getList().get();
                     Atom acc = arguments.get(1);
                     if(data.isEmpty())
@@ -358,9 +366,9 @@ public class CoreLib {
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 3)
                     throw new Error("Invalid invocation to 'foldr'.");
-                arguments.get(0).guardType("First argument to 'foldr'", Type.CLOSURE);
-                arguments.get(2).guardType("Third argument to 'foldr'", Type.LIST);
                 return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'foldr'", Type.CLOSURE);
+                    arguments.get(2).guardType("Third argument to 'foldr'", Type.LIST);
                     List<Atom> data = arguments.get(2).getList().get();
                     Atom acc = arguments.get(1);
                     if(data.isEmpty())
@@ -379,11 +387,13 @@ public class CoreLib {
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 2)
                     throw new Error("Invalid invocation to 'any'.");
-                arguments.get(0).guardType("First argument to 'any'", Type.CLOSURE);
-                arguments.get(1).guardType("Second argument to 'any'", Type.LIST);
-                return new Atom(new LbcSupplier<>(() -> arguments.get(1).getList().get().stream().anyMatch(x ->
-                        arguments.get(0).getClosure().get().apply(env, Collections.singletonList(x)).coerceBool()
-                ) ? BigDecimal.ONE : BigDecimal.ZERO));
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'any'", Type.CLOSURE);
+                    arguments.get(1).guardType("Second argument to 'any'", Type.LIST);
+                    return arguments.get(1).getList().get().stream().anyMatch(x ->
+                            arguments.get(0).getClosure().get().apply(env, Collections.singletonList(x)).coerceBool()
+                    ) ? BigDecimal.ONE : BigDecimal.ZERO;
+                }));
             }
         }));
 
@@ -392,9 +402,9 @@ public class CoreLib {
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 2)
                     throw new Error("Invalid invocation to 'zip'.");
-                arguments.get(0).guardType("First argument to 'zip'", Type.LIST);
-                arguments.get(1).guardType("Second argument to 'zip'", Type.LIST);
                 return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'zip'", Type.LIST);
+                    arguments.get(1).guardType("Second argument to 'zip'", Type.LIST);
                     List<Atom> a = arguments.get(0).getList().get();
                     List<Atom> b = arguments.get(1).getList().get();
                     return Streams.zip(a.stream(), b.stream(), (x, y) -> new Atom(new LbcSupplier<>(() -> List.of(x, y)))).collect(Collectors.toList());
@@ -407,10 +417,10 @@ public class CoreLib {
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 3)
                     throw new Error("Invalid invocation to 'zip-with'.");
-                arguments.get(0).guardType("First argument to 'zip-with'", Type.CLOSURE);
-                arguments.get(1).guardType("Second argument to 'zip-with'", Type.LIST);
-                arguments.get(2).guardType("Second argument to 'zip-with'", Type.LIST);
                 return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'zip-with'", Type.CLOSURE);
+                    arguments.get(1).guardType("Second argument to 'zip-with'", Type.LIST);
+                    arguments.get(2).guardType("Second argument to 'zip-with'", Type.LIST);
                     List<Atom> a = arguments.get(1).getList().get();
                     List<Atom> b = arguments.get(2).getList().get();
                     return Streams.zip(a.stream(), b.stream(), (x, y) -> arguments.get(0).getClosure().get().apply(env, Arrays.asList(x, y))).collect(Collectors.toList());
@@ -423,8 +433,8 @@ public class CoreLib {
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() < 2)
                     throw new Error("Invalid invocation to 'cond'.");
-                List<Atom> args = arguments.stream().map(x -> x.getType() == Type.LIST ? x : env.evaluate(x)).collect(Collectors.toList());
                 return new Atom(new LbcSupplier<>(() -> {
+                    List<Atom> args = arguments.stream().map(x -> x.getType() == Type.LIST ? x : env.evaluate(x)).collect(Collectors.toList());
                     for(Atom a : args) {
                         List<Atom> clause = a.getList().get();
                         if(clause.size() != 1 && clause.size() != 2)
@@ -479,6 +489,19 @@ public class CoreLib {
                 if(arguments.size() != 1)
                     throw new Error("Invalid invocation to 'eval'.");
                 return new Atom(new LbcSupplier<>(() -> env.evaluate(arguments.get(0)).get().get()));
+            }
+        }));
+
+        env.push("parse", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'parse'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("Argument to parse", Type.STRING_CONSTANT);
+                    String s = arguments.get(0).getString().get();
+                    return Evaluation.evalString(env.env, s);
+                }));
             }
         }));
     }

@@ -241,17 +241,19 @@ public class MathLib {
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 2)
                     throw new Error("Invalid invocation to '<'.");
-                if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.NUMBER) {
-                    return new Atom(new LbcSupplier<>(() -> arguments.get(0).getNumber().get().compareTo(arguments.get(1).getNumber().get()) < 0 ? BigDecimal.ONE : BigDecimal.ZERO));
-                } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
-                    return new Atom(new LbcSupplier<>(() -> arguments.get(0).getStringConstant().get().get().compareTo(arguments.get(1).getStringConstant().get().get()) < 0 ? BigDecimal.ONE : BigDecimal.ZERO));
-                } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.NUMBER) {
-                    return new Atom(new LbcSupplier<>(() -> arguments.get(0).getStringConstant().get().get().length() < arguments.get(1).getNumber().get().intValue() ? BigDecimal.ONE : BigDecimal.ZERO));
-                } else if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.STRING_CONSTANT) {
-                    return new Atom(new LbcSupplier<>(() -> arguments.get(1).getStringConstant().get().get().length() < arguments.get(0).getNumber().get().intValue() ? BigDecimal.ONE : BigDecimal.ZERO));
-                } else {
-                    throw new Error("Invalid invocation to '<'. Expected two numbers or two strings.");
-                }
+                return new Atom(new LbcSupplier<>(() -> {
+                    if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.NUMBER) {
+                        return arguments.get(0).getNumber().get().compareTo(arguments.get(1).getNumber().get()) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+                    } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
+                        return arguments.get(0).getStringConstant().get().get().compareTo(arguments.get(1).getStringConstant().get().get()) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+                    } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.NUMBER) {
+                        return arguments.get(0).getStringConstant().get().get().length() < arguments.get(1).getNumber().get().intValue() ? BigDecimal.ONE : BigDecimal.ZERO;
+                    } else if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.STRING_CONSTANT) {
+                        return arguments.get(1).getStringConstant().get().get().length() < arguments.get(0).getNumber().get().intValue() ? BigDecimal.ONE : BigDecimal.ZERO;
+                    } else {
+                        throw new Error("Invalid invocation to '<'. Expected two numbers or two strings.");
+                    }
+                }));
             }
         }));
 
@@ -260,17 +262,19 @@ public class MathLib {
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 2)
                     throw new Error("Invalid invocation to '>'.");
-                if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.NUMBER) {
-                    return new Atom(new LbcSupplier<>(() -> arguments.get(0).getNumber().get().compareTo(arguments.get(1).getNumber().get()) > 0 ? BigDecimal.ONE : BigDecimal.ZERO));
-                } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
-                    return new Atom(new LbcSupplier<>(() -> arguments.get(0).getStringConstant().get().get().compareTo(arguments.get(1).getStringConstant().get().get()) > 0 ? BigDecimal.ONE : BigDecimal.ZERO));
-                } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.NUMBER) {
-                    return new Atom(new LbcSupplier<>(() -> arguments.get(0).getStringConstant().get().get().length() > arguments.get(1).getNumber().get().intValue() ? BigDecimal.ONE : BigDecimal.ZERO));
-                } else if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.STRING_CONSTANT) {
-                    return new Atom(new LbcSupplier<>(() -> arguments.get(1).getStringConstant().get().get().length() > arguments.get(0).getNumber().get().intValue() ? BigDecimal.ONE : BigDecimal.ZERO));
-                } else {
-                    throw new Error("Invalid invocation to '>'. Expected two numbers or two strings.");
-                }
+                return new Atom(new LbcSupplier<>(() -> {
+                    if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.NUMBER) {
+                        return arguments.get(0).getNumber().get().compareTo(arguments.get(1).getNumber().get()) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+                    } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
+                        return arguments.get(0).getStringConstant().get().get().compareTo(arguments.get(1).getStringConstant().get().get()) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+                    } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.NUMBER) {
+                        return arguments.get(0).getStringConstant().get().get().length() > arguments.get(1).getNumber().get().intValue() ? BigDecimal.ONE : BigDecimal.ZERO;
+                    } else if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.STRING_CONSTANT) {
+                        return arguments.get(1).getStringConstant().get().get().length() > arguments.get(0).getNumber().get().intValue() ? BigDecimal.ONE : BigDecimal.ZERO;
+                    } else {
+                        throw new Error("Invalid invocation to '>'. Expected two numbers or two strings.");
+                    }
+                }));
             }
         }));
 
@@ -279,30 +283,29 @@ public class MathLib {
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 2)
                     throw new Error("Invalid invocation to '|'.");
-                if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.NUMBER) {
-                    return new Atom(new LbcSupplier<>(() -> new BigDecimal(
-                            arguments
-                                    .get(0)
-                                    .getNumber()
-                                    .get()
-                                    .toBigInteger()
-                                    .or(arguments.get(1).getNumber().get().toBigInteger()))));
-                } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
-                    return new Atom(new LbcSupplier<>(() ->
-                            new StringConstant(arguments.get(0).getStringConstant().get().get().concat(arguments.get(1).getStringConstant().get().get())
-                                    .codePoints()
-                                    .distinct()
-                                    .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                                    .toString())));
-                } else if(arguments.get(0).getType() == Type.LIST && arguments.get(1).getType() == Type.LIST) {
-                    return new Atom(new LbcSupplier<>(() -> {
+                return new Atom(new LbcSupplier<>(() -> {
+                    if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.NUMBER) {
+                        return new BigDecimal(
+                                arguments
+                                        .get(0)
+                                        .getNumber()
+                                        .get()
+                                        .toBigInteger()
+                                        .or(arguments.get(1).getNumber().get().toBigInteger()));
+                    } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
+                        return new StringConstant(arguments.get(0).getStringConstant().get().get().concat(arguments.get(1).getStringConstant().get().get())
+                                        .codePoints()
+                                        .distinct()
+                                        .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                                        .toString());
+                    } else if(arguments.get(0).getType() == Type.LIST && arguments.get(1).getType() == Type.LIST) {
                         Set<Object> result = new LinkedHashSet<>();
                         result.addAll(arguments.get(0).getList().get().stream().map(x -> x.get().get()).collect(Collectors.toList()));
                         result.addAll(arguments.get(1).getList().get().stream().map(x -> x.get().get()).collect(Collectors.toList()));
                         return result.stream().map(x -> new Atom(new LbcSupplier<>(() -> x))).collect(Collectors.toList());
-                    }));
-                } else
-                    throw new Error("Invalid invocation to '|'. Expected two numbers, two strings or two lists.");
+                    } else
+                        throw new Error("Invalid invocation to '|'. Expected two numbers, two strings or two lists.");
+                }));
             }
         }));
 
@@ -311,30 +314,28 @@ public class MathLib {
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 2)
                     throw new Error("Invalid invocation to '&'.");
-                if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.NUMBER) {
-                    return new Atom(new LbcSupplier<>(() -> new BigDecimal(
-                            arguments
-                                    .get(0)
-                                    .getNumber()
-                                    .get()
-                                    .toBigInteger()
-                                    .and(arguments.get(1).getNumber().get().toBigInteger()))));
-                } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
-                    return new Atom(new LbcSupplier<>(() -> {
+                return new Atom(new LbcSupplier<>(() -> {
+                    if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.NUMBER) {
+                        return new BigDecimal(
+                                arguments
+                                        .get(0)
+                                        .getNumber()
+                                        .get()
+                                        .toBigInteger()
+                                        .and(arguments.get(1).getNumber().get().toBigInteger()));
+                    } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
                         Set<Integer> result = new LinkedHashSet<>();
                         result.addAll(arguments.get(0).getStringConstant().get().get().codePoints().boxed().collect(Collectors.toList()));
                         result.retainAll(arguments.get(1).getStringConstant().get().get().codePoints().boxed().collect(Collectors.toList()));
                         return new StringConstant(result.stream().collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString());
-                    }));
-                } else if(arguments.get(0).getType() == Type.LIST && arguments.get(1).getType() == Type.LIST) {
-                    return new Atom(new LbcSupplier<>(() -> {
+                    } else if(arguments.get(0).getType() == Type.LIST && arguments.get(1).getType() == Type.LIST) {
                         Set<Atom> result = new LinkedHashSet<>();
                         result.addAll(arguments.get(0).getList().get());
                         result.retainAll(arguments.get(1).getList().get());
                         return result.stream().collect(Collectors.toList());
-                    }));
-                } else
-                    throw new Error("Invalid invocation to '&'. Expected two numbers, two strings or two lists.");
+                    } else
+                        throw new Error("Invalid invocation to '&'. Expected two numbers, two strings or two lists.");
+                }));
             }
         }));
 
@@ -343,15 +344,15 @@ public class MathLib {
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 2)
                     throw new Error("Invalid invocation to '>='.");
-                Atom a1 = arguments.get(0);
-                Atom a2 = arguments.get(1);
-                return new Atom(new LbcSupplier<>(() ->
-                        env.evaluate(new Atom(List.of(
-                                new Atom("|"),
-                                new Atom(List.of(new Atom("="), a1, a2)),
-                                new Atom(List.of(new Atom(">"), a1, a2))
-                        )))
-                ));
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a1 = arguments.get(0);
+                    Atom a2 = arguments.get(1);
+                    return env.evaluate(new Atom(List.of(
+                            new Atom("|"),
+                            new Atom(List.of(new Atom("="), a1, a2)),
+                            new Atom(List.of(new Atom(">"), a1, a2))
+                    )));
+                }));
             }
         }));
 
@@ -360,15 +361,15 @@ public class MathLib {
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 2)
                     throw new Error("Invalid invocation to '<='.");
-                Atom a1 = arguments.get(0);
-                Atom a2 = arguments.get(1);
-                return new Atom(new LbcSupplier<>(() ->
-                        env.evaluate(new Atom(List.of(
-                                new Atom("|"),
-                                new Atom(List.of(new Atom("="), a1, a2)),
-                                new Atom(List.of(new Atom("<"), a1, a2))
-                        )))
-                ));
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a1 = arguments.get(0);
+                    Atom a2 = arguments.get(1);
+                    return env.evaluate(new Atom(List.of(
+                            new Atom("|"),
+                            new Atom(List.of(new Atom("="), a1, a2)),
+                            new Atom(List.of(new Atom("<"), a1, a2))
+                    )));
+                }));
             }
         }));
 
