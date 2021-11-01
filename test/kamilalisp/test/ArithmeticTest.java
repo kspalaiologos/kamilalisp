@@ -71,4 +71,12 @@ class ArithmeticTest {
         assertTrue(Evaluation.evalString("(= 1 (- (/ 5 3) (/ 2 3)))").get(0).getNumber().get().equals(BigDecimal.ONE));
         assertTrue(Evaluation.evalString("(= 1 (- (/ 4 3) (/ 1 3)))").get(0).getNumber().get().equals(BigDecimal.ONE));
     }
+
+    @Test
+    void lessThan() {
+        assertTrue(Evaluation.evalString("(< 2 3)").get(0).coerceBool());
+        assertFalse(Evaluation.evalString("(< 3 2)").get(0).coerceBool());
+        assertTrue(Evaluation.evalString("(< \"hi\" 3)").get(0).coerceBool());
+        assertFalse(Evaluation.evalString("(< \"hello\" 2)").get(0).coerceBool());
+    }
 }

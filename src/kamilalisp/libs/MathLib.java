@@ -235,5 +235,24 @@ public class MathLib {
                 throw new Error("Invalid invocation to '~'.");
             }
         }));
+
+        env.push("<", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to '<'.");
+                if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.NUMBER) {
+                    return new Atom(new LbcSupplier<>(() -> arguments.get(0).getNumber().get().compareTo(arguments.get(1).getNumber().get()) < 0 ? BigDecimal.ONE : BigDecimal.ZERO));
+                } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
+                    return new Atom(new LbcSupplier<>(() -> arguments.get(0).getStringConstant().get().get().compareTo(arguments.get(1).getStringConstant().get().get()) < 0 ? BigDecimal.ONE : BigDecimal.ZERO));
+                } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.NUMBER) {
+                    return new Atom(new LbcSupplier<>(() -> arguments.get(0).getStringConstant().get().get().length() < arguments.get(1).getNumber().get().intValue() ? BigDecimal.ONE : BigDecimal.ZERO));
+                } else if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.STRING_CONSTANT) {
+                    return new Atom(new LbcSupplier<>(() -> arguments.get(1).getStringConstant().get().get().length() < arguments.get(0).getNumber().get().intValue() ? BigDecimal.ONE : BigDecimal.ZERO));
+                } else {
+                    throw new Error("Invalid invocation to '<'. Expected two numbers or two strings.");
+                }
+            }
+        }));
     }
 }
