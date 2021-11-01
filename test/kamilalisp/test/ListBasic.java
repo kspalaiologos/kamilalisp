@@ -184,4 +184,21 @@ public class ListBasic {
         assertTrue(Evaluation.evalString("(rotate \"hello, world\" 5)").get(0).equals(new Atom(new StringConstant(", worldhello"))));
         assertTrue(Evaluation.evalString("(rotate \"hello, world\" 10)").get(0).equals(new Atom(new StringConstant("ldhello, wor"))));
     }
+
+    @Test
+    void testFlatten() {
+        assertTrue(Evaluation.evalString("(flatten '(1 2 3))").get(0).equals(new Atom(List.of(
+                new Atom(BigDecimal.valueOf(1)),
+                new Atom(BigDecimal.valueOf(2)),
+                new Atom(BigDecimal.valueOf(3))
+        ))));
+
+        assertTrue(Evaluation.evalString("(flatten '(1 2 (3 4) 5))").get(0).equals(new Atom(List.of(
+                new Atom(BigDecimal.valueOf(1)),
+                new Atom(BigDecimal.valueOf(2)),
+                new Atom(BigDecimal.valueOf(3)),
+                new Atom(BigDecimal.valueOf(4)),
+                new Atom(BigDecimal.valueOf(5))
+        ))));
+    }
 }

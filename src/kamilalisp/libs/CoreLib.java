@@ -540,7 +540,7 @@ public class CoreLib {
                 if(arguments.size() != 1)
                     throw new Error("Invalid invocation to 'parse'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("Argument to parse", Type.STRING_CONSTANT);
+                    arguments.get(0).guardType("Argument to 'parse'.", Type.STRING_CONSTANT);
                     String s = arguments.get(0).getString().get();
                     return Evaluation.evalString(env.env, s);
                 }));
@@ -617,9 +617,9 @@ public class CoreLib {
                 if(arguments.size() != 2)
                     throw new Error("Invalid invocation to 'every'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(1).guardType("Argument to every", Type.LIST);
+                    arguments.get(1).guardType("Argument to 'every'.", Type.LIST);
                     List<Atom> l = arguments.get(1).getList().get();
-                    arguments.get(0).guardType("Argument to every", Type.CLOSURE);
+                    arguments.get(0).guardType("Argument to 'every'.", Type.CLOSURE);
                     Closure c = arguments.get(0).getClosure().get();
                     for (int i = 0; i < l.size(); i++) {
                         if(!c.apply(env, Arrays.asList(l.get(i))).coerceBool())
@@ -636,6 +636,72 @@ public class CoreLib {
                 if(arguments.size() != 1)
                     throw new Error("Invalid invocation to 'id'.");
                 return arguments.get(0);
+            }
+        }));
+
+        env.push("flatten", new Atom(new Closure() {
+            public <T> List<T> flat(List<List<T>> list) {
+                return list.stream()
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toList());
+            }
+
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'flatten'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("Argument to 'flatten'.", Type.LIST);
+                    List<Atom> l = arguments.get(0).getList().get();
+                    return flat(l.stream().map(x -> x.getType() == Type.LIST ? x.getList().get() : List.of(x)).collect(Collectors.toList()));
+                }));
+            }
+        }));
+
+        env.push("flatmap", new Atom(new Closure() {
+            public <T> List<T> flat(List<List<T>> list) {
+                return list.stream()
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toList());
+            }
+
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'flatmap'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(1).guardType("Argument to 'flatmap'.", Type.LIST);
+                    List<Atom> l = arguments.get(1).getList().get();
+                    arguments.get(0).guardType("Argument to 'flatmap'.", Type.CLOSURE);
+                    Closure c = arguments.get(0).getClosure().get();
+                    return flat(l.stream().map(x -> c.apply(env, List.of(x))).map(x -> x.getType() == Type.LIST ? x.getList().get() : List.of(x)).collect(Collectors.toList()));
+                }));
+            }
+        }));
+
+        env.push("nth", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'nth'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("Argument to 'nth'.", Type.NUMBER);
+                    if(arguments.get(1).getType() == Type.LIST) {
+                        List<Atom> l = arguments.get(1).getList().get();
+                        int n = arguments.get(0).getNumber().get().intValue();
+                        if (n < 0 || n >= l.size())
+                            throw new Error("Index out of bounds.");
+                        return l.get(n).get().get();
+                    } else if(arguments.get(1).getType() == Type.STRING_CONSTANT) {
+                        String s = arguments.get(1).getStringConstant().get().get();
+                        int n = arguments.get(0).getNumber().get().intValue();
+                        if (n < 0 || n >= s.length())
+                            throw new Error("Index out of bounds.");
+                        return new StringConstant("" + s.charAt(n));
+                    }
+
+                    throw new Error("Invalid argument to 'nth'.");
+                }));
             }
         }));
     }

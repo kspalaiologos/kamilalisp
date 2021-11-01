@@ -37,4 +37,16 @@ public class HigherOrder {
         assertTrue(Evaluation.evalString("(every ~ '(1 1 1))").get(0).get().get().equals(BigDecimal.valueOf(0)));
         assertTrue(Evaluation.evalString("(every ~ '(0 0 0))").get(0).get().get().equals(BigDecimal.valueOf(1)));
     }
+
+    @Test
+    public void testFlatmap() {
+        assertTrue(Evaluation.evalString("(nth 2 (flatmap (lambda (x) (cons x 'nil)) '(1 2 3)))").get(0).get().get().equals(BigDecimal.valueOf(3)));
+    }
+
+    @Test
+    public void testNth() {
+        assertTrue(Evaluation.evalString("(nth 0 '(1 2 3))").get(0).get().get().equals(BigDecimal.valueOf(1)));
+        assertTrue(Evaluation.evalString("(nth 1 '(1 2 3))").get(0).get().get().equals(BigDecimal.valueOf(2)));
+        assertTrue(Evaluation.evalString("(nth 2 '(1 2 3))").get(0).get().get().equals(BigDecimal.valueOf(3)));
+    }
 }
