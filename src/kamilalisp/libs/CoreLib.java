@@ -1,12 +1,15 @@
 package kamilalisp.libs;
 
+import com.google.common.collect.Lists;
 import kamilalisp.data.*;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CoreLib {
     public static void install(Environment env) {
@@ -327,6 +330,48 @@ public class CoreLib {
                         return Atom.NULL.get().get();
                     else
                         return data.subList(1, data.size());
+                }));
+            }
+        }));
+
+        env.push("foldl", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 3)
+                    throw new Error("Invalid invocation to 'foldl'.");
+                arguments.get(0).guardType("First argument to 'foldl'", Type.CLOSURE);
+                arguments.get(2).guardType("Third argument to 'foldl'", Type.LIST);
+                return new Atom(new LbcSupplier<>(() -> {
+                    List<Atom> data = arguments.get(2).getList().get();
+                    Atom acc = arguments.get(1);
+                    if(data.isEmpty())
+                        return acc.get().get();
+                    else {
+                        return Stream.concat(Stream.of(acc), data.stream()).reduce((x, y) ->
+                            arguments.get(0).getClosure().get().apply(env, Arrays.asList(x, y))
+                        ).get().get().get();
+                    }
+                }));
+            }
+        }));
+
+        env.push("foldr", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 3)
+                    throw new Error("Invalid invocation to 'foldr'.");
+                arguments.get(0).guardType("First argument to 'foldr'", Type.CLOSURE);
+                arguments.get(2).guardType("Third argument to 'foldr'", Type.LIST);
+                return new Atom(new LbcSupplier<>(() -> {
+                    List<Atom> data = arguments.get(2).getList().get();
+                    Atom acc = arguments.get(1);
+                    if(data.isEmpty())
+                        return acc.get().get();
+                    else {
+                        return Stream.concat(Stream.of(acc), Lists.reverse(data).stream()).reduce((x, y) ->
+                            arguments.get(0).getClosure().get().apply(env, Arrays.asList(y, x))
+                        ).get().get().get();
+                    }
                 }));
             }
         }));
