@@ -375,5 +375,18 @@ public class CoreLib {
                 }));
             }
         }));
+
+        env.push("any", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'any'.");
+                arguments.get(0).guardType("First argument to 'any'", Type.CLOSURE);
+                arguments.get(1).guardType("Second argument to 'any'", Type.LIST);
+                return new Atom(new LbcSupplier<>(() -> arguments.get(1).getList().get().stream().anyMatch(x ->
+                        arguments.get(0).getClosure().get().apply(env, Collections.singletonList(x)).coerceBool()
+                ) ? BigDecimal.ONE : BigDecimal.ZERO));
+            }
+        }));
     }
 }

@@ -90,4 +90,12 @@ public class ListBasic {
         assertTrue(Evaluation.evalString("(foldr + 0 '(1 2 3 4 5))").get(0).equals(new Atom(BigDecimal.valueOf(15))));
         assertTrue(Evaluation.evalString("(foldr - 0 '(1 2 3 4 5))").get(0).equals(new Atom(BigDecimal.valueOf(3))));
     }
+
+    @Test
+    void testAny() {
+        assertTrue(Evaluation.evalString("(any (lambda (x) (= x 1)) '(1 2 3))").get(0).coerceBool());
+        assertTrue(Evaluation.evalString("(any (lambda (x) (= x 2)) '(1 2 3))").get(0).coerceBool());
+        assertTrue(Evaluation.evalString("(any (lambda (x) (= x 3)) '(1 2 3))").get(0).coerceBool());
+        assertFalse(Evaluation.evalString("(any (lambda (x) (= x 4)) '(1 2 3))").get(0).coerceBool());
+    }
 }
