@@ -5,10 +5,7 @@ import com.google.common.collect.Streams;
 import kamilalisp.data.*;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -449,6 +446,30 @@ public class CoreLib {
                 if(arguments.size() != 1)
                     throw new Error("Invalid invocation to 'type'.");
                 return new Atom(new LbcSupplier<>(() -> new StringConstant(arguments.get(0).getType().toString())));
+            }
+        }));
+
+        env.push("let", new Atom(new Macro() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() < 2)
+                    throw new Error("Invalid invocation to 'let'.");
+                List<Atom> args = arguments.get(0).getList().get();
+                return new Atom(new LbcSupplier<>(() -> {
+                    Environment newEnv = env.env.descendant("Let expression");
+                    for(int i = 0; i < args.size(); i++) {
+                        if(args.get(i).getType() != Type.LIST)
+                            throw new Error("Invalid invocation to 'let'.");
+                        List<Atom> binding = args.get(i).getList().get();
+                        if(binding.size() % 2 != 0)
+                            throw new Error("Invalid invocation to 'let'.");
+                        if(binding.get(0).getType() != Type.STRING)
+                            throw new Error("Invalid invocation to 'let'.");
+                        newEnv.push(binding.get(0).getString().get(), env.evaluate(binding.get(1)));
+                    }
+                    newEnv.owner = new Atom(this);
+                    return new Executor(newEnv).evaluate(arguments.get(1)).get().get();
+                }));
             }
         }));
     }
