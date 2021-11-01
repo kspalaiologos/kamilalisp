@@ -105,4 +105,9 @@ class ArithmeticTest {
         assertTrue(Evaluation.evalString("(max \"hello\" \"hi\")").get(0).getStringConstant().get().get().equals("hi"));
         assertTrue(Evaluation.evalString("(size (max '(1 2 3 4) '(1 2)))").get(0).getNumber().get().equals(BigDecimal.valueOf(4)));
     }
+
+    @Test
+    void testId() {
+        assertTrue(Evaluation.evalString("(id 5)").get(0).getNumber().get().equals(BigDecimal.valueOf(5)));
+    }
 }

@@ -629,5 +629,14 @@ public class CoreLib {
                 }));
             }
         }));
+
+        env.push("id", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'id'.");
+                return arguments.get(0);
+            }
+        }));
     }
 }
