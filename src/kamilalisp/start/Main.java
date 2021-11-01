@@ -24,8 +24,19 @@ public class Main {
         Scanner s = new Scanner(System.in);
         banner(); prompt();
         while(s.hasNextLine()) {
-            List<Atom> result = Evaluation.evalString(env, s.nextLine());
-            result.forEach(System.out::println);
+            String line = s.nextLine();
+            boolean muffled = false;
+
+            if(line.startsWith(".s")) {
+                muffled = true;
+                line = line.substring(2);
+            }
+
+            List<Atom> result = Evaluation.evalString(env, line);
+
+            if(!muffled)
+                result.forEach(System.out::println);
+
             prompt();
         }
     }
