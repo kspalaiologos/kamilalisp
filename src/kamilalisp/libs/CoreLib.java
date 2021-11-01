@@ -472,5 +472,14 @@ public class CoreLib {
                 }));
             }
         }));
+
+        env.push("eval", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'eval'.");
+                return new Atom(new LbcSupplier<>(() -> env.evaluate(arguments.get(0)).get().get()));
+            }
+        }));
     }
 }
