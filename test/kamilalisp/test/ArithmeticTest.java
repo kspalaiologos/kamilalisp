@@ -64,6 +64,11 @@ class ArithmeticTest {
     void negation() {
         assertTrue(Evaluation.evalString("(= (~ 1) 0)").get(0).coerceBool());
         assertTrue(Evaluation.evalString("(= (~ 0) 1)").get(0).coerceBool());
+    }
 
+    @Test
+    void division() {
+        assertTrue(Evaluation.evalString("(= 1 (- (/ 5 3) (/ 2 3)))").get(0).getNumber().get().equals(BigDecimal.ONE));
+        assertTrue(Evaluation.evalString("(= 1 (- (/ 4 3) (/ 1 3)))").get(0).getNumber().get().equals(BigDecimal.ONE));
     }
 }

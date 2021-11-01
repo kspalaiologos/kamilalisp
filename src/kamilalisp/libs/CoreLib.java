@@ -26,6 +26,11 @@ public class CoreLib {
                     }
 
                     @Override
+                    public List requote() {
+                        return arguments;
+                    }
+
+                    @Override
                     public Atom apply(Executor env, List<Atom> innerArgs) {
                         if(innerArgs.size() != params.size())
                             throw new Error("Invalid invocation to a lambda expression.");
@@ -54,6 +59,11 @@ public class CoreLib {
                     @Override
                     public String representation() {
                         return "(macro " + params.stream().map(x -> x.getString().get()).collect(Collectors.joining(" ")) + "." + code.toString() + ")";
+                    }
+
+                    @Override
+                    public List requote() {
+                        return arguments;
                     }
 
                     @Override

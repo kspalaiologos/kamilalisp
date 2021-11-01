@@ -16,5 +16,9 @@ public class ListBasic {
                 new Atom(BigDecimal.valueOf(2)),
                 new Atom(BigDecimal.valueOf(3))
         ))));
+
+        assertTrue(Evaluation.evalString("(size (~ '(1 2 3) 3))").get(0).equals(new Atom(BigDecimal.valueOf(2))));
+        assertTrue(Evaluation.evalString("(= 2 (size (~ '(1 2 3) 3)))").get(0).equals(new Atom(BigDecimal.valueOf(1))));
+        assertTrue(Evaluation.evalString("(= 2 (size (~ '(1 2 3) 3)))").get(0).coerceBool());
     }
 }
