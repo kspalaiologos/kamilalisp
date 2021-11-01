@@ -17,14 +17,4 @@ public class ListBasic {
                 new Atom(BigDecimal.valueOf(3))
         ))));
     }
-
-    @Test
-    void multiCons() {
-        assertTrue(Evaluation.evalString("(cons (cons 'nil 4 5) 2 3)").get(0).equals(new Atom(List.of(
-                new Atom(BigDecimal.valueOf(2)),
-                new Atom(BigDecimal.valueOf(3)),
-                new Atom(BigDecimal.valueOf(4)),
-                new Atom(BigDecimal.valueOf(5))
-        ))));
-    }
 }
