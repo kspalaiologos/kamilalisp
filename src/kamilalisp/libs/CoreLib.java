@@ -193,20 +193,10 @@ public class CoreLib {
 
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 2) {
-                    if(arguments.size() < 2)
-                        throw new Error("invalid invocation to 'cons'.");
-                    return new Atom(new LbcSupplier(() -> {
-                        Atom target = arguments.get(0);
-                        if(target.getType() != Type.LIST)
-                            throw new Error("invalid invocation to 'cons'.");
-                        List<Atom> l = arguments.stream().skip(1).collect(Collectors.toList());
-                        l.addAll(target.getList().get());
-                        return l;
-                    }));
-                } else {
+                if(arguments.size() != 2)
+                    throw new Error("invalid invocation to 'cons'.");
+                else
                     return new Atom(new LbcSupplier(() -> cons2(arguments.get(0), arguments.get(1))));
-                }
             }
         }));
 
@@ -229,7 +219,7 @@ public class CoreLib {
                     return new Atom(new LbcSupplier(() -> {
                         if(arguments.get(0).getType() != Type.LIST)
                             throw new Error("invalid invocation to 'append'.");
-                        List<Atom> l = new LinkedList<Atom>(arguments.get(0).getList().get());
+                        List<Atom> l = new LinkedList<>(arguments.get(0).getList().get());
                         l.addAll(arguments.stream().skip(1).collect(Collectors.toList()));
                         return l;
                     }));
@@ -255,6 +245,22 @@ public class CoreLib {
                     return new Atom(new LbcSupplier(() -> arguments.stream().map(x -> car(x)).collect(Collectors.toList())));
                 } else
                     throw new Error("Invalid invocation to 'car'.");
+            }
+        }));
+
+        env.push("size", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'size'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    if(arguments.get(0).getType() == Type.LIST)
+                        return BigDecimal.valueOf(arguments.get(0).getList().get().size());
+                    else if(arguments.get(0).getType() == Type.STRING_CONSTANT)
+                        return BigDecimal.valueOf(arguments.get(0).getStringConstant().get().get().length());
+                    else
+                        throw new Error("Invalid invocation to 'size'. Expected a string or list, got " + arguments.get(0).getType().name());
+                }));
             }
         }));
     }
