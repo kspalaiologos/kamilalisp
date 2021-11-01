@@ -426,5 +426,45 @@ public class MathLib {
                 throw new Error("Unimplemented");
             }
         }));
+
+        env.push("min", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'min'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a1 = arguments.get(0);
+                    Atom a2 = arguments.get(1);
+                    if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
+                        return a1.getNumber().get().min(a2.getNumber().get());
+                    } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.STRING_CONSTANT) {
+                        return a1.getStringConstant().get().get().compareTo(a2.getStringConstant().get().get()) < 0 ? a1.get().get() : a2.get().get();
+                    } else if(a1.getType() == Type.LIST && a2.getType() == Type.LIST) {
+                        return a1.getList().get().size() < a2.getList().get().size() ? a1.get().get() : a2.get().get();
+                    }
+                    throw new Error("Invalid invocation to 'min': expected two lists, two strings or two numbers.");
+                }));
+            }
+        }));
+
+        env.push("max", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'max'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a1 = arguments.get(0);
+                    Atom a2 = arguments.get(1);
+                    if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
+                        return a1.getNumber().get().max(a2.getNumber().get());
+                    } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.STRING_CONSTANT) {
+                        return a1.getStringConstant().get().get().compareTo(a2.getStringConstant().get().get()) > 0 ? a1.get().get() : a2.get().get();
+                    } else if(a1.getType() == Type.LIST && a2.getType() == Type.LIST) {
+                        return a1.getList().get().size() > a2.getList().get().size() ? a1.get().get() : a2.get().get();
+                    }
+                    throw new Error("Invalid invocation to 'max': expected two lists, two strings or two numbers.");
+                }));
+            }
+        }));
     }
 }

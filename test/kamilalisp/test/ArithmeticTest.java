@@ -87,4 +87,22 @@ class ArithmeticTest {
         assertTrue(Evaluation.evalString("(> \"hello\" 2)").get(0).coerceBool());
         assertFalse(Evaluation.evalString("(> \"hi\" 3)").get(0).coerceBool());
     }
+
+    @Test
+    void testMin() {
+        assertTrue(Evaluation.evalString("(min 2 3)").get(0).getNumber().get().equals(BigDecimal.valueOf(2)));
+        assertTrue(Evaluation.evalString("(min 3 2)").get(0).getNumber().get().equals(BigDecimal.valueOf(2)));
+        assertTrue(Evaluation.evalString("(min \"hi\" \"hello\")").get(0).getStringConstant().get().get().equals("hello"));
+        assertTrue(Evaluation.evalString("(min \"hello\" \"hi\")").get(0).getStringConstant().get().get().equals("hello"));
+        assertTrue(Evaluation.evalString("(size (min '(1 2 3 4) '(1 2)))").get(0).getNumber().get().equals(BigDecimal.valueOf(2)));
+    }
+
+    @Test
+    void testMax() {
+        assertTrue(Evaluation.evalString("(max 2 3)").get(0).getNumber().get().equals(BigDecimal.valueOf(3)));
+        assertTrue(Evaluation.evalString("(max 3 2)").get(0).getNumber().get().equals(BigDecimal.valueOf(3)));
+        assertTrue(Evaluation.evalString("(max \"hi\" \"hello\")").get(0).getStringConstant().get().get().equals("hi"));
+        assertTrue(Evaluation.evalString("(max \"hello\" \"hi\")").get(0).getStringConstant().get().get().equals("hi"));
+        assertTrue(Evaluation.evalString("(size (max '(1 2 3 4) '(1 2)))").get(0).getNumber().get().equals(BigDecimal.valueOf(4)));
+    }
 }
