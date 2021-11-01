@@ -116,4 +116,23 @@ public class ListBasic {
                 new Atom(BigDecimal.valueOf(9))
         ))));
     }
+
+    @Test
+    void testReverse() {
+        assertTrue(Evaluation.evalString("(reverse '(1 2 3))").get(0).equals(new Atom(List.of(
+                new Atom(BigDecimal.valueOf(3)),
+                new Atom(BigDecimal.valueOf(2)),
+                new Atom(BigDecimal.valueOf(1))
+        ))));
+
+        assertTrue(Evaluation.evalString("(reverse '(1 2 3 4 5))").get(0).equals(new Atom(List.of(
+                new Atom(BigDecimal.valueOf(5)),
+                new Atom(BigDecimal.valueOf(4)),
+                new Atom(BigDecimal.valueOf(3)),
+                new Atom(BigDecimal.valueOf(2)),
+                new Atom(BigDecimal.valueOf(1))
+        ))));
+
+        assertTrue(Evaluation.evalString("(reverse \"hello\")").get(0).getStringConstant().get().get().equals("olleh"));
+    }
 }

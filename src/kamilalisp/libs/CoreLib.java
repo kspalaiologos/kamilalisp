@@ -546,5 +546,30 @@ public class CoreLib {
                 }));
             }
         }));
+
+        env.push("reverse", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'reverse'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    if(arguments.get(0).getType() == Type.LIST) {
+                        List<Atom> l = arguments.get(0).getList().get();
+                        List<Atom> r = new ArrayList<>();
+                        for (int i = l.size() - 1; i >= 0; i--)
+                            r.add(l.get(i));
+                        return r;
+                    } else if(arguments.get(0).getType() == Type.STRING_CONSTANT) {
+                        String s = arguments.get(0).getStringConstant().get().get();
+                        String r = "";
+                        for (int i = s.length() - 1; i >= 0; i--)
+                            r += s.charAt(i);
+                        return new StringConstant(r);
+                    }
+
+                    throw new Error("Invalid invocation to 'reverse': expected a string or list.");
+                }));
+            }
+        }));
     }
 }
