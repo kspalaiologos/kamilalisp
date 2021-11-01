@@ -4,6 +4,7 @@ import kamilalisp.api.Evaluation;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -48,5 +49,11 @@ public class HigherOrder {
         assertTrue(Evaluation.evalString("(nth 0 '(1 2 3))").get(0).get().get().equals(BigDecimal.valueOf(1)));
         assertTrue(Evaluation.evalString("(nth 1 '(1 2 3))").get(0).get().get().equals(BigDecimal.valueOf(2)));
         assertTrue(Evaluation.evalString("(nth 2 '(1 2 3))").get(0).get().get().equals(BigDecimal.valueOf(3)));
+    }
+
+    @Test
+    public void testTie() {
+        assertTrue(Evaluation.evalString("(tie 4 5 6)").get(0).getList().get().size() == 3);
+        assertTrue(Evaluation.evalString("(tie 4 5 6)").get(0).getList().get().get(0).get().get().equals(BigDecimal.valueOf(4)));
     }
 }

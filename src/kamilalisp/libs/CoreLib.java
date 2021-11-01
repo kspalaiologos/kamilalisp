@@ -704,5 +704,12 @@ public class CoreLib {
                 }));
             }
         }));
+
+        env.push("tie", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                return new Atom(arguments);
+            }
+        }));
     }
 }
