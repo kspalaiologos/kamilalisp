@@ -288,5 +288,21 @@ public class CoreLib {
                 ).collect(Collectors.toList())));
             }
         }));
+
+        env.push("cdr", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                return new Atom(new LbcSupplier<>(() -> {
+                    if(arguments.size() != 1)
+                        throw new Error("Invalid invocation to 'cdr'.");
+                    arguments.get(0).guardType("Argument to 'cdr'", Type.LIST);
+                    List<Atom> data = arguments.get(0).getList().get();
+                    if(data.isEmpty())
+                        return Atom.NULL.get().get();
+                    else
+                        return data.subList(1, data.size());
+                }));
+            }
+        }));
     }
 }

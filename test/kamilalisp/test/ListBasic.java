@@ -21,4 +21,13 @@ public class ListBasic {
         assertTrue(Evaluation.evalString("(= 2 (size (~ '(1 2 3) 3)))").get(0).equals(new Atom(BigDecimal.valueOf(1))));
         assertTrue(Evaluation.evalString("(= 2 (size (~ '(1 2 3) 3)))").get(0).coerceBool());
     }
+
+    @Test
+    void testCdr() {
+        assertTrue(Evaluation.evalString("(cdr (cons 2 (cons 3 'nil)))").get(0).equals(new Atom(List.of(
+                new Atom(BigDecimal.valueOf(3))
+        ))));
+
+        assertTrue(Evaluation.evalString("(cdr 'nil)").get(0).equals(Atom.NULL));
+    }
 }
