@@ -47,4 +47,19 @@ public class ListBasic {
         assertTrue(Evaluation.evalString("(| 1 1)").get(0).getNumber().get().equals(BigDecimal.valueOf(1)));
         assertTrue(Evaluation.evalString("(| 5 20)").get(0).getNumber().get().equals(BigDecimal.valueOf(21)));
     }
+
+    @Test
+    void testIntersection() {
+        assertTrue(Evaluation.evalString("(& '(1 2 3) '(2 3 4))").get(0).equals(new Atom(List.of(
+                new Atom(BigDecimal.valueOf(2)),
+                new Atom(BigDecimal.valueOf(3))
+        ))));
+
+        assertTrue(Evaluation.evalString("(& \"hi\" \"hello\")").get(0).getStringConstant().get().get().equals("h"));
+        assertTrue(Evaluation.evalString("(& 1 0)").get(0).getNumber().get().equals(BigDecimal.valueOf(0)));
+        assertTrue(Evaluation.evalString("(& 0 1)").get(0).getNumber().get().equals(BigDecimal.valueOf(0)));
+        assertTrue(Evaluation.evalString("(& 0 0)").get(0).getNumber().get().equals(BigDecimal.valueOf(0)));
+        assertTrue(Evaluation.evalString("(& 1 1)").get(0).getNumber().get().equals(BigDecimal.valueOf(1)));
+        assertTrue(Evaluation.evalString("(& 5 20)").get(0).getNumber().get().equals(BigDecimal.valueOf(4)));
+    }
 }

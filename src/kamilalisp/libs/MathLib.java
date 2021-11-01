@@ -320,14 +320,14 @@ public class MathLib {
                                     .and(arguments.get(1).getNumber().get().toBigInteger()))));
                 } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
                     return new Atom(new LbcSupplier<>(() -> {
-                        Set<Integer> result = new HashSet<>();
+                        Set<Integer> result = new LinkedHashSet<>();
                         result.addAll(arguments.get(0).getStringConstant().get().get().codePoints().boxed().collect(Collectors.toList()));
                         result.retainAll(arguments.get(1).getStringConstant().get().get().codePoints().boxed().collect(Collectors.toList()));
-                        return result.stream().collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
+                        return new StringConstant(result.stream().collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString());
                     }));
                 } else if(arguments.get(0).getType() == Type.LIST && arguments.get(1).getType() == Type.LIST) {
                     return new Atom(new LbcSupplier<>(() -> {
-                        Set<Atom> result = new HashSet<>();
+                        Set<Atom> result = new LinkedHashSet<>();
                         result.addAll(arguments.get(0).getList().get());
                         result.retainAll(arguments.get(1).getList().get());
                         return result.stream().collect(Collectors.toList());
