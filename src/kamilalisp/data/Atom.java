@@ -1,6 +1,9 @@
 package kamilalisp.data;
 
+import com.google.common.base.Joiner;
+
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -90,6 +93,16 @@ public class Atom {
             return true;
         }
         return false;
+    }
+
+    public void guardType(String cause, Type... t) throws Error {
+        if(t.length > 1) {
+            if(Arrays.stream(t).noneMatch(x -> x == getType()))
+                throw new Error(cause + ": expected any of " + Joiner.on(", ").join(t) + " got " + getType().name());
+        } else {
+            if(t[0] != getType())
+                throw new Error(cause + ": expected " + t[0].name() + " got " + getType().name());
+        }
     }
 
     public boolean coerceBool() {

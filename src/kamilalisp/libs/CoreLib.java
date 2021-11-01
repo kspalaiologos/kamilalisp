@@ -3,6 +3,7 @@ package kamilalisp.libs;
 import kamilalisp.data.*;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -212,8 +213,7 @@ public class CoreLib {
 
         env.push("append", new Atom(new Closure() {
             private List<Atom> append2(Atom list, Atom tail) {
-                if(list.getType() != Type.LIST)
-                    throw new Error("invalid invocation to 'append'.");
+                list.guardType("Argument to 'append'", Type.LIST);
                 LinkedList<Atom> l = new LinkedList<Atom>(list.getList().get());
                 l.addLast(tail);
                 return l;
@@ -227,8 +227,7 @@ public class CoreLib {
                     return new Atom(new LbcSupplier(() -> append2(arguments.get(0), arguments.get(1))));
                 else
                     return new Atom(new LbcSupplier(() -> {
-                        if(arguments.get(0).getType() != Type.LIST)
-                            throw new Error("invalid invocation to 'append'.");
+                        arguments.get(0).guardType("Argument to 'append'", Type.LIST);
                         List<Atom> l = new LinkedList<>(arguments.get(0).getList().get());
                         l.addAll(arguments.stream().skip(1).collect(Collectors.toList()));
                         return l;
@@ -238,8 +237,7 @@ public class CoreLib {
 
         env.push("car", new Atom(new Closure() {
             private Atom car(Atom l) {
-                if(l.getType() != Type.LIST)
-                    throw new Error("Invalid invocation of 'car': trying to take the head of an empty list.");
+                l.guardType("Argument to 'car'", Type.LIST);
                 List<Atom> data = l.getList().get();
                 if(data.isEmpty())
                     return Atom.NULL;
@@ -264,13 +262,30 @@ public class CoreLib {
                 if(arguments.size() != 1)
                     throw new Error("Invalid invocation to 'size'.");
                 return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("Argument to 'size'", Type.LIST, Type.STRING_CONSTANT);
+
                     if(arguments.get(0).getType() == Type.LIST)
                         return BigDecimal.valueOf(arguments.get(0).getList().get().size());
                     else if(arguments.get(0).getType() == Type.STRING_CONSTANT)
                         return BigDecimal.valueOf(arguments.get(0).getStringConstant().get().get().length());
-                    else
-                        throw new Error("Invalid invocation to 'size'. Expected a string or list, got " + arguments.get(0).getType().name());
+
+                    throw new Error("Invalid invocation to 'size'.");
                 }));
+            }
+        }));
+
+        env.push("map", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'map'.");
+                arguments.get(0).guardType("First argument to 'map'", Type.CLOSURE);
+                arguments.get(1).guardType("Second argument to 'map'", Type.LIST);
+                return new Atom(new LbcSupplier<>(() -> arguments.get(1).getList().get().stream().map(x ->
+                        new Atom(new LbcSupplier<>(() ->
+                                arguments.get(0).getClosure().get().apply(env, Collections.singletonList(x))
+                        ))
+                ).collect(Collectors.toList())));
             }
         }));
     }

@@ -65,10 +65,8 @@ public class MathLib {
             }
 
             private Atom sub1(Atom a) {
-                if(a.getType() == Type.NUMBER)
-                    return new Atom(new LbcSupplier<>(() -> a.getNumber().get().negate()));
-                else
-                    throw new Error("- unsupported on operand of type " + a.getType().name());
+                a.guardType("Argument to monadic -", Type.NUMBER);
+                throw new Error("- unsupported on operand of type " + a.getType().name());
             }
 
             @Override
@@ -97,10 +95,8 @@ public class MathLib {
             }
 
             public Atom mul1(Atom a) {
-                if(a.getType() == Type.NUMBER)
-                    return new Atom(new LbcSupplier<>(() -> new BigDecimal(a.getNumber().get().compareTo(BigDecimal.ZERO))));
-                else
-                    throw new Error("* unsupported on operand of type " + a.getType().name());
+                a.guardType("Argument to monadic *", Type.NUMBER);
+                return new Atom(new LbcSupplier<>(() -> new BigDecimal(a.getNumber().get().compareTo(BigDecimal.ZERO))));
             }
 
             @Override
@@ -137,10 +133,8 @@ public class MathLib {
             }
 
             public Atom div1(Atom a) {
-                if(a.getType() == Type.NUMBER)
-                    return new Atom(new LbcSupplier<>(() -> BigDecimal.ONE.divide(a.getNumber().get())));
-                else
-                    throw new Error("/ unsupported on operand of type " + a.getType().name());
+                a.guardType("Argument to monadic /", Type.NUMBER);
+                return new Atom(new LbcSupplier<>(() -> BigDecimal.ONE.divide(a.getNumber().get())));
             }
 
             @Override
@@ -157,8 +151,8 @@ public class MathLib {
             private Atom IDENTITY = new Atom(BigDecimal.ZERO);
 
             private Atom gcd2(Atom a1, Atom a2) {
-                if(a1.getType() != Type.NUMBER || a2.getType() != Type.NUMBER)
-                    throw new Error("Invalid argument to 'gcd'.");
+                a1.guardType("First argument to 'gcd'", Type.NUMBER);
+                a2.guardType("Second argument to 'gcd'", Type.NUMBER);
                 return new Atom(new BigDecimal(a1.getNumber().get().toBigInteger().gcd(a2.getNumber().get().toBigInteger())));
             }
 
@@ -176,8 +170,8 @@ public class MathLib {
             private Atom IDENTITY = new Atom(BigDecimal.ZERO);
 
             private Atom gcd2(Atom a1, Atom a2) {
-                if(a1.getType() != Type.NUMBER || a2.getType() != Type.NUMBER)
-                    throw new Error("Invalid argument to 'lcm'.");
+                a1.guardType("First argument to 'lcm'", Type.NUMBER);
+                a2.guardType("Second argument to 'lcm'", Type.NUMBER);
                 return new Atom(a1.getNumber().get().multiply(a2.getNumber().get()).divide(new BigDecimal(a1.getNumber().get().toBigInteger().gcd(a2.getNumber().get().toBigInteger()))));
             }
 
@@ -205,17 +199,20 @@ public class MathLib {
             }
 
             public Atom neg1(Atom a) {
+                a.guardType("First argument to monadic '~'", Type.NUMBER, Type.STRING_CONSTANT);
+
                 if(a.getType() == Type.NUMBER) {
                     return new Atom(BigDecimal.valueOf(a.getNumber().get().compareTo(BigDecimal.ZERO) == 0 ? 1 : 0));
                 } else if(a.getType() == Type.STRING_CONSTANT) {
                     return new Atom(new StringConstant(reverseCase(a.getStringConstant().get().get())));
-                } else
-                    throw new Error("Invalid invocation to '~', unexpected value of type " + a.getType().name());
+                }
+
+                // Should never get here.
+                return null;
             }
 
             public Atom neg2(Atom a, Atom b) {
-                if(a.getType() != Type.LIST)
-                    throw new Error("Dyadic '~' expects a list as the first argument, got " + a.getType().name());
+                a.guardType("First argument to dyadic '~'", Type.LIST);
                 if(b.getType() == Type.LIST) {
                     List<Atom> clone = new LinkedList<>(a.getList().get());
                     clone.removeIf(x -> a.getList().get().contains(x.get().get()));

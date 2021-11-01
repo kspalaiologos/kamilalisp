@@ -40,7 +40,6 @@ public class Lexer {
                 case '[': tokens.add(new Token(TokenType.LS, null)); break;
                 case ']': tokens.add(new Token(TokenType.RS, null)); break;
                 case '\'': tokens.add(new Token(TokenType.QUOT, null)); break;
-                case '#': c = input.read(); tokens.add(new Token(TokenType.NTH, readNumber(c))); break;
                 case '$': c = input.read(); tokens.add(new Token(TokenType.TACK, readNumber(c))); break;
                 case ';': while(c != '\n' && input.available() > 0) { c = input.read(); } break;
                 case '"': {

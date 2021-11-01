@@ -1,6 +1,8 @@
 package kamilalisp.reader;
 
 import kamilalisp.data.Atom;
+import kamilalisp.data.Closure;
+import kamilalisp.data.Executor;
 import kamilalisp.data.StringConstant;
 
 import java.math.BigDecimal;
@@ -55,9 +57,12 @@ public class Parser {
             case ID:
                 return new Atom(token.content);
             case TACK:
-                return new Atom("$" + token.content);
-            case NTH:
-                return new Atom("#" + token.content);
+                return new Atom(new Closure() {
+                    @Override
+                    public Atom apply(Executor env, List<Atom> arguments) {
+                        return arguments.get(Integer.valueOf(token.content));
+                    }
+                });
         }
 
         return null;
