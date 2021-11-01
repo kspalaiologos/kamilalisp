@@ -30,4 +30,11 @@ public class HigherOrder {
         assertTrue(Evaluation.evalString("(eval '(+ 1 2))").get(0).get().get().equals(BigDecimal.valueOf(3)));
         assertTrue(Evaluation.evalString("((eval '(lambda (x) (* x x))) 5)").get(0).get().get().equals(BigDecimal.valueOf(25)));
     }
+
+    @Test
+    public void testEvery() {
+        assertTrue(Evaluation.evalString("(every ~ '(1 0 1))").get(0).get().get().equals(BigDecimal.valueOf(0)));
+        assertTrue(Evaluation.evalString("(every ~ '(1 1 1))").get(0).get().get().equals(BigDecimal.valueOf(0)));
+        assertTrue(Evaluation.evalString("(every ~ '(0 0 0))").get(0).get().get().equals(BigDecimal.valueOf(1)));
+    }
 }

@@ -610,5 +610,24 @@ public class CoreLib {
                 }));
             }
         }));
+
+        env.push("every", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'every'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(1).guardType("Argument to every", Type.LIST);
+                    List<Atom> l = arguments.get(1).getList().get();
+                    arguments.get(0).guardType("Argument to every", Type.CLOSURE);
+                    Closure c = arguments.get(0).getClosure().get();
+                    for (int i = 0; i < l.size(); i++) {
+                        if(!c.apply(env, Arrays.asList(l.get(i))).coerceBool())
+                            return BigDecimal.ZERO;
+                    }
+                    return BigDecimal.ONE;
+                }));
+            }
+        }));
     }
 }
