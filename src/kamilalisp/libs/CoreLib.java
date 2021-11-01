@@ -571,5 +571,44 @@ public class CoreLib {
                 }));
             }
         }));
+
+        env.push("rotate", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'rotate'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    if(arguments.get(0).getType() == Type.LIST) {
+                        List<Atom> l = arguments.get(0).getList().get();
+                        int n = arguments.get(1).getNumber().get().intValue();
+                        if(n < 0)
+                            n += l.size();
+                        if(n >= l.size())
+                            n %= l.size();
+                        List<Atom> r = new ArrayList<>();
+                        for (int i = n; i < l.size(); i++)
+                            r.add(l.get(i));
+                        for (int i = 0; i < n; i++)
+                            r.add(l.get(i));
+                        return r;
+                    } else if(arguments.get(0).getType() == Type.STRING_CONSTANT) {
+                        String s = arguments.get(0).getStringConstant().get().get();
+                        int n = arguments.get(1).getNumber().get().intValue();
+                        if(n < 0)
+                            n += s.length();
+                        if(n >= s.length())
+                            n %= s.length();
+                        String r = "";
+                        for (int i = n; i < s.length(); i++)
+                            r += s.charAt(i);
+                        for (int i = 0; i < n; i++)
+                            r += s.charAt(i);
+                        return new StringConstant(r);
+                    }
+
+                    throw new Error("Invalid invocation to 'rotate': expected a string or list.");
+                }));
+            }
+        }));
     }
 }

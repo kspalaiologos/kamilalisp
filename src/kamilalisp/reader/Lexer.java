@@ -16,6 +16,11 @@ public class Lexer {
     private String readNumber(int c) throws IOException {
         String s = "";
 
+        if(c == '-') {
+            s += (char) c;
+            c = input.read();
+        }
+
         while((Character.isDigit(c) || c == '.') && input.available() > 0) {
             s += (char) c;
             c = input.read();
@@ -56,8 +61,12 @@ public class Lexer {
                     break;
                 }
                 default:
-                    if(Character.isDigit(c)) {
-                        tokens.add(new Token(TokenType.NUM, readNumber(c)));
+                    if(Character.isDigit(c) || c == '-') {
+                        String num = readNumber(c);
+                        if(num.equals("-"))
+                            tokens.add(new Token(TokenType.ID, "-"));
+                        else
+                            tokens.add(new Token(TokenType.NUM, num));
                     } else {
                         String s = "";
 

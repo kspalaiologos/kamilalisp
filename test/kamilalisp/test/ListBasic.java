@@ -2,6 +2,7 @@ package kamilalisp.test;
 
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.Atom;
+import kamilalisp.data.StringConstant;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -134,5 +135,53 @@ public class ListBasic {
         ))));
 
         assertTrue(Evaluation.evalString("(reverse \"hello\")").get(0).getStringConstant().get().get().equals("olleh"));
+    }
+
+    @Test
+    void testRotate() {
+        assertTrue(Evaluation.evalString("(rotate '(1 2 3 4 5) 1)").get(0).equals(new Atom(List.of(
+                new Atom(BigDecimal.valueOf(2)),
+                new Atom(BigDecimal.valueOf(3)),
+                new Atom(BigDecimal.valueOf(4)),
+                new Atom(BigDecimal.valueOf(5)),
+                new Atom(BigDecimal.valueOf(1))
+        ))));
+
+        assertTrue(Evaluation.evalString("(rotate '(1 2 3 4 5) 3)").get(0).equals(new Atom(List.of(
+                new Atom(BigDecimal.valueOf(4)),
+                new Atom(BigDecimal.valueOf(5)),
+                new Atom(BigDecimal.valueOf(1)),
+                new Atom(BigDecimal.valueOf(2)),
+                new Atom(BigDecimal.valueOf(3))
+        ))));
+
+        assertTrue(Evaluation.evalString("(rotate '(1 2 3 4 5) 5)").get(0).equals(new Atom(List.of(
+                new Atom(BigDecimal.valueOf(1)),
+                new Atom(BigDecimal.valueOf(2)),
+                new Atom(BigDecimal.valueOf(3)),
+                new Atom(BigDecimal.valueOf(4)),
+                new Atom(BigDecimal.valueOf(5))
+        ))));
+
+        assertTrue(Evaluation.evalString("(rotate '(1 2 3 4 5) -1)").get(0).equals(new Atom(List.of(
+                new Atom(BigDecimal.valueOf(5)),
+                new Atom(BigDecimal.valueOf(1)),
+                new Atom(BigDecimal.valueOf(2)),
+                new Atom(BigDecimal.valueOf(3)),
+                new Atom(BigDecimal.valueOf(4))
+        ))));
+
+        assertTrue(Evaluation.evalString("(rotate '(1 2 3 4 5) -3)").get(0).equals(new Atom(List.of(
+                new Atom(BigDecimal.valueOf(3)),
+                new Atom(BigDecimal.valueOf(4)),
+                new Atom(BigDecimal.valueOf(5)),
+                new Atom(BigDecimal.valueOf(1)),
+                new Atom(BigDecimal.valueOf(2))
+        ))));
+
+        assertTrue(Evaluation.evalString("(rotate \"hello, world\" 3)").get(0).equals(new Atom(new StringConstant("lo, worldhel"))));
+        assertTrue(Evaluation.evalString("(rotate \"hello, world\" -3)").get(0).equals(new Atom(new StringConstant("rldhello, wo"))));
+        assertTrue(Evaluation.evalString("(rotate \"hello, world\" 5)").get(0).equals(new Atom(new StringConstant(", worldhello"))));
+        assertTrue(Evaluation.evalString("(rotate \"hello, world\" 10)").get(0).equals(new Atom(new StringConstant("ldhello, wor"))));
     }
 }
