@@ -109,4 +109,10 @@ public class Atom {
         return (this.getType() == Type.NUMBER && this.getNumber().get().compareTo(BigDecimal.ZERO) != 0)
             || (this.getType() == Type.STRING_CONSTANT && this.getStringConstant().get().get().length() > 0);
     }
+
+    public Atom eager() {
+        Object data = content.get();
+        content = new LbcSupplier<>(() -> data);
+        return this;
+    }
 }

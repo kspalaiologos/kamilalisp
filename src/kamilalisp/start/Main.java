@@ -30,6 +30,10 @@ public class Main {
             if(line.startsWith(".s")) {
                 muffled = true;
                 line = line.substring(2);
+            } else if(line.startsWith(".gc")) {
+                System.gc();
+                prompt();
+                continue;
             }
 
             List<Atom> result = Evaluation.evalString(env, line);
