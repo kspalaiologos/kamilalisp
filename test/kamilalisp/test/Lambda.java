@@ -44,4 +44,9 @@ public class Lambda {
         Evaluation.evalString(env, "(defun caar (x) (car (car x)))");
         assertTrue(Evaluation.evalString(env, "(caar '((1 2) (3 4) 5 6))").get(0).getNumber().get().compareTo(BigDecimal.ONE) == 0);
     }
+
+    @Test
+    void testType() {
+        assertTrue(Evaluation.evalString("(type (lambda (x y) (+ x y)))").get(0).getStringConstant().get().get().equals("CLOSURE"));
+    }
 }
