@@ -420,5 +420,27 @@ public class CoreLib {
                 }));
             }
         }));
+
+        env.push("cond", new Atom(new Macro() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() < 2)
+                    throw new Error("Invalid invocation to 'cond'.");
+                List<Atom> args = arguments.stream().map(x -> x.getType() == Type.LIST ? x : env.evaluate(x)).collect(Collectors.toList());
+                return new Atom(new LbcSupplier<>(() -> {
+                    for(Atom a : args) {
+                        List<Atom> clause = a.getList().get();
+                        if(clause.size() != 1 && clause.size() != 2)
+                            throw new Error("Invalid invocation to 'cond'.");
+                        if(clause.size() == 1)
+                            return env.evaluate(clause.get(0)).get().get();
+                        if(env.evaluate(clause.get(0)).coerceBool())
+                            return env.evaluate(clause.get(1)).get().get();
+                    }
+
+                    throw new Error("Non-exhaustive 'cond'.");
+                }));
+            }
+        }));
     }
 }
