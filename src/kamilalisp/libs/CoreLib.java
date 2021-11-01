@@ -1,6 +1,7 @@
 package kamilalisp.libs;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Streams;
 import kamilalisp.data.*;
 
 import java.math.BigDecimal;
@@ -386,6 +387,37 @@ public class CoreLib {
                 return new Atom(new LbcSupplier<>(() -> arguments.get(1).getList().get().stream().anyMatch(x ->
                         arguments.get(0).getClosure().get().apply(env, Collections.singletonList(x)).coerceBool()
                 ) ? BigDecimal.ONE : BigDecimal.ZERO));
+            }
+        }));
+
+        env.push("zip", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'zip'.");
+                arguments.get(0).guardType("First argument to 'zip'", Type.LIST);
+                arguments.get(1).guardType("Second argument to 'zip'", Type.LIST);
+                return new Atom(new LbcSupplier<>(() -> {
+                    List<Atom> a = arguments.get(0).getList().get();
+                    List<Atom> b = arguments.get(1).getList().get();
+                    return Streams.zip(a.stream(), b.stream(), (x, y) -> new Atom(new LbcSupplier<>(() -> List.of(x, y)))).collect(Collectors.toList());
+                }));
+            }
+        }));
+
+        env.push("zip-with", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 3)
+                    throw new Error("Invalid invocation to 'zip-with'.");
+                arguments.get(0).guardType("First argument to 'zip-with'", Type.CLOSURE);
+                arguments.get(1).guardType("Second argument to 'zip-with'", Type.LIST);
+                arguments.get(2).guardType("Second argument to 'zip-with'", Type.LIST);
+                return new Atom(new LbcSupplier<>(() -> {
+                    List<Atom> a = arguments.get(1).getList().get();
+                    List<Atom> b = arguments.get(2).getList().get();
+                    return Streams.zip(a.stream(), b.stream(), (x, y) -> arguments.get(0).getClosure().get().apply(env, Arrays.asList(x, y))).collect(Collectors.toList());
+                }));
             }
         }));
     }

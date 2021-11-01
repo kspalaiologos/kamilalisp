@@ -98,4 +98,22 @@ public class ListBasic {
         assertTrue(Evaluation.evalString("(any (lambda (x) (= x 3)) '(1 2 3))").get(0).coerceBool());
         assertFalse(Evaluation.evalString("(any (lambda (x) (= x 4)) '(1 2 3))").get(0).coerceBool());
     }
+
+    @Test
+    void testZip() {
+        assertTrue(Evaluation.evalString("(zip '(1 2 3) '(4 5 6))").get(0).equals(new Atom(List.of(
+                new Atom(List.of(new Atom(BigDecimal.valueOf(1)), new Atom(BigDecimal.valueOf(4)))),
+                new Atom(List.of(new Atom(BigDecimal.valueOf(2)), new Atom(BigDecimal.valueOf(5)))),
+                new Atom(List.of(new Atom(BigDecimal.valueOf(3)), new Atom(BigDecimal.valueOf(6))))
+        ))));
+    }
+
+    @Test
+    void testZipWith() {
+        assertTrue(Evaluation.evalString("(zip-with + '(1 2 3) '(4 5 6))").get(0).equals(new Atom(List.of(
+                new Atom(BigDecimal.valueOf(5)),
+                new Atom(BigDecimal.valueOf(7)),
+                new Atom(BigDecimal.valueOf(9))
+        ))));
+    }
 }
