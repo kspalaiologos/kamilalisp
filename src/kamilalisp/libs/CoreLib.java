@@ -289,6 +289,32 @@ public class CoreLib {
             }
         }));
 
+        env.push("filter", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'filter'.");
+                arguments.get(0).guardType("First argument to 'filter'", Type.CLOSURE);
+                arguments.get(1).guardType("Second argument to 'filter'", Type.LIST);
+                return new Atom(new LbcSupplier<>(() -> arguments.get(1).getList().get().stream().filter(x ->
+                        arguments.get(0).getClosure().get().apply(env, Collections.singletonList(x)).coerceBool()
+                ).collect(Collectors.toList())));
+            }
+        }));
+
+        env.push("count", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'count'.");
+                arguments.get(0).guardType("First argument to 'count'", Type.CLOSURE);
+                arguments.get(1).guardType("Second argument to 'count'", Type.LIST);
+                return new Atom(new LbcSupplier<>(() -> new BigDecimal(arguments.get(1).getList().get().stream().filter(x ->
+                        arguments.get(0).getClosure().get().apply(env, Collections.singletonList(x)).coerceBool()
+                ).count())));
+            }
+        }));
+
         env.push("cdr", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
