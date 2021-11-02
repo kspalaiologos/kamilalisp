@@ -27,3 +27,11 @@ out/
 
 # Stuff I keep locally.
 attic/
+
+src/kamilalisp/reader/Grammar.interp
+
+src/kamilalisp/reader/Grammar.tokens
+
+src/kamilalisp/reader/GrammarLexer.interp
+
+src/kamilalisp/reader/GrammarLexer.tokens
