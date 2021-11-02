@@ -3,7 +3,17 @@ package kamilalisp.start;
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.Atom;
 import kamilalisp.data.Environment;
+import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
+import org.jline.reader.impl.DefaultParser;
+import org.jline.reader.impl.DefaultParser.Bracket;
+import org.jline.terminal.Size;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -14,34 +24,25 @@ public class Main {
         System.out.println();
     }
 
-    private static void prompt() {
-        System.out.print("% ");
-        System.out.flush();
-    }
-
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Environment env = Evaluation.createDefaultEnv();
-        Scanner s = new Scanner(System.in);
-        banner(); prompt();
-        while(s.hasNextLine()) {
-            String line = s.nextLine();
-            boolean muffled = false;
-
-            if(line.startsWith(".s")) {
-                muffled = true;
-                line = line.substring(2);
-            } else if(line.startsWith(".gc")) {
-                System.gc();
-                prompt();
-                continue;
+        banner();
+        DefaultParser parser = new DefaultParser();
+        parser.setEofOnUnclosedBracket(Bracket.ROUND, Bracket.SQUARE);
+        parser.setEofOnUnclosedQuote(true);
+        parser.setEscapeChars(new char[]{'\\'});
+        parser.setQuoteChars(new char[]{'\"'});
+        LineReader r = LineReaderBuilder.builder().appName("KamilaLisp").parser(parser).build();
+        try {
+            while (true) {
+                String code = r.readLine("%% ");
+                Atom result = Evaluation.evalAtom(env, code);
+                System.out.println(result);
             }
-
-            List<Atom> result = Evaluation.evalString(env, line);
-
-            if(!muffled)
-                result.forEach(System.out::println);
-
-            prompt();
+        } catch(EndOfFileException e) {
+            System.out.println("Bye.");
+        } catch(UserInterruptException e) {
+            System.out.println("Interrupted.");
         }
     }
 }

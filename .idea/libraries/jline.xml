@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="jline" type="repository">
+    <properties maven-id="org.jline:jline:3.21.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jline/jline/3.21.0/jline-3.21.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

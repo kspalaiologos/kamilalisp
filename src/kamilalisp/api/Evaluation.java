@@ -14,6 +14,8 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +41,17 @@ public class Evaluation {
         List<Atom> atoms = visitor.visit(tree).getList().get();
         Executor executor = new Executor(globEnv);
         return atoms.stream().map(executor::evaluate).collect(Collectors.toList());
+    }
+
+    public static Atom evalAtom(Environment globEnv, String code) {
+        GrammarLexer lex = new GrammarLexer(CharStreams.fromString(code));
+        CommonTokenStream tokens = new CommonTokenStream(lex);
+        GrammarParser parser = new GrammarParser(tokens);
+        ParseTree tree = parser.form();
+        DefaultVisitor visitor = new DefaultVisitor();
+        Atom atom = visitor.visit(tree);
+        Executor executor = new Executor(globEnv);
+        return executor.evaluate(atom);
     }
 
     public static Environment createDefaultEnv() {
