@@ -3,7 +3,6 @@ package kamilalisp.libs;
 import kamilalisp.data.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class IOLib {
     public static void install(Environment env) {

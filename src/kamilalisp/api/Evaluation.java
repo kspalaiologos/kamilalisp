@@ -1,12 +1,12 @@
 package kamilalisp.api;
 
+import kamilalisp.data.Atom;
+import kamilalisp.data.Environment;
+import kamilalisp.data.Executor;
 import kamilalisp.libs.CoreLib;
 import kamilalisp.libs.IOLib;
 import kamilalisp.libs.ListLib;
 import kamilalisp.libs.MathLib;
-import kamilalisp.data.Atom;
-import kamilalisp.data.Environment;
-import kamilalisp.data.Executor;
 import kamilalisp.reader.DefaultVisitor;
 import kamilalisp.reader.GrammarLexer;
 import kamilalisp.reader.GrammarParser;
@@ -14,8 +14,6 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -6,13 +6,13 @@ import kamilalisp.data.*;
 
 import java.io.StringWriter;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.*;
-import java.util.function.BinaryOperator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class MathLib {
     public static void install(Environment env) {
