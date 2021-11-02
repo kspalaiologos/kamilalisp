@@ -7,36 +7,36 @@ import kamilalisp.libs.MathLib;
 import kamilalisp.data.Atom;
 import kamilalisp.data.Environment;
 import kamilalisp.data.Executor;
-import kamilalisp.reader.Lexer;
-import kamilalisp.reader.Parser;
-import kamilalisp.reader.Token;
+import kamilalisp.reader.DefaultVisitor;
+import kamilalisp.reader.GrammarLexer;
+import kamilalisp.reader.GrammarParser;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Evaluation {
     public static List<Atom> evalString(String code) {
-        Lexer l = new Lexer(new StringReader(code));
-        Parser p = new Parser(l);
-        List<Atom> atoms = new LinkedList<>();
-        while(p.hasMore())
-            atoms.add(p.parse());
+        GrammarLexer lex = new GrammarLexer(CharStreams.fromString(code));
+        CommonTokenStream tokens = new CommonTokenStream(lex);
+        GrammarParser parser = new GrammarParser(tokens);
+        ParseTree tree = parser.file_();
+        DefaultVisitor visitor = new DefaultVisitor();
+        List<Atom> atoms = visitor.visit(tree).getList().get();
         Environment globEnv = createDefaultEnv();
         Executor executor = new Executor(globEnv);
         return atoms.stream().map(executor::evaluate).collect(Collectors.toList());
     }
 
     public static List<Atom> evalString(Environment globEnv, String code) {
-        Lexer l = new Lexer(new StringReader(code));
-        Parser p = new Parser(l);
-        List<Atom> atoms = new LinkedList<>();
-        while(p.hasMore())
-            atoms.add(p.parse());
+        GrammarLexer lex = new GrammarLexer(CharStreams.fromString(code));
+        CommonTokenStream tokens = new CommonTokenStream(lex);
+        GrammarParser parser = new GrammarParser(tokens);
+        ParseTree tree = parser.file_();
+        DefaultVisitor visitor = new DefaultVisitor();
+        List<Atom> atoms = visitor.visit(tree).getList().get();
         Executor executor = new Executor(globEnv);
         return atoms.stream().map(executor::evaluate).collect(Collectors.toList());
     }
