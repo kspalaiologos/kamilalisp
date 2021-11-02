@@ -201,4 +201,25 @@ public class ListBasic {
                 new Atom(BigDecimal.valueOf(5))
         ))));
     }
+
+    @Test
+    void testGrade() {
+        assertTrue(Evaluation.evalString("(grade-up '(1 6 2 3 4 5))").get(0).getList().get().equals(List.of(
+                new Atom(BigDecimal.valueOf(0)),
+                new Atom(BigDecimal.valueOf(2)),
+                new Atom(BigDecimal.valueOf(3)),
+                new Atom(BigDecimal.valueOf(4)),
+                new Atom(BigDecimal.valueOf(5)),
+                new Atom(BigDecimal.valueOf(1))
+        )));
+
+        assertTrue(Evaluation.evalString("(grade-down '(1 6 2 3 4 5))").get(0).getList().get().equals(List.of(
+                new Atom(BigDecimal.valueOf(1)),
+                new Atom(BigDecimal.valueOf(5)),
+                new Atom(BigDecimal.valueOf(4)),
+                new Atom(BigDecimal.valueOf(3)),
+                new Atom(BigDecimal.valueOf(2)),
+                new Atom(BigDecimal.valueOf(0))
+        )));
+    }
 }
