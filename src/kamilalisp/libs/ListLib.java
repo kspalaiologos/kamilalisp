@@ -533,5 +533,30 @@ public class ListLib {
                 }));
             }
         }));
+
+        env.push("unique", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'unique'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    if(arguments.get(0).getType() == Type.LIST) {
+                        List<Atom> l = arguments.get(0).getList().get();
+                        return l.stream().distinct().collect(Collectors.toList());
+                    } else if(arguments.get(0).getType() == Type.STRING_CONSTANT) {
+                        return arguments
+                                .get(0)
+                                .getStringConstant()
+                                .get().get()
+                                .codePoints()
+                                .distinct()
+                                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                                .toString();
+                    }
+
+                    throw new Error("'unique' expects a list or string as it's argument.");
+                }));
+            }
+        }));
     }
 }
