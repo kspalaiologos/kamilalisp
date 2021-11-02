@@ -497,5 +497,41 @@ public class ListLib {
                 }));
             }
         }));
+
+        env.push("at", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 3)
+                    throw new Error("Invalid invocation to 'at'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'at'", Type.CLOSURE);
+                    arguments.get(1).guardType("Second argument to 'at'", Type.LIST, Type.CLOSURE);
+                    arguments.get(2).guardType("Third argument to 'at'", Type.LIST);
+                    Closure proc = arguments.get(0).getClosure().get();
+
+                    if(arguments.get(1).getType() == Type.CLOSURE) {
+                        Closure cond = arguments.get(1).getClosure().get();
+                        List<Atom> l = arguments.get(2).getList().get();
+                        List<Atom> rightSpots = l.stream().map(x -> cond.apply(env, List.of(x))).collect(Collectors.toList());
+                        return Streams.zip(l.stream(), rightSpots.stream(), (x, y) -> {
+                            if(y.coerceBool())
+                                return proc.apply(env, List.of(x));
+                            else
+                                return x;
+                        }).collect(Collectors.toList());
+                    } else if(arguments.get(1).getType() == Type.LIST) {
+                        List<Integer> l = arguments.get(1).getList().get().stream().map(x -> {
+                            x.guardType("Second 'at' list", Type.NUMBER);
+                            return x.getNumber().get().intValue();
+                        }).collect(Collectors.toList());
+                        List<Atom> r = new LinkedList<>(arguments.get(2).getList().get());
+                        l.forEach(x -> r.set(x, proc.apply(env, List.of(r.get(x)))));
+                        return r;
+                    }
+
+                    throw new Error("Unreachable");
+                }));
+            }
+        }));
     }
 }

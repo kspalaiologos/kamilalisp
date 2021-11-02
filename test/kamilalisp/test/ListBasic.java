@@ -232,4 +232,33 @@ public class ListBasic {
                 new Atom(BigDecimal.valueOf(5))
         )));
     }
+
+    @Test
+    void testAt() {
+        assertTrue(Evaluation.evalString("(at (lambda (x) [x + 10]) '(1 2 3) (iota 10))").get(0).getList().get().equals(List.of(
+                new Atom(BigDecimal.valueOf(0)),
+                new Atom(BigDecimal.valueOf(11)),
+                new Atom(BigDecimal.valueOf(12)),
+                new Atom(BigDecimal.valueOf(13)),
+                new Atom(BigDecimal.valueOf(4)),
+                new Atom(BigDecimal.valueOf(5)),
+                new Atom(BigDecimal.valueOf(6)),
+                new Atom(BigDecimal.valueOf(7)),
+                new Atom(BigDecimal.valueOf(8)),
+                new Atom(BigDecimal.valueOf(9))
+        )));
+
+        assertTrue(Evaluation.evalString("(at (lambda (x) [x + 10]) (lambda (x) [x > 5]) (iota 10))").get(0).getList().get().equals(List.of(
+                new Atom(BigDecimal.valueOf(0)),
+                new Atom(BigDecimal.valueOf(1)),
+                new Atom(BigDecimal.valueOf(2)),
+                new Atom(BigDecimal.valueOf(3)),
+                new Atom(BigDecimal.valueOf(4)),
+                new Atom(BigDecimal.valueOf(5)),
+                new Atom(BigDecimal.valueOf(16)),
+                new Atom(BigDecimal.valueOf(17)),
+                new Atom(BigDecimal.valueOf(18)),
+                new Atom(BigDecimal.valueOf(19))
+        )));
+    }
 }
