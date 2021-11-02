@@ -373,57 +373,21 @@ public class MathLib {
             }
         }));
 
-        env.push("iota", new Atom(new Closure() {
-            private List<BigDecimal> iota(long n) {
-                List<BigDecimal> result = new ArrayList<>();
-                for(long i = 0; i < n; i++)
-                    result.add(BigDecimal.valueOf(i));
-                return result;
-            }
-
-            protected <T> List<List<T>> cartesianProduct(List<List<T>> lists) {
-                List<List<T>> resultLists = new ArrayList<List<T>>();
-                if (lists.size() == 0) {
-                    resultLists.add(new ArrayList<T>());
-                    return resultLists;
-                } else {
-                    List<T> firstList = lists.get(0);
-                    List<List<T>> remainingLists = cartesianProduct(lists.subList(1, lists.size()));
-                    for (T condition : firstList) {
-                        for (List<T> remainingList : remainingLists) {
-                            ArrayList<T> resultList = new ArrayList<T>();
-                            resultList.add(condition);
-                            resultList.addAll(remainingList);
-                            resultLists.add(resultList);
-                        }
-                    }
-                }
-                return resultLists;
-            }
-
+        env.push("=", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'iota'.");
-                if(arguments.get(0).getType() == Type.NUMBER)
-                    return new Atom(new LbcSupplier<>(() ->
-                            iota(arguments.get(0).getNumber().get().toBigInteger().intValue())
-                                    .stream().map(Atom::new).collect(Collectors.toList())));
-                else if(arguments.get(0).getType() == Type.LIST) {
-                    return new Atom(new LbcSupplier<>(() -> {
-                        List<List<BigDecimal>> iotas = arguments.get(0).getList().get().stream().map(x -> {
-                            if(x.getType() != Type.NUMBER)
-                                throw new Error("Invalid invocation to 'iota'. Expected a list of numbers.");
-                            return iota(x.getNumber().get().toBigInteger().intValue());
-                        }).collect(Collectors.toList());
+                if(arguments.size() != 2)
+                    throw new Error("invalid invocation to '='.");
+                return new Atom(new LbcSupplier(() -> arguments.get(0).equals(arguments.get(1)) ? BigDecimal.ONE : BigDecimal.ZERO));
+            }
+        }));
 
-                        return cartesianProduct(iotas)
-                                .stream()
-                                .map(x -> new Atom(x.stream().map(Atom::new).collect(Collectors.toList())))
-                                .collect(Collectors.toList());
-                    }));
-                }
-                throw new Error("Unimplemented");
+        env.push("/=", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("invalid invocation to '='.");
+                return new Atom(new LbcSupplier(() -> arguments.get(0).equals(arguments.get(1)) ? BigDecimal.ZERO : BigDecimal.ONE));
             }
         }));
 

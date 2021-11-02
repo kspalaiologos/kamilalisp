@@ -41,7 +41,7 @@ public class HigherOrder {
 
     @Test
     public void testFlatmap() {
-        assertTrue(Evaluation.evalString("(nth 2 (flatmap (lambda (x) (cons x 'nil)) '(1 2 3)))").get(0).get().get().equals(BigDecimal.valueOf(3)));
+        assertTrue(Evaluation.evalString("(nth 2 (flat-map (lambda (x) (cons x 'nil)) '(1 2 3)))").get(0).get().get().equals(BigDecimal.valueOf(3)));
     }
 
     @Test

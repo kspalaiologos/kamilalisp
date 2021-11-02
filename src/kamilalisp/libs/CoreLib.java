@@ -178,105 +178,6 @@ public class CoreLib {
             }
         }));
 
-        env.push("=", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 2)
-                    throw new Error("invalid invocation to '='.");
-                return new Atom(new LbcSupplier(() -> arguments.get(0).equals(arguments.get(1)) ? BigDecimal.ONE : BigDecimal.ZERO));
-            }
-        }));
-
-        env.push("/=", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 2)
-                    throw new Error("invalid invocation to '='.");
-                return new Atom(new LbcSupplier(() -> arguments.get(0).equals(arguments.get(1)) ? BigDecimal.ZERO : BigDecimal.ONE));
-            }
-        }));
-
-        env.push("cons", new Atom(new Closure() {
-            private List<Atom> cons2(Atom element, Atom list) {
-                if(list.getType() != Type.LIST)
-                    throw new Error("invalid invocation to 'cons'.");
-                LinkedList<Atom> l = new LinkedList<>(list.getList().get());
-                l.addFirst(element);
-                return l;
-            }
-
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 2)
-                    throw new Error("invalid invocation to 'cons'.");
-                else
-                    return new Atom(new LbcSupplier(() -> cons2(arguments.get(0), arguments.get(1))));
-            }
-        }));
-
-        env.push("append", new Atom(new Closure() {
-            private List<Atom> append2(Atom list, Atom tail) {
-                list.guardType("Argument to 'append'", Type.LIST);
-                LinkedList<Atom> l = new LinkedList<Atom>(list.getList().get());
-                l.addLast(tail);
-                return l;
-            }
-
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() < 2)
-                    throw new Error("invalid invocation to 'append'.");
-                if(arguments.size() == 2)
-                    return new Atom(new LbcSupplier(() -> append2(arguments.get(0), arguments.get(1))));
-                else
-                    return new Atom(new LbcSupplier(() -> {
-                        arguments.get(0).guardType("Argument to 'append'", Type.LIST);
-                        List<Atom> l = new LinkedList<>(arguments.get(0).getList().get());
-                        l.addAll(arguments.stream().skip(1).collect(Collectors.toList()));
-                        return l;
-                    }));
-            }
-        }));
-
-        env.push("car", new Atom(new Closure() {
-            private Atom car(Atom l) {
-                l.guardType("Argument to 'car'", Type.LIST);
-                List<Atom> data = l.getList().get();
-                if(data.isEmpty())
-                    return Atom.NULL;
-                else
-                    return data.get(0);
-            }
-
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() == 1) {
-                    return new Atom(new LbcSupplier(() -> car(arguments.get(0)).get().get()));
-                } else if(arguments.size() >= 2) {
-                    return new Atom(new LbcSupplier(() -> arguments.stream().map(x -> car(x)).collect(Collectors.toList())));
-                } else
-                    throw new Error("Invalid invocation to 'car'.");
-            }
-        }));
-
-        env.push("size", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'size'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("Argument to 'size'", Type.LIST, Type.STRING_CONSTANT);
-
-                    if(arguments.get(0).getType() == Type.LIST)
-                        return BigDecimal.valueOf(arguments.get(0).getList().get().size());
-                    else if(arguments.get(0).getType() == Type.STRING_CONSTANT)
-                        return BigDecimal.valueOf(arguments.get(0).getStringConstant().get().get().length());
-
-                    throw new Error("Invalid invocation to 'size'.");
-                }));
-            }
-        }));
-
         env.push("map", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
@@ -320,136 +221,6 @@ public class CoreLib {
                     return new BigDecimal(arguments.get(1).getList().get().stream().filter(x ->
                             arguments.get(0).getClosure().get().apply(env, Collections.singletonList(x)).coerceBool()
                     ).count());
-                }));
-            }
-        }));
-
-        env.push("cdr", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'cdr'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("Argument to 'cdr'", Type.LIST);
-                    List<Atom> data = arguments.get(0).getList().get();
-                    if(data.isEmpty())
-                        return Atom.NULL.get().get();
-                    else
-                        return data.subList(1, data.size());
-                }));
-            }
-        }));
-
-        env.push("foldl", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 3)
-                    throw new Error("Invalid invocation to 'foldl'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'foldl'", Type.CLOSURE);
-                    arguments.get(2).guardType("Third argument to 'foldl'", Type.LIST);
-                    List<Atom> data = arguments.get(2).getList().get();
-                    Atom acc = arguments.get(1);
-                    if(data.isEmpty())
-                        return acc.get().get();
-                    else {
-                        return Stream.concat(Stream.of(acc), data.stream()).reduce((x, y) ->
-                            arguments.get(0).getClosure().get().apply(env, Arrays.asList(x, y))
-                        ).get().get().get();
-                    }
-                }));
-            }
-        }));
-
-        env.push("foldr", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 3)
-                    throw new Error("Invalid invocation to 'foldr'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'foldr'", Type.CLOSURE);
-                    arguments.get(2).guardType("Third argument to 'foldr'", Type.LIST);
-                    List<Atom> data = arguments.get(2).getList().get();
-                    Atom acc = arguments.get(1);
-                    if(data.isEmpty())
-                        return acc.get().get();
-                    else {
-                        return Stream.concat(Stream.of(acc), Lists.reverse(data).stream()).reduce((x, y) ->
-                            arguments.get(0).getClosure().get().apply(env, Arrays.asList(y, x))
-                        ).get().get().get();
-                    }
-                }));
-            }
-        }));
-
-        env.push("foldl'", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 3)
-                    throw new Error("Invalid invocation to 'foldl''.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'foldl''", Type.CLOSURE);
-                    arguments.get(2).guardType("Third argument to 'foldl''", Type.LIST);
-                    List<Atom> data = arguments.get(2).getList().get();
-                    Atom acc = arguments.get(1);
-                    if(data.isEmpty())
-                        return acc.get().get();
-                    else {
-                        return Stream.concat(Stream.of(acc), data.stream()).reduce((x, y) ->
-                                arguments.get(0).getClosure().get().apply(env, Arrays.asList(x.eager(), y.eager())).eager()
-                        ).get().get().get();
-                    }
-                }));
-            }
-        }));
-
-        env.push("foldr'", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 3)
-                    throw new Error("Invalid invocation to 'foldr''.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'foldr''", Type.CLOSURE);
-                    arguments.get(2).guardType("Third argument to 'foldr''", Type.LIST);
-                    List<Atom> data = arguments.get(2).getList().get();
-                    Atom acc = arguments.get(1);
-                    if(data.isEmpty())
-                        return acc.get().get();
-                    else {
-                        return Stream.concat(Stream.of(acc), Lists.reverse(data).stream()).reduce((x, y) ->
-                                arguments.get(0).getClosure().get().apply(env, Arrays.asList(y.eager(), x.eager())).eager()
-                        ).get().get().get();
-                    }
-                }));
-            }
-        }));
-
-        env.push("any", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 2)
-                    throw new Error("Invalid invocation to 'any'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'any'", Type.CLOSURE);
-                    arguments.get(1).guardType("Second argument to 'any'", Type.LIST);
-                    return arguments.get(1).getList().get().stream().anyMatch(x ->
-                            arguments.get(0).getClosure().get().apply(env, Collections.singletonList(x)).coerceBool()
-                    ) ? BigDecimal.ONE : BigDecimal.ZERO;
-                }));
-            }
-        }));
-
-        env.push("zip", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 2)
-                    throw new Error("Invalid invocation to 'zip'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'zip'", Type.LIST);
-                    arguments.get(1).guardType("Second argument to 'zip'", Type.LIST);
-                    List<Atom> a = arguments.get(0).getList().get();
-                    List<Atom> b = arguments.get(1).getList().get();
-                    return Streams.zip(a.stream(), b.stream(), (x, y) -> new Atom(new LbcSupplier<>(() -> List.of(x, y)))).collect(Collectors.toList());
                 }));
             }
         }));
@@ -547,70 +318,6 @@ public class CoreLib {
             }
         }));
 
-        env.push("reverse", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'reverse'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    if(arguments.get(0).getType() == Type.LIST) {
-                        List<Atom> l = arguments.get(0).getList().get();
-                        List<Atom> r = new ArrayList<>();
-                        for (int i = l.size() - 1; i >= 0; i--)
-                            r.add(l.get(i));
-                        return r;
-                    } else if(arguments.get(0).getType() == Type.STRING_CONSTANT) {
-                        String s = arguments.get(0).getStringConstant().get().get();
-                        String r = "";
-                        for (int i = s.length() - 1; i >= 0; i--)
-                            r += s.charAt(i);
-                        return new StringConstant(r);
-                    }
-
-                    throw new Error("Invalid invocation to 'reverse': expected a string or list.");
-                }));
-            }
-        }));
-
-        env.push("rotate", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 2)
-                    throw new Error("Invalid invocation to 'rotate'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    if(arguments.get(0).getType() == Type.LIST) {
-                        List<Atom> l = arguments.get(0).getList().get();
-                        int n = arguments.get(1).getNumber().get().intValue();
-                        if(n < 0)
-                            n += l.size();
-                        if(n >= l.size())
-                            n %= l.size();
-                        List<Atom> r = new ArrayList<>();
-                        for (int i = n; i < l.size(); i++)
-                            r.add(l.get(i));
-                        for (int i = 0; i < n; i++)
-                            r.add(l.get(i));
-                        return r;
-                    } else if(arguments.get(0).getType() == Type.STRING_CONSTANT) {
-                        String s = arguments.get(0).getStringConstant().get().get();
-                        int n = arguments.get(1).getNumber().get().intValue();
-                        if(n < 0)
-                            n += s.length();
-                        if(n >= s.length())
-                            n %= s.length();
-                        String r = "";
-                        for (int i = n; i < s.length(); i++)
-                            r += s.charAt(i);
-                        for (int i = 0; i < n; i++)
-                            r += s.charAt(i);
-                        return new StringConstant(r);
-                    }
-
-                    throw new Error("Invalid invocation to 'rotate': expected a string or list.");
-                }));
-            }
-        }));
-
         env.push("every", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
@@ -639,26 +346,7 @@ public class CoreLib {
             }
         }));
 
-        env.push("flatten", new Atom(new Closure() {
-            public <T> List<T> flat(List<List<T>> list) {
-                return list.stream()
-                        .flatMap(Collection::stream)
-                        .collect(Collectors.toList());
-            }
-
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'flatten'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("Argument to 'flatten'.", Type.LIST);
-                    List<Atom> l = arguments.get(0).getList().get();
-                    return flat(l.stream().map(x -> x.getType() == Type.LIST ? x.getList().get() : List.of(x)).collect(Collectors.toList()));
-                }));
-            }
-        }));
-
-        env.push("flatmap", new Atom(new Closure() {
+        env.push("flat-map", new Atom(new Closure() {
             public <T> List<T> flat(List<List<T>> list) {
                 return list.stream()
                         .flatMap(Collection::stream)
@@ -668,47 +356,23 @@ public class CoreLib {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 2)
-                    throw new Error("Invalid invocation to 'flatmap'.");
+                    throw new Error("Invalid invocation to 'flat-map'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(1).guardType("Argument to 'flatmap'.", Type.LIST);
+                    arguments.get(1).guardType("Argument to 'flat-map'.", Type.LIST);
                     List<Atom> l = arguments.get(1).getList().get();
-                    arguments.get(0).guardType("Argument to 'flatmap'.", Type.CLOSURE);
+                    arguments.get(0).guardType("Argument to 'flat-map'.", Type.CLOSURE);
                     Closure c = arguments.get(0).getClosure().get();
                     return flat(l.stream().map(x -> c.apply(env, List.of(x))).map(x -> x.getType() == Type.LIST ? x.getList().get() : List.of(x)).collect(Collectors.toList()));
                 }));
             }
         }));
 
-        env.push("nth", new Atom(new Closure() {
+        env.push("seq", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 2)
-                    throw new Error("Invalid invocation to 'nth'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("Argument to 'nth'.", Type.NUMBER);
-                    if(arguments.get(1).getType() == Type.LIST) {
-                        List<Atom> l = arguments.get(1).getList().get();
-                        int n = arguments.get(0).getNumber().get().intValue();
-                        if (n < 0 || n >= l.size())
-                            throw new Error("Index out of bounds.");
-                        return l.get(n).get().get();
-                    } else if(arguments.get(1).getType() == Type.STRING_CONSTANT) {
-                        String s = arguments.get(1).getStringConstant().get().get();
-                        int n = arguments.get(0).getNumber().get().intValue();
-                        if (n < 0 || n >= s.length())
-                            throw new Error("Index out of bounds.");
-                        return new StringConstant("" + s.charAt(n));
-                    }
-
-                    throw new Error("Invalid argument to 'nth'.");
-                }));
-            }
-        }));
-
-        env.push("tie", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                return new Atom(arguments);
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'seq'.");
+                return new Atom(new LbcSupplier<>(() -> arguments.get(0).get().get()));
             }
         }));
     }

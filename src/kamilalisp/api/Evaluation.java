@@ -2,6 +2,7 @@ package kamilalisp.api;
 
 import kamilalisp.libs.CoreLib;
 import kamilalisp.libs.IOLib;
+import kamilalisp.libs.ListLib;
 import kamilalisp.libs.MathLib;
 import kamilalisp.data.Atom;
 import kamilalisp.data.Environment;
@@ -56,6 +57,7 @@ public class Evaluation {
         IOLib.install(globEnv);
         MathLib.install(globEnv);
         CoreLib.install(globEnv);
+        ListLib.install(globEnv);
         globEnv.owner = null;
         return globEnv;
     }
