@@ -29,7 +29,7 @@ public class MathLib {
                 } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.NUMBER) {
                     return new Atom(new StringConstant(a1.getStringConstant().get().get() + a2.getNumber().get().toPlainString()));
                 } else {
-                    throw new Error("+ unsupported on operands of type " + a1.getType().name() + " and " + a1.getType().name());
+                    throw new Error("+ unsupported on operands of type " + a1.getType().name() + " and " + a2.getType().name());
                 }
             }
 
@@ -60,7 +60,7 @@ public class MathLib {
                     String s = a1.getStringConstant().get().get();
                     return new Atom(new StringConstant(s.substring(0, s.length() - a2.getNumber().get().intValue())));
                 } else {
-                    throw new Error("- unsupported on operands of type " + a1.getType().name() + " and " + a1.getType().name());
+                    throw new Error("- unsupported on operands of type " + a1.getType().name() + " and " + a2.getType().name());
                 }
             }
 
@@ -90,7 +90,7 @@ public class MathLib {
                 } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.NUMBER) {
                     return new Atom(new StringConstant(a1.getStringConstant().get().get().repeat(a2.getNumber().get().intValue())));
                 } else {
-                    throw new Error("* unsupported on operands of type " + a1.getType().name() + " and " + a1.getType().name());
+                    throw new Error("* unsupported on operands of type " + a1.getType().name() + " and " + a2.getType().name());
                 }
             }
 
@@ -128,7 +128,7 @@ public class MathLib {
                     List<Atom> s = a1.getList().get();
                     return new Atom(Lists.partition(s, s.size() / a2.getNumber().get().intValue()).stream().map(x -> new Atom(x)).collect(Collectors.toList()));
                 } else {
-                    throw new Error("/ unsupported on operands of type " + a1.getType().name() + " and " + a1.getType().name());
+                    throw new Error("/ unsupported on operands of type " + a1.getType().name() + " and " + a2.getType().name());
                 }
             }
 

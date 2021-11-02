@@ -9,6 +9,7 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
 import org.jline.reader.impl.DefaultParser;
 import org.jline.reader.impl.DefaultParser.Bracket;
+import org.jline.reader.impl.history.DefaultHistory;
 import org.jline.terminal.Size;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
@@ -32,7 +33,12 @@ public class Main {
         parser.setEofOnUnclosedQuote(true);
         parser.setEscapeChars(new char[]{'\\'});
         parser.setQuoteChars(new char[]{'\"'});
-        LineReader r = LineReaderBuilder.builder().appName("KamilaLisp").parser(parser).build();
+        LineReader r = LineReaderBuilder
+                .builder()
+                .appName("KamilaLisp")
+                .parser(parser)
+                .history(new DefaultHistory())
+                .build();
         try {
             while (true) {
                 String code = r.readLine("%% ");
