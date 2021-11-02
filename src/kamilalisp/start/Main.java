@@ -38,10 +38,12 @@ public class Main {
                 .appName("KamilaLisp")
                 .parser(parser)
                 .history(new DefaultHistory())
+                .variable(LineReader.SECONDARY_PROMPT_PATTERN, "%P. ")
+                .variable(LineReader.INDENTATION, 3)
                 .build();
         try {
             while (true) {
-                String code = r.readLine("%% ");
+                String code = r.readLine("--> ");
                 Atom result = Evaluation.evalAtom(env, code);
                 System.out.println(result);
             }

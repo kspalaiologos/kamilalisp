@@ -11,9 +11,13 @@ public class IOLib {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
                 // XXX: REMOVE AND REPLACE WITH IO MONAD
-                String msg = arguments.stream().map(x -> x.toString()).collect(Collectors.joining(" "));
-                System.out.println(msg);
-                return new Atom(new StringConstant(msg));
+                if(arguments.size() != 1)
+                    throw new Error("'println' expects exactly one argument");
+                if(arguments.get(0).getType() == Type.STRING_CONSTANT)
+                    System.out.println(arguments.get(0).getStringConstant().get().get());
+                else
+                    System.out.println(arguments.get(0).toString());
+                return arguments.get(0);
             }
         }));
     }

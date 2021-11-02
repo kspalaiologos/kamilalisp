@@ -74,7 +74,8 @@ public class DefaultVisitor extends AbstractParseTreeVisitor<Atom> implements Gr
     public Atom visitString_(GrammarParser.String_Context ctx) {
         String text = ctx.getText();
         text = text.substring(1, text.length() - 1);
-        return new Atom(new StringConstant(text.replace("\\\"", "\"")));
+        text = text.replace("\\\"", "\"");
+        return new Atom(new StringConstant(text));
     }
 
     @Override
