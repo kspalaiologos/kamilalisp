@@ -115,4 +115,43 @@ class ArithmeticTest {
     void testDiscard() {
         assertTrue(Evaluation.evalString("(discard (+ 2 2))").get(0).equals(Atom.NULL));
     }
+
+    @Test
+    void testSort() {
+        // Copilot generated these. Don't complain to me.
+        assertTrue(Evaluation.evalString("(sort '(3 2 1))").get(0).getList().get().get(0).getNumber().get().equals(BigDecimal.valueOf(1)));
+        assertTrue(Evaluation.evalString("(sort '(3 2 1))").get(0).getList().get().get(1).getNumber().get().equals(BigDecimal.valueOf(2)));
+        assertTrue(Evaluation.evalString("(sort '(3 2 1))").get(0).getList().get().get(2).getNumber().get().equals(BigDecimal.valueOf(3)));
+        assertTrue(Evaluation.evalString("(sort '(3 2 1))").get(0).getList().get().size() == 3);
+    }
+
+    @Test
+    void testSortStrings() {
+        assertTrue(Evaluation.evalString("(sort '(\"hello\" \"world\" \"hi\" \"example\" \"a test\"))").get(0).getList().get().get(0).getStringConstant().get().get().equals("a test"));
+        assertTrue(Evaluation.evalString("(sort '(\"hello\" \"world\" \"hi\" \"example\" \"a test\"))").get(0).getList().get().get(1).getStringConstant().get().get().equals("example"));
+        assertTrue(Evaluation.evalString("(sort '(\"hello\" \"world\" \"hi\" \"example\" \"a test\"))").get(0).getList().get().get(2).getStringConstant().get().get().equals("hello"));
+        assertTrue(Evaluation.evalString("(sort '(\"hello\" \"world\" \"hi\" \"example\" \"a test\"))").get(0).getList().get().get(3).getStringConstant().get().get().equals("hi"));
+        assertTrue(Evaluation.evalString("(sort '(\"hello\" \"world\" \"hi\" \"example\" \"a test\"))").get(0).getList().get().get(4).getStringConstant().get().get().equals("world"));
+        assertTrue(Evaluation.evalString("(sort '(\"hello\" \"world\" \"hi\" \"example\" \"a test\"))").get(0).getList().get().size() == 5);
+    }
+
+    @Test
+    void testSortMixed() {
+        assertTrue(Evaluation.evalString("(sort '(\"hello\" \"world\" 2 3))").get(0).getList().get().get(0).getNumber().get().equals(BigDecimal.valueOf(2)));
+        assertTrue(Evaluation.evalString("(sort '(\"hello\" \"world\" 2 3))").get(0).getList().get().get(1).getNumber().get().equals(BigDecimal.valueOf(3)));
+        assertTrue(Evaluation.evalString("(sort '(\"hello\" \"world\" 2 3))").get(0).getList().get().get(2).getStringConstant().get().get().equals("hello"));
+        assertTrue(Evaluation.evalString("(sort '(\"hello\" \"world\" 2 3))").get(0).getList().get().get(3).getStringConstant().get().get().equals("world"));
+        assertTrue(Evaluation.evalString("(sort '(\"hello\" \"world\" 2 3))").get(0).getList().get().size() == 4);
+    }
+
+    @Test
+    void testSortList() {
+        assertTrue(Evaluation.evalString("(sort '((1 2 3) (1 2 3 4)))").get(0).getList().get().get(0).getList().get().get(0).getNumber().get().equals(BigDecimal.valueOf(1)));
+        assertTrue(Evaluation.evalString("(sort '((1 2 3) (1 2 3 4)))").get(0).getList().get().get(0).getList().get().get(1).getNumber().get().equals(BigDecimal.valueOf(2)));
+        assertTrue(Evaluation.evalString("(sort '((1 2 3) (1 2 3 4)))").get(0).getList().get().get(0).getList().get().get(2).getNumber().get().equals(BigDecimal.valueOf(3)));
+        assertTrue(Evaluation.evalString("(sort '((1 2 3) (1 2 3 4)))").get(0).getList().get().get(0).getList().get().size() == 3);
+        assertTrue(Evaluation.evalString("(sort '((2 2 3) (1 2 3 4)))").get(0).getList().get().get(0).getList().get().get(0).getNumber().get().equals(BigDecimal.valueOf(2)));
+        assertTrue(Evaluation.evalString("(sort '((2 2 3) (1 2 3 4)))").get(0).getList().get().get(0).getList().get().get(1).getNumber().get().equals(BigDecimal.valueOf(2)));
+        assertTrue(Evaluation.evalString("(sort '((2 2 3) (1 2 3 4)))").get(0).getList().get().get(0).getList().get().get(2).getNumber().get().equals(BigDecimal.valueOf(3)));
+    }
 }
