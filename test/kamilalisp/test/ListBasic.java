@@ -222,4 +222,13 @@ public class ListBasic {
                 new Atom(BigDecimal.valueOf(0))
         )));
     }
+
+    @Test
+    void testIndex() {
+        assertTrue(Evaluation.evalString("(index '(1 3 5) (iota 10))").get(0).getList().get().equals(List.of(
+                new Atom(BigDecimal.valueOf(1)),
+                new Atom(BigDecimal.valueOf(3)),
+                new Atom(BigDecimal.valueOf(5))
+        )));
+    }
 }

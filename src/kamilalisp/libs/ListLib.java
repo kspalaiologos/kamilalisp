@@ -479,5 +479,23 @@ public class ListLib {
                 }));
             }
         }));
+
+        env.push("index", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'index'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    Atom b = arguments.get(1);
+                    a.guardType("First argument to 'index'", Type.LIST);
+                    b.guardType("Second argument to 'index'", Type.LIST);
+                    List<Atom> l = a.getList().get();
+                    List<Atom> r = b.getList().get();
+                    l.forEach(x -> x.guardType("First 'index' list", Type.NUMBER));
+                    return l.stream().map(x -> r.get(x.getNumber().get().intValue())).collect(Collectors.toList());
+                }));
+            }
+        }));
     }
 }
