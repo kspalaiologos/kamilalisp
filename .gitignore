@@ -24,3 +24,6 @@ hs_err_pid*
 
 # IntelliJ output
 out/
+
+# Stuff I keep locally.
+attic/

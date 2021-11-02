@@ -26,7 +26,7 @@ public class CoreLib {
                 Atom result = new Atom(new Closure() {
                     @Override
                     public String representation() {
-                        return "(λ " + params.stream().map(x -> x.getString().get()).collect(Collectors.joining(" ")) + "." + code.toString() + ")";
+                        return "(λ " + params.stream().map(x -> x.getString().get()).collect(Collectors.joining(" ")) + " . " + code.toString() + ")";
                     }
 
                     @Override
@@ -62,7 +62,7 @@ public class CoreLib {
                 Atom result = new Atom(new Closure() {
                     @Override
                     public String representation() {
-                        return "(macro " + params.stream().map(x -> x.getString().get()).collect(Collectors.joining(" ")) + "." + code.toString() + ")";
+                        return "(macro " + params.stream().map(x -> x.getString().get()).collect(Collectors.joining(" ")) + " . " + code.toString() + ")";
                     }
 
                     @Override
