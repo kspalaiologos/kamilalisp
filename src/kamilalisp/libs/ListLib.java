@@ -313,8 +313,7 @@ public class ListLib {
 
         env.push("cons", new Atom(new Closure() {
             private List<Atom> cons2(Atom element, Atom list) {
-                if(list.getType() != Type.LIST)
-                    throw new Error("invalid invocation to 'cons'.");
+                list.guardType("Second argument to 'cons'", Type.LIST);
                 LinkedList<Atom> l = new LinkedList<>(list.getList().get());
                 l.addFirst(element);
                 return l;

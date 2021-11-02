@@ -18,7 +18,7 @@ public class GrammarParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, STRING=7, FLOAT=8, HEX=9, 
-		BIN=10, LONG=11, NIL=12, SYMBOL=13, TRASH=14;
+		BIN=10, LONG=11, NIL=12, NAME=13, TRASH=14;
 	public static final int
 		RULE_file_ = 0, RULE_form = 1, RULE_forms = 2, RULE_list_ = 3, RULE_sqlist = 4, 
 		RULE_reader_macro = 5, RULE_quote = 6, RULE_tack = 7, RULE_literal = 8, 
@@ -42,7 +42,7 @@ public class GrammarParser extends Parser {
 	private static String[] makeSymbolicNames() {
 		return new String[] {
 			null, null, null, null, null, null, null, "STRING", "FLOAT", "HEX", "BIN", 
-			"LONG", "NIL", "SYMBOL", "TRASH"
+			"LONG", "NIL", "NAME", "TRASH"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -133,7 +133,7 @@ public class GrammarParser extends Parser {
 			setState(33);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__4) | (1L << T__5) | (1L << STRING) | (1L << FLOAT) | (1L << HEX) | (1L << BIN) | (1L << LONG) | (1L << NIL) | (1L << SYMBOL))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__4) | (1L << T__5) | (1L << STRING) | (1L << FLOAT) | (1L << HEX) | (1L << BIN) | (1L << LONG) | (1L << NIL) | (1L << NAME))) != 0)) {
 				{
 				{
 				setState(30);
@@ -160,8 +160,8 @@ public class GrammarParser extends Parser {
 	}
 
 	public static class FormContext extends ParserRuleContext {
-		public LiteralContext literal() {
-			return getRuleContext(LiteralContext.class,0);
+		public Reader_macroContext reader_macro() {
+			return getRuleContext(Reader_macroContext.class,0);
 		}
 		public List_Context list_() {
 			return getRuleContext(List_Context.class,0);
@@ -169,8 +169,8 @@ public class GrammarParser extends Parser {
 		public SqlistContext sqlist() {
 			return getRuleContext(SqlistContext.class,0);
 		}
-		public Reader_macroContext reader_macro() {
-			return getRuleContext(Reader_macroContext.class,0);
+		public LiteralContext literal() {
+			return getRuleContext(LiteralContext.class,0);
 		}
 		public FormContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -198,17 +198,12 @@ public class GrammarParser extends Parser {
 			setState(42);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case STRING:
-			case FLOAT:
-			case HEX:
-			case BIN:
-			case LONG:
-			case NIL:
-			case SYMBOL:
+			case T__4:
+			case T__5:
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(38);
-				literal();
+				reader_macro();
 				}
 				break;
 			case T__0:
@@ -225,12 +220,17 @@ public class GrammarParser extends Parser {
 				sqlist();
 				}
 				break;
-			case T__4:
-			case T__5:
+			case STRING:
+			case FLOAT:
+			case HEX:
+			case BIN:
+			case LONG:
+			case NIL:
+			case NAME:
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(41);
-				reader_macro();
+				literal();
 				}
 				break;
 			default:
@@ -284,7 +284,7 @@ public class GrammarParser extends Parser {
 			setState(47);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__4) | (1L << T__5) | (1L << STRING) | (1L << FLOAT) | (1L << HEX) | (1L << BIN) | (1L << LONG) | (1L << NIL) | (1L << SYMBOL))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__4) | (1L << T__5) | (1L << STRING) | (1L << FLOAT) | (1L << HEX) | (1L << BIN) | (1L << LONG) | (1L << NIL) | (1L << NAME))) != 0)) {
 				{
 				{
 				setState(44);
@@ -621,7 +621,7 @@ public class GrammarParser extends Parser {
 				nil_();
 				}
 				break;
-			case SYMBOL:
+			case NAME:
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(71);
@@ -890,7 +890,7 @@ public class GrammarParser extends Parser {
 	}
 
 	public static class SymbolContext extends ParserRuleContext {
-		public TerminalNode SYMBOL() { return getToken(GrammarParser.SYMBOL, 0); }
+		public TerminalNode NAME() { return getToken(GrammarParser.NAME, 0); }
 		public SymbolContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -917,7 +917,7 @@ public class GrammarParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(88);
-			match(SYMBOL);
+			match(NAME);
 			}
 		}
 		catch (RecognitionException re) {
@@ -943,7 +943,7 @@ public class GrammarParser extends Parser {
 		"\n8\3\2\2\2\f>\3\2\2\2\16@\3\2\2\2\20C\3\2\2\2\22J\3\2\2\2\24L\3\2\2\2"+
 		"\26N\3\2\2\2\30P\3\2\2\2\32V\3\2\2\2\34X\3\2\2\2\36Z\3\2\2\2 \"\5\4\3"+
 		"\2! \3\2\2\2\"%\3\2\2\2#!\3\2\2\2#$\3\2\2\2$&\3\2\2\2%#\3\2\2\2&\'\7\2"+
-		"\2\3\'\3\3\2\2\2(-\5\22\n\2)-\5\b\5\2*-\5\n\6\2+-\5\f\7\2,(\3\2\2\2,)"+
+		"\2\3\'\3\3\2\2\2(-\5\f\7\2)-\5\b\5\2*-\5\n\6\2+-\5\22\n\2,(\3\2\2\2,)"+
 		"\3\2\2\2,*\3\2\2\2,+\3\2\2\2-\5\3\2\2\2.\60\5\4\3\2/.\3\2\2\2\60\63\3"+
 		"\2\2\2\61/\3\2\2\2\61\62\3\2\2\2\62\7\3\2\2\2\63\61\3\2\2\2\64\65\7\3"+
 		"\2\2\65\66\5\6\4\2\66\67\7\4\2\2\67\t\3\2\2\289\7\5\2\29:\5\6\4\2:;\7"+

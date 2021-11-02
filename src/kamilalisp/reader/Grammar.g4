@@ -2,10 +2,10 @@ grammar Grammar;
 
 file_: form * EOF;
 
-form: literal
+form: reader_macro
     | list_
     | sqlist
-    | reader_macro
+    | literal
     ;
 
 forms: form* ;
@@ -45,7 +45,7 @@ number
 
 nil_: NIL;
 
-symbol: SYMBOL;
+symbol: NAME;
 
 // Lexers
 //--------------------------------------------------------------------
@@ -76,23 +76,24 @@ FLOAT_EXP
     ;
 fragment
 HEXD: [0-9a-fA-F] ;
+
 HEX: '0' [xX] HEXD+ ;
 BIN: '0' [bB] [10]+ ;
 LONG: '-'? [0-9]+;
 
 NIL : 'nil';
 
-SYMBOL
-    : '.'
-    | '/'
-    | NAME
-    ;
-
-// Fragments
-//--------------------------------------------------------------------
+// Note: This all is required only because ANTLR is garbage
+// and can't inline rules on it's own.
+// Normally I'd have made a rule with NOTID and inverted it in a set.
 
 fragment
-NAME: ~('\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';')+ ;
+NOTID: ~('\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';') ;
+
+fragment
+NOTID_START: ~('#' | '\'' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';');
+
+NAME: NOTID_START NOTID* ;
 
 // Discard
 //--------------------------------------------------------------------
