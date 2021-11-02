@@ -392,5 +392,18 @@ public class CoreLib {
                     return Atom.NULL;
             }
         }));
+
+        env.push("commute", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() < 2)
+                    throw new Error("Invalid invocation to 'commute'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("Argument to 'commute'.", Type.CLOSURE);
+                    Closure c = arguments.get(0).getClosure().get();
+                    return c.apply(env, Lists.reverse(arguments.subList(1, arguments.size()))).get().get();
+                }));
+            }
+        }));
     }
 }

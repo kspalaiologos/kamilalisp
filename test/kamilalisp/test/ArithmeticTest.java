@@ -110,4 +110,9 @@ class ArithmeticTest {
     void testId() {
         assertTrue(Evaluation.evalString("(id 5)").get(0).getNumber().get().equals(BigDecimal.valueOf(5)));
     }
+
+    @Test
+    void testDiscard() {
+        assertTrue(Evaluation.evalString("(discard (+ 2 2))").get(0).equals(Atom.NULL));
+    }
 }

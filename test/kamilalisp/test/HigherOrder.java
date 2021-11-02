@@ -1,6 +1,7 @@
 package kamilalisp.test;
 
 import kamilalisp.api.Evaluation;
+import kamilalisp.data.Atom;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -55,5 +56,10 @@ public class HigherOrder {
     public void testTie() {
         assertTrue(Evaluation.evalString("(tie 4 5 6)").get(0).getList().get().size() == 3);
         assertTrue(Evaluation.evalString("(tie 4 5 6)").get(0).getList().get().get(0).get().get().equals(BigDecimal.valueOf(4)));
+    }
+
+    @Test
+    public void testCommute() {
+        assertTrue(Evaluation.evalString("(commute tie 1 2 3)").get(0).getList().get().equals(List.of(new Atom(new BigDecimal(3)), new Atom(new BigDecimal(2)), new Atom(new BigDecimal(1)))));
     }
 }
