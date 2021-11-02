@@ -13,6 +13,7 @@ import kamilalisp.reader.Token;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,14 +21,8 @@ import java.util.stream.Collectors;
 
 public class Evaluation {
     public static List<Atom> evalString(String code) {
-        ByteArrayInputStream input = new ByteArrayInputStream(code.getBytes(StandardCharsets.UTF_8));
-        List<Token> tokens = null;
-        try {
-            tokens = new Lexer(input).getTokens();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Parser p = new Parser(tokens);
+        Lexer l = new Lexer(new StringReader(code));
+        Parser p = new Parser(l);
         List<Atom> atoms = new LinkedList<>();
         while(p.hasMore())
             atoms.add(p.parse());
@@ -37,14 +32,8 @@ public class Evaluation {
     }
 
     public static List<Atom> evalString(Environment globEnv, String code) {
-        ByteArrayInputStream input = new ByteArrayInputStream(code.getBytes(StandardCharsets.UTF_8));
-        List<Token> tokens = null;
-        try {
-            tokens = new Lexer(input).getTokens();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Parser p = new Parser(tokens);
+        Lexer l = new Lexer(new StringReader(code));
+        Parser p = new Parser(l);
         List<Atom> atoms = new LinkedList<>();
         while(p.hasMore())
             atoms.add(p.parse());

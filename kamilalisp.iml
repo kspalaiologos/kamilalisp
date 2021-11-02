@@ -25,5 +25,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="google.guava" level="project" />
+    <orderEntry type="library" name="antlr.antlr4.runtime" level="project" />
   </component>
 </module>

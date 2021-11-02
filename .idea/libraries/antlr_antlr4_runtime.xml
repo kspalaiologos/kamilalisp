@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="antlr.antlr4.runtime" type="repository">
+    <properties maven-id="org.antlr:antlr4-runtime:4.6" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/antlr/antlr4-runtime/4.6/antlr4-runtime-4.6.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
