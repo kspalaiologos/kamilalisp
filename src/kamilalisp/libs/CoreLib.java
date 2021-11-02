@@ -374,5 +374,23 @@ public class CoreLib {
                 return new Atom(new LbcSupplier<>(() -> arguments.get(0).get().get()));
             }
         }));
+
+        env.push("discard", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                return Atom.NULL;
+            }
+        }));
+
+        env.push("gc", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                System.gc();
+                if(arguments.size() >= 1)
+                    return arguments.get(0);
+                else
+                    return Atom.NULL;
+            }
+        }));
     }
 }
