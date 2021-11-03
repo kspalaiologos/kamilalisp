@@ -291,4 +291,22 @@ public class ListBasic {
         assertTrue(Evaluation.evalString("(iterate (lambda (x) [x + 1]) 0 10)").get(0).getNumber().get().intValue() == 10);
         assertTrue(Evaluation.evalString("(iterate (monad [x + 1]) (monad [x < 10]) 0)").get(0).getNumber().get().intValue() == 10);
     }
+
+    @Test
+    void testWhere() {
+        assertTrue(Evaluation.evalString("(where '(1 0 1 0 1 0))").get(0).getList().get().equals(List.of(
+                new Atom(BigDecimal.valueOf(0)),
+                new Atom(BigDecimal.valueOf(2)),
+                new Atom(BigDecimal.valueOf(4))
+        )));
+
+        assertTrue(Evaluation.evalString("(where '(1 2 3))").get(0).getList().get().equals(List.of(
+                new Atom(BigDecimal.valueOf(0)),
+                new Atom(BigDecimal.valueOf(1)),
+                new Atom(BigDecimal.valueOf(1)),
+                new Atom(BigDecimal.valueOf(2)),
+                new Atom(BigDecimal.valueOf(2)),
+                new Atom(BigDecimal.valueOf(2))
+        )));
+    }
 }

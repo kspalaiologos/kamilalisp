@@ -563,5 +563,33 @@ public class ListLib {
                 }));
             }
         }));
+
+        env.push("where", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'where'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'where'", Type.LIST);
+                    return Streams.zip(
+                            arguments
+                                    .get(0)
+                                    .getList()
+                                    .get()
+                                    .stream()
+                                    .map(x -> {
+                                        x.guardType("'where' argument list contents", Type.NUMBER);
+                                        return x.getNumber().get().intValue();
+                                    }),
+                            IntStream.range(0,
+                                    arguments
+                                            .get(0)
+                                            .getList()
+                                            .get()
+                                            .size()).mapToObj(x -> new Atom(BigDecimal.valueOf(x))),
+                            (x, y) -> Collections.nCopies(x, y)).flatMap(Collection::stream).collect(Collectors.toList());
+                }));
+            }
+        }));
     }
 }
