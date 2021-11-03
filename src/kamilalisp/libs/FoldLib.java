@@ -289,5 +289,110 @@ public class FoldLib {
                 }));
             }
         }));
+
+
+        env.push("scanl1", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'scanl1'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'scanl1'", Type.CLOSURE, Type.MACRO);
+                    arguments.get(1).guardType("Second argument to 'scanl1'", Type.LIST);
+                    List<Atom> data = arguments.get(1).getList().get();
+                    List<Atom> result = new LinkedList<>();
+                    if(data.isEmpty())
+                        throw new Error("Cannot fold an empty list.");
+                    else if(data.size() == 1)
+                        return data.get(0);
+                    else {
+                        data.stream().reduce((x, y) -> {
+                            Atom a = arguments.get(0).getCallable().get().apply(env, Arrays.asList(x, y));
+                            result.add(a);
+                            return a;
+                        }).get().get().get();
+                        return result;
+                    }
+                }));
+            }
+        }));
+
+        env.push("scanr1", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'scanr1'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'scanr1'", Type.CLOSURE, Type.MACRO);
+                    arguments.get(1).guardType("Second argument to 'scanr1'", Type.LIST);
+                    List<Atom> data = arguments.get(1).getList().get();
+                    List<Atom> result = new LinkedList<>();
+                    if(data.isEmpty())
+                        throw new Error("Cannot fold an empty list.");
+                    else if(data.size() == 1)
+                        return data.get(0);
+                    else {
+                        Lists.reverse(data).stream().reduce((x, y) -> {
+                            Atom a = arguments.get(0).getCallable().get().apply(env, Arrays.asList(y, x));
+                            result.add(a);
+                            return a;
+                        }).get().get().get();
+                        return Lists.reverse(result);
+                    }
+                }));
+            }
+        }));
+
+        env.push("scanl1'", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'scanl1''.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'scanl1''", Type.CLOSURE, Type.MACRO);
+                    arguments.get(1).guardType("Third argument to 'scanl1''", Type.LIST);
+                    List<Atom> data = arguments.get(1).getList().get();
+                    List<Atom> result = new LinkedList<>();
+                    if(data.isEmpty())
+                        throw new Error("Cannot fold an empty list.");
+                    else if(data.size() == 1)
+                        return data.get(0);
+                    else {
+                        data.stream().reduce((x, y) -> {
+                            Atom a = arguments.get(0).getCallable().get().apply(env, Arrays.asList(x.eager(), y.eager())).eager();
+                            result.add(a);
+                            return a;
+                        }).get().get().get();
+                        return result;
+                    }
+                }));
+            }
+        }));
+
+        env.push("scanr1'", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'scanr1''.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'scanr1''", Type.CLOSURE, Type.MACRO);
+                    arguments.get(1).guardType("Second argument to 'scanr1''", Type.LIST);
+                    List<Atom> data = arguments.get(1).getList().get();
+                    List<Atom> result = new LinkedList<>();
+                    if(data.isEmpty())
+                        throw new Error("Cannot fold an empty list.");
+                    else if(data.size() == 1)
+                        return data.get(0);
+                    else {
+                        Lists.reverse(data).stream().reduce((x, y) -> {
+                            Atom a = arguments.get(0).getCallable().get().apply(env, Arrays.asList(y.eager(), x.eager())).eager();
+                            result.add(a);
+                            return a;
+                        }).get().get().get();
+                        return Lists.reverse(result);
+                    }
+                }));
+            }
+        }));
     }
 }
