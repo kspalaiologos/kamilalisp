@@ -541,8 +541,13 @@ public class ListLib {
                     throw new Error("Invalid invocation to 'unique'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     if(arguments.get(0).getType() == Type.LIST) {
-                        List<Atom> l = arguments.get(0).getList().get();
-                        return l.stream().distinct().collect(Collectors.toList());
+                        // XXX: Stream.distinct() is broken.
+                        List<Atom> l = new LinkedList<>(arguments.get(0).getList().get());
+                        for(int i = 0; i < l.size(); i++)
+                            for(int j = i + 1; j < l.size(); j++)
+                                if(l.get(i).equals(l.get(j)))
+                                    l.remove(j--);
+                        return l;
                     } else if(arguments.get(0).getType() == Type.STRING_CONSTANT) {
                         return arguments
                                 .get(0)

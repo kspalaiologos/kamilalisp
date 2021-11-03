@@ -6,11 +6,9 @@ import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CoreLib {
     public static void install(Environment env) {
@@ -419,6 +417,32 @@ public class CoreLib {
                     Closure c = arguments.get(0).getClosure().get();
                     List<Atom> l = arguments.get(1).getList().get();
                     return c.apply(env, l);
+                }));
+            }
+        }));
+
+        env.push("iterate", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() < 3)
+                    throw new Error("Invalid invocation to 'iterate'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("Argument to 'iterate'.", Type.CLOSURE);
+                    Closure c = arguments.get(0).getClosure().get();
+                    LinkedList<Atom> rest = new LinkedList<>(arguments.subList(3, arguments.size()));
+                    rest.addFirst(arguments.get(2));
+
+                    if(arguments.get(1).getType() == Type.NUMBER) {
+                        int n = arguments.get(1).getNumber().get().intValue();
+                        for (int i = 0; i < n; i++)
+                            rest.set(0, c.apply(env, rest));
+                    } else if(arguments.get(1).getType() == Type.CLOSURE) {
+                        Closure f = arguments.get(1).getClosure().get();
+                        while(f.apply(env, List.of(rest.get(0))).coerceBool())
+                            rest.set(0, c.apply(env, rest));
+                    }
+
+                    return rest.get(0).get().get();
                 }));
             }
         }));

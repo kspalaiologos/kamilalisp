@@ -261,4 +261,34 @@ public class ListBasic {
                 new Atom(BigDecimal.valueOf(19))
         )));
     }
+    
+    @Test
+    void testUnique() {
+        assertTrue(Evaluation.evalString("(unique '(1 2 3 1 2 3))").get(0).getList().get().equals(List.of(
+                new Atom(BigDecimal.valueOf(1)),
+                new Atom(BigDecimal.valueOf(2)),
+                new Atom(BigDecimal.valueOf(3))
+        )));
+
+        assertTrue(Evaluation.evalString("(unique '((1 2) (1 2) (1 2 3) (1 2 3)))").get(0).getList().get().equals(List.of(
+                new Atom(List.of(new Atom(BigDecimal.valueOf(1)), new Atom(BigDecimal.valueOf(2)))),
+                new Atom(List.of(new Atom(BigDecimal.valueOf(1)), new Atom(BigDecimal.valueOf(2)), new Atom(BigDecimal.valueOf(3))))
+        )));
+
+        assertTrue(Evaluation.evalString("(unique '((1 2) (1 2 3) (1 2) (1 2 3)))").get(0).getList().get().equals(List.of(
+                new Atom(List.of(new Atom(BigDecimal.valueOf(1)), new Atom(BigDecimal.valueOf(2)))),
+                new Atom(List.of(new Atom(BigDecimal.valueOf(1)), new Atom(BigDecimal.valueOf(2)), new Atom(BigDecimal.valueOf(3))))
+        )));
+
+        assertTrue(Evaluation.evalString("(unique '((1 2) (1 2 3) (1 2 3) (1 2)))").get(0).getList().get().equals(List.of(
+                new Atom(List.of(new Atom(BigDecimal.valueOf(1)), new Atom(BigDecimal.valueOf(2)))),
+                new Atom(List.of(new Atom(BigDecimal.valueOf(1)), new Atom(BigDecimal.valueOf(2)), new Atom(BigDecimal.valueOf(3))))
+        )));
+    }
+
+    @Test
+    void testIterate() {
+        assertTrue(Evaluation.evalString("(iterate (lambda (x) [x + 1]) 0 10)").get(0).getNumber().get().intValue() == 10);
+        assertTrue(Evaluation.evalString("(iterate (monad [x + 1]) (monad [x < 10]) 0)").get(0).getNumber().get().intValue() == 10);
+    }
 }
