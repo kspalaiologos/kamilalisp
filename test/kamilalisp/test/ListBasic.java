@@ -335,4 +335,21 @@ public class ListBasic {
                 new Atom(new BigDecimal("4"))
         )));
     }
+
+    @Test
+    void testTake() {
+        assertTrue(Evaluation.evalString("(take 3 '(1 2 3 4 5))").get(0).getList().get().equals(List.of(
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("2")),
+                new Atom(new BigDecimal("3"))
+        )));
+
+        assertTrue(Evaluation.evalString("(take 0 '(1 2 3 4 5))").get(0).getList().get().equals(List.of()));
+
+        assertTrue(Evaluation.evalString("(take -3 '(1 2 3 4 5))").get(0).getList().get().equals(List.of(
+                new Atom(new BigDecimal("3")),
+                new Atom(new BigDecimal("4")),
+                new Atom(new BigDecimal("5"))
+        )));
+    }
 }
