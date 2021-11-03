@@ -352,4 +352,37 @@ public class ListBasic {
                 new Atom(new BigDecimal("5"))
         )));
     }
+
+    @Test
+    void testScanterate() {
+        assertTrue(Evaluation.evalString("(scanterate (lambda (x) [x + 2]) (lambda (x) [x < 10]) 0)").get(0).getList().get().equals(List.of(
+                new Atom(new BigDecimal("0")),
+                new Atom(new BigDecimal("2")),
+                new Atom(new BigDecimal("4")),
+                new Atom(new BigDecimal("6")),
+                new Atom(new BigDecimal("8")),
+                new Atom(new BigDecimal("10"))
+        )));
+    }
+
+    @Test
+    void testIntersperse() {
+        assertTrue(Evaluation.evalString("(intersperse 'a '(1 2 3))").get(0).getList().get().equals(List.of(
+                new Atom(new BigDecimal("1")),
+                new Atom("a"),
+                new Atom(new BigDecimal("2")),
+                new Atom("a"),
+                new Atom(new BigDecimal("3"))
+        )));
+    }
+
+    @Test
+    void testIntersperseLists() {
+        assertTrue(Evaluation.evalString("(intersperse '(1 2) '(3 4))").get(0).getList().get().equals(List.of(
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("3")),
+                new Atom(new BigDecimal("2")),
+                new Atom(new BigDecimal("4"))
+        )));
+    }
 }

@@ -663,5 +663,25 @@ public class ListLib {
                 }));
             }
         }));
+
+        env.push("intersperse", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'intersperse'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(1).guardType("Second argument to 'intersperse'", Type.LIST);
+                    List<Atom> l2 = arguments.get(1).getList().get();
+                    if(arguments.get(0).getType() == Type.LIST) {
+                        List<Atom> l1 = arguments.get(0).getList().get();
+                        if (l1.size() != l2.size())
+                            throw new Error("'intersperse' expects two lists of the same size.");
+                        return Streams.zip(l1.stream(), l2.stream(), (x, y) -> Lists.newArrayList(x, y)).flatMap(Collection::stream).collect(Collectors.toList());
+                    } else {
+                        return l2.stream().map(x -> List.of(arguments.get(0), x)).flatMap(Collection::stream).skip(1).collect(Collectors.toList());
+                    }
+                }));
+            }
+        }));
     }
 }

@@ -446,5 +446,34 @@ public class CoreLib {
                 }));
             }
         }));
+
+        env.push("scanterate", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() < 3)
+                    throw new Error("Invalid invocation to 'scanterate'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("Argument to 'scanterate'.", Type.CLOSURE);
+                    Closure c = arguments.get(0).getClosure().get();
+                    LinkedList<Atom> rest = new LinkedList<>(arguments.subList(3, arguments.size()));
+                    rest.addFirst(arguments.get(2));
+                    List<Atom> result = new LinkedList<>();
+
+                    if(arguments.get(1).getType() == Type.NUMBER) {
+                        int n = arguments.get(1).getNumber().get().intValue();
+                        for (int i = 0; i < n; i++)
+                            result.add(rest.set(0, c.apply(env, rest)));
+                    } else if(arguments.get(1).getType() == Type.CLOSURE) {
+                        Closure f = arguments.get(1).getClosure().get();
+                        while(f.apply(env, List.of(rest.get(0))).coerceBool())
+                            result.add(rest.set(0, c.apply(env, rest)));
+                    }
+
+                    result.add(rest.get(0));
+
+                    return result;
+                }));
+            }
+        }));
     }
 }
