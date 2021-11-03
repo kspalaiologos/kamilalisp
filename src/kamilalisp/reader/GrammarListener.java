@@ -38,6 +38,16 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitForms(GrammarParser.FormsContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link GrammarParser#any_list}.
+	 * @param ctx the parse tree
+	 */
+	void enterAny_list(GrammarParser.Any_listContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#any_list}.
+	 * @param ctx the parse tree
+	 */
+	void exitAny_list(GrammarParser.Any_listContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link GrammarParser#list_}.
 	 * @param ctx the parse tree
 	 */
@@ -77,6 +87,16 @@ public interface GrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitQuote(GrammarParser.QuoteContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GrammarParser#fork}.
+	 * @param ctx the parse tree
+	 */
+	void enterFork(GrammarParser.ForkContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#fork}.
+	 * @param ctx the parse tree
+	 */
+	void exitFork(GrammarParser.ForkContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link GrammarParser#tack}.
 	 * @param ctx the parse tree

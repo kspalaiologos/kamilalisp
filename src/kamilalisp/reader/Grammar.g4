@@ -3,12 +3,14 @@ grammar Grammar;
 file_: form * EOF;
 
 form: reader_macro
-    | list_
-    | sqlist
+    | fork
+    | any_list
     | literal
     ;
 
 forms: form* ;
+
+any_list: list_ | sqlist ;
 
 list_: '(' forms ')' ;
 sqlist: '[' forms ']' ;
@@ -20,6 +22,10 @@ reader_macro
 
 quote
     : '\'' form
+    ;
+
+fork
+    : '#' any_list
     ;
 
 tack

@@ -29,6 +29,12 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitForms(GrammarParser.FormsContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link GrammarParser#any_list}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAny_list(GrammarParser.Any_listContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link GrammarParser#list_}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -52,6 +58,12 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitQuote(GrammarParser.QuoteContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link GrammarParser#fork}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFork(GrammarParser.ForkContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link GrammarParser#tack}.
 	 * @param ctx the parse tree

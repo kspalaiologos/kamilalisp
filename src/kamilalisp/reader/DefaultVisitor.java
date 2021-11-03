@@ -1,15 +1,13 @@
 package kamilalisp.reader;
 
-import kamilalisp.data.Atom;
-import kamilalisp.data.Closure;
-import kamilalisp.data.Executor;
-import kamilalisp.data.StringConstant;
+import kamilalisp.data.*;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DefaultVisitor extends AbstractParseTreeVisitor<Atom> implements GrammarVisitor<Atom> {
     @Override
@@ -26,6 +24,11 @@ public class DefaultVisitor extends AbstractParseTreeVisitor<Atom> implements Gr
     @Override
     public Atom visitForms(GrammarParser.FormsContext ctx) {
         return null;
+    }
+
+    @Override
+    public Atom visitAny_list(GrammarParser.Any_listContext ctx) {
+        return visitChildren(ctx);
     }
 
     @Override
@@ -53,6 +56,30 @@ public class DefaultVisitor extends AbstractParseTreeVisitor<Atom> implements Gr
     @Override
     public Atom visitQuote(GrammarParser.QuoteContext ctx) {
         return new Atom(List.of(new Atom("quote"), visit(ctx.form())));
+    }
+
+    @Override
+    public Atom visitFork(GrammarParser.ForkContext ctx) {
+        List<Atom> tmp = visit(ctx.any_list()).getList().get();
+        if(tmp.size() < 2)
+            throw new RuntimeException("a fork can't be created out of less than two functions.");
+        return new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                // #(f g h) <=> (f (g ...) (h ...))
+                // #(f g) <=> (f (g ...))
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom first = env.evaluate(tmp.get(0));
+                    first.guardType("fork head", Type.CLOSURE, Type.MACRO);
+                    List<Atom> forkData = tmp.subList(1, tmp.size()).stream().map(x -> {
+                        Atom a = env.evaluate(x);
+                        a.guardType("fork child", Type.CLOSURE, Type.MACRO);
+                        return a.getCallable().get().apply(env, arguments);
+                    }).collect(Collectors.toList());
+                    return first.getCallable().get().apply(env, forkData).get().get();
+                }));
+            }
+        });
     }
 
     @Override
