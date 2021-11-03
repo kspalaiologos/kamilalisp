@@ -3,10 +3,7 @@ package kamilalisp.api;
 import kamilalisp.data.Atom;
 import kamilalisp.data.Environment;
 import kamilalisp.data.Executor;
-import kamilalisp.libs.CoreLib;
-import kamilalisp.libs.IOLib;
-import kamilalisp.libs.ListLib;
-import kamilalisp.libs.MathLib;
+import kamilalisp.libs.*;
 import kamilalisp.reader.DefaultVisitor;
 import kamilalisp.reader.GrammarLexer;
 import kamilalisp.reader.GrammarParser;
@@ -58,6 +55,7 @@ public class Evaluation {
         MathLib.install(globEnv);
         CoreLib.install(globEnv);
         ListLib.install(globEnv);
+        FoldLib.install(globEnv);
         globEnv.owner = null;
         return globEnv;
     }
