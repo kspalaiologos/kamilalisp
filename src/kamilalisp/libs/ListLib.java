@@ -20,7 +20,7 @@ public class ListLib {
                 return result;
             }
 
-            protected <T> List<List<T>> cartesianProduct(List<List<T>> lists) {
+            private <T> List<List<T>> cartesianProduct(List<List<T>> lists) {
                 List<List<T>> resultLists = new ArrayList<List<T>>();
                 if (lists.size() == 0) {
                     resultLists.add(new ArrayList<T>());
@@ -203,7 +203,7 @@ public class ListLib {
                 if(arguments.size() != 3)
                     throw new Error("Invalid invocation to 'foldl'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'foldl'", Type.CLOSURE);
+                    arguments.get(0).guardType("First argument to 'foldl'", Type.CLOSURE, Type.MACRO);
                     arguments.get(2).guardType("Third argument to 'foldl'", Type.LIST);
                     List<Atom> data = arguments.get(2).getList().get();
                     Atom acc = arguments.get(1);
@@ -211,7 +211,7 @@ public class ListLib {
                         return acc.get().get();
                     else {
                         return Stream.concat(Stream.of(acc), data.stream()).reduce((x, y) ->
-                                arguments.get(0).getClosure().get().apply(env, Arrays.asList(x, y))
+                                arguments.get(0).getCallable().get().apply(env, Arrays.asList(x, y))
                         ).get().get().get();
                     }
                 }));
@@ -224,7 +224,7 @@ public class ListLib {
                 if(arguments.size() != 3)
                     throw new Error("Invalid invocation to 'foldr'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'foldr'", Type.CLOSURE);
+                    arguments.get(0).guardType("First argument to 'foldr'", Type.CLOSURE, Type.MACRO);
                     arguments.get(2).guardType("Third argument to 'foldr'", Type.LIST);
                     List<Atom> data = arguments.get(2).getList().get();
                     Atom acc = arguments.get(1);
@@ -232,7 +232,7 @@ public class ListLib {
                         return acc.get().get();
                     else {
                         return Stream.concat(Stream.of(acc), Lists.reverse(data).stream()).reduce((x, y) ->
-                                arguments.get(0).getClosure().get().apply(env, Arrays.asList(y, x))
+                                arguments.get(0).getCallable().get().apply(env, Arrays.asList(y, x))
                         ).get().get().get();
                     }
                 }));
@@ -245,7 +245,7 @@ public class ListLib {
                 if(arguments.size() != 3)
                     throw new Error("Invalid invocation to 'foldl''.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'foldl''", Type.CLOSURE);
+                    arguments.get(0).guardType("First argument to 'foldl''", Type.CLOSURE, Type.MACRO);
                     arguments.get(2).guardType("Third argument to 'foldl''", Type.LIST);
                     List<Atom> data = arguments.get(2).getList().get();
                     Atom acc = arguments.get(1);
@@ -253,7 +253,7 @@ public class ListLib {
                         return acc.get().get();
                     else {
                         return Stream.concat(Stream.of(acc), data.stream()).reduce((x, y) ->
-                                arguments.get(0).getClosure().get().apply(env, Arrays.asList(x.eager(), y.eager())).eager()
+                                arguments.get(0).getCallable().get().apply(env, Arrays.asList(x.eager(), y.eager())).eager()
                         ).get().get().get();
                     }
                 }));
@@ -266,7 +266,7 @@ public class ListLib {
                 if(arguments.size() != 3)
                     throw new Error("Invalid invocation to 'foldr''.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'foldr''", Type.CLOSURE);
+                    arguments.get(0).guardType("First argument to 'foldr''", Type.CLOSURE, Type.MACRO);
                     arguments.get(2).guardType("Third argument to 'foldr''", Type.LIST);
                     List<Atom> data = arguments.get(2).getList().get();
                     Atom acc = arguments.get(1);
@@ -274,7 +274,7 @@ public class ListLib {
                         return acc.get().get();
                     else {
                         return Stream.concat(Stream.of(acc), Lists.reverse(data).stream()).reduce((x, y) ->
-                                arguments.get(0).getClosure().get().apply(env, Arrays.asList(y.eager(), x.eager())).eager()
+                                arguments.get(0).getCallable().get().apply(env, Arrays.asList(y.eager(), x.eager())).eager()
                         ).get().get().get();
                     }
                 }));
@@ -287,10 +287,10 @@ public class ListLib {
                 if(arguments.size() != 2)
                     throw new Error("Invalid invocation to 'any'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'any'", Type.CLOSURE);
+                    arguments.get(0).guardType("First argument to 'any'", Type.CLOSURE, Type.MACRO);
                     arguments.get(1).guardType("Second argument to 'any'", Type.LIST);
                     return arguments.get(1).getList().get().stream().anyMatch(x ->
-                            arguments.get(0).getClosure().get().apply(env, Collections.singletonList(x)).coerceBool()
+                            arguments.get(0).getCallable().get().apply(env, Collections.singletonList(x)).coerceBool()
                     ) ? BigDecimal.ONE : BigDecimal.ZERO;
                 }));
             }
@@ -401,8 +401,8 @@ public class ListLib {
                     if(arguments.size() == 1 && arguments.get(0).getType() == Type.LIST) {
                         List<Atom> l = arguments.get(0).getList().get();
                         return l.stream().sorted(new AtomComparator()).collect(Collectors.toList());
-                    } else if(arguments.size() == 2 && arguments.get(0).getType() == Type.CLOSURE && arguments.get(1).getType() == Type.LIST) {
-                        Closure c = arguments.get(0).getClosure().get();
+                    } else if(arguments.size() == 2 && arguments.get(0).isCallable() && arguments.get(1).getType() == Type.LIST) {
+                        Callable c = arguments.get(0).getCallable().get();
                         List<Atom> l = arguments.get(1).getList().get();
                         return l.stream().sorted(new Comparator<Atom>() {
                             @Override
@@ -432,8 +432,8 @@ public class ListLib {
                                 return new AtomComparator().compare(l.get(o1), l.get(o2));
                             }
                         }).map(x -> new Atom(BigDecimal.valueOf(x))).collect(Collectors.toList());
-                    } else if(arguments.size() == 2 && arguments.get(0).getType() == Type.CLOSURE && arguments.get(1).getType() == Type.LIST) {
-                        Closure c = arguments.get(0).getClosure().get();
+                    } else if(arguments.size() == 2 && arguments.get(0).isCallable() && arguments.get(1).getType() == Type.LIST) {
+                        Callable c = arguments.get(0).getCallable().get();
                         List<Atom> l = arguments.get(1).getList().get();
                         return IntStream.range(0, l.size()).boxed().sorted(new Comparator<Integer>() {
                             @Override
@@ -463,8 +463,8 @@ public class ListLib {
                                 return new AtomComparator().compare(l.get(o2), l.get(o1));
                             }
                         }).map(x -> new Atom(BigDecimal.valueOf(x))).collect(Collectors.toList());
-                    } else if(arguments.size() == 2 && arguments.get(0).getType() == Type.CLOSURE && arguments.get(1).getType() == Type.LIST) {
-                        Closure c = arguments.get(0).getClosure().get();
+                    } else if(arguments.size() == 2 && arguments.get(0).isCallable() && arguments.get(1).getType() == Type.LIST) {
+                        Callable c = arguments.get(0).getCallable().get();
                         List<Atom> l = arguments.get(1).getList().get();
                         return IntStream.range(0, l.size()).boxed().sorted(new Comparator<Integer>() {
                             @Override
@@ -504,13 +504,13 @@ public class ListLib {
                 if(arguments.size() != 3)
                     throw new Error("Invalid invocation to 'at'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'at'", Type.CLOSURE);
-                    arguments.get(1).guardType("Second argument to 'at'", Type.LIST, Type.CLOSURE);
+                    arguments.get(0).guardType("First argument to 'at'", Type.CLOSURE, Type.MACRO);
+                    arguments.get(1).guardType("Second argument to 'at'", Type.LIST, Type.CLOSURE, Type.MACRO);
                     arguments.get(2).guardType("Third argument to 'at'", Type.LIST);
-                    Closure proc = arguments.get(0).getClosure().get();
+                    Callable proc = arguments.get(0).getCallable().get();
 
-                    if(arguments.get(1).getType() == Type.CLOSURE) {
-                        Closure cond = arguments.get(1).getClosure().get();
+                    if(arguments.get(1).isCallable()) {
+                        Callable cond = arguments.get(1).getCallable().get();
                         List<Atom> l = arguments.get(2).getList().get();
                         List<Atom> rightSpots = l.stream().map(x -> cond.apply(env, List.of(x))).collect(Collectors.toList());
                         return Streams.zip(l.stream(), rightSpots.stream(), (x, y) -> {
@@ -690,7 +690,7 @@ public class ListLib {
                 if(arguments.size() != 3)
                     throw new Error("Invalid invocation to 'scanl'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'scanl'", Type.CLOSURE);
+                    arguments.get(0).guardType("First argument to 'scanl'", Type.CLOSURE, Type.MACRO);
                     arguments.get(2).guardType("Third argument to 'scanl'", Type.LIST);
                     List<Atom> data = arguments.get(2).getList().get();
                     Atom acc = arguments.get(1);
@@ -700,7 +700,7 @@ public class ListLib {
                         return acc.get().get();
                     else {
                         Stream.concat(Stream.of(acc), data.stream()).reduce((x, y) -> {
-                            Atom a = arguments.get(0).getClosure().get().apply(env, Arrays.asList(x, y));
+                            Atom a = arguments.get(0).getCallable().get().apply(env, Arrays.asList(x, y));
                             result.add(a);
                             return a;
                         }).get().get().get();
@@ -716,7 +716,7 @@ public class ListLib {
                 if(arguments.size() != 3)
                     throw new Error("Invalid invocation to 'scanr'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'scanr'", Type.CLOSURE);
+                    arguments.get(0).guardType("First argument to 'scanr'", Type.CLOSURE, Type.MACRO);
                     arguments.get(2).guardType("Third argument to 'scanr'", Type.LIST);
                     List<Atom> data = arguments.get(2).getList().get();
                     Atom acc = arguments.get(1);
@@ -726,7 +726,7 @@ public class ListLib {
                         return acc.get().get();
                     else {
                         Stream.concat(Stream.of(acc), Lists.reverse(data).stream()).reduce((x, y) -> {
-                            Atom a = arguments.get(0).getClosure().get().apply(env, Arrays.asList(y, x));
+                            Atom a = arguments.get(0).getCallable().get().apply(env, Arrays.asList(y, x));
                             result.add(a);
                             return a;
                         }).get().get().get();
@@ -742,7 +742,7 @@ public class ListLib {
                 if(arguments.size() != 3)
                     throw new Error("Invalid invocation to 'scanl''.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'scanl''", Type.CLOSURE);
+                    arguments.get(0).guardType("First argument to 'scanl''", Type.CLOSURE, Type.MACRO);
                     arguments.get(2).guardType("Third argument to 'scanl''", Type.LIST);
                     List<Atom> data = arguments.get(2).getList().get();
                     Atom acc = arguments.get(1);
@@ -752,7 +752,7 @@ public class ListLib {
                         return acc.get().get();
                     else {
                         Stream.concat(Stream.of(acc), data.stream()).reduce((x, y) -> {
-                            Atom a = arguments.get(0).getClosure().get().apply(env, Arrays.asList(x.eager(), y.eager())).eager();
+                            Atom a = arguments.get(0).getCallable().get().apply(env, Arrays.asList(x.eager(), y.eager())).eager();
                             result.add(a);
                             return a;
                         }).get().get().get();
@@ -768,7 +768,7 @@ public class ListLib {
                 if(arguments.size() != 3)
                     throw new Error("Invalid invocation to 'scanr''.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'scanr''", Type.CLOSURE);
+                    arguments.get(0).guardType("First argument to 'scanr''", Type.CLOSURE, Type.MACRO);
                     arguments.get(2).guardType("Third argument to 'scanr''", Type.LIST);
                     List<Atom> data = arguments.get(2).getList().get();
                     Atom acc = arguments.get(1);
@@ -778,7 +778,7 @@ public class ListLib {
                         return acc.get().get();
                     else {
                         Stream.concat(Stream.of(acc), Lists.reverse(data).stream()).reduce((x, y) -> {
-                            Atom a = arguments.get(0).getClosure().get().apply(env, Arrays.asList(y.eager(), x.eager())).eager();
+                            Atom a = arguments.get(0).getCallable().get().apply(env, Arrays.asList(y.eager(), x.eager())).eager();
                             result.add(a);
                             return a;
                         }).get().get().get();

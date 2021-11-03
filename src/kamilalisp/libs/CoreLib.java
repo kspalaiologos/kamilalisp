@@ -7,6 +7,7 @@ import kamilalisp.data.*;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -183,11 +184,11 @@ public class CoreLib {
                 if(arguments.size() != 2)
                     throw new Error("Invalid invocation to 'map'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'map'", Type.CLOSURE);
+                    arguments.get(0).guardType("First argument to 'map'", Type.CLOSURE, Type.MACRO);
                     arguments.get(1).guardType("Second argument to 'map'", Type.LIST);
                     return arguments.get(1).getList().get().stream().map(x ->
                             new Atom(new LbcSupplier<>(() ->
-                                    arguments.get(0).getClosure().get().apply(env, Collections.singletonList(x))
+                                    arguments.get(0).getCallable().get().apply(env, Collections.singletonList(x))
                             ))
                     ).collect(Collectors.toList());
                 }));
@@ -200,10 +201,10 @@ public class CoreLib {
                 if(arguments.size() != 2)
                     throw new Error("Invalid invocation to 'filter'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'filter'", Type.CLOSURE);
+                    arguments.get(0).guardType("First argument to 'filter'", Type.CLOSURE, Type.MACRO);
                     arguments.get(1).guardType("Second argument to 'filter'", Type.LIST);
                     return arguments.get(1).getList().get().stream().filter(x ->
-                            arguments.get(0).getClosure().get().apply(env, Collections.singletonList(x)).coerceBool()
+                            arguments.get(0).getCallable().get().apply(env, Collections.singletonList(x)).coerceBool()
                     ).collect(Collectors.toList());
                 }));
             }
@@ -215,10 +216,10 @@ public class CoreLib {
                 if(arguments.size() != 2)
                     throw new Error("Invalid invocation to 'count'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'count'", Type.CLOSURE);
+                    arguments.get(0).guardType("First argument to 'count'", Type.CLOSURE, Type.MACRO);
                     arguments.get(1).guardType("Second argument to 'count'", Type.LIST);
                     return new BigDecimal(arguments.get(1).getList().get().stream().filter(x ->
-                            arguments.get(0).getClosure().get().apply(env, Collections.singletonList(x)).coerceBool()
+                            arguments.get(0).getCallable().get().apply(env, Collections.singletonList(x)).coerceBool()
                     ).count());
                 }));
             }
@@ -230,12 +231,12 @@ public class CoreLib {
                 if(arguments.size() != 3)
                     throw new Error("Invalid invocation to 'zip-with'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'zip-with'", Type.CLOSURE);
+                    arguments.get(0).guardType("First argument to 'zip-with'", Type.CLOSURE, Type.MACRO);
                     arguments.get(1).guardType("Second argument to 'zip-with'", Type.LIST);
                     arguments.get(2).guardType("Second argument to 'zip-with'", Type.LIST);
                     List<Atom> a = arguments.get(1).getList().get();
                     List<Atom> b = arguments.get(2).getList().get();
-                    return Streams.zip(a.stream(), b.stream(), (x, y) -> arguments.get(0).getClosure().get().apply(env, Arrays.asList(x, y))).collect(Collectors.toList());
+                    return Streams.zip(a.stream(), b.stream(), (x, y) -> arguments.get(0).getCallable().get().apply(env, Arrays.asList(x, y))).collect(Collectors.toList());
                 }));
             }
         }));
@@ -325,8 +326,8 @@ public class CoreLib {
                 return new Atom(new LbcSupplier<>(() -> {
                     arguments.get(1).guardType("Argument to 'every'.", Type.LIST);
                     List<Atom> l = arguments.get(1).getList().get();
-                    arguments.get(0).guardType("Argument to 'every'.", Type.CLOSURE);
-                    Closure c = arguments.get(0).getClosure().get();
+                    arguments.get(0).guardType("Argument to 'every'.", Type.CLOSURE, Type.MACRO);
+                    Callable c = arguments.get(0).getCallable().get();
                     for (int i = 0; i < l.size(); i++) {
                         if(!c.apply(env, Arrays.asList(l.get(i))).coerceBool())
                             return BigDecimal.ZERO;
@@ -359,8 +360,8 @@ public class CoreLib {
                 return new Atom(new LbcSupplier<>(() -> {
                     arguments.get(1).guardType("Argument to 'flat-map'.", Type.LIST);
                     List<Atom> l = arguments.get(1).getList().get();
-                    arguments.get(0).guardType("Argument to 'flat-map'.", Type.CLOSURE);
-                    Closure c = arguments.get(0).getClosure().get();
+                    arguments.get(0).guardType("Argument to 'flat-map'.", Type.CLOSURE, Type.MACRO);
+                    Callable c = arguments.get(0).getCallable().get();
                     return flat(l.stream().map(x -> c.apply(env, List.of(x))).map(x -> x.getType() == Type.LIST ? x.getList().get() : List.of(x)).collect(Collectors.toList()));
                 }));
             }
@@ -399,8 +400,8 @@ public class CoreLib {
                 if(arguments.size() < 2)
                     throw new Error("Invalid invocation to 'commute'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("Argument to 'commute'.", Type.CLOSURE);
-                    Closure c = arguments.get(0).getClosure().get();
+                    arguments.get(0).guardType("Argument to 'commute'.", Type.CLOSURE, Type.MACRO);
+                    Callable c = arguments.get(0).getCallable().get();
                     return c.apply(env, Lists.reverse(arguments.subList(1, arguments.size()))).get().get();
                 }));
             }
@@ -412,9 +413,9 @@ public class CoreLib {
                 if(arguments.size() < 2)
                     throw new Error("Invalid invocation to 'lift'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("Argument to 'lift'.", Type.CLOSURE);
+                    arguments.get(0).guardType("Argument to 'lift'.", Type.CLOSURE, Type.MACRO);
                     arguments.get(1).guardType("Argument to 'lift'.", Type.LIST);
-                    Closure c = arguments.get(0).getClosure().get();
+                    Callable c = arguments.get(0).getCallable().get();
                     List<Atom> l = arguments.get(1).getList().get();
                     return c.apply(env, l);
                 }));
@@ -427,8 +428,8 @@ public class CoreLib {
                 if(arguments.size() < 3)
                     throw new Error("Invalid invocation to 'iterate'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("Argument to 'iterate'.", Type.CLOSURE);
-                    Closure c = arguments.get(0).getClosure().get();
+                    arguments.get(0).guardType("Argument to 'iterate'.", Type.CLOSURE, Type.MACRO);
+                    Callable c = arguments.get(0).getCallable().get();
                     LinkedList<Atom> rest = new LinkedList<>(arguments.subList(3, arguments.size()));
                     rest.addFirst(arguments.get(2));
 
@@ -436,8 +437,8 @@ public class CoreLib {
                         int n = arguments.get(1).getNumber().get().intValue();
                         for (int i = 0; i < n; i++)
                             rest.set(0, c.apply(env, rest));
-                    } else if(arguments.get(1).getType() == Type.CLOSURE) {
-                        Closure f = arguments.get(1).getClosure().get();
+                    } else if(arguments.get(1).isCallable()) {
+                        Callable f = arguments.get(1).getCallable().get();
                         while(f.apply(env, List.of(rest.get(0))).coerceBool())
                             rest.set(0, c.apply(env, rest));
                     }
@@ -453,8 +454,8 @@ public class CoreLib {
                 if(arguments.size() < 3)
                     throw new Error("Invalid invocation to 'scanterate'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("Argument to 'scanterate'.", Type.CLOSURE);
-                    Closure c = arguments.get(0).getClosure().get();
+                    arguments.get(0).guardType("Argument to 'scanterate'.", Type.CLOSURE, Type.MACRO);
+                    Callable c = arguments.get(0).getCallable().get();
                     LinkedList<Atom> rest = new LinkedList<>(arguments.subList(3, arguments.size()));
                     rest.addFirst(arguments.get(2));
                     List<Atom> result = new LinkedList<>();
@@ -463,8 +464,8 @@ public class CoreLib {
                         int n = arguments.get(1).getNumber().get().intValue();
                         for (int i = 0; i < n; i++)
                             result.add(rest.set(0, c.apply(env, rest)));
-                    } else if(arguments.get(1).getType() == Type.CLOSURE) {
-                        Closure f = arguments.get(1).getClosure().get();
+                    } else if(arguments.get(1).isCallable()) {
+                        Callable f = arguments.get(1).getCallable().get();
                         while(f.apply(env, List.of(rest.get(0))).coerceBool())
                             result.add(rest.set(0, c.apply(env, rest)));
                     }
@@ -472,6 +473,40 @@ public class CoreLib {
                     result.add(rest.get(0));
 
                     return result;
+                }));
+            }
+        }));
+
+        env.push("bind", new Atom(new Macro() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() < 2)
+                    throw new Error("Invalid invocation to 'bind'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom arg0 = env.evaluate(arguments.get(0));
+                    arg0.guardType("First argument to 'bind'.", Type.CLOSURE, Type.MACRO);
+                    Callable c = arg0.getCallable().get();
+                    List<Atom> rest = arguments.subList(1, arguments.size());
+                    return new Closure() {
+                        @Override
+                        public Atom apply(Executor innerEnv, List<Atom> args) {
+                            return new Atom(new LbcSupplier<>(() -> {
+                                AtomicReference<Integer> consumed = new AtomicReference<>(0);
+                                List<Atom> data = rest.stream().map(x -> {
+                                    if(x.getType() == Type.STRING && x.getString().get().equals("_")) {
+                                        // handle placeholder.
+                                        if(consumed.get() >= args.size())
+                                            throw new Error("Too few arguments to partially applied function. Stopped on " + consumed.get() + " placeholder.");
+                                        return args.get(consumed.getAndSet(consumed.get() + 1));
+                                    } else {
+                                        return env.evaluate(x);
+                                    }
+                                }).collect(Collectors.toList());
+                                data.addAll(args.subList(consumed.get(), args.size()));
+                                return c.apply(env, data).get().get();
+                            }));
+                        }
+                    };
                 }));
             }
         }));

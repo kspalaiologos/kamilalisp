@@ -82,4 +82,19 @@ public class HigherOrder {
     public void testScanrOrdered() {
         assertTrue(Evaluation.evalString("(scanr - 0 '(1 2 3))").get(0).getList().get().equals(List.of(new Atom(BigDecimal.valueOf(2)), new Atom(BigDecimal.valueOf(-1)), new Atom(BigDecimal.valueOf(3)), new Atom(BigDecimal.valueOf(0)))));
     }
+
+    @Test
+    public void testBindBasic() {
+        assertTrue(Evaluation.evalString("([+ bind 2] 5)").get(0).getNumber().get().equals(BigDecimal.valueOf(7)));
+    }
+
+    @Test
+    public void testBindBasicPlaceholder() {
+        assertTrue(Evaluation.evalString("([+ bind _] 5 2)").get(0).getNumber().get().equals(BigDecimal.valueOf(7)));
+    }
+
+    @Test
+    public void testMultibind() {
+        assertTrue(Evaluation.evalString("([[if bind [0 /= 0]] bind 1] 12)").get(0).getNumber().get().equals(BigDecimal.valueOf(12)));
+    }
 }

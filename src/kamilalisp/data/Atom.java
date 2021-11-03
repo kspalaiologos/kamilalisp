@@ -24,6 +24,7 @@ public class Atom {
     public LbcSupplier<StringConstant> getStringConstant() { assert getType() == Type.STRING_CONSTANT; return (LbcSupplier<StringConstant>) content; }
     public LbcSupplier<List<Atom>> getList() { assert getType() == Type.LIST; return (LbcSupplier<List<Atom>>) content; }
     public LbcSupplier<Closure> getClosure() { assert getType() == Type.CLOSURE; return (LbcSupplier<Closure>) content; }
+    public LbcSupplier<Callable> getCallable() { assert isCallable(); return (LbcSupplier<Callable>) content; }
     public LbcSupplier<Macro> getMacro() { assert getType() == Type.MACRO; return (LbcSupplier<Macro>) content; }
     public LbcSupplier<?> get() { return content; }
     public Type getType() {
@@ -56,6 +57,10 @@ public class Atom {
     private Type type;
 
     public static Atom NULL = new Atom();
+
+    public boolean isCallable() {
+        return getType() == Type.CLOSURE || getType() == Type.MACRO;
+    }
 
     @Override
     public String toString() {
