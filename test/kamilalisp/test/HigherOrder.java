@@ -62,4 +62,24 @@ public class HigherOrder {
     public void testCommute() {
         assertTrue(Evaluation.evalString("(commute tie 1 2 3)").get(0).getList().get().equals(List.of(new Atom(new BigDecimal(3)), new Atom(new BigDecimal(2)), new Atom(new BigDecimal(1)))));
     }
+
+    @Test
+    public void testScanl() {
+        assertTrue(Evaluation.evalString("(scanl + 0 '(1 2 3))").get(0).getList().get().equals(List.of(new Atom(BigDecimal.ZERO), new Atom(BigDecimal.ONE), new Atom(BigDecimal.valueOf(3)), new Atom(BigDecimal.valueOf(6)))));
+    }
+
+    @Test
+    public void testScanlOrdered() {
+        assertTrue(Evaluation.evalString("(scanl - 0 '(1 2 3))").get(0).getList().get().equals(List.of(new Atom(BigDecimal.ZERO), new Atom(BigDecimal.valueOf(-1)), new Atom(BigDecimal.valueOf(-3)), new Atom(BigDecimal.valueOf(-6)))));
+    }
+
+    @Test
+    public void testScanr() {
+        assertTrue(Evaluation.evalString("(scanr + 0 '(1 2 3))").get(0).getList().get().equals(List.of(new Atom(BigDecimal.valueOf(6)), new Atom(BigDecimal.valueOf(5)), new Atom(BigDecimal.valueOf(3)), new Atom(BigDecimal.valueOf(0)))));
+    }
+
+    @Test
+    public void testScanrOrdered() {
+        assertTrue(Evaluation.evalString("(scanr - 0 '(1 2 3))").get(0).getList().get().equals(List.of(new Atom(BigDecimal.valueOf(2)), new Atom(BigDecimal.valueOf(-1)), new Atom(BigDecimal.valueOf(3)), new Atom(BigDecimal.valueOf(0)))));
+    }
 }
