@@ -591,5 +591,35 @@ public class ListLib {
                 }));
             }
         }));
+
+        env.push("replicate", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'replicate'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    if(arguments.get(0).getType() == Type.NUMBER) {
+                        if (arguments.get(1).getType() != Type.LIST) {
+                            return Collections.nCopies(arguments.get(0).getNumber().get().intValue(), arguments.get(1));
+                        } else {
+                            return arguments.get(1).getList().get().stream().map(x -> {
+                                return Collections.nCopies(arguments.get(0).getNumber().get().intValue(), x);
+                            }).flatMap(Collection::stream).collect(Collectors.toList());
+                        }
+                    } else if(arguments.get(0).getType() == Type.LIST) {
+                        List<Integer> l1 = arguments.get(0).getList().get().stream().map(x -> {
+                            x.guardType("'replicate' argument list contents", Type.NUMBER);
+                            return x.getNumber().get().intValue();
+                        }).collect(Collectors.toList());
+                        List<Atom> l2 = arguments.get(1).getList().get();
+                        if(l1.size() != l2.size())
+                            throw new Error("'replicate' expects two lists of the same size.");
+                        return Streams.zip(l1.stream(), l2.stream(), (x, y) -> Collections.nCopies(x, y)).flatMap(Collection::stream).collect(Collectors.toList());
+                    } else {
+                        throw new Error("'replicate' expects a number or list as it's first argument.");
+                    }
+                }));
+            }
+        }));
     }
 }

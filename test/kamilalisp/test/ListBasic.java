@@ -309,4 +309,30 @@ public class ListBasic {
                 new Atom(BigDecimal.valueOf(2))
         )));
     }
+
+    @Test
+    void testReplicate() {
+        assertTrue(Evaluation.evalString("(replicate 3 'a)").get(0).getList().get().equals(List.of(
+                new Atom("a"),
+                new Atom("a"),
+                new Atom("a")
+        )));
+
+        assertTrue(Evaluation.evalString("(replicate 0 'a)").get(0).getList().get().equals(List.of()));
+
+        assertTrue(Evaluation.evalString("(replicate 3 '(1 2))").get(0).getList().get().equals(List.of(
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("2")),
+                new Atom(new BigDecimal("2")),
+                new Atom(new BigDecimal("2"))
+        )));
+
+        assertTrue(Evaluation.evalString("(replicate '(1 0 1 0 1 0) (iota 6))").get(0).getList().get().equals(List.of(
+                new Atom(new BigDecimal("0")),
+                new Atom(new BigDecimal("2")),
+                new Atom(new BigDecimal("4"))
+        )));
+    }
 }
