@@ -66,7 +66,10 @@ public class Atom {
             case NUMBER: return getNumber().get().toPlainString();
             case STRING: return getString().get();
             case LIST:
-                return "(" + getList().get().stream().map(x -> x.toString()).collect(Collectors.joining(" ")) + ")";
+                if(getList().get().size() > 0)
+                    return "(" + getList().get().stream().map(x -> x.toString()).collect(Collectors.joining(" ")) + ")";
+                else
+                    return "nil";
         }
 
         return "??";
