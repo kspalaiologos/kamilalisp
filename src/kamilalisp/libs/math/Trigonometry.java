@@ -166,5 +166,44 @@ public class Trigonometry {
                 }));
             }
         }));
+
+        env.push("sinh", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'sinh'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'sinh'", Type.NUMBER);
+                    return BigDecimalMath.sinh(a.getNumber().get(), MathContext.DECIMAL128);
+                }));
+            }
+        }));
+
+        env.push("cosh", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'cosh'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'cosh'", Type.NUMBER);
+                    return BigDecimalMath.cosh(a.getNumber().get(), MathContext.DECIMAL128);
+                }));
+            }
+        }));
+
+        env.push("tanh", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'tanh'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'tanh'", Type.NUMBER);
+                    return BigDecimalMath.tanh(a.getNumber().get(), MathContext.DECIMAL128);
+                }));
+            }
+        }));
     }
 }
