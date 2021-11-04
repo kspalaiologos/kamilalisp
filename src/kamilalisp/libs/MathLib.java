@@ -593,5 +593,18 @@ public class MathLib {
                 }));
             }
         }));
+
+        env.push("!", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to '!'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to '!'", Type.NUMBER);
+                    return BigDecimalMath.factorial(a.getNumber().get(), MathContext.DECIMAL128);
+                }));
+            }
+        }));
     }
 }

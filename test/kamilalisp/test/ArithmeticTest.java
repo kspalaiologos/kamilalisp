@@ -183,4 +183,11 @@ class ArithmeticTest {
     void testApproxEq() {
         assertEquals(Evaluation.evalString("(approx-eq 0.1 0.11 0.1)").get(0).getNumber().get(), BigDecimal.valueOf(1));
     }
+
+    @Test
+    void testFactorial() {
+        assertEquals(Evaluation.evalString("(! 5)").get(0).getNumber().get(), BigDecimal.valueOf(120));
+        assertEquals(Evaluation.evalString("(! 0)").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("(! 1)").get(0).getNumber().get(), BigDecimal.valueOf(1));
+    }
 }
