@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class CoreLib {
@@ -559,6 +560,25 @@ public class CoreLib {
                             return new Atom(new BigDecimal(randomNumber));
                         }).collect(Collectors.toList());
                     }));
+            }
+        }));
+
+        env.push("rng-deal", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                return new Atom(new LbcSupplier<>(() -> {
+                    Random r = new Random();
+                    arguments.get(0).guardType("First argument to 'rng-deal'.", Type.NUMBER);
+                    arguments.get(1).guardType("Second argument to 'rng-deal'.", Type.NUMBER);
+                    BigInteger cap = arguments.get(1).getNumber().get().toBigInteger();
+                    return IntStream.range(0, arguments.get(0).getNumber().get().toBigInteger().intValue()).mapToObj(i -> {
+                        BigInteger randomNumber;
+                        do {
+                            randomNumber = new BigInteger(cap.bitLength(), r);
+                        } while (randomNumber.compareTo(cap) >= 0);
+                        return new Atom(new BigDecimal(randomNumber));
+                    }).collect(Collectors.toList());
+                }));
             }
         }));
     }
