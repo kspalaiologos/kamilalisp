@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ArithmeticTest {
     @Test
@@ -153,5 +152,30 @@ class ArithmeticTest {
         assertTrue(Evaluation.evalString("(sort '((2 2 3) (1 2 3 4)))").get(0).getList().get().get(0).getList().get().get(0).getNumber().get().equals(BigDecimal.valueOf(2)));
         assertTrue(Evaluation.evalString("(sort '((2 2 3) (1 2 3 4)))").get(0).getList().get().get(0).getList().get().get(1).getNumber().get().equals(BigDecimal.valueOf(2)));
         assertTrue(Evaluation.evalString("(sort '((2 2 3) (1 2 3 4)))").get(0).getList().get().get(0).getList().get().get(2).getNumber().get().equals(BigDecimal.valueOf(3)));
+    }
+
+    @Test
+    void testSinCos() {
+        assertTrue(Evaluation.evalString("(sin 0)").get(0).getNumber().get().equals(BigDecimal.valueOf(0)));
+        assertEquals(Evaluation.evalString("[(- (sin (rad 90)) 1) < 0.00000001]").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("[(cos (rad 90)) < 0.00000001]").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("[(sin (rad 180)) < 0.00000001]").get(0).getNumber().get(), BigDecimal.valueOf(1));
+    }
+
+    @Test
+    void testTanSec() {
+        assertEquals(Evaluation.evalString("[(- (tan (rad 45)) 1.61) < 0.1]").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("[(tan (rad 90)) < 0.00000001]").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("[(tan (rad 135)) < 0.00000001]").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("[(tan (rad 180)) < 0.00000001]").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("[(- (tan (rad 45)) 1) < 0.00000001]").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("[(- (sec (rad 45)) 1.41) < 0.1]").get(0).getNumber().get(), BigDecimal.valueOf(1));
+    }
+
+    @Test
+    void testDeg() {
+        assertEquals(Evaluation.evalString("[[(deg (rad 180)) - 180] < 0.01]").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("[[(deg (rad 90)) - 90] < 0.01]").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("[[(deg (rad 123)) - 123] < 0.01]").get(0).getNumber().get(), BigDecimal.valueOf(1));
     }
 }
