@@ -180,6 +180,32 @@ public class Trigonometry {
             }
         }));
 
+        env.push("arcsec", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'arcsec'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'arcsec'", Type.NUMBER);
+                    return BigDecimalMath.acos(BigDecimal.ONE.divide(a.getNumber().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                }));
+            }
+        }));
+
+        env.push("arccsec", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'arccsec'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'arccsec'", Type.NUMBER);
+                    return BigDecimalMath.asin(BigDecimal.ONE.divide(a.getNumber().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                }));
+            }
+        }));
+
         env.push("sinh", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
