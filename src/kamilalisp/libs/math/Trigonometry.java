@@ -257,5 +257,57 @@ public class Trigonometry {
                 }));
             }
         }));
+
+        env.push("arcsinh", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'arcsinh'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'arcsinh'", Type.NUMBER);
+                    return BigDecimalMath.asinh(a.getNumber().get(), MathContext.DECIMAL128);
+                }));
+            }
+        }));
+
+        env.push("arccosh", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'arccosh'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'arccosh'", Type.NUMBER);
+                    return BigDecimalMath.acosh(a.getNumber().get(), MathContext.DECIMAL128);
+                }));
+            }
+        }));
+
+        env.push("arctanh", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'arctanh'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'arctanh'", Type.NUMBER);
+                    return BigDecimalMath.atanh(a.getNumber().get(), MathContext.DECIMAL128);
+                }));
+            }
+        }));
+
+        env.push("arcctanh", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'arcctanh'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'arcctanh'", Type.NUMBER);
+                    return BigDecimalMath.acoth(a.getNumber().get(), MathContext.DECIMAL128);
+                }));
+            }
+        }));
     }
 }
