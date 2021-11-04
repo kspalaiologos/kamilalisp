@@ -390,4 +390,31 @@ public class ListBasic {
     void testForkAvg() {
         assertTrue(Evaluation.evalString("(#(/ [foldl bind + 0] size) '(1 2 3 4 5))").get(0).getNumber().get().equals(new BigDecimal("3")));
     }
+
+    @Test
+    void testUniqueMask() {
+        assertTrue(Evaluation.evalString("(unique-mask '(1 2 3 4 5))").get(0).getList().get().equals(List.of(
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("1"))
+        )));
+
+        assertTrue(Evaluation.evalString("(unique-mask '(1 2 3 4 1))").get(0).getList().get().equals(List.of(
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("0"))
+        )));
+
+        assertTrue(Evaluation.evalString("(unique-mask '(1 2 1 2 3))").get(0).getList().get().equals(List.of(
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("0")),
+                new Atom(new BigDecimal("0")),
+                new Atom(new BigDecimal("1"))
+        )));
+    }
 }

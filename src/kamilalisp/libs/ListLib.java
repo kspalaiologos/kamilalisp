@@ -599,5 +599,44 @@ public class ListLib {
                 }));
             }
         }));
+
+        env.push("unique-mask", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'unique-mask'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    if(a.getType() == Type.LIST) {
+                        // XXX: See `unique` implementation.
+                        List<Atom> l = new LinkedList<>(a.getList().get());
+                        for(int i = 0; i < l.size(); i++)
+                            for(int j = i + 1; j < l.size(); j++)
+                                if(l.get(i).equals(l.get(j)))
+                                    l.remove(j--);
+                        return a.getList().get().stream().map(x -> {
+                            if(l.contains(x)) {
+                                l.remove(x);
+                                return new Atom(BigDecimal.ONE);
+                            } else {
+                                return new Atom(BigDecimal.ZERO);
+                            }
+                        }).collect(Collectors.toList());
+                    } else if(a.getType() == Type.STRING_CONSTANT) {
+                        List<Integer> l = a.getStringConstant().get().get()
+                                .codePoints().distinct().boxed().collect(Collectors.toList());
+                        return a.getStringConstant().get().get().codePoints().mapToObj(x -> {
+                            if(l.contains(x)) {
+                                l.remove(x);
+                                return new Atom(BigDecimal.ONE);
+                            } else {
+                                return new Atom(BigDecimal.ZERO);
+                            }
+                        }).collect(Collectors.toList());
+                    } else
+                        throw new Error("'unique-mask' expects a list or a string.");
+                }));
+            }
+        }));
     }
 }
