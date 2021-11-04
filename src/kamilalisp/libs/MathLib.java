@@ -606,5 +606,23 @@ public class MathLib {
                 }));
             }
         }));
+
+        env.push("binomial", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'binomial'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    Atom b = arguments.get(1);
+                    a.guardType("First argument to 'binomial'", Type.NUMBER);
+                    b.guardType("Second argument to 'binomial'", Type.NUMBER);
+                    BigDecimal aBang = BigDecimalMath.factorial(a.getNumber().get(), MathContext.DECIMAL128);
+                    BigDecimal bBang = BigDecimalMath.factorial(b.getNumber().get(), MathContext.DECIMAL128);
+                    BigDecimal abBang = BigDecimalMath.factorial(a.getNumber().get().subtract(b.getNumber().get()), MathContext.DECIMAL128);
+                    return aBang.divide(bBang.multiply(abBang), MathContext.DECIMAL128);
+                }));
+            }
+        }));
     }
 }

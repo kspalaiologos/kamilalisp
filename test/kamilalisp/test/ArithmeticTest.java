@@ -190,4 +190,11 @@ class ArithmeticTest {
         assertEquals(Evaluation.evalString("(! 0)").get(0).getNumber().get(), BigDecimal.valueOf(1));
         assertEquals(Evaluation.evalString("(! 1)").get(0).getNumber().get(), BigDecimal.valueOf(1));
     }
+
+    @Test
+    void testBinomial() {
+        assertEquals(Evaluation.evalString("(binomial 5 2)").get(0).getNumber().get(), BigDecimal.valueOf(10));
+        assertEquals(Evaluation.evalString("(binomial 5 3)").get(0).getNumber().get(), BigDecimal.valueOf(10));
+        assertEquals(Evaluation.evalString("(binomial 5 4)").get(0).getNumber().get(), BigDecimal.valueOf(5));
+    }
 }
