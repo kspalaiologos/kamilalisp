@@ -155,6 +155,25 @@ public class MathLib {
             }
         }));
 
+        env.push("%", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() == 0 || arguments.size() > 2)
+                    throw new Error("Invalid % invocation.");
+                if(arguments.size() == 1) {
+                    return new Atom(new LbcSupplier<>(() -> {
+                        arguments.get(0).guardType("Argument to monadic %", Type.NUMBER);
+                        return arguments.get(0).getNumber().get().abs();
+                    }));
+                } else
+                    return new Atom(new LbcSupplier<>(() -> {
+                        arguments.get(0).guardType("Argument to dyadic %", Type.NUMBER);
+                        arguments.get(1).guardType("Argument to dyadic %", Type.NUMBER);
+                        return arguments.get(0).getNumber().get().remainder(arguments.get(1).getNumber().get());
+                    }));
+            }
+        }));
+
         env.push("gcd", new Atom(new Closure() {
             private Atom IDENTITY = new Atom(BigDecimal.ZERO);
 
@@ -539,19 +558,6 @@ public class MathLib {
                     a.guardType("First argument to 'root'", Type.NUMBER);
                     b.guardType("Second argument to 'root'", Type.NUMBER);
                     return BigDecimalMath.root(b.getNumber().get(), a.getNumber().get(), MathContext.DECIMAL128);
-                }));
-            }
-        }));
-
-        env.push("abs", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'abs'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    Atom a = arguments.get(0);
-                    a.guardType("First argument to 'abs'", Type.NUMBER);
-                    return a.getNumber().get().abs();
                 }));
             }
         }));

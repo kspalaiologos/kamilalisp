@@ -207,8 +207,15 @@ class ArithmeticTest {
 
     @Test
     void testAbs() {
-        assertEquals(Evaluation.evalString("(abs -1)").get(0).getNumber().get(), BigDecimal.valueOf(1));
-        assertEquals(Evaluation.evalString("(abs 1)").get(0).getNumber().get(), BigDecimal.valueOf(1));
-        assertEquals(Evaluation.evalString("(abs 0)").get(0).getNumber().get(), BigDecimal.valueOf(0));
+        assertEquals(Evaluation.evalString("(% -1)").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("(% 1)").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("(% 0)").get(0).getNumber().get(), BigDecimal.valueOf(0));
+    }
+
+    @Test
+    void testRemainder() {
+        assertEquals(Evaluation.evalString("(% 5 2)").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("(% 5 3)").get(0).getNumber().get(), BigDecimal.valueOf(2));
+        assertEquals(Evaluation.evalString("(% 5 4)").get(0).getNumber().get(), BigDecimal.valueOf(1));
     }
 }
