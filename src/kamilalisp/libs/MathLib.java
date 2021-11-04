@@ -542,5 +542,18 @@ public class MathLib {
                 }));
             }
         }));
+
+        env.push("abs", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'abs'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'abs'", Type.NUMBER);
+                    return a.getNumber().get().abs();
+                }));
+            }
+        }));
     }
 }

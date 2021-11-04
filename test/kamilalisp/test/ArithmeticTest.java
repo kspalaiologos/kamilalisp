@@ -204,4 +204,11 @@ class ArithmeticTest {
         assertEquals(Evaluation.evalString("[(root 3 0) approx-eq 0 0.001]").get(0).getNumber().get(), BigDecimal.valueOf(1));
         assertEquals(Evaluation.evalString("[(root 3 125) approx-eq 5 0.001]").get(0).getNumber().get(), BigDecimal.valueOf(1));
     }
+
+    @Test
+    void testAbs() {
+        assertEquals(Evaluation.evalString("(abs -1)").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("(abs 1)").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("(abs 0)").get(0).getNumber().get(), BigDecimal.valueOf(0));
+    }
 }
