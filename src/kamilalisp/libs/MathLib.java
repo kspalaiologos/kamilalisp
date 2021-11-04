@@ -4,6 +4,9 @@ import ch.obermuhlner.math.big.BigDecimalMath;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import kamilalisp.data.*;
+import kamilalisp.libs.math.Constant;
+import kamilalisp.libs.math.Logarithm;
+import kamilalisp.libs.math.Trigonometry;
 
 import java.io.StringWriter;
 import java.math.BigDecimal;
@@ -17,6 +20,10 @@ import java.util.stream.Collectors;
 
 public class MathLib {
     public static void install(Environment env) {
+        Logarithm.install(env);
+        Constant.install(env);
+        Trigonometry.install(env);
+
         env.push("+", new Atom(new Closure() {
             private Atom IDENTITY = new Atom(BigDecimal.ZERO);
 
@@ -432,110 +439,6 @@ public class MathLib {
             }
         }));
 
-        env.push("sin", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'sin'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    Atom a = arguments.get(0);
-                    a.guardType("First argument to 'sin'", Type.NUMBER);
-                    return BigDecimalMath.sin(a.getNumber().get(), MathContext.DECIMAL128);
-                }));
-            }
-        }));
-
-        env.push("csec", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'csc'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    Atom a = arguments.get(0);
-                    a.guardType("First argument to 'csc'", Type.NUMBER);
-                    return BigDecimal.valueOf(1).divide(BigDecimalMath.sin(a.getNumber().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
-                }));
-            }
-        }));
-
-        env.push("cos", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'cos'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    Atom a = arguments.get(0);
-                    a.guardType("First argument to 'cos'", Type.NUMBER);
-                    return BigDecimalMath.cos(a.getNumber().get(), MathContext.DECIMAL128);
-                }));
-            }
-        }));
-
-        env.push("sec", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'sec'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    Atom a = arguments.get(0);
-                    a.guardType("First argument to 'sec'", Type.NUMBER);
-                    return BigDecimal.valueOf(1).divide(BigDecimalMath.cos(a.getNumber().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
-                }));
-            }
-        }));
-
-        env.push("tan", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'tan'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    Atom a = arguments.get(0);
-                    a.guardType("First argument to 'tan'", Type.NUMBER);
-                    return BigDecimalMath.tan(a.getNumber().get(), MathContext.DECIMAL128);
-                }));
-            }
-        }));
-
-        env.push("ctan", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'ctan'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    Atom a = arguments.get(0);
-                    a.guardType("First argument to 'ctan'", Type.NUMBER);
-                    return BigDecimal.valueOf(1).divide(BigDecimalMath.tan(a.getNumber().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
-                }));
-            }
-        }));
-
-        env.push("rad", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'rad'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    Atom a = arguments.get(0);
-                    a.guardType("First argument to 'rad'", Type.NUMBER);
-                    return a.getNumber().get().multiply(BigDecimalMath.pi(MathContext.DECIMAL128).divide(BigDecimal.valueOf(180), MathContext.DECIMAL128));
-                }));
-            }
-        }));
-
-        env.push("deg", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'deg'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    Atom a = arguments.get(0);
-                    a.guardType("First argument to 'deg'", Type.NUMBER);
-                    return a.getNumber().get().multiply(BigDecimal.valueOf(180).divide(BigDecimalMath.pi(MathContext.DECIMAL128), MathContext.DECIMAL128));
-                }));
-            }
-        }));
-
         env.push("approx-eq", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
@@ -636,76 +539,6 @@ public class MathLib {
                     a.guardType("First argument to 'root'", Type.NUMBER);
                     b.guardType("Second argument to 'root'", Type.NUMBER);
                     return BigDecimalMath.root(b.getNumber().get(), a.getNumber().get(), MathContext.DECIMAL128);
-                }));
-            }
-        }));
-
-        env.push("pi", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() == 0)
-                    return new Atom(new LbcSupplier<>(() -> BigDecimalMath.pi(MathContext.DECIMAL128)));
-                else
-                    return new Atom(new LbcSupplier<>(() -> {
-                        arguments.get(0).guardType("Argument to 'pi'", Type.NUMBER);
-                        return BigDecimalMath.pi(new MathContext(arguments.get(0).getNumber().get().intValue()));
-                    }));
-            }
-        }));
-
-        env.push("e", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() == 0)
-                    return new Atom(new LbcSupplier<>(() -> BigDecimalMath.e(MathContext.DECIMAL128)));
-                else
-                    return new Atom(new LbcSupplier<>(() -> {
-                        arguments.get(0).guardType("Argument to 'e'", Type.NUMBER);
-                        return BigDecimalMath.e(new MathContext(arguments.get(0).getNumber().get().intValue()));
-                    }));
-            }
-        }));
-
-        env.push("log", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() == 1)
-                    return new Atom(new LbcSupplier<>(() -> {
-                        arguments.get(0).guardType("First argument to 'log'.", Type.NUMBER);
-                        return BigDecimalMath.log10(arguments.get(0).getNumber().get(), MathContext.DECIMAL128);
-                    }));
-                else if(arguments.size() == 2)
-                    return new Atom(new LbcSupplier<>(() -> {
-                        arguments.get(0).guardType("First argument to 'log'.", Type.NUMBER);
-                        arguments.get(1).guardType("Second argument to 'log'.", Type.NUMBER);
-                        return BigDecimalMath.log(arguments.get(1).getNumber().get(), MathContext.DECIMAL128)
-                                .divide(BigDecimalMath.log(arguments.get(0).getNumber().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
-                    }));
-                else
-                    throw new Error("Invalid invocation to 'log'.");
-            }
-        }));
-
-        env.push("log2", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'log2'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'log'.", Type.NUMBER);
-                    return BigDecimalMath.log2(arguments.get(0).getNumber().get(), MathContext.DECIMAL128);
-                }));
-            }
-        }));
-
-        env.push("ln", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'ln'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'ln'.", Type.NUMBER);
-                    return BigDecimalMath.log(arguments.get(0).getNumber().get(), MathContext.DECIMAL128);
                 }));
             }
         }));
