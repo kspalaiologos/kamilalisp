@@ -160,8 +160,8 @@ public class Trigonometry {
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
                     Atom b = arguments.get(1);
-                    a.guardType("First argument to 'arctan'", Type.NUMBER);
-                    b.guardType("Second argument to 'arctan'", Type.NUMBER);
+                    a.guardType("First argument to 'arctan2'", Type.NUMBER);
+                    b.guardType("Second argument to 'arctan2'", Type.NUMBER);
                     return BigDecimalMath.atan2(a.getNumber().get(), b.getNumber().get(), MathContext.DECIMAL128);
                 }));
             }
