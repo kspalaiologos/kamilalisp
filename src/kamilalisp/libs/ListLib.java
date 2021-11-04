@@ -638,5 +638,55 @@ public class ListLib {
                 }));
             }
         }));
+
+        env.push("prefixes", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'prefixes'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    if(arguments.get(0).getType() == Type.LIST) {
+                        List<Atom> l = arguments.get(0).getList().get();
+                        return IntStream.range(0, l.size()).mapToObj(i -> new Atom(l.subList(0, i + 1))).collect(Collectors.toList());
+                    } else if(arguments.get(0).getType() == Type.STRING_CONSTANT) {
+                        List<Integer> l = arguments.get(0).getStringConstant().get().get().codePoints().boxed().collect(Collectors.toList());
+                        return IntStream.range(0, l.size())
+                                .mapToObj(i ->
+                                        new Atom(new StringConstant(
+                                                l.subList(0, i + 1).stream()
+                                                        .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                                                        .toString())))
+                                .collect(Collectors.toList());
+                    } else {
+                        throw new Error("'prefixes' expects a list or a string.");
+                    }
+                }));
+            }
+        }));
+
+        env.push("suffixes", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'suffixes'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    if(arguments.get(0).getType() == Type.LIST) {
+                        List<Atom> l = arguments.get(0).getList().get();
+                        return Lists.reverse(IntStream.range(0, l.size()).mapToObj(i -> new Atom(l.subList(i, l.size()))).collect(Collectors.toList()));
+                    } else if(arguments.get(0).getType() == Type.STRING_CONSTANT) {
+                        List<Integer> l = arguments.get(0).getStringConstant().get().get().codePoints().boxed().collect(Collectors.toList());
+                        return Lists.reverse(IntStream.range(0, l.size())
+                                .mapToObj(i ->
+                                        new Atom(new StringConstant(
+                                                l.subList(i, l.size()).stream()
+                                                        .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                                                        .toString())))
+                                .collect(Collectors.toList()));
+                    } else {
+                        throw new Error("'suffixes' expects a list or a string.");
+                    }
+                }));
+            }
+        }));
     }
 }

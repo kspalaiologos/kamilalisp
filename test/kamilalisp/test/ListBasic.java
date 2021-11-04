@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ListBasic {
     @Test
@@ -417,4 +416,43 @@ public class ListBasic {
                 new Atom(new BigDecimal("1"))
         )));
     }
+
+    @Test
+    void testPrefixes() {
+        assertTrue(Evaluation.evalString("(prefixes '(1 2 3 4 5))").get(0).getList().get().equals(List.of(
+                new Atom(List.of(new Atom(new BigDecimal("1")))),
+                new Atom(List.of(new Atom(new BigDecimal("1")), new Atom(new BigDecimal("2")))),
+                new Atom(List.of(new Atom(new BigDecimal("1")), new Atom(new BigDecimal("2")), new Atom(new BigDecimal("3")))),
+                new Atom(List.of(new Atom(new BigDecimal("1")), new Atom(new BigDecimal("2")), new Atom(new BigDecimal("3")), new Atom(new BigDecimal("4")))),
+                new Atom(List.of(new Atom(new BigDecimal("1")), new Atom(new BigDecimal("2")), new Atom(new BigDecimal("3")), new Atom(new BigDecimal("4")), new Atom(new BigDecimal("5"))))
+        )));
+
+        assertTrue(Evaluation.evalString("(prefixes \"hello\")").get(0).getList().get().equals(List.of(
+                new Atom(new StringConstant("h")),
+                new Atom(new StringConstant("he")),
+                new Atom(new StringConstant("hel")),
+                new Atom(new StringConstant("hell")),
+                new Atom(new StringConstant("hello"))
+        )));
+    }
+
+    @Test
+    void testSuffixes() {
+        assertTrue(Evaluation.evalString("(suffixes '(1 2 3 4 5))").get(0).getList().get().equals(List.of(
+                new Atom(List.of(new Atom(new BigDecimal("5")))),
+                new Atom(List.of(new Atom(new BigDecimal("4")), new Atom(new BigDecimal("5")))),
+                new Atom(List.of(new Atom(new BigDecimal("3")), new Atom(new BigDecimal("4")), new Atom(new BigDecimal("5")))),
+                new Atom(List.of(new Atom(new BigDecimal("2")), new Atom(new BigDecimal("3")), new Atom(new BigDecimal("4")), new Atom(new BigDecimal("5")))),
+                new Atom(List.of(new Atom(new BigDecimal("1")), new Atom(new BigDecimal("2")), new Atom(new BigDecimal("3")), new Atom(new BigDecimal("4")), new Atom(new BigDecimal("5"))))
+        )));
+
+        assertEquals(Evaluation.evalString("(suffixes \"hello\")").get(0).getList().get(), List.of(
+                new Atom(new StringConstant("o")),
+                new Atom(new StringConstant("lo")),
+                new Atom(new StringConstant("llo")),
+                new Atom(new StringConstant("ello")),
+                new Atom(new StringConstant("hello"))
+        ));
+    }
 }
+
