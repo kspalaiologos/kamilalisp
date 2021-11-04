@@ -552,5 +552,31 @@ public class MathLib {
                 }));
             }
         }));
+
+        env.push("sqrt", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'sqrt'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'sqrt'", Type.NUMBER);
+                    return BigDecimalMath.sqrt(a.getNumber().get(), MathContext.DECIMAL128);
+                }));
+            }
+        }));
+
+        env.push("exp", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'exp'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'exp'", Type.NUMBER);
+                    return BigDecimalMath.exp(a.getNumber().get(), MathContext.DECIMAL128);
+                }));
+            }
+        }));
     }
 }
