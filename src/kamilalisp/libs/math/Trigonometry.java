@@ -138,5 +138,33 @@ public class Trigonometry {
                 }));
             }
         }));
+
+        env.push("arctan", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'arctan'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'arctan'", Type.NUMBER);
+                    return BigDecimalMath.atan(a.getNumber().get(), MathContext.DECIMAL128);
+                }));
+            }
+        }));
+
+        env.push("arctan2", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'arctan2'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    Atom b = arguments.get(1);
+                    a.guardType("First argument to 'arctan'", Type.NUMBER);
+                    b.guardType("Second argument to 'arctan'", Type.NUMBER);
+                    return BigDecimalMath.atan2(a.getNumber().get(), b.getNumber().get(), MathContext.DECIMAL128);
+                }));
+            }
+        }));
     }
 }
