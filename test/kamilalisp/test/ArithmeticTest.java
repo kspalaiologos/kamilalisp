@@ -197,4 +197,11 @@ class ArithmeticTest {
         assertEquals(Evaluation.evalString("(binomial 5 3)").get(0).getNumber().get(), BigDecimal.valueOf(10));
         assertEquals(Evaluation.evalString("(binomial 5 4)").get(0).getNumber().get(), BigDecimal.valueOf(5));
     }
+
+    @Test
+    void testNthRoot() {
+        assertEquals(Evaluation.evalString("[(root 2 81) approx-eq 9 0.001]").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("[(root 3 0) approx-eq 0 0.001]").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("[(root 3 125) approx-eq 5 0.001]").get(0).getNumber().get(), BigDecimal.valueOf(1));
+    }
 }
