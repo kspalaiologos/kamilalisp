@@ -218,4 +218,20 @@ class ArithmeticTest {
         assertEquals(Evaluation.evalString("(% 5 3)").get(0).getNumber().get(), BigDecimal.valueOf(2));
         assertEquals(Evaluation.evalString("(% 5 4)").get(0).getNumber().get(), BigDecimal.valueOf(1));
     }
+
+    @Test
+    void testFloor() {
+        assertEquals(Evaluation.evalString("(floor 0.5)").get(0).getNumber().get(), BigDecimal.valueOf(0));
+        assertEquals(Evaluation.evalString("(floor -0.5)").get(0).getNumber().get(), BigDecimal.valueOf(-1));
+        assertEquals(Evaluation.evalString("(floor 1.5)").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("(floor -1.5)").get(0).getNumber().get(), BigDecimal.valueOf(-2));
+    }
+
+    @Test
+    void testCeil() {
+        assertEquals(Evaluation.evalString("(ceil 0.5)").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("(ceil -0.5)").get(0).getNumber().get(), BigDecimal.valueOf(0));
+        assertEquals(Evaluation.evalString("(ceil 1.5)").get(0).getNumber().get(), BigDecimal.valueOf(2));
+        assertEquals(Evaluation.evalString("(ceil -1.5)").get(0).getNumber().get(), BigDecimal.valueOf(-1));
+    }
 }

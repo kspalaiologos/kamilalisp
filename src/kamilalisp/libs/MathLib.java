@@ -561,5 +561,39 @@ public class MathLib {
                 }));
             }
         }));
+
+        env.push("floor", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1 && arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'floor'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'floor'", Type.NUMBER);
+                    if(arguments.size() == 2) {
+                        arguments.get(1).guardType("Second argument to 'floor'", Type.NUMBER);
+                        return a.getNumber().get().setScale(arguments.get(1).getNumber().get().intValue(), RoundingMode.FLOOR);
+                    } else
+                        return a.getNumber().get().setScale(0, RoundingMode.FLOOR);
+                }));
+            }
+        }));
+
+        env.push("ceil", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1 && arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'ceil'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'ceil'", Type.NUMBER);
+                    if(arguments.size() == 2) {
+                        arguments.get(1).guardType("Second argument to 'ceil'", Type.NUMBER);
+                        return a.getNumber().get().setScale(arguments.get(1).getNumber().get().intValue(), RoundingMode.CEILING);
+                    } else
+                        return a.getNumber().get().setScale(0, RoundingMode.CEILING);
+                }));
+            }
+        }));
     }
 }
