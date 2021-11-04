@@ -309,5 +309,55 @@ public class Trigonometry {
                 }));
             }
         }));
+
+        env.push("arcsech", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'arcsech'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'arcsech'", Type.NUMBER);
+                    BigDecimal x = a.getNumber().get();
+                    if(x.compareTo(BigDecimal.ZERO) != 1 || x.compareTo(BigDecimal.ONE) == 1)
+                        throw new Error("The domain of arccsech is (0, 1>");
+                    // A1 = 1 - x^2
+                    BigDecimal A1 = BigDecimal.ONE.subtract(x.multiply(x));
+                    // A2 = 1 + sqrt(A1)
+                    BigDecimal A2 = BigDecimalMath.sqrt(A1, MathContext.DECIMAL128).add(BigDecimal.ONE);
+                    // A3 = A2 / x
+                    BigDecimal A3 = A2.divide(x, MathContext.DECIMAL128);
+                    // return ln(A3) = ln(A2 / x) = ln((1 + sqrt(1 - x^2)) / x)
+                    return BigDecimalMath.log(A3, MathContext.DECIMAL128);
+                }));
+            }
+        }));
+
+        env.push("arccsech", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'arccsech'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'arccsech'", Type.NUMBER);
+                    BigDecimal x = a.getNumber().get();
+                    if(x.compareTo(BigDecimal.ZERO) == 0)
+                        throw new Error("The domain of arccsech is x /= 0");
+                    // A1 = 1 / x
+                    BigDecimal A1 = BigDecimal.ONE.divide(x, MathContext.DECIMAL128);
+                    // A2 = A1^2 = 1 / x^2
+                    BigDecimal A2 = A1.multiply(A1);
+                    // A3 = A2 + 1
+                    BigDecimal A3 = A2.add(BigDecimal.ONE);
+                    // A4 = sqrt(A3)
+                    BigDecimal A4 = BigDecimalMath.sqrt(A3, MathContext.DECIMAL128);
+                    // A5 = A1 + A4
+                    BigDecimal A5 = A1.add(A4);
+                    // return ln(A5)
+                    return BigDecimalMath.log(A5, MathContext.DECIMAL128);
+                }));
+            }
+        }));
     }
 }
