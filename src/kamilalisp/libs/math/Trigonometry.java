@@ -167,6 +167,19 @@ public class Trigonometry {
             }
         }));
 
+        env.push("arcctan", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'arcctan'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'arcctan'", Type.NUMBER);
+                    return BigDecimalMath.acot(a.getNumber().get(), MathContext.DECIMAL128);
+                }));
+            }
+        }));
+
         env.push("sinh", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
@@ -202,6 +215,19 @@ public class Trigonometry {
                     Atom a = arguments.get(0);
                     a.guardType("First argument to 'tanh'", Type.NUMBER);
                     return BigDecimalMath.tanh(a.getNumber().get(), MathContext.DECIMAL128);
+                }));
+            }
+        }));
+
+        env.push("ctanh", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'ctanh'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'ctanh'", Type.NUMBER);
+                    return BigDecimalMath.coth(a.getNumber().get(), MathContext.DECIMAL128);
                 }));
             }
         }));
