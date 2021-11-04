@@ -510,5 +510,14 @@ public class CoreLib {
                 }));
             }
         }));
+
+        env.push("to-string", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() < 1)
+                    throw new Error("Invalid invocation to 'to-string'.");
+                return new Atom(new LbcSupplier<>(() -> arguments.get(0).toString()));
+            }
+        }));
     }
 }
