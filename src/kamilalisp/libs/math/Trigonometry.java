@@ -112,5 +112,31 @@ public class Trigonometry {
                 }));
             }
         }));
+
+        env.push("arcsin", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'arcsin'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'arcsin'", Type.NUMBER);
+                    return BigDecimalMath.asin(a.getNumber().get(), MathContext.DECIMAL128);
+                }));
+            }
+        }));
+
+        env.push("arccos", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'arccos'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'arccos'", Type.NUMBER);
+                    return BigDecimalMath.acos(a.getNumber().get(), MathContext.DECIMAL128);
+                }));
+            }
+        }));
     }
 }

@@ -190,7 +190,7 @@ public class CoreLib {
                     arguments.get(1).guardType("Second argument to 'map'", Type.LIST);
                     return arguments.get(1).getList().get().stream().map(x ->
                             new Atom(new LbcSupplier<>(() ->
-                                    arguments.get(0).getCallable().get().apply(env, Collections.singletonList(x))
+                                    arguments.get(0).getCallable().get().apply(env, Collections.singletonList(x)).get().get()
                             ))
                     ).collect(Collectors.toList());
                 }));

@@ -306,6 +306,7 @@ public class FoldLib {
                     else if(data.size() == 1)
                         return data.get(0);
                     else {
+                        result.add(data.get(0));
                         data.stream().reduce((x, y) -> {
                             Atom a = arguments.get(0).getCallable().get().apply(env, Arrays.asList(x, y));
                             result.add(a);
@@ -332,6 +333,7 @@ public class FoldLib {
                     else if(data.size() == 1)
                         return data.get(0);
                     else {
+                        result.add(data.get(data.size() - 1));
                         Lists.reverse(data).stream().reduce((x, y) -> {
                             Atom a = arguments.get(0).getCallable().get().apply(env, Arrays.asList(y, x));
                             result.add(a);
@@ -358,6 +360,7 @@ public class FoldLib {
                     else if(data.size() == 1)
                         return data.get(0);
                     else {
+                        result.add(data.get(0));
                         data.stream().reduce((x, y) -> {
                             Atom a = arguments.get(0).getCallable().get().apply(env, Arrays.asList(x.eager(), y.eager())).eager();
                             result.add(a);
@@ -384,6 +387,7 @@ public class FoldLib {
                     else if(data.size() == 1)
                         return data.get(0);
                     else {
+                        result.add(data.get(data.size() - 1));
                         Lists.reverse(data).stream().reduce((x, y) -> {
                             Atom a = arguments.get(0).getCallable().get().apply(env, Arrays.asList(y.eager(), x.eager())).eager();
                             result.add(a);

@@ -54,5 +54,6 @@ public class Lambda {
     void testLog() {
         assertEquals(Evaluation.evalString("[(log 10) approx-eq 1 0.01]").get(0).getNumber().get(), BigDecimal.valueOf(1));
         assertEquals(Evaluation.evalString("[(log 2 8) approx-eq 3 0.01]").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("[(log2 8) approx-eq 3 0.01]").get(0).getNumber().get(), BigDecimal.valueOf(1));
     }
 }
