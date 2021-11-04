@@ -688,5 +688,34 @@ public class ListLib {
                 }));
             }
         }));
+
+        env.push("partition", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'partition'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'partition'.", Type.LIST);
+                    arguments.get(1).guardType("Second argument to 'partition'.", Type.LIST);
+                    List<Boolean> l1 = Stream.concat(arguments.get(0).getList().get().stream().map(x -> x.coerceBool()), Stream.of(Boolean.TRUE))
+                            .collect(Collectors.toList());
+                    List<Atom> l2 = arguments.get(1).getList().get();
+                    // Java needs explicit generic specification because the compiler is extremely dumb.
+                    // Equivalent APL code:
+                    // ⍸
+                    List<Integer> where = Streams.<Integer, Boolean, List<Integer>>zip(IntStream.range(0, l1.size()).boxed(), l1.stream(), (i, b) -> {
+                        if(b)
+                            return List.of(i);
+                        else
+                            return List.of();
+                    }).flatMap(Collection::stream).collect(Collectors.toList());
+                    // Equivalent APL code:
+                    // |2-/
+                    Stream<Integer> differences = IntStream.range(0, where.size() - 1).mapToObj(i -> Math.abs(where.get(i + 1) - where.get(i)));
+                    // Java to APL code volume ratio: 1206 / 5 = 240
+                    return Streams.zip(where.stream(), differences, (i, d) -> new Atom(l2.subList(i, i + d))).collect(Collectors.toList());
+                }));
+            }
+        }));
     }
 }

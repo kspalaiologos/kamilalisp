@@ -454,5 +454,14 @@ public class ListBasic {
                 new Atom(new StringConstant("hello"))
         ));
     }
+
+    @Test
+    void testPartition() {
+        assertEquals(Evaluation.evalString("(partition '(1 0 1 0 0 1) '(1 2 3 4 5 6))").get(0).getList().get(), List.of(
+                new Atom(List.of(new Atom(new BigDecimal("1")), new Atom(new BigDecimal("2")))),
+                new Atom(List.of(new Atom(new BigDecimal("3")), new Atom(new BigDecimal("4")), new Atom(new BigDecimal("5")))),
+                new Atom(List.of(new Atom(new BigDecimal("6"))))
+        ));
+    }
 }
 
