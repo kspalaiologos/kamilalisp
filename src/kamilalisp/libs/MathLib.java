@@ -665,5 +665,27 @@ public class MathLib {
                     }));
             }
         }));
+
+        env.push("log", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() == 1)
+                    return new Atom(new LbcSupplier<>(() -> {
+                        arguments.get(0).guardType("First argument to 'log'.", Type.NUMBER);
+                        return BigDecimalMath.log10(arguments.get(0).getNumber().get(), MathContext.DECIMAL128);
+                    }));
+                else if(arguments.size() == 2)
+                    return new Atom(new LbcSupplier<>(() -> {
+                        arguments.get(0).guardType("First argument to 'log'.", Type.NUMBER);
+                        arguments.get(1).guardType("Second argument to 'log'.", Type.NUMBER);
+                        return BigDecimalMath.log(arguments.get(1).getNumber().get(), MathContext.DECIMAL128)
+                                .divide(BigDecimalMath.log(arguments.get(0).getNumber().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                    }));
+                else
+                    throw new Error("Invalid invocation to 'log'.");
+            }
+        }));
+
+        
     }
 }

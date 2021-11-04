@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Lambda {
@@ -47,5 +48,11 @@ public class Lambda {
     @Test
     void testType() {
         assertTrue(Evaluation.evalString("(type (lambda (x y) (+ x y)))").get(0).getStringConstant().get().get().equals("CLOSURE"));
+    }
+
+    @Test
+    void testLog() {
+        assertEquals(Evaluation.evalString("[(log 10) approx-eq 1 0.01]").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("[(log 2 8) approx-eq 3 0.01]").get(0).getNumber().get(), BigDecimal.valueOf(1));
     }
 }
