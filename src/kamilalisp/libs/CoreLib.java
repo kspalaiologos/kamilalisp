@@ -6,6 +6,7 @@ import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -537,6 +538,27 @@ public class CoreLib {
                         }
                     }));
                 }));
+            }
+        }));
+
+        env.push("rng-roll", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() == 0)
+                    return new Atom(new LbcSupplier<>(() -> new BigDecimal(Math.random())));
+                else
+                    return new Atom(new LbcSupplier<>(() -> {
+                        Random r = new Random();
+                        return arguments.stream().map(x -> {
+                            x.guardType("Argument to 'rng-roll'.", Type.NUMBER);
+                            BigInteger size = x.getNumber().get().toBigInteger();
+                            BigInteger randomNumber;
+                            do {
+                                randomNumber = new BigInteger(size.bitLength(), r);
+                            } while (randomNumber.compareTo(size) >= 0);
+                            return new Atom(new BigDecimal(randomNumber));
+                        }).collect(Collectors.toList());
+                    }));
             }
         }));
     }
