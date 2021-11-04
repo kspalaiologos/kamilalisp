@@ -686,6 +686,18 @@ public class MathLib {
             }
         }));
 
+        env.push("log2", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'log2'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'log'.", Type.NUMBER);
+                    return BigDecimalMath.log2(arguments.get(0).getNumber().get(), MathContext.DECIMAL128);
+                }));
+            }
+        }));
+
         
     }
 }
