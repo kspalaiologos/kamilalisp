@@ -535,5 +535,22 @@ public class MathLib {
                 }));
             }
         }));
+
+        env.push("approx-eq", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 3)
+                    throw new Error("Invalid invocation to 'approx-eq'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    Atom b = arguments.get(1);
+                    Atom epsilon = arguments.get(2);
+                    a.guardType("First argument to 'approx-eq'", Type.NUMBER);
+                    b.guardType("Second argument to 'approx-eq'", Type.NUMBER);
+                    epsilon.guardType("Third argument to 'approx-eq'", Type.NUMBER);
+                    return a.getNumber().get().subtract(b.getNumber().get()).abs().compareTo(epsilon.getNumber().get()) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+                }));
+            }
+        }));
     }
 }

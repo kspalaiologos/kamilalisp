@@ -178,4 +178,9 @@ class ArithmeticTest {
         assertEquals(Evaluation.evalString("[[(deg (rad 90)) - 90] < 0.01]").get(0).getNumber().get(), BigDecimal.valueOf(1));
         assertEquals(Evaluation.evalString("[[(deg (rad 123)) - 123] < 0.01]").get(0).getNumber().get(), BigDecimal.valueOf(1));
     }
+
+    @Test
+    void testApproxEq() {
+        assertEquals(Evaluation.evalString("(approx-eq 0.1 0.11 0.1)").get(0).getNumber().get(), BigDecimal.valueOf(1));
+    }
 }
