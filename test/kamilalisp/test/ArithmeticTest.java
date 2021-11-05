@@ -248,4 +248,9 @@ class ArithmeticTest {
     void testPollardRho() {
         assertEquals(Evaluation.evalString("(sum (p-factors 44343535354351600000003434353))").get(0).getNumber().get(), new BigDecimal("903348927041347"));
     }
+
+    @Test
+    void testTotient() {
+        assertEquals(Evaluation.evalString("(totient 174)").get(0).getNumber().get(), new BigDecimal("56"));
+    }
 }

@@ -600,6 +600,19 @@ public class MathLib {
             }
         }));
 
+        env.push("is-prime?", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'is-prime'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'is-prime'", Type.NUMBER);
+                    return a.getNumber().get().toBigInteger().isProbablePrime(50) ? BigDecimal.ONE : BigDecimal.ZERO;
+                }));
+            }
+        }));
+
         env.push("decode", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
@@ -643,5 +656,7 @@ public class MathLib {
         // Math utilities implemented in Lisp for no real reason.
         // Except that they're easier to maintain.
         Evaluation.evalString(env, "(def sum (bind foldl' + 0))");
+        Evaluation.evalString(env, "(def prod (bind foldl' * 1))");
+        Evaluation.evalString(env, "(defun totient (x) (let ((y (p-factors x))) (prod (zip-with - y (unique-mask y)))))");
     }
 }
