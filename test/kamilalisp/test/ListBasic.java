@@ -523,5 +523,11 @@ public class ListBasic {
 
         assertEquals(Evaluation.evalString("(ucs '(77 105 115 115 105 115 115 105 112 112 105))").get(0).getStringConstant().get().get(), "Mississippi");
     }
+
+    @Test
+    void testIn() {
+        assertEquals(Evaluation.evalString("(in? '(1 2) '((1 2) (3 4) (5 6)))").get(0).coerceBool(), Boolean.TRUE);
+        assertEquals(Evaluation.evalString("(in? '(1 2 3) '((1 2) (3 4) (5 6)))").get(0).coerceBool(), Boolean.FALSE);
+    }
 }
 

@@ -870,5 +870,27 @@ public class ListLib {
                 }));
             }
         }));
+
+        env.push("in?", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'in?'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
+                        String l1 = arguments.get(0).getStringConstant().get().get();
+                        String l2 = arguments.get(1).getStringConstant().get().get();
+                        LinkedList<Atom> l = new LinkedList<>();
+                        for(char c : l1.toCharArray())
+                            l.add(new Atom(new BigDecimal(l2.indexOf(c) != -1 ? 1 : 0)));
+                        return l;
+                    } else if(arguments.get(1).getType() == Type.LIST) {
+                        List<Atom> l = arguments.get(1).getList().get();
+                        return new BigDecimal(l.contains(arguments.get(0)) ? 1 : 0);
+                    } else
+                        throw new Error("'in?' expects two lists and strings as its arguments.");
+                }));
+            }
+        }));
     }
 }
