@@ -529,5 +529,26 @@ public class ListBasic {
         assertEquals(Evaluation.evalString("(in? '(1 2) '((1 2) (3 4) (5 6)))").get(0).coerceBool(), Boolean.TRUE);
         assertEquals(Evaluation.evalString("(in? '(1 2 3) '((1 2) (3 4) (5 6)))").get(0).coerceBool(), Boolean.FALSE);
     }
+
+    @Test
+    void testFindSeq() {
+        assertEquals(Evaluation.evalString("(find-seq \"ana\" \"Banana\")").get(0).getList().get(), List.of(
+                new Atom(new BigDecimal(0)),
+                new Atom(new BigDecimal(1)),
+                new Atom(new BigDecimal(0)),
+                new Atom(new BigDecimal(1)),
+                new Atom(new BigDecimal(0)),
+                new Atom(new BigDecimal(0))
+        ));
+
+        assertEquals(Evaluation.evalString("(find-seq '(\"a\" \"n\" \"a\") '(\"B\" \"a\" \"n\" \"a\" \"n\" \"a\"))").get(0).getList().get(), List.of(
+                new Atom(new BigDecimal(0)),
+                new Atom(new BigDecimal(1)),
+                new Atom(new BigDecimal(0)),
+                new Atom(new BigDecimal(1)),
+                new Atom(new BigDecimal(0)),
+                new Atom(new BigDecimal(0))
+        ));
+    }
 }
 

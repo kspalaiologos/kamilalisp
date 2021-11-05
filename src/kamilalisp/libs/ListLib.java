@@ -731,7 +731,7 @@ public class ListLib {
                         List<Atom> data = arguments.get(1).getList().get();
                         return IntStream.range(0, data.size() - windowSize + 1).mapToObj(i -> new Atom(data.subList(i, i + windowSize))).collect(Collectors.toList());
                     } else if(arguments.get(1).getType() == Type.STRING_CONSTANT) {
-                        String data = arguments.get(1).getString().get();
+                        String data = arguments.get(1).getStringConstant().get().get();
                         return IntStream.range(0, data.length() - windowSize + 1).mapToObj(i -> new Atom(new StringConstant(data.substring(i, i + windowSize)))).collect(Collectors.toList());
                     } else
                         throw new Error("Invalid invocation to 'window'. The second argument was expected to be either a list or a string constant.");
@@ -889,6 +889,32 @@ public class ListLib {
                         return new BigDecimal(l.contains(arguments.get(0)) ? 1 : 0);
                     } else
                         throw new Error("'in?' expects two lists and strings as its arguments.");
+                }));
+            }
+        }));
+
+        env.push("find-seq", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'find-seq'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
+                        String needle = arguments.get(0).getStringConstant().get().get();
+                        String haystack = arguments.get(1).getStringConstant().get().get();
+                        int windowSize = needle.length();
+                        Stream<String> s = IntStream.range(0, haystack.length() - windowSize + 1).mapToObj(i -> haystack.substring(i, i + windowSize));
+                        return Stream.concat(s.map(x -> x.equals(needle) ? BigDecimal.ONE : BigDecimal.ZERO), Collections.nCopies(windowSize - 1, BigDecimal.ZERO).stream())
+                                .map(Atom::new).collect(Collectors.toList());
+                    } else if(arguments.get(0).getType() == Type.LIST && arguments.get(1).getType() == Type.LIST) {
+                        List<Atom> needle = arguments.get(0).getList().get();
+                        List<Atom> haystack = arguments.get(1).getList().get();
+                        int windowSize = needle.size();
+                        Stream<List<Atom>> s = IntStream.range(0, haystack.size() - windowSize + 1).mapToObj(i -> haystack.subList(i, i + windowSize));
+                        return Stream.concat(s.map(x -> x.equals(needle) ? BigDecimal.ONE : BigDecimal.ZERO), Collections.nCopies(windowSize - 1, BigDecimal.ZERO).stream())
+                                .map(Atom::new).collect(Collectors.toList());
+                    } else
+                        throw new Error("'find-seq' expects two lists and strings as its arguments.");
                 }));
             }
         }));
