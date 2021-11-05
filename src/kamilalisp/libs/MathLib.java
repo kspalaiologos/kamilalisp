@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class MathLib {
     public static void install(Environment env) {
@@ -592,6 +593,46 @@ public class MathLib {
                         return a.getNumber().get().setScale(arguments.get(1).getNumber().get().intValue(), RoundingMode.CEILING);
                     } else
                         return a.getNumber().get().setScale(0, RoundingMode.CEILING);
+                }));
+            }
+        }));
+
+        env.push("decode", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'decode'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    Atom b = arguments.get(1);
+                    b.guardType("Second argument to 'decode'", Type.LIST);
+                    if(a.getType() == Type.NUMBER) {
+                        BigDecimal n = new BigDecimal(1);
+                        BigDecimal base = a.getNumber().get();
+                        BigDecimal s = new BigDecimal(0);
+                        List<Atom> l = Lists.reverse(b.getList().get());
+                        for(int i = 0; i < l.size(); i++) {
+                            l.get(i).guardType("Element in list argument to 'decode'", Type.NUMBER);
+                            s = s.add(l.get(i).getNumber().get().multiply(n));
+                            n = n.multiply(base);
+                        }
+                        return s;
+                    } else if(a.getType() == Type.LIST) {
+                        List<BigDecimal> ns = a.getList().get().stream().map(x -> {
+                            x.guardType("Element in list argument to 'decode'", Type.NUMBER);
+                            return x.getNumber().get();
+                        }).collect(Collectors.toList());
+                        BigDecimal s = new BigDecimal(0);
+                        BigDecimal n = new BigDecimal(1);
+                        List<Atom> l = b.getList().get();
+                        for(int i = l.size() - 1; i >= 0; i--) {
+                            l.get(i).guardType("Element in list argument to 'decode'", Type.NUMBER);
+                            s = s.add(l.get(i).getNumber().get().multiply(n));
+                            n = n.multiply(ns.get(i));
+                        }
+                        return s;
+                    }
+                    throw new Error("First argument to 'decode' must be a number or a list.");
                 }));
             }
         }));

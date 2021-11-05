@@ -2,6 +2,7 @@ package kamilalisp.test;
 
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.Atom;
+import kamilalisp.data.Environment;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -233,5 +234,13 @@ class ArithmeticTest {
         assertEquals(Evaluation.evalString("(ceil -0.5)").get(0).getNumber().get(), BigDecimal.valueOf(0));
         assertEquals(Evaluation.evalString("(ceil 1.5)").get(0).getNumber().get(), BigDecimal.valueOf(2));
         assertEquals(Evaluation.evalString("(ceil -1.5)").get(0).getNumber().get(), BigDecimal.valueOf(-1));
+    }
+
+    @Test
+    void testDecode() {
+        Environment env = Evaluation.createDefaultEnv();
+        Evaluation.evalString(env, "(def hms-to-sec #((bind decode '(24 60 60)) tie))");
+        assertEquals(Evaluation.evalString(env, "(hms-to-sec 2 46 40)").get(0).getNumber().get(), new BigDecimal(10000));
+        assertEquals(Evaluation.evalString("[2 decode '(1 1 0 1)]").get(0).getNumber().get(), new BigDecimal(13));
     }
 }
