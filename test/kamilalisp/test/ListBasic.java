@@ -463,5 +463,10 @@ public class ListBasic {
                 new Atom(List.of(new Atom(new BigDecimal("6"))))
         ));
     }
+
+    @Test
+    void testInnerProduct() {
+        assertEquals(Evaluation.evalString("[+ inner-prod * '(1 2 3) '(3 2 1)]").get(0).getNumber().get(), new BigDecimal("10"));
+    }
 }
 

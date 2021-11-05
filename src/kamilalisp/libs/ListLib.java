@@ -717,5 +717,47 @@ public class ListLib {
                 }));
             }
         }));
+
+        env.push("window", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'window'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'window'.", Type.NUMBER);
+                    arguments.get(1).guardType("Second argument to 'window'.", Type.LIST);
+                    int windowSize = arguments.get(0).getNumber().get().intValue();
+                    List<Atom> data = arguments.get(1).getList().get();
+                    return IntStream.range(0, data.size() - windowSize + 1).mapToObj(i -> new Atom(data.subList(i, i + windowSize))).collect(Collectors.toList());
+                }));
+            }
+        }));
+
+        env.push("inner-prod", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 4)
+                    throw new Error("Invalid invocation to 'inner-prod'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'inner-prod'.", Type.CLOSURE, Type.MACRO);
+                    arguments.get(1).guardType("Second argument to 'inner-prod'.", Type.CLOSURE, Type.MACRO);
+                    arguments.get(2).guardType("Third argument to 'inner-prod'.", Type.LIST);
+                    arguments.get(3).guardType("Fourth argument to 'inner-prod'.", Type.LIST);
+                    List<Atom> l1 = arguments.get(2).getList().get();
+                    List<Atom> l2 = arguments.get(3).getList().get();
+                    Callable f = arguments.get(0).getCallable().get();
+                    Callable g = arguments.get(1).getCallable().get();
+                    if(l1.size() != l2.size())
+                        throw new Error("The length of lists provided to 'inner-prod' doesn't match.");
+                    else if(l1.size() == 0)
+                        return Atom.NULL.get().get();
+                    else if(l1.size() == 1)
+                        return g.apply(env, List.of(l1.get(0), l2.get(0))).get().get();
+                    else
+                        return Streams.zip(l1.stream(), l2.stream(), (x, y) -> g.apply(env, List.of(x, y)))
+                                .reduce((x, y) -> f.apply(env, List.of(x, y))).get().get().get();
+                }));
+            }
+        }));
     }
 }
