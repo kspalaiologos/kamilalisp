@@ -243,4 +243,9 @@ class ArithmeticTest {
         assertEquals(Evaluation.evalString(env, "(hms-to-sec 2 46 40)").get(0).getNumber().get(), new BigDecimal(10000));
         assertEquals(Evaluation.evalString("[2 decode '(1 1 0 1)]").get(0).getNumber().get(), new BigDecimal(13));
     }
+
+    @Test
+    void testPollardRho() {
+        assertEquals(Evaluation.evalString("(sum (p-factors 44343535354351600000003434353))").get(0).getNumber().get(), new BigDecimal("903348927041347"));
+    }
 }

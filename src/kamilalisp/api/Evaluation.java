@@ -51,9 +51,9 @@ public class Evaluation {
 
     public static Environment createDefaultEnv() {
         Environment globEnv = new Environment("Global scope");
+        CoreLib.install(globEnv);
         IOLib.install(globEnv);
         MathLib.install(globEnv);
-        CoreLib.install(globEnv);
         ListLib.install(globEnv);
         FoldLib.install(globEnv);
         globEnv.owner = null;

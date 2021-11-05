@@ -3,9 +3,11 @@ package kamilalisp.libs;
 import ch.obermuhlner.math.big.BigDecimalMath;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
 import kamilalisp.libs.math.Constant;
 import kamilalisp.libs.math.Logarithm;
+import kamilalisp.libs.math.PollardRho;
 import kamilalisp.libs.math.Trigonometry;
 
 import java.io.StringWriter;
@@ -24,6 +26,7 @@ public class MathLib {
         Logarithm.install(env);
         Constant.install(env);
         Trigonometry.install(env);
+        PollardRho.install(env);
 
         env.push("+", new Atom(new Closure() {
             private Atom IDENTITY = new Atom(BigDecimal.ZERO);
@@ -636,5 +639,9 @@ public class MathLib {
                 }));
             }
         }));
+
+        // Math utilities implemented in Lisp for no real reason.
+        // Except that they're easier to maintain.
+        Evaluation.evalString(env, "(def sum (bind foldl' + 0))");
     }
 }
