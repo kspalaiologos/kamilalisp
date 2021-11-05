@@ -497,11 +497,31 @@ public class ListBasic {
                 new Atom(new BigDecimal(2))
         ));
 
+        // Thanks, Dyalog.
         assertEquals(Evaluation.evalString("(index-of \"ACF\" \"ABCDABCDEF\")").get(0).getList().get(), List.of(
                 new Atom(new BigDecimal(0)),
                 new Atom(new BigDecimal(2)),
                 new Atom(new BigDecimal(9))
         ));
+    }
+
+    @Test
+    void testUCS() {
+        assertEquals(Evaluation.evalString("(ucs \"Mississippi\")").get(0).getList().get(), List.of(
+                new Atom(new BigDecimal(0x004D)),
+                new Atom(new BigDecimal(0x0069)),
+                new Atom(new BigDecimal(0x0073)),
+                new Atom(new BigDecimal(0x0073)),
+                new Atom(new BigDecimal(0x0069)),
+                new Atom(new BigDecimal(0x0073)),
+                new Atom(new BigDecimal(0x0073)),
+                new Atom(new BigDecimal(0x0069)),
+                new Atom(new BigDecimal(0x0070)),
+                new Atom(new BigDecimal(0x0070)),
+                new Atom(new BigDecimal(0x0069))
+        ));
+
+        assertEquals(Evaluation.evalString("(ucs '(77 105 115 115 105 115 115 105 112 112 105))").get(0).getStringConstant().get().get(), "Mississippi");
     }
 }
 

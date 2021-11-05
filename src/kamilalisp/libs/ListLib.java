@@ -849,5 +849,26 @@ public class ListLib {
                 }));
             }
         }));
+
+        env.push("ucs", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'ucs'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    if(arguments.get(0).getType() == Type.STRING_CONSTANT) {
+                        String s = arguments.get(0).getStringConstant().get().get();
+                        return s.codePoints().mapToObj(x -> new Atom(new BigDecimal(x))).collect(Collectors.toList());
+                    } else if(arguments.get(0).getType() == Type.LIST) {
+                        List<Atom> l = arguments.get(0).getList().get();
+                        return new StringConstant(l.stream().mapToInt(x -> {
+                            x.guardType("List argument to 'ucs'", Type.NUMBER);
+                            return x.getNumber().get().intValue();
+                        }).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString());
+                    } else
+                        throw new Error("'ucs' expects a list or string as its argument.");
+                }));
+            }
+        }));
     }
 }
