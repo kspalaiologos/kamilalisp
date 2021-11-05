@@ -6,6 +6,7 @@ import kamilalisp.data.*;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -725,10 +726,15 @@ public class ListLib {
                     throw new Error("Invalid invocation to 'window'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     arguments.get(0).guardType("First argument to 'window'.", Type.NUMBER);
-                    arguments.get(1).guardType("Second argument to 'window'.", Type.LIST);
                     int windowSize = arguments.get(0).getNumber().get().intValue();
-                    List<Atom> data = arguments.get(1).getList().get();
-                    return IntStream.range(0, data.size() - windowSize + 1).mapToObj(i -> new Atom(data.subList(i, i + windowSize))).collect(Collectors.toList());
+                    if(arguments.get(1).getType() == Type.LIST) {
+                        List<Atom> data = arguments.get(1).getList().get();
+                        return IntStream.range(0, data.size() - windowSize + 1).mapToObj(i -> new Atom(data.subList(i, i + windowSize))).collect(Collectors.toList());
+                    } else if(arguments.get(1).getType() == Type.STRING_CONSTANT) {
+                        String data = arguments.get(1).getString().get();
+                        return IntStream.range(0, data.length() - windowSize + 1).mapToObj(i -> new Atom(new StringConstant(data.substring(i, i + windowSize)))).collect(Collectors.toList());
+                    } else
+                        throw new Error("Invalid invocation to 'window'. The second argument was expected to be either a list or a string constant.");
                 }));
             }
         }));
@@ -773,6 +779,50 @@ public class ListLib {
                     List<Atom> l2 = arguments.get(2).getList().get();
                     Callable f = arguments.get(0).getCallable().get();
                     return cartesianProduct(List.of(l1, l2)).stream().map(x -> f.apply(env, x)).collect(Collectors.toList());
+                }));
+            }
+        }));
+
+        env.push("keys", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'keys'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    if(arguments.get(0).getType() == Type.LIST) {
+                        // XXX: See implementation notes for 'unique'.
+                        List<Atom> l = new LinkedList<>(arguments.get(0).getList().get());
+                        for(int i = 0; i < l.size(); i++)
+                            for(int j = i + 1; j < l.size(); j++)
+                                if(l.get(i).equals(l.get(j)))
+                                    l.remove(j--);
+                        LinkedHashMap<Atom, List<Atom>> o = new LinkedHashMap<>();
+                        for(Atom a : l)
+                            o.put(a, new LinkedList<>());
+                        AtomicInteger position = new AtomicInteger();
+                        arguments.get(0).getList().get().forEach(x -> {
+                            o.get(x).add(new Atom(new BigDecimal(position.get())));
+                            position.incrementAndGet();
+                        });
+                        return new LinkedList<>(o.entrySet()).stream()
+                                .map(x -> new Atom(List.of(x.getKey(), new Atom(x.getValue())))).collect(Collectors.toList());
+                    } else if(arguments.get(0).getType() == Type.STRING_CONSTANT) {
+                        String s = arguments.get(0).getStringConstant().get().get();
+                        IntStream uniques = s.codePoints().distinct();
+                        LinkedHashMap<Integer, List<Atom>> o = new LinkedHashMap<>();
+                        uniques.forEach(x -> o.put(x, new LinkedList<>()));
+                        AtomicInteger position = new AtomicInteger();
+                        s.codePoints().forEach(x -> {
+                            o.get(x).add(new Atom(new BigDecimal(position.get())));
+                            position.getAndIncrement();
+                        });
+                        return new LinkedList<>(o.entrySet()).stream()
+                                .map(x -> new Atom(List.of(
+                                        new Atom(new StringConstant(new StringBuilder().appendCodePoint(x.getKey()).toString())),
+                                        new Atom(x.getValue())))).collect(Collectors.toList());
+                    }
+
+                    throw new Error("'keys' expects a list or string as it's argument.");
                 }));
             }
         }));

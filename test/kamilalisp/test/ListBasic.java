@@ -473,5 +473,15 @@ public class ListBasic {
     void testOuterProduct() {
         assertEquals(Evaluation.evalString("(foldl1 + (outer-prod * '(1 2) '(1 2 3 4)))").get(0).getNumber().get(), new BigDecimal("30"));
     }
+
+    @Test
+    void testKeys() {
+        assertEquals(Evaluation.evalString("(keys \"Mississippi\")").get(0).getList().get(), List.of(
+                new Atom(List.of(new Atom(new StringConstant("M")), new Atom(List.of(new Atom(new BigDecimal(0)))))),
+                new Atom(List.of(new Atom(new StringConstant("i")), new Atom(List.of(new Atom(new BigDecimal(1)), new Atom(new BigDecimal(4)), new Atom(new BigDecimal(7)), new Atom(new BigDecimal(10)))))),
+                new Atom(List.of(new Atom(new StringConstant("s")), new Atom(List.of(new Atom(new BigDecimal(2)), new Atom(new BigDecimal(3)), new Atom(new BigDecimal(5)), new Atom(new BigDecimal(6)))))),
+                new Atom(List.of(new Atom(new StringConstant("p")), new Atom(List.of(new Atom(new BigDecimal(8)), new Atom(new BigDecimal(9))))))
+        ));
+    }
 }
 
