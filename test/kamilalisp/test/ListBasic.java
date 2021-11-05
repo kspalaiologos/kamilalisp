@@ -483,5 +483,19 @@ public class ListBasic {
                 new Atom(List.of(new Atom(new StringConstant("p")), new Atom(List.of(new Atom(new BigDecimal(8)), new Atom(new BigDecimal(9))))))
         ));
     }
+
+    @Test
+    void testIndexOf() {
+        assertEquals(Evaluation.evalString("(index-of '(1 3 4) '(1 2 3 4 5))").get(0).getList().get(), List.of(
+                new Atom(new BigDecimal(0)),
+                new Atom(new BigDecimal(2)),
+                new Atom(new BigDecimal(3))
+        ));
+
+        assertEquals(Evaluation.evalString("(index-of '((1 2) (3 4)) '((1 2) (2 3) (3 4) (4 5)))").get(0).getList().get(), List.of(
+                new Atom(new BigDecimal(0)),
+                new Atom(new BigDecimal(2))
+        ));
+    }
 }
 

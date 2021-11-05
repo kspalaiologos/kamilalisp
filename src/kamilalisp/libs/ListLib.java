@@ -826,5 +826,20 @@ public class ListLib {
                 }));
             }
         }));
+
+        env.push("index-of", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'index-of'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'index-of'", Type.LIST);
+                    arguments.get(1).guardType("Second argument to 'index-of'", Type.LIST);
+                    List<Atom> l1 = arguments.get(0).getList().get();
+                    List<Atom> l2 = arguments.get(1).getList().get();
+                    return l1.stream().map(x -> new Atom(new BigDecimal(l2.indexOf(x)))).collect(Collectors.toList());
+                }));
+            }
+        }));
     }
 }
