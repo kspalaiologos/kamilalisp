@@ -11,6 +11,26 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class ListLib {
+    private static <T> List<List<T>> cartesianProduct(List<List<T>> lists) {
+        List<List<T>> resultLists = new ArrayList<List<T>>();
+        if (lists.size() == 0) {
+            resultLists.add(new ArrayList<T>());
+            return resultLists;
+        } else {
+            List<T> firstList = lists.get(0);
+            List<List<T>> remainingLists = cartesianProduct(lists.subList(1, lists.size()));
+            for (T condition : firstList) {
+                for (List<T> remainingList : remainingLists) {
+                    ArrayList<T> resultList = new ArrayList<T>();
+                    resultList.add(condition);
+                    resultList.addAll(remainingList);
+                    resultLists.add(resultList);
+                }
+            }
+        }
+        return resultLists;
+    }
+
     public static void install(Environment env) {
         env.push("iota", new Atom(new Closure() {
             private List<BigDecimal> iota(long n) {
@@ -18,26 +38,6 @@ public class ListLib {
                 for(long i = 0; i < n; i++)
                     result.add(BigDecimal.valueOf(i));
                 return result;
-            }
-
-            private <T> List<List<T>> cartesianProduct(List<List<T>> lists) {
-                List<List<T>> resultLists = new ArrayList<List<T>>();
-                if (lists.size() == 0) {
-                    resultLists.add(new ArrayList<T>());
-                    return resultLists;
-                } else {
-                    List<T> firstList = lists.get(0);
-                    List<List<T>> remainingLists = cartesianProduct(lists.subList(1, lists.size()));
-                    for (T condition : firstList) {
-                        for (List<T> remainingList : remainingLists) {
-                            ArrayList<T> resultList = new ArrayList<T>();
-                            resultList.add(condition);
-                            resultList.addAll(remainingList);
-                            resultLists.add(resultList);
-                        }
-                    }
-                }
-                return resultLists;
             }
 
             @Override
@@ -756,6 +756,23 @@ public class ListLib {
                     else
                         return Streams.zip(l1.stream(), l2.stream(), (x, y) -> g.apply(env, List.of(x, y)))
                                 .reduce((x, y) -> f.apply(env, List.of(x, y))).get().get().get();
+                }));
+            }
+        }));
+
+        env.push("outer-prod", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 3)
+                    throw new Error("Invalid invocation to 'outer-prod'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'outer-prod'", Type.CLOSURE, Type.MACRO);
+                    arguments.get(1).guardType("Second argument to 'outer-prod'", Type.LIST);
+                    arguments.get(2).guardType("Third argument to 'outer-prod'", Type.LIST);
+                    List<Atom> l1 = arguments.get(1).getList().get();
+                    List<Atom> l2 = arguments.get(2).getList().get();
+                    Callable f = arguments.get(0).getCallable().get();
+                    return cartesianProduct(List.of(l1, l2)).stream().map(x -> f.apply(env, x)).collect(Collectors.toList());
                 }));
             }
         }));

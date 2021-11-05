@@ -468,5 +468,10 @@ public class ListBasic {
     void testInnerProduct() {
         assertEquals(Evaluation.evalString("[+ inner-prod * '(1 2 3) '(3 2 1)]").get(0).getNumber().get(), new BigDecimal("10"));
     }
+
+    @Test
+    void testOuterProduct() {
+        assertEquals(Evaluation.evalString("(foldl1 + (outer-prod * '(1 2) '(1 2 3 4)))").get(0).getNumber().get(), new BigDecimal("30"));
+    }
 }
 
