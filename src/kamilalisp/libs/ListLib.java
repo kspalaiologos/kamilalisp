@@ -833,11 +833,19 @@ public class ListLib {
                 if(arguments.size() != 2)
                     throw new Error("Invalid invocation to 'index-of'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'index-of'", Type.LIST);
-                    arguments.get(1).guardType("Second argument to 'index-of'", Type.LIST);
-                    List<Atom> l1 = arguments.get(0).getList().get();
-                    List<Atom> l2 = arguments.get(1).getList().get();
-                    return l1.stream().map(x -> new Atom(new BigDecimal(l2.indexOf(x)))).collect(Collectors.toList());
+                    if(arguments.get(0).getType() == Type.LIST && arguments.get(1).getType() == Type.LIST) {
+                        List<Atom> l1 = arguments.get(0).getList().get();
+                        List<Atom> l2 = arguments.get(1).getList().get();
+                        return l1.stream().map(x -> new Atom(new BigDecimal(l2.indexOf(x)))).collect(Collectors.toList());
+                    } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
+                        String l1 = arguments.get(0).getStringConstant().get().get();
+                        String l2 = arguments.get(1).getStringConstant().get().get();
+                        LinkedList<Atom> l = new LinkedList<>();
+                        for(char c : l1.toCharArray())
+                            l.add(new Atom(new BigDecimal(l2.indexOf(c))));
+                        return l;
+                    } else
+                        throw new Error("'index-of' expects two lists and strings as its arguments.");
                 }));
             }
         }));

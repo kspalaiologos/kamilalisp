@@ -496,6 +496,12 @@ public class ListBasic {
                 new Atom(new BigDecimal(0)),
                 new Atom(new BigDecimal(2))
         ));
+
+        assertEquals(Evaluation.evalString("(index-of \"ACF\" \"ABCDABCDEF\")").get(0).getList().get(), List.of(
+                new Atom(new BigDecimal(0)),
+                new Atom(new BigDecimal(2)),
+                new Atom(new BigDecimal(9))
+        ));
     }
 }
 
