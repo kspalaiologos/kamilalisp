@@ -33,12 +33,15 @@ public class Main {
                 .appName("KamilaLisp")
                 .parser(parser)
                 .history(new DefaultHistory())
+                .highlighter(new LispHighlight())
                 .variable(LineReader.SECONDARY_PROMPT_PATTERN, "%P. ")
                 .variable(LineReader.INDENTATION, 3)
                 .build();
         try {
             while (true) {
                 String code = r.readLine("--> ");
+                if(code.length() == 0 || code.trim().length() == 0)
+                    continue;
                 Atom result = Evaluation.evalAtom(env, code);
                 System.out.println(result);
             }
