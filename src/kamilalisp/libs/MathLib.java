@@ -5,10 +5,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
-import kamilalisp.libs.math.Constant;
-import kamilalisp.libs.math.Logarithm;
-import kamilalisp.libs.math.PollardRho;
-import kamilalisp.libs.math.Trigonometry;
+import kamilalisp.libs.math.*;
 
 import java.io.StringWriter;
 import java.math.BigDecimal;
@@ -27,6 +24,7 @@ public class MathLib {
         Constant.install(env);
         Trigonometry.install(env);
         PollardRho.install(env);
+        LambertW.install(env);
 
         env.push("+", new Atom(new Closure() {
             private Atom IDENTITY = new Atom(BigDecimal.ZERO);

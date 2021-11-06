@@ -253,4 +253,9 @@ class ArithmeticTest {
     void testTotient() {
         assertEquals(Evaluation.evalString("(totient 174)").get(0).getNumber().get(), new BigDecimal("56"));
     }
+
+    @Test
+    void testLambertW() {
+        assertTrue(Evaluation.evalString("[(lambert-w 1) approx-eq 0.567143290409783872999968662210355486529509244883197153529119923828457615923191388868984309071565618676152600936250143142408492557857682170573048310470607266265742292274719559702173158208541174420285717432949219640 0.00000000000000000000000001]").get(0).coerceBool());
+    }
 }
