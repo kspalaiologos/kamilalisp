@@ -75,9 +75,9 @@ public class MathLib {
                 }
             }
 
-            private Atom sub1(Atom a) {
+            private BigDecimal sub1(Atom a) {
                 a.guardType("Argument to monadic -", Type.NUMBER);
-                throw new Error("- unsupported on operand of type " + a.getType().name());
+                return a.getNumber().get().negate();
             }
 
             @Override
@@ -85,7 +85,7 @@ public class MathLib {
                 if(arguments.size() == 0 || arguments.size() > 2)
                     throw new Error("Invalid - invocation.");
                 else if(arguments.size() == 1)
-                    return sub1(arguments.get(0));
+                    return new Atom(new LbcSupplier<>(() -> sub1(arguments.get(0))));
                 return new Atom(new LbcSupplier<>(() -> sub2(arguments.get(0), arguments.get(1)).get().get()));
             }
         }));
