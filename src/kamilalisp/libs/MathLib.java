@@ -9,6 +9,7 @@ import kamilalisp.libs.math.*;
 
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.LinkedHashSet;
@@ -607,6 +608,23 @@ public class MathLib {
                     Atom a = arguments.get(0);
                     a.guardType("First argument to 'is-prime'", Type.NUMBER);
                     return a.getNumber().get().toBigInteger().isProbablePrime(50) ? BigDecimal.ONE : BigDecimal.ZERO;
+                }));
+            }
+        }));
+
+        env.push("hamming-weight", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'hamming-weight'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'hamming-weight'", Type.NUMBER);
+                    BigInteger value = arguments.get(0).getNumber().get().toBigInteger();
+                    BigInteger weight = new BigInteger("0");
+                    for (int i = 0; i <= value.bitLength(); i++)
+                        if (value.testBit(i))
+                            weight = weight.add(BigInteger.ONE);
+                    return new BigDecimal(weight);
                 }));
             }
         }));
