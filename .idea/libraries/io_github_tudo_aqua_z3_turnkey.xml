@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="io.github.tudo.aqua.z3.turnkey" type="repository">
+    <properties maven-id="io.github.tudo-aqua:z3-turnkey:4.8.12" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/github/tudo-aqua/z3-turnkey/4.8.12/z3-turnkey-4.8.12.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
