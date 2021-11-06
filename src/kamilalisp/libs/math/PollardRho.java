@@ -35,7 +35,7 @@ public class PollardRho {
 
     private List<BigInteger> factors = new ArrayList<>();
 
-    private void factor(BigInteger N) {
+    public void factor(BigInteger N) {
         if (N.compareTo(ONE) == 0) return;
         if (N.isProbablePrime(50)) { factors.add(N); return; }
         BigInteger divisor = rho(N);
@@ -43,7 +43,7 @@ public class PollardRho {
         factor(N.divide(divisor));
     }
 
-    private List<BigInteger> getFactors() {
+    public List<BigInteger> getFactors() {
         return factors;
     }
 

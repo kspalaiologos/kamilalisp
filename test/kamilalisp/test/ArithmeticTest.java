@@ -263,4 +263,12 @@ class ArithmeticTest {
     void testHammingWeight() {
         assertTrue(Evaluation.evalString("(= (hamming-weight 1612386) 9)").get(0).coerceBool());
     }
+
+    @Test
+    void testMobiusMu() {
+        assertEquals(Evaluation.evalString("(mobius-mu 1523)").get(0).getNumber().get(), BigDecimal.valueOf(0));
+        assertEquals(Evaluation.evalString("(mobius-mu 7)").get(0).getNumber().get(), BigDecimal.valueOf(-1));
+        assertEquals(Evaluation.evalString("(mobius-mu 10)").get(0).getNumber().get(), BigDecimal.valueOf(1));
+        assertEquals(Evaluation.evalString("(mobius-mu 8)").get(0).getNumber().get(), BigDecimal.valueOf(0));
+    }
 }

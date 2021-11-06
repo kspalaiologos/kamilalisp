@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class MathLib {
     public static void install(Environment env) {
@@ -26,6 +25,7 @@ public class MathLib {
         Trigonometry.install(env);
         PollardRho.install(env);
         LambertW.install(env);
+        MobiusMu.install(env);
 
         env.push("+", new Atom(new Closure() {
             private Atom IDENTITY = new Atom(BigDecimal.ZERO);
