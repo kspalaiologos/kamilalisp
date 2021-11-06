@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public class Main {
     private static void banner() {
-        System.out.println("KamilaLisp v 1.0 - Copyright (C) Kamila Szewczyk, 2021.");
+        System.out.println("KamilaLisp v 0.1 - Copyright (C) Kamila Szewczyk, 2021.");
         System.out.println("Interactive mode.");
         System.out.println();
     }
