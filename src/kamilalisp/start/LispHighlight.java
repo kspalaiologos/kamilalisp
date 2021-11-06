@@ -26,14 +26,16 @@ public class LispHighlight implements Highlighter {
         return refGlobEnv.has(s);
     }
 
-    public AttributedStyle getStyleForToken(Token t, boolean isKw) {
+    public AttributedStyle getStyleForToken(Token t, boolean isKw, boolean isWs) {
         if(isKw)
             return new AttributedStyle().foreground(AttributedStyle.MAGENTA);
         switch(t.getType()) {
             case GrammarLexer.BIN: case GrammarLexer.FLOAT: case GrammarLexer.HEX: case GrammarLexer.LONG:
                 return new AttributedStyle().foreground(AttributedStyle.YELLOW);
-            case GrammarLexer.NAME: case GrammarLexer.TRASH:
+            case GrammarLexer.NAME:
                 return new AttributedStyle();
+            case GrammarLexer.TRASH:
+                return isWs ? new AttributedStyle() : new AttributedStyle().foreground(AttributedStyle.BRIGHT | AttributedStyle.BLACK);
             case GrammarLexer.NIL:
                 return new AttributedStyle().foreground(AttributedStyle.RED);
             case GrammarLexer.STRING:
@@ -50,7 +52,7 @@ public class LispHighlight implements Highlighter {
             return b.toAttributedString();
         GrammarLexer lex = new GrammarLexer(CharStreams.fromString(s));
         ((List<Token>) lex.getAllTokens()).forEach(x -> {
-            b.style(getStyleForToken(x, isKeyword(x.getText())));
+            b.style(getStyleForToken(x, isKeyword(x.getText()), x.getText().trim().equals("")));
             b.append(x.getText());
         });
         return b.toAttributedString();

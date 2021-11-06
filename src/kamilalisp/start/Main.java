@@ -40,7 +40,7 @@ public class Main {
         try {
             while (true) {
                 String code = r.readLine("--> ");
-                if(code.length() == 0 || code.trim().length() == 0)
+                if(code.length() == 0 || code.trim().length() == 0 || code.trim().startsWith(";"))
                     continue;
                 Atom result = Evaluation.evalAtom(env, code);
                 System.out.println(result);
