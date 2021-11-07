@@ -432,17 +432,17 @@ public class CoreLib {
                 if(arguments.size() < 3)
                     throw new Error("Invalid invocation to 'iterate'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("Argument to 'iterate'.", Type.CLOSURE, Type.MACRO);
-                    Callable c = arguments.get(0).getCallable().get();
+                    arguments.get(1).guardType("Argument to 'iterate'.", Type.CLOSURE, Type.MACRO);
+                    Callable c = arguments.get(1).getCallable().get();
                     LinkedList<Atom> rest = new LinkedList<>(arguments.subList(3, arguments.size()));
                     rest.addFirst(arguments.get(2));
 
-                    if(arguments.get(1).getType() == Type.NUMBER) {
-                        int n = arguments.get(1).getNumber().get().intValue();
+                    if(arguments.get(0).getType() == Type.NUMBER) {
+                        int n = arguments.get(0).getNumber().get().intValue();
                         for (int i = 0; i < n; i++)
                             rest.set(0, c.apply(env, rest));
-                    } else if(arguments.get(1).isCallable()) {
-                        Callable f = arguments.get(1).getCallable().get();
+                    } else if(arguments.get(0).isCallable()) {
+                        Callable f = arguments.get(0).getCallable().get();
                         while(f.apply(env, List.of(rest.get(0))).coerceBool())
                             rest.set(0, c.apply(env, rest));
                     }
@@ -591,15 +591,18 @@ public class CoreLib {
                     throw new Error("Invalid invocation to 'memo'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     parentArgs.get(0).guardType("First argument to 'memo'.", Type.CLOSURE);
-                    HashMap<List<Atom>, Atom> cache = new HashMap<>();
+                    // XXX: Can't use a map. Weirdness with hash codes and comparisons. Not worth it.
+                    List<List<Atom>> keys = new ArrayList<>();
+                    List<Atom> values = new ArrayList<>();
                     return new Closure() {
                         @Override
                         public Atom apply(Executor env, List<Atom> arguments) {
-                            if(cache.containsKey(arguments))
-                                return cache.get(arguments);
+                            if(keys.contains(arguments))
+                                return values.get(keys.indexOf(arguments));
                             else {
                                 Atom result = parentArgs.get(0).getClosure().get().apply(env, arguments);
-                                cache.put(arguments, result);
+                                keys.add(arguments);
+                                values.add(result);
                                 return result;
                             }
                         }

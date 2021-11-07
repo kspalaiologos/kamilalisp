@@ -287,8 +287,8 @@ public class ListBasic {
 
     @Test
     void testIterate() {
-        assertTrue(Evaluation.evalString("(iterate (lambda (x) [x + 1]) 0 10)").get(0).getNumber().get().intValue() == 10);
-        assertTrue(Evaluation.evalString("(iterate (monad [x + 1]) (monad [x < 10]) 0)").get(0).getNumber().get().intValue() == 10);
+        assertTrue(Evaluation.evalString("(iterate 0 (lambda (x) [x + 1]) 10)").get(0).getNumber().get().intValue() == 10);
+        assertTrue(Evaluation.evalString("(iterate (monad [x < 10]) (monad [x + 1]) 0)").get(0).getNumber().get().intValue() == 10);
     }
 
     @Test

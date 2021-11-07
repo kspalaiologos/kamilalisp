@@ -86,6 +86,11 @@ public class DefaultVisitor extends AbstractParseTreeVisitor<Atom> implements Gr
     public Atom visitTack(GrammarParser.TackContext ctx) {
         return new Atom(new Closure() {
             @Override
+            public String representation() {
+                return "#" + ctx.getText().substring(1);
+            }
+
+            @Override
             public Atom apply(Executor env, List<Atom> arguments) {
                 return arguments.get(Integer.valueOf(ctx.getText().substring(1)));
             }
