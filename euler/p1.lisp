@@ -1,2 +1,2 @@
-(def divides #($(= 0) %))
-(sum@filter (lambda (x) (| (divides x 5) (divides x 3))) (iota 1000))
+(def divides $(= 0)@%)
+(sum@filter #(| $(commute divides 5) $(commute divides 3)) (iota 1000))
