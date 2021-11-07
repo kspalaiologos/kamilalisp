@@ -1,6 +1,7 @@
 package kamilalisp.data;
 
 import ch.obermuhlner.math.big.BigComplex;
+import ch.obermuhlner.math.big.BigComplexMath;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -53,6 +54,7 @@ public class AtomComparator implements Comparator<Atom> {
             BigComplex c1 = o1.getComplex().get();
             BigComplex c2 = o2.getComplex().get();
             // Compare |c1| and |c2|.
+            // Should add a square root, but it's not significant here.
             return c1.re.pow(2).add(c1.im.pow(2)).compareTo(c2.re.pow(2).add(c2.im.pow(2)));
         }
 

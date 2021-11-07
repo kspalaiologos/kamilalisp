@@ -68,8 +68,8 @@ class ArithmeticTest {
 
     @Test
     void division() {
-        assertTrue(Evaluation.evalString("(= 1 (- (/ 5 3) (/ 2 3)))").get(0).getNumber().get().equals(BigDecimal.ONE));
-        assertTrue(Evaluation.evalString("(= 1 (- (/ 4 3) (/ 1 3)))").get(0).getNumber().get().equals(BigDecimal.ONE));
+        assertTrue(Evaluation.evalString("(approx-eq 1 (- (/ 5 3) (/ 2 3)) 0.00001)").get(0).getNumber().get().equals(BigDecimal.ONE));
+        assertTrue(Evaluation.evalString("(approx-eq 1 (- (/ 4 3) (/ 1 3)) 0.00001)").get(0).getNumber().get().equals(BigDecimal.ONE));
     }
 
     @Test

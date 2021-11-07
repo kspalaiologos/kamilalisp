@@ -1,5 +1,7 @@
 package kamilalisp.libs;
 
+import ch.obermuhlner.math.big.BigComplex;
+import ch.obermuhlner.math.big.BigComplexMath;
 import ch.obermuhlner.math.big.BigDecimalMath;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
@@ -19,6 +21,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MathLib {
+    private static BigDecimal modulus(BigComplex x) {
+        return x.re.pow(2).add(x.im.pow(2)).sqrt(MathContext.DECIMAL128);
+    }
+
     public static void install(Environment env) {
         Logarithm.install(env);
         Constant.install(env);
@@ -50,8 +56,14 @@ public class MathLib {
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() == 0 || arguments.size() > 2)
                     throw new Error("Invalid + invocation.");
-                else if(arguments.size() == 1)
-                    return arguments.get(0);
+                else if(arguments.size() == 1) {
+                    return new Atom(new LbcSupplier<>(() -> {
+                        if(arguments.get(0).getType() == Type.COMPLEX) {
+                            return BigComplexMath.conjugate(arguments.get(0).getComplex().get());
+                        } else
+                            return arguments.get(0).get().get();
+                    }));
+                }
                 return new Atom(new LbcSupplier<>(() -> add2(arguments.get(0), arguments.get(1)).get().get()));
             }
         }));
@@ -62,6 +74,8 @@ public class MathLib {
             private Atom sub2(Atom a1, Atom a2) {
                 if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
                     return new Atom(a1.getNumber().get().subtract(a2.getNumber().get()));
+                } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
+                    return new Atom(a1.getComplex().get().subtract(a2.getComplex().get()));
                 } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.STRING_CONSTANT) {
                     final String lookup = a2.getStringConstant().get().get();
                     return new Atom(new StringConstant(a1.getStringConstant().get().get()
@@ -77,9 +91,14 @@ public class MathLib {
                 }
             }
 
-            private BigDecimal sub1(Atom a) {
-                a.guardType("Argument to monadic -", Type.NUMBER);
-                return a.getNumber().get().negate();
+            private Object sub1(Atom a) {
+                a.guardType("Argument to monadic -", Type.NUMBER, Type.COMPLEX);
+                if(a.getType() == Type.NUMBER) {
+                    return a.getNumber().get().negate();
+                } else if(a.getType() == Type.COMPLEX) {
+                    return a.getComplex().get().negate();
+                }
+                throw new Error("Unreachable");
             }
 
             @Override
@@ -98,6 +117,8 @@ public class MathLib {
             private Atom mul2(Atom a1, Atom a2) {
                 if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
                     return new Atom(a1.getNumber().get().multiply(a2.getNumber().get()));
+                } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
+                    return new Atom(a1.getComplex().get().multiply(a2.getComplex().get()));
                 } else if(a1.getType() == Type.NUMBER && a2.getType() == Type.STRING_CONSTANT) {
                     return new Atom(new StringConstant(a2.getStringConstant().get().get().repeat(a1.getNumber().get().intValue())));
                 } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.NUMBER) {
@@ -107,9 +128,14 @@ public class MathLib {
                 }
             }
 
-            public Atom mul1(Atom a) {
-                a.guardType("Argument to monadic *", Type.NUMBER);
-                return new Atom(new LbcSupplier<>(() -> new BigDecimal(a.getNumber().get().compareTo(BigDecimal.ZERO))));
+            public Object mul1(Atom a) {
+                a.guardType("Argument to monadic *", Type.NUMBER, Type.COMPLEX);
+                if(a.getType() == Type.NUMBER) {
+                    return new BigDecimal(a.getNumber().get().compareTo(BigDecimal.ZERO));
+                } else if(a.getType() == Type.COMPLEX) {
+                    return new BigDecimal(modulus(a.getComplex().get()).compareTo(BigDecimal.ZERO));
+                } else
+                    throw new Error("unreachable.");
             }
 
             @Override
@@ -117,7 +143,7 @@ public class MathLib {
                 if(arguments.size() == 0 || arguments.size() > 2)
                     throw new Error("Invalid * invocation.");
                 if(arguments.size() == 1)
-                    return mul1(arguments.get(0));
+                    return new Atom(new LbcSupplier<>(() -> mul1(arguments.get(0))));
                 return new Atom(new LbcSupplier<>(() -> mul2(arguments.get(0), arguments.get(1)).get().get()));
             }
         }));
@@ -127,7 +153,7 @@ public class MathLib {
 
             private Atom div2(Atom a1, Atom a2) {
                 if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
-                    return new Atom(a1.getNumber().get().divide(a2.getNumber().get(), MathContext.DECIMAL128).setScale(0, RoundingMode.FLOOR));
+                    return new Atom(a1.getNumber().get().divide(a2.getNumber().get(), MathContext.DECIMAL128));
                 } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.NUMBER) {
                     String s = a1.getStringConstant().get().get();
                     return new Atom(Lists.newLinkedList(
@@ -137,6 +163,8 @@ public class MathLib {
                         ).stream()
                             .map(x -> new Atom(new StringConstant(x)))
                             .collect(Collectors.toList()));
+                } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
+                    return new Atom(a1.getComplex().get().divide(a2.getComplex().get(), MathContext.DECIMAL128));
                 } else if(a1.getType() == Type.LIST && a2.getType() == Type.NUMBER) {
                     List<Atom> s = a1.getList().get();
                     return new Atom(Lists.partition(s, s.size() / a2.getNumber().get().intValue()).stream().map(x -> new Atom(x)).collect(Collectors.toList()));
@@ -145,9 +173,14 @@ public class MathLib {
                 }
             }
 
-            public Atom div1(Atom a) {
-                a.guardType("Argument to monadic /", Type.NUMBER);
-                return new Atom(new LbcSupplier<>(() -> BigDecimal.ONE.divide(a.getNumber().get())));
+            public Object div1(Atom a) {
+                a.guardType("Argument to monadic /", Type.NUMBER, Type.COMPLEX);
+                if(a.getType() == Type.NUMBER) {
+                    return BigDecimal.ONE.divide(a.getNumber().get());
+                } else if(a.getType() == Type.COMPLEX) {
+                    return a.getComplex().get().reciprocal(MathContext.DECIMAL128);
+                } else
+                    throw new Error("unreachable.");
             }
 
             @Override
@@ -155,7 +188,7 @@ public class MathLib {
                 if(arguments.size() == 0 || arguments.size() > 2)
                     throw new Error("Invalid / invocation.");
                 if(arguments.size() == 1)
-                    return div1(arguments.get(0));
+                    return new Atom(new LbcSupplier<>(() -> div1(arguments.get(0))));
                 return new Atom(new LbcSupplier<>(() -> div2(arguments.get(0), arguments.get(1)).get().get()));
             }
         }));
@@ -167,8 +200,15 @@ public class MathLib {
                     throw new Error("Invalid % invocation.");
                 if(arguments.size() == 1) {
                     return new Atom(new LbcSupplier<>(() -> {
-                        arguments.get(0).guardType("Argument to monadic %", Type.NUMBER);
-                        return arguments.get(0).getNumber().get().abs();
+                        arguments.get(0).guardType("Argument to monadic %", Type.NUMBER, Type.COMPLEX);
+
+                        if(arguments.get(0).getType() == Type.NUMBER) {
+                            return arguments.get(0).getNumber().get().abs();
+                        } else if(arguments.get(0).getType() == Type.COMPLEX) {
+                            return modulus(arguments.get(0).getComplex().get());
+                        }
+
+                        throw new Error("unreachable.");
                     }));
                 } else
                     return new Atom(new LbcSupplier<>(() -> {
