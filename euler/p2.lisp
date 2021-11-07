@@ -11,4 +11,4 @@
 ;     iterate n (lambda (x) (
 ;         tie (nth 1 x) [(nth 0 x) + (nth 1 x)])) '(0 1))))
 
-(sum (filter #(& #(~ $(% _ 2)) $(> 4000000)) (map fib (iota 40))))
+(sum@filter #(& ~@$(% _ 2) $(> 4000000)) (map fib (iota 40)))

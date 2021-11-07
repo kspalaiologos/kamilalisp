@@ -5,6 +5,7 @@ file_: form * EOF;
 form: reader_macro
     | fork
     | bind
+    | form '@' form
     | any_list
     | literal
     ;

@@ -1,5 +1,6 @@
 package kamilalisp.reader;
 
+import com.google.common.collect.Lists;
 import kamilalisp.data.*;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -19,7 +20,23 @@ public class DefaultVisitor extends AbstractParseTreeVisitor<Atom> implements Gr
 
     @Override
     public Atom visitForm(GrammarParser.FormContext ctx) {
-        return visitChildren(ctx);
+        // XXX: Refactor atops in `form' as labeled alternatives.
+        if(ctx.form().isEmpty()) {
+            return visitChildren(ctx);
+        }
+
+        List<Atom> components = Lists.reverse(ctx.form().stream().map(x -> visitChildren(x)).collect(Collectors.toList()));
+        return new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom x = env.evaluate(components.get(0)).getCallable().get().apply(env, arguments);
+                    for(int i = 1; i < components.size(); i++)
+                        x = env.evaluate(components.get(i)).getCallable().get().apply(env, List.of(x));
+                    return x.get().get();
+                }));
+            }
+        });
     }
 
     @Override
