@@ -28,4 +28,10 @@ public class EulerTests {
                 "        [(fib [x - 1]) + (fib [x - 2])])))))" +
                 "(sum@filter #(& ~@$(% _ 2) $(> 4000000)) (map fib (iota 40)))").get(1).getNumber().get(), new BigDecimal("4613732"));
     }
+
+    @Test
+    void problem3() {
+        Environment env = Evaluation.createDefaultEnv();
+        assertEquals(Evaluation.evalString(env, "(foldl1' max (p-factors 600851475143))").get(0).getNumber().get(), new BigDecimal("6857"));
+    }
 }
