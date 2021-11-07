@@ -33,9 +33,19 @@ public class SATLib {
                         List<Atom> results = new LinkedList<>();
                         for (FuncDecl funcDecl : dC) {
                             Expr x = m.getConstInterp(funcDecl);
-                            results.add(new Atom(List.of(
-                                    new Atom(new StringConstant(funcDecl.getName().toString())),
-                                    Evaluation.evalString(env.env, x.getSExpr()).get(0))));
+                            if(x instanceof IntNum) {
+                                results.add(new Atom(List.of(
+                                        new Atom(new StringConstant(funcDecl.getName().toString())),
+                                        new Atom(new BigDecimal(((IntNum) x).toString()))
+                                )));
+                            } else if(x instanceof RatNum) {
+                                results.add(new Atom(List.of(
+                                        new Atom(new StringConstant(funcDecl.getName().toString())),
+                                        new Atom(new BigDecimal(((RatNum) x).toDecimalString(60)))
+                                )));
+                            } else {
+                                throw new Error("'solve': result type not yet supported.");
+                            }
                         }
                         if(dF.length > 0)
                             throw new Error("'solve': yielding functions not yet supported.");
