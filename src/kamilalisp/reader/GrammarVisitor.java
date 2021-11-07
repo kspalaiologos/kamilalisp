@@ -71,6 +71,12 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTack(GrammarParser.TackContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link GrammarParser#bind}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBind(GrammarParser.BindContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link GrammarParser#literal}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

@@ -452,6 +452,15 @@ public class CoreLib {
             }
         }));
 
+        env.push("eager", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'eager'.");
+                return arguments.get(0).eager();
+            }
+        }));
+
         env.push("scanterate", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {

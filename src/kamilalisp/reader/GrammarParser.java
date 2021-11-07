@@ -17,33 +17,33 @@ public class GrammarParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, STRING=7, FLOAT=8, HEX=9, 
-		BIN=10, LONG=11, NIL=12, NAME=13, TRASH=14;
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, STRING=8, FLOAT=9, 
+		HEX=10, BIN=11, LONG=12, NIL=13, NAME=14, TRASH=15;
 	public static final int
 		RULE_file_ = 0, RULE_form = 1, RULE_forms = 2, RULE_any_list = 3, RULE_list_ = 4, 
 		RULE_sqlist = 5, RULE_reader_macro = 6, RULE_quote = 7, RULE_fork = 8, 
-		RULE_tack = 9, RULE_literal = 10, RULE_string_ = 11, RULE_hex_ = 12, RULE_bin_ = 13, 
-		RULE_number = 14, RULE_nil_ = 15, RULE_symbol = 16;
+		RULE_tack = 9, RULE_bind = 10, RULE_literal = 11, RULE_string_ = 12, RULE_hex_ = 13, 
+		RULE_bin_ = 14, RULE_number = 15, RULE_nil_ = 16, RULE_symbol = 17;
 	private static String[] makeRuleNames() {
 		return new String[] {
 			"file_", "form", "forms", "any_list", "list_", "sqlist", "reader_macro", 
-			"quote", "fork", "tack", "literal", "string_", "hex_", "bin_", "number", 
-			"nil_", "symbol"
+			"quote", "fork", "tack", "bind", "literal", "string_", "hex_", "bin_", 
+			"number", "nil_", "symbol"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'('", "')'", "'['", "']'", "'''", "'#'", null, null, null, null, 
-			null, "'nil'"
+			null, "'('", "')'", "'['", "']'", "'''", "'#'", "'$'", null, null, null, 
+			null, null, "'nil'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, null, null, null, null, null, "STRING", "FLOAT", "HEX", "BIN", 
-			"LONG", "NIL", "NAME", "TRASH"
+			null, null, null, null, null, null, null, null, "STRING", "FLOAT", "HEX", 
+			"BIN", "LONG", "NIL", "NAME", "TRASH"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -131,21 +131,21 @@ public class GrammarParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(37);
+			setState(39);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__4) | (1L << T__5) | (1L << STRING) | (1L << FLOAT) | (1L << HEX) | (1L << BIN) | (1L << LONG) | (1L << NIL) | (1L << NAME))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__4) | (1L << T__5) | (1L << T__6) | (1L << STRING) | (1L << FLOAT) | (1L << HEX) | (1L << BIN) | (1L << LONG) | (1L << NIL) | (1L << NAME))) != 0)) {
 				{
 				{
-				setState(34);
+				setState(36);
 				form();
 				}
 				}
-				setState(39);
+				setState(41);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(40);
+			setState(42);
 			match(EOF);
 			}
 		}
@@ -166,6 +166,9 @@ public class GrammarParser extends Parser {
 		}
 		public ForkContext fork() {
 			return getRuleContext(ForkContext.class,0);
+		}
+		public BindContext bind() {
+			return getRuleContext(BindContext.class,0);
 		}
 		public Any_listContext any_list() {
 			return getRuleContext(Any_listContext.class,0);
@@ -196,34 +199,41 @@ public class GrammarParser extends Parser {
 		FormContext _localctx = new FormContext(_ctx, getState());
 		enterRule(_localctx, 2, RULE_form);
 		try {
-			setState(46);
+			setState(49);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(42);
+				setState(44);
 				reader_macro();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(43);
+				setState(45);
 				fork();
 				}
 				break;
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(44);
-				any_list();
+				setState(46);
+				bind();
 				}
 				break;
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(45);
+				setState(47);
+				any_list();
+				}
+				break;
+			case 5:
+				enterOuterAlt(_localctx, 5);
+				{
+				setState(48);
 				literal();
 				}
 				break;
@@ -273,17 +283,17 @@ public class GrammarParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(51);
+			setState(54);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__4) | (1L << T__5) | (1L << STRING) | (1L << FLOAT) | (1L << HEX) | (1L << BIN) | (1L << LONG) | (1L << NIL) | (1L << NAME))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__2) | (1L << T__4) | (1L << T__5) | (1L << T__6) | (1L << STRING) | (1L << FLOAT) | (1L << HEX) | (1L << BIN) | (1L << LONG) | (1L << NIL) | (1L << NAME))) != 0)) {
 				{
 				{
-				setState(48);
+				setState(51);
 				form();
 				}
 				}
-				setState(53);
+				setState(56);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -330,20 +340,20 @@ public class GrammarParser extends Parser {
 		Any_listContext _localctx = new Any_listContext(_ctx, getState());
 		enterRule(_localctx, 6, RULE_any_list);
 		try {
-			setState(56);
+			setState(59);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case T__0:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(54);
+				setState(57);
 				list_();
 				}
 				break;
 			case T__2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(55);
+				setState(58);
 				sqlist();
 				}
 				break;
@@ -391,11 +401,11 @@ public class GrammarParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(58);
+			setState(61);
 			match(T__0);
-			setState(59);
+			setState(62);
 			forms();
-			setState(60);
+			setState(63);
 			match(T__1);
 			}
 		}
@@ -439,11 +449,11 @@ public class GrammarParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(62);
+			setState(65);
 			match(T__2);
-			setState(63);
+			setState(66);
 			forms();
-			setState(64);
+			setState(67);
 			match(T__3);
 			}
 		}
@@ -488,20 +498,20 @@ public class GrammarParser extends Parser {
 		Reader_macroContext _localctx = new Reader_macroContext(_ctx, getState());
 		enterRule(_localctx, 12, RULE_reader_macro);
 		try {
-			setState(68);
+			setState(71);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case T__4:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(66);
+				setState(69);
 				quote();
 				}
 				break;
 			case T__5:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(67);
+				setState(70);
 				tack();
 				}
 				break;
@@ -549,9 +559,9 @@ public class GrammarParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(70);
+			setState(73);
 			match(T__4);
-			setState(71);
+			setState(74);
 			form();
 			}
 		}
@@ -595,9 +605,9 @@ public class GrammarParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(73);
+			setState(76);
 			match(T__5);
-			setState(74);
+			setState(77);
 			any_list();
 			}
 		}
@@ -641,10 +651,56 @@ public class GrammarParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(76);
+			setState(79);
 			match(T__5);
-			setState(77);
+			setState(80);
 			number();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class BindContext extends ParserRuleContext {
+		public Any_listContext any_list() {
+			return getRuleContext(Any_listContext.class,0);
+		}
+		public BindContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_bind; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof GrammarListener ) ((GrammarListener)listener).enterBind(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof GrammarListener ) ((GrammarListener)listener).exitBind(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof GrammarVisitor ) return ((GrammarVisitor<? extends T>)visitor).visitBind(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final BindContext bind() throws RecognitionException {
+		BindContext _localctx = new BindContext(_ctx, getState());
+		enterRule(_localctx, 20, RULE_bind);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(82);
+			match(T__6);
+			setState(83);
+			any_list();
 			}
 		}
 		catch (RecognitionException re) {
@@ -692,15 +748,15 @@ public class GrammarParser extends Parser {
 
 	public final LiteralContext literal() throws RecognitionException {
 		LiteralContext _localctx = new LiteralContext(_ctx, getState());
-		enterRule(_localctx, 20, RULE_literal);
+		enterRule(_localctx, 22, RULE_literal);
 		try {
-			setState(83);
+			setState(89);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case STRING:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(79);
+				setState(85);
 				string_();
 				}
 				break;
@@ -710,21 +766,21 @@ public class GrammarParser extends Parser {
 			case LONG:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(80);
+				setState(86);
 				number();
 				}
 				break;
 			case NIL:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(81);
+				setState(87);
 				nil_();
 				}
 				break;
 			case NAME:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(82);
+				setState(88);
 				symbol();
 				}
 				break;
@@ -766,11 +822,11 @@ public class GrammarParser extends Parser {
 
 	public final String_Context string_() throws RecognitionException {
 		String_Context _localctx = new String_Context(_ctx, getState());
-		enterRule(_localctx, 22, RULE_string_);
+		enterRule(_localctx, 24, RULE_string_);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(85);
+			setState(91);
 			match(STRING);
 			}
 		}
@@ -808,11 +864,11 @@ public class GrammarParser extends Parser {
 
 	public final Hex_Context hex_() throws RecognitionException {
 		Hex_Context _localctx = new Hex_Context(_ctx, getState());
-		enterRule(_localctx, 24, RULE_hex_);
+		enterRule(_localctx, 26, RULE_hex_);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(87);
+			setState(93);
 			match(HEX);
 			}
 		}
@@ -850,11 +906,11 @@ public class GrammarParser extends Parser {
 
 	public final Bin_Context bin_() throws RecognitionException {
 		Bin_Context _localctx = new Bin_Context(_ctx, getState());
-		enterRule(_localctx, 26, RULE_bin_);
+		enterRule(_localctx, 28, RULE_bin_);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(89);
+			setState(95);
 			match(BIN);
 			}
 		}
@@ -899,36 +955,36 @@ public class GrammarParser extends Parser {
 
 	public final NumberContext number() throws RecognitionException {
 		NumberContext _localctx = new NumberContext(_ctx, getState());
-		enterRule(_localctx, 28, RULE_number);
+		enterRule(_localctx, 30, RULE_number);
 		try {
-			setState(95);
+			setState(101);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case FLOAT:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(91);
+				setState(97);
 				match(FLOAT);
 				}
 				break;
 			case HEX:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(92);
+				setState(98);
 				hex_();
 				}
 				break;
 			case BIN:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(93);
+				setState(99);
 				bin_();
 				}
 				break;
 			case LONG:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(94);
+				setState(100);
 				match(LONG);
 				}
 				break;
@@ -970,11 +1026,11 @@ public class GrammarParser extends Parser {
 
 	public final Nil_Context nil_() throws RecognitionException {
 		Nil_Context _localctx = new Nil_Context(_ctx, getState());
-		enterRule(_localctx, 30, RULE_nil_);
+		enterRule(_localctx, 32, RULE_nil_);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(97);
+			setState(103);
 			match(NIL);
 			}
 		}
@@ -1012,11 +1068,11 @@ public class GrammarParser extends Parser {
 
 	public final SymbolContext symbol() throws RecognitionException {
 		SymbolContext _localctx = new SymbolContext(_ctx, getState());
-		enterRule(_localctx, 32, RULE_symbol);
+		enterRule(_localctx, 34, RULE_symbol);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(99);
+			setState(105);
 			match(NAME);
 			}
 		}
@@ -1032,31 +1088,32 @@ public class GrammarParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\20h\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\21n\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4"+
-		"\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22\3\2\7"+
-		"\2&\n\2\f\2\16\2)\13\2\3\2\3\2\3\3\3\3\3\3\3\3\5\3\61\n\3\3\4\7\4\64\n"+
-		"\4\f\4\16\4\67\13\4\3\5\3\5\5\5;\n\5\3\6\3\6\3\6\3\6\3\7\3\7\3\7\3\7\3"+
-		"\b\3\b\5\bG\n\b\3\t\3\t\3\t\3\n\3\n\3\n\3\13\3\13\3\13\3\f\3\f\3\f\3\f"+
-		"\5\fV\n\f\3\r\3\r\3\16\3\16\3\17\3\17\3\20\3\20\3\20\3\20\5\20b\n\20\3"+
-		"\21\3\21\3\22\3\22\3\22\2\2\23\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36"+
-		" \"\2\2\2c\2\'\3\2\2\2\4\60\3\2\2\2\6\65\3\2\2\2\b:\3\2\2\2\n<\3\2\2\2"+
-		"\f@\3\2\2\2\16F\3\2\2\2\20H\3\2\2\2\22K\3\2\2\2\24N\3\2\2\2\26U\3\2\2"+
-		"\2\30W\3\2\2\2\32Y\3\2\2\2\34[\3\2\2\2\36a\3\2\2\2 c\3\2\2\2\"e\3\2\2"+
-		"\2$&\5\4\3\2%$\3\2\2\2&)\3\2\2\2\'%\3\2\2\2\'(\3\2\2\2(*\3\2\2\2)\'\3"+
-		"\2\2\2*+\7\2\2\3+\3\3\2\2\2,\61\5\16\b\2-\61\5\22\n\2.\61\5\b\5\2/\61"+
-		"\5\26\f\2\60,\3\2\2\2\60-\3\2\2\2\60.\3\2\2\2\60/\3\2\2\2\61\5\3\2\2\2"+
-		"\62\64\5\4\3\2\63\62\3\2\2\2\64\67\3\2\2\2\65\63\3\2\2\2\65\66\3\2\2\2"+
-		"\66\7\3\2\2\2\67\65\3\2\2\28;\5\n\6\29;\5\f\7\2:8\3\2\2\2:9\3\2\2\2;\t"+
-		"\3\2\2\2<=\7\3\2\2=>\5\6\4\2>?\7\4\2\2?\13\3\2\2\2@A\7\5\2\2AB\5\6\4\2"+
-		"BC\7\6\2\2C\r\3\2\2\2DG\5\20\t\2EG\5\24\13\2FD\3\2\2\2FE\3\2\2\2G\17\3"+
-		"\2\2\2HI\7\7\2\2IJ\5\4\3\2J\21\3\2\2\2KL\7\b\2\2LM\5\b\5\2M\23\3\2\2\2"+
-		"NO\7\b\2\2OP\5\36\20\2P\25\3\2\2\2QV\5\30\r\2RV\5\36\20\2SV\5 \21\2TV"+
-		"\5\"\22\2UQ\3\2\2\2UR\3\2\2\2US\3\2\2\2UT\3\2\2\2V\27\3\2\2\2WX\7\t\2"+
-		"\2X\31\3\2\2\2YZ\7\13\2\2Z\33\3\2\2\2[\\\7\f\2\2\\\35\3\2\2\2]b\7\n\2"+
-		"\2^b\5\32\16\2_b\5\34\17\2`b\7\r\2\2a]\3\2\2\2a^\3\2\2\2a_\3\2\2\2a`\3"+
-		"\2\2\2b\37\3\2\2\2cd\7\16\2\2d!\3\2\2\2ef\7\17\2\2f#\3\2\2\2\t\'\60\65"+
-		":FUa";
+		"\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22\4\23"+
+		"\t\23\3\2\7\2(\n\2\f\2\16\2+\13\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\5\3\64\n"+
+		"\3\3\4\7\4\67\n\4\f\4\16\4:\13\4\3\5\3\5\5\5>\n\5\3\6\3\6\3\6\3\6\3\7"+
+		"\3\7\3\7\3\7\3\b\3\b\5\bJ\n\b\3\t\3\t\3\t\3\n\3\n\3\n\3\13\3\13\3\13\3"+
+		"\f\3\f\3\f\3\r\3\r\3\r\3\r\5\r\\\n\r\3\16\3\16\3\17\3\17\3\20\3\20\3\21"+
+		"\3\21\3\21\3\21\5\21h\n\21\3\22\3\22\3\23\3\23\3\23\2\2\24\2\4\6\b\n\f"+
+		"\16\20\22\24\26\30\32\34\36 \"$\2\2\2i\2)\3\2\2\2\4\63\3\2\2\2\68\3\2"+
+		"\2\2\b=\3\2\2\2\n?\3\2\2\2\fC\3\2\2\2\16I\3\2\2\2\20K\3\2\2\2\22N\3\2"+
+		"\2\2\24Q\3\2\2\2\26T\3\2\2\2\30[\3\2\2\2\32]\3\2\2\2\34_\3\2\2\2\36a\3"+
+		"\2\2\2 g\3\2\2\2\"i\3\2\2\2$k\3\2\2\2&(\5\4\3\2\'&\3\2\2\2(+\3\2\2\2)"+
+		"\'\3\2\2\2)*\3\2\2\2*,\3\2\2\2+)\3\2\2\2,-\7\2\2\3-\3\3\2\2\2.\64\5\16"+
+		"\b\2/\64\5\22\n\2\60\64\5\26\f\2\61\64\5\b\5\2\62\64\5\30\r\2\63.\3\2"+
+		"\2\2\63/\3\2\2\2\63\60\3\2\2\2\63\61\3\2\2\2\63\62\3\2\2\2\64\5\3\2\2"+
+		"\2\65\67\5\4\3\2\66\65\3\2\2\2\67:\3\2\2\28\66\3\2\2\289\3\2\2\29\7\3"+
+		"\2\2\2:8\3\2\2\2;>\5\n\6\2<>\5\f\7\2=;\3\2\2\2=<\3\2\2\2>\t\3\2\2\2?@"+
+		"\7\3\2\2@A\5\6\4\2AB\7\4\2\2B\13\3\2\2\2CD\7\5\2\2DE\5\6\4\2EF\7\6\2\2"+
+		"F\r\3\2\2\2GJ\5\20\t\2HJ\5\24\13\2IG\3\2\2\2IH\3\2\2\2J\17\3\2\2\2KL\7"+
+		"\7\2\2LM\5\4\3\2M\21\3\2\2\2NO\7\b\2\2OP\5\b\5\2P\23\3\2\2\2QR\7\b\2\2"+
+		"RS\5 \21\2S\25\3\2\2\2TU\7\t\2\2UV\5\b\5\2V\27\3\2\2\2W\\\5\32\16\2X\\"+
+		"\5 \21\2Y\\\5\"\22\2Z\\\5$\23\2[W\3\2\2\2[X\3\2\2\2[Y\3\2\2\2[Z\3\2\2"+
+		"\2\\\31\3\2\2\2]^\7\n\2\2^\33\3\2\2\2_`\7\f\2\2`\35\3\2\2\2ab\7\r\2\2"+
+		"b\37\3\2\2\2ch\7\13\2\2dh\5\34\17\2eh\5\36\20\2fh\7\16\2\2gc\3\2\2\2g"+
+		"d\3\2\2\2ge\3\2\2\2gf\3\2\2\2h!\3\2\2\2ij\7\17\2\2j#\3\2\2\2kl\7\20\2"+
+		"\2l%\3\2\2\2\t)\638=I[g";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

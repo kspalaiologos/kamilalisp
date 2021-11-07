@@ -4,6 +4,7 @@ file_: form * EOF;
 
 form: reader_macro
     | fork
+    | bind
     | any_list
     | literal
     ;
@@ -30,6 +31,10 @@ fork
 
 tack
     : '#' number
+    ;
+
+bind
+    : '$' any_list
     ;
 
 literal
@@ -97,7 +102,7 @@ fragment
 NOTID: ~('\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';') ;
 
 fragment
-NOTID_START: ~('#' | '\'' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';');
+NOTID_START: ~('#' | '$' | '\'' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';');
 
 NAME: NOTID_START NOTID* ;
 

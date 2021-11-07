@@ -8,6 +8,7 @@ import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DefaultVisitor extends AbstractParseTreeVisitor<Atom> implements GrammarVisitor<Atom> {
     @Override
@@ -62,7 +63,7 @@ public class DefaultVisitor extends AbstractParseTreeVisitor<Atom> implements Gr
     public Atom visitFork(GrammarParser.ForkContext ctx) {
         List<Atom> tmp = visit(ctx.any_list()).getList().get();
         if(tmp.size() < 2)
-            throw new RuntimeException("a fork can't be created out of less than two functions.");
+            throw new Error("a fork can't be created out of less than two functions.");
         return new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
@@ -80,6 +81,14 @@ public class DefaultVisitor extends AbstractParseTreeVisitor<Atom> implements Gr
                 }));
             }
         });
+    }
+
+    @Override
+    public Atom visitBind(GrammarParser.BindContext ctx) {
+        List<Atom> tmp = visit(ctx.any_list()).getList().get();
+        if(tmp.size() < 1)
+            throw new Error("a bind can't be created out of less than one entity.");
+        return new Atom(Stream.concat(Stream.of(new Atom("bind")), tmp.stream()).collect(Collectors.toList()));
     }
 
     @Override
