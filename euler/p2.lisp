@@ -1,5 +1,5 @@
 
-(def fib (memo (monad (eager (
+(def fib (memo (monad (seq (
     if [x < 2]
         x
         [(fib [x - 1]) + (fib [x - 2])])))))
