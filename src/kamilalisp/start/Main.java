@@ -42,8 +42,12 @@ public class Main {
                 String code = r.readLine("--> ");
                 if(code.length() == 0 || code.trim().length() == 0 || code.trim().startsWith(";"))
                     continue;
-                Atom result = Evaluation.evalAtom(env, code);
-                System.out.println(result);
+                try {
+                    Atom result = Evaluation.evalAtom(env, code);
+                    System.out.println(result);
+                } catch(Throwable e) {
+                    e.printStackTrace();
+                }
             }
         } catch(EndOfFileException e) {
             System.out.println("Bye.");
