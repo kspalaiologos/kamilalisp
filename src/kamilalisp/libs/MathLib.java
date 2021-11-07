@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MathLib {
+    // apparently, english people call it "norm"
     private static BigDecimal modulus(BigComplex x) {
         return x.re.pow(2).add(x.im.pow(2)).sqrt(MathContext.DECIMAL128);
     }
