@@ -39,8 +39,8 @@ bind
     ;
 
 literal
-    : string_
-    | number
+    : number
+    | string_
     | nil_
     | symbol
     ;
@@ -49,9 +49,10 @@ string_: STRING;
 hex_: HEX;
 bin_: BIN;
 number
-    : FLOAT
+    : COMPLEX
     | hex_
     | bin_
+    | FLOAT
     | LONG
     ;
 
@@ -63,6 +64,8 @@ symbol: NAME;
 //--------------------------------------------------------------------
 
 STRING : '"' ( ~'"' | '\\' '"' )* '"' ;
+
+COMPLEX: (FLOAT | LONG) 'J' (FLOAT | LONG);
 
 FLOAT
     : '-'? [0-9]+ FLOAT_TAIL

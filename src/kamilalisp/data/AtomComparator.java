@@ -1,5 +1,7 @@
 package kamilalisp.data;
 
+import ch.obermuhlner.math.big.BigComplex;
+
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
@@ -46,14 +48,22 @@ public class AtomComparator implements Comparator<Atom> {
             return n1.compareTo(n2);
         }
 
-        // 6. Handle closures.
+        // 6. Handle complex numbers.
+        if (o1.getType() == Type.COMPLEX) {
+            BigComplex c1 = o1.getComplex().get();
+            BigComplex c2 = o2.getComplex().get();
+            // Compare |c1| and |c2|.
+            return c1.re.pow(2).add(c1.im.pow(2)).compareTo(c2.re.pow(2).add(c2.im.pow(2)));
+        }
+
+        // 7. Handle closures.
         if (o1.getType() == Type.CLOSURE) {
             Closure c1 = o1.getClosure().get();
             Closure c2 = o2.getClosure().get();
             return c1.representation().compareTo(c2.representation());
         }
 
-        // 7. Handle macros.
+        // 8. Handle macros.
         if (o1.getType() == Type.MACRO) {
             Macro m1 = o1.getMacro().get();
             Macro m2 = o2.getMacro().get();

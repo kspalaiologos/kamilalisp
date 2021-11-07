@@ -1,5 +1,7 @@
 package kamilalisp.reader;
 
+import ch.obermuhlner.math.big.BigComplex;
+import ch.obermuhlner.math.big.BigComplexMath;
 import com.google.common.collect.Lists;
 import kamilalisp.data.*;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
@@ -148,7 +150,11 @@ public class DefaultVisitor extends AbstractParseTreeVisitor<Atom> implements Gr
 
     @Override
     public Atom visitNumber(GrammarParser.NumberContext ctx) {
-        return new Atom(new BigDecimal(ctx.getText()));
+        if(ctx.getText().contains("J")) {
+            String[] parts = ctx.getText().split("J");
+            return new Atom(BigComplex.valueOf(new BigDecimal(parts[0]), new BigDecimal(parts[1])));
+        } else
+            return new Atom(new BigDecimal(ctx.getText()));
     }
 
     @Override

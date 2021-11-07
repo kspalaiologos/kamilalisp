@@ -1,5 +1,6 @@
 package kamilalisp.data;
 
+import ch.obermuhlner.math.big.BigComplex;
 import com.google.common.base.Joiner;
 
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ public class Atom {
     public Atom(List<Atom> atom) { this.content = new LbcSupplier<>(() -> atom); this.type = Type.LIST; }
     public Atom(Closure atom) { this.content = new LbcSupplier<>(() -> atom); this.type = Type.CLOSURE; }
     public Atom(Macro atom) { this.content = new LbcSupplier<>(() -> atom); this.type = Type.MACRO; }
+    public Atom(BigComplex atom) { this.content = new LbcSupplier<>(() -> atom); this.type = Type.COMPLEX; }
     public Atom(LbcSupplier<?> atom, Type t) { this.content = atom; this.type = t; }
     public Atom(LbcSupplier<?> atom) { this.content = atom; this.type = null; }
 
@@ -26,6 +28,7 @@ public class Atom {
     public LbcSupplier<Closure> getClosure() { assert getType() == Type.CLOSURE; return (LbcSupplier<Closure>) content; }
     public LbcSupplier<Callable> getCallable() { assert isCallable(); return (LbcSupplier<Callable>) content; }
     public LbcSupplier<Macro> getMacro() { assert getType() == Type.MACRO; return (LbcSupplier<Macro>) content; }
+    public LbcSupplier<BigComplex> getComplex() { assert getType() == Type.COMPLEX; return (LbcSupplier<BigComplex>) content; }
     public LbcSupplier<?> get() { return content; }
     public Type getType() {
         if(type != null)
@@ -45,6 +48,8 @@ public class Atom {
             type = Type.CLOSURE;
         else if (data instanceof Macro)
             type = Type.MACRO;
+        else if(data instanceof BigComplex)
+            type = Type.COMPLEX;
         else
             throw new Error("Unknown type: " + data.getClass().getSimpleName());
 
@@ -69,6 +74,10 @@ public class Atom {
             case MACRO: return getMacro().get().representation();
             case STRING_CONSTANT: return "\"" + getStringConstant().get().get() + "\"";
             case NUMBER: return getNumber().get().toPlainString();
+            case COMPLEX: {
+                BigComplex c = getComplex().get();
+                return c.re + "J" + c.im;
+            }
             case STRING: return getString().get();
             case LIST:
                 return "(" + getList().get().stream().map(x -> x.toString()).collect(Collectors.joining(" ")) + ")";
@@ -88,7 +97,8 @@ public class Atom {
                 || (getType() == Type.STRING && other.getString().get().equals(getString().get()))
                 || (getType() == Type.NUMBER && other.getNumber().get().compareTo(getNumber().get()) == 0)
                 || (getType() == Type.CLOSURE && other.getClosure().get().equals(getClosure().get()))
-                || (getType() == Type.MACRO && other.getMacro().get().equals(getMacro().get())))
+                || (getType() == Type.MACRO && other.getMacro().get().equals(getMacro().get()))
+                || (getType() == Type.COMPLEX && other.getComplex().get().equals(getComplex().get())))
             return true;
         else if(getType() == Type.LIST && other.getList().get().size() == getList().get().size()) {
             List<Atom> l1 = other.getList().get(), l2 = getList().get();
@@ -112,7 +122,8 @@ public class Atom {
 
     public boolean coerceBool() {
         return (this.getType() == Type.NUMBER && this.getNumber().get().compareTo(BigDecimal.ZERO) != 0)
-            || (this.getType() == Type.STRING_CONSTANT && this.getStringConstant().get().get().length() > 0);
+            || (this.getType() == Type.STRING_CONSTANT && this.getStringConstant().get().get().length() > 0)
+            || (this.getType() == Type.COMPLEX && this.getComplex().get().re.compareTo(BigDecimal.ZERO) != 0);
     }
 
     public Atom eager() {

@@ -33,6 +33,8 @@ public class MathLib {
             private Atom add2(Atom a1, Atom a2) {
                 if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
                     return new Atom(a1.getNumber().get().add(a2.getNumber().get()));
+                } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
+                    return new Atom(a1.getComplex().get().add(a2.getComplex().get()));
                 } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.STRING_CONSTANT) {
                     return new Atom(new StringConstant(a1.getStringConstant().get().get() + a2.getStringConstant().get().get()));
                 } else if(a1.getType() == Type.NUMBER && a2.getType() == Type.STRING_CONSTANT) {
