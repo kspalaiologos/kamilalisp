@@ -24,7 +24,6 @@ public class CoreLib {
                 params = arguments.get(0).getList().get(); code = arguments.get(1);
                 if(params.stream().anyMatch(x -> x.getType() != Type.STRING))
                     throw new Error("Invalid lambda argument name.");
-                Environment newEnv = outerEnv.env.descendant("Lambda expression");
                 Atom result = new Atom(new Closure() {
                     @Override
                     public String representation() {
@@ -38,6 +37,8 @@ public class CoreLib {
 
                     @Override
                     public Atom apply(Executor env, List<Atom> innerArgs) {
+                        Environment newEnv = outerEnv.env.descendant("Lambda expression");
+                        newEnv.owner = new Atom(this);
                         if(innerArgs.size() != params.size())
                             throw new Error("Invalid invocation to a lambda expression.");
                         for(int i = 0; i < params.size(); i++)
@@ -46,7 +47,6 @@ public class CoreLib {
                         return lambdaExecutor.evaluate(code);
                     }
                 });
-                newEnv.owner = result;
                 return result;
             }
         }));
@@ -173,10 +173,12 @@ public class CoreLib {
                 Atom cond = arguments.get(0);
                 Atom iftrue = arguments.get(1);
                 Atom iffalse = arguments.get(2);
-                if(env.evaluate(cond).coerceBool())
-                    return new Atom(new LbcSupplier(() -> env.evaluate(iftrue).get().get()));
-                else
-                    return new Atom(new LbcSupplier(() -> env.evaluate(iffalse).get().get()));
+                return new Atom(new LbcSupplier<>(() -> {
+                    if(env.evaluate(cond).coerceBool())
+                        return env.evaluate(iftrue).get().get();
+                    else
+                        return env.evaluate(iffalse).get().get();
+                }));
             }
         }));
 
@@ -578,6 +580,30 @@ public class CoreLib {
                         } while (randomNumber.compareTo(cap) >= 0);
                         return new Atom(new BigDecimal(randomNumber));
                     }).collect(Collectors.toList());
+                }));
+            }
+        }));
+
+        env.push("memo", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> parentArgs) {
+                if(parentArgs.size() != 1)
+                    throw new Error("Invalid invocation to 'memo'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    parentArgs.get(0).guardType("First argument to 'memo'.", Type.CLOSURE);
+                    HashMap<List<Atom>, Atom> cache = new HashMap<>();
+                    return new Closure() {
+                        @Override
+                        public Atom apply(Executor env, List<Atom> arguments) {
+                            if(cache.containsKey(arguments))
+                                return cache.get(arguments);
+                            else {
+                                Atom result = parentArgs.get(0).getClosure().get().apply(env, arguments);
+                                cache.put(arguments, result);
+                                return result;
+                            }
+                        }
+                    };
                 }));
             }
         }));

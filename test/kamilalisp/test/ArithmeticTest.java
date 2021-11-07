@@ -271,4 +271,20 @@ class ArithmeticTest {
         assertEquals(Evaluation.evalString("(mobius-mu 10)").get(0).getNumber().get(), BigDecimal.valueOf(1));
         assertEquals(Evaluation.evalString("(mobius-mu 8)").get(0).getNumber().get(), BigDecimal.valueOf(0));
     }
+
+    @Test
+    void testFibonacci() {
+        Environment env = Evaluation.createDefaultEnv();
+        Evaluation.evalString(env,
+                "(defun fib (n) (\n" +
+                        "    if [n < 2]\n" +
+                        "        n\n" +
+                        "        [(fib [n - 1]) + (fib [n - 2])]))");
+        assertEquals(Evaluation.evalString(env, "(fib 0)").get(0).getNumber().get(), new BigDecimal(0));
+        assertEquals(Evaluation.evalString(env, "(fib 1)").get(0).getNumber().get(), new BigDecimal(1));
+        assertEquals(Evaluation.evalString(env, "(fib 2)").get(0).getNumber().get(), new BigDecimal(1));
+        assertEquals(Evaluation.evalString(env, "(fib 3)").get(0).getNumber().get(), new BigDecimal(2));
+        assertEquals(Evaluation.evalString(env, "(fib 4)").get(0).getNumber().get(), new BigDecimal(3));
+        assertEquals(Evaluation.evalString(env, "(fib 5)").get(0).getNumber().get(), new BigDecimal(5));
+    }
 }
