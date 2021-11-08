@@ -46,6 +46,20 @@ public class MathLib {
         assert x.re.stripTrailingZeros().scale() <= 0 && x.im.stripTrailingZeros().scale() <= 0;
     }
 
+    private static boolean isPrime(BigComplex n) {
+        if(n.absSquare(MathContext.DECIMAL128).toBigInteger().isProbablePrime(50))
+            return true;
+        if(n.re.compareTo(BigDecimal.ZERO) != 0 && n.im.compareTo(BigDecimal.ZERO) == 0) {
+            if(n.re.abs().remainder(BigDecimal.valueOf(4)).compareTo(BigDecimal.valueOf(3)) == 0 && n.re.toBigInteger().isProbablePrime(50))
+                return true;
+        }
+        if(n.im.compareTo(BigDecimal.ZERO) != 0 && n.re.compareTo(BigDecimal.ZERO) == 0) {
+            if(n.im.abs().remainder(BigDecimal.valueOf(4)).compareTo(BigDecimal.valueOf(3)) == 0 && n.im.toBigInteger().isProbablePrime(50))
+                return true;
+        }
+        return false;
+    }
+
     public static void install(Environment env) {
         Logarithm.install(env);
         Constant.install(env);
@@ -612,11 +626,22 @@ public class MathLib {
                 if(arguments.size() != 2)
                     throw new Error("Invalid invocation to '**'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    Atom a = arguments.get(0);
-                    Atom b = arguments.get(1);
-                    a.guardType("First argument to '**'", Type.NUMBER);
-                    b.guardType("Second argument to '**'", Type.NUMBER);
-                    return a.getNumber().get().pow(b.getNumber().get().intValue(), MathContext.DECIMAL128);
+                    Atom a1 = arguments.get(0);
+                    Atom a2 = arguments.get(1);
+                    a1.guardType("First argument to '**'", Type.NUMBER, Type.COMPLEX);
+                    a2.guardType("Second argument to '**'", Type.NUMBER, Type.COMPLEX);
+                    if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
+                        return BigDecimalMath.pow(a1.getNumber().get(), a2.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        BigComplex a, b;
+                        if(a1.getType() == Type.NUMBER) { a = BigComplex.valueOf(a1.getNumber().get(), BigDecimal.ZERO); }
+                        else { a = a1.getComplex().get(); }
+                        if(a2.getType() == Type.NUMBER) { b = BigComplex.valueOf(a2.getNumber().get(), BigDecimal.ZERO); }
+                        else { b = a2.getComplex().get(); }
+                        assertGaussian(a);
+                        assertGaussian(b);
+                        return BigComplexMath.pow(a, b, MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
@@ -628,8 +653,12 @@ public class MathLib {
                     throw new Error("Invalid invocation to '!'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to '!'", Type.NUMBER);
-                    return BigDecimalMath.factorial(a.getNumber().get(), MathContext.DECIMAL128);
+                    a.guardType("First argument to '!'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.factorial(a.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        return BigComplexMath.factorial(a.getComplex().get(), MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
@@ -660,9 +689,15 @@ public class MathLib {
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
                     Atom b = arguments.get(1);
-                    a.guardType("First argument to 'root'", Type.NUMBER);
-                    b.guardType("Second argument to 'root'", Type.NUMBER);
-                    return BigDecimalMath.root(b.getNumber().get(), a.getNumber().get(), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'root'", Type.NUMBER, Type.COMPLEX);
+                    b.guardType("Second argument to 'root'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER && b.getType() == Type.NUMBER) {
+                        return BigDecimalMath.root(b.getNumber().get(), a.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        BigComplex x = a.getComplex().get();
+                        BigComplex y = b.getComplex().get();
+                        return BigComplexMath.root(x, y, MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
@@ -674,12 +709,24 @@ public class MathLib {
                     throw new Error("Invalid invocation to 'floor'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'floor'", Type.NUMBER);
-                    if(arguments.size() == 2) {
-                        arguments.get(1).guardType("Second argument to 'floor'", Type.NUMBER);
-                        return a.getNumber().get().setScale(arguments.get(1).getNumber().get().intValue(), RoundingMode.FLOOR);
-                    } else
-                        return a.getNumber().get().setScale(0, RoundingMode.FLOOR);
+                    a.guardType("First argument to 'floor'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        if(arguments.size() == 2) {
+                            arguments.get(1).guardType("Second argument to 'floor'", Type.NUMBER);
+                            return a.getNumber().get().setScale(arguments.get(1).getNumber().get().intValue(), RoundingMode.FLOOR);
+                        } else
+                            return a.getNumber().get().setScale(0, RoundingMode.FLOOR);
+                    } else {
+                        int scale = 0;
+                        BigComplex x = a.getComplex().get();
+
+                        if(arguments.size() == 2) {
+                            arguments.get(1).guardType("Second argument to 'floor'", Type.NUMBER);
+                            scale = arguments.get(1).getNumber().get().intValue();
+                        }
+
+                        return BigComplex.valueOf(x.re.setScale(scale, RoundingMode.FLOOR), x.im.setScale(scale, RoundingMode.FLOOR));
+                    }
                 }));
             }
         }));
@@ -692,11 +739,23 @@ public class MathLib {
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
                     a.guardType("First argument to 'ceil'", Type.NUMBER);
-                    if(arguments.size() == 2) {
-                        arguments.get(1).guardType("Second argument to 'ceil'", Type.NUMBER);
-                        return a.getNumber().get().setScale(arguments.get(1).getNumber().get().intValue(), RoundingMode.CEILING);
-                    } else
-                        return a.getNumber().get().setScale(0, RoundingMode.CEILING);
+                    if(a.getType() == Type.NUMBER) {
+                        if(arguments.size() == 2) {
+                            arguments.get(1).guardType("Second argument to 'ceil'", Type.NUMBER);
+                            return a.getNumber().get().setScale(arguments.get(1).getNumber().get().intValue(), RoundingMode.CEILING);
+                        } else
+                            return a.getNumber().get().setScale(0, RoundingMode.CEILING);
+                    } else {
+                        int scale = 0;
+                        BigComplex x = a.getComplex().get();
+
+                        if(arguments.size() == 2) {
+                            arguments.get(1).guardType("Second argument to 'ceil'", Type.NUMBER);
+                            scale = arguments.get(1).getNumber().get().intValue();
+                        }
+
+                        return BigComplex.valueOf(x.re.setScale(scale, RoundingMode.CEILING), x.im.setScale(scale, RoundingMode.CEILING));
+                    }
                 }));
             }
         }));
@@ -708,8 +767,13 @@ public class MathLib {
                     throw new Error("Invalid invocation to 'is-prime'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'is-prime'", Type.NUMBER);
-                    return a.getNumber().get().toBigInteger().isProbablePrime(50) ? BigDecimal.ONE : BigDecimal.ZERO;
+                    a.guardType("First argument to 'is-prime'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return a.getNumber().get().toBigInteger().isProbablePrime(50) ? BigDecimal.ONE : BigDecimal.ZERO;
+                    } else {
+                        assertGaussian(a.getComplex().get());
+                        return isPrime(a.getComplex().get()) ? BigDecimal.ONE : BigDecimal.ZERO;
+                    }
                 }));
             }
         }));
