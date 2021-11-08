@@ -360,6 +360,8 @@ public class MathLib {
                 return new Atom(new LbcSupplier<>(() -> {
                     if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.NUMBER) {
                         return arguments.get(0).getNumber().get().compareTo(arguments.get(1).getNumber().get()) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+                    } else if(arguments.get(0).getType() == Type.COMPLEX && arguments.get(1).getType() == Type.COMPLEX) {
+                        return modulus(arguments.get(0).getComplex().get()).compareTo(modulus(arguments.get(1).getComplex().get())) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
                     } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
                         return arguments.get(0).getStringConstant().get().get().compareTo(arguments.get(1).getStringConstant().get().get()) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
                     } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.NUMBER) {
@@ -381,6 +383,8 @@ public class MathLib {
                 return new Atom(new LbcSupplier<>(() -> {
                     if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.NUMBER) {
                         return arguments.get(0).getNumber().get().compareTo(arguments.get(1).getNumber().get()) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+                    } else if(arguments.get(0).getType() == Type.COMPLEX && arguments.get(1).getType() == Type.COMPLEX) {
+                        return modulus(arguments.get(0).getComplex().get()).compareTo(modulus(arguments.get(1).getComplex().get())) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
                     } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
                         return arguments.get(0).getStringConstant().get().get().compareTo(arguments.get(1).getStringConstant().get().get()) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
                     } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.NUMBER) {
@@ -517,6 +521,8 @@ public class MathLib {
                     Atom a2 = arguments.get(1);
                     if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
                         return a1.getNumber().get().min(a2.getNumber().get());
+                    } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
+                        return modulus(a1.getComplex().get()).compareTo(modulus(a2.getComplex().get())) < 0 ? a1.get().get() : a2.get().get();
                     } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.STRING_CONSTANT) {
                         return a1.getStringConstant().get().get().compareTo(a2.getStringConstant().get().get()) < 0 ? a1.get().get() : a2.get().get();
                     } else if(a1.getType() == Type.LIST && a2.getType() == Type.LIST) {
@@ -537,6 +543,8 @@ public class MathLib {
                     Atom a2 = arguments.get(1);
                     if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
                         return a1.getNumber().get().max(a2.getNumber().get());
+                    } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
+                        return modulus(a1.getComplex().get()).compareTo(modulus(a2.getComplex().get())) > 0 ? a1.get().get() : a2.get().get();
                     } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.STRING_CONSTANT) {
                         return a1.getStringConstant().get().get().compareTo(a2.getStringConstant().get().get()) > 0 ? a1.get().get() : a2.get().get();
                     } else if(a1.getType() == Type.LIST && a2.getType() == Type.LIST) {
@@ -571,8 +579,12 @@ public class MathLib {
                     throw new Error("Invalid invocation to 'sqrt'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'sqrt'", Type.NUMBER);
-                    return BigDecimalMath.sqrt(a.getNumber().get(), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'sqrt'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.sqrt(a.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        return BigComplexMath.sqrt(a.getComplex().get(), MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
@@ -584,8 +596,12 @@ public class MathLib {
                     throw new Error("Invalid invocation to 'exp'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'exp'", Type.NUMBER);
-                    return BigDecimalMath.exp(a.getNumber().get(), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'exp'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.exp(a.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        return BigComplexMath.exp(a.getComplex().get(), MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
