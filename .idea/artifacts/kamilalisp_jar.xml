@@ -13,7 +13,6 @@
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/antlr/antlr4-runtime/4.9.1/antlr4-runtime-4.9.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jline/jline/3.21.0/jline-3.21.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/ch/obermuhlner/big-math/2.3.0/big-math-2.3.0.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/io/github/tudo-aqua/z3-turnkey/4.8.12/z3-turnkey-4.8.12.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
