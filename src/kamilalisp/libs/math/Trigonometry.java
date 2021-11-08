@@ -360,8 +360,15 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'arcsinh'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'arcsinh'", Type.NUMBER);
-                    return BigDecimalMath.asinh(a.getNumber().get(), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'arcsinh'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.asinh(a.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        // log(sqrt(1 + a) + a)
+                        BigComplex rt = BigComplexMath.sqrt(BigComplex.ONE.add(a.getComplex().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                        BigComplex log = BigComplexMath.log(rt.add(a.getComplex().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                        return log;
+                    }
                 }));
             }
         }));
@@ -373,8 +380,16 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'arccosh'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'arccosh'", Type.NUMBER);
-                    return BigDecimalMath.acosh(a.getNumber().get(), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'arccosh'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.acosh(a.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        // log(sqrt(a - 1) * sqrt(a + 1) + a)
+                        BigComplex rt = BigComplexMath.sqrt(a.getComplex().get().subtract(BigComplex.ONE, MathContext.DECIMAL128), MathContext.DECIMAL128);
+                        BigComplex rt2 = BigComplexMath.sqrt(a.getComplex().get().add(BigComplex.ONE, MathContext.DECIMAL128), MathContext.DECIMAL128);
+                        BigComplex log = BigComplexMath.log(rt.multiply(rt2, MathContext.DECIMAL128).add(a.getComplex().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                        return log;
+                    }
                 }));
             }
         }));
@@ -386,8 +401,16 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'arctanh'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'arctanh'", Type.NUMBER);
-                    return BigDecimalMath.atanh(a.getNumber().get(), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'arctanh'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.atanh(a.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        // (log(1 + a) - log(1 - a)) / 2
+                        BigComplex l1 = BigComplexMath.log(BigComplex.ONE.add(a.getComplex().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                        BigComplex l2 = BigComplexMath.log(BigComplex.ONE.subtract(a.getComplex().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                        BigComplex log = l1.subtract(l2, MathContext.DECIMAL128).divide(BigDecimal.valueOf(2), MathContext.DECIMAL128);
+                        return log;
+                    }
                 }));
             }
         }));
@@ -399,8 +422,17 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'arcctanh'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'arcctanh'", Type.NUMBER);
-                    return BigDecimalMath.acoth(a.getNumber().get(), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'arcctanh'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.acoth(a.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        // (log(1 + 1/a) - log(1 - 1/a)) / 2
+                        BigComplex arg = a.getComplex().get().reciprocal(MathContext.DECIMAL128);
+                        BigComplex l1 = BigComplexMath.log(BigComplex.ONE.add(arg, MathContext.DECIMAL128), MathContext.DECIMAL128);
+                        BigComplex l2 = BigComplexMath.log(BigComplex.ONE.subtract(arg, MathContext.DECIMAL128), MathContext.DECIMAL128);
+                        BigComplex log = l1.subtract(l2, MathContext.DECIMAL128).divide(BigDecimal.valueOf(2), MathContext.DECIMAL128);
+                        return log;
+                    }
                 }));
             }
         }));
