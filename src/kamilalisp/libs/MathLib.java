@@ -42,6 +42,10 @@ public class MathLib {
         return gcd(beta, gaussianRem(alpha, beta));
     }
 
+    private static void assertGaussian(BigComplex x) {
+        assert x.re.stripTrailingZeros().scale() <= 0 && x.im.stripTrailingZeros().scale() <= 0;
+    }
+
     public static void install(Environment env) {
         Logarithm.install(env);
         Constant.install(env);
@@ -250,6 +254,8 @@ public class MathLib {
                     else { a = a1.getComplex().get(); }
                     if(a2.getType() == Type.NUMBER) { b = BigComplex.valueOf(a2.getNumber().get(), BigDecimal.ZERO); }
                     else { b = a2.getComplex().get(); }
+                    assertGaussian(a);
+                    assertGaussian(b);
                     // compute gcd(a, b).
                     return new Atom(gcd(a, b));
                 }
@@ -279,6 +285,8 @@ public class MathLib {
                     else { a = a1.getComplex().get(); }
                     if(a2.getType() == Type.NUMBER) { b = BigComplex.valueOf(a2.getNumber().get(), BigDecimal.ZERO); }
                     else { b = a2.getComplex().get(); }
+                    assertGaussian(a);
+                    assertGaussian(b);
                     return new Atom(a.multiply(b).divide(gcd(a, b), MathContext.DECIMAL128));
                 }
             }
