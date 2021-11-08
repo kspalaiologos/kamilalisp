@@ -1,5 +1,7 @@
 package kamilalisp.libs.math;
 
+import ch.obermuhlner.math.big.BigComplex;
+import ch.obermuhlner.math.big.BigComplexMath;
 import ch.obermuhlner.math.big.BigDecimalMath;
 import kamilalisp.data.*;
 
@@ -16,8 +18,12 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'sin'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'sin'", Type.NUMBER);
-                    return BigDecimalMath.sin(a.getNumber().get(), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'sin'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.sin(a.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        return BigComplexMath.sin(a.getComplex().get(), MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
@@ -29,8 +35,13 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'csc'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'csc'", Type.NUMBER);
-                    return BigDecimal.valueOf(1).divide(BigDecimalMath.sin(a.getNumber().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'csc'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimal.valueOf(1).divide(BigDecimalMath.sin(a.getNumber().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                    } else {
+                        return BigComplex.valueOf(BigDecimal.ONE, BigDecimal.ONE)
+                                .divide(BigComplexMath.sin(a.getComplex().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
@@ -42,8 +53,12 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'cos'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'cos'", Type.NUMBER);
-                    return BigDecimalMath.cos(a.getNumber().get(), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'cos'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.cos(a.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        return BigComplexMath.cos(a.getComplex().get(), MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
