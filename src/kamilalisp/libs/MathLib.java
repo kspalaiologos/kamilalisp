@@ -21,9 +21,25 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MathLib {
-    // apparently, english people call it "norm"
+    // apparently, english people call it "norm".
+    // well, except the square root.
     private static BigDecimal modulus(BigComplex x) {
         return x.re.pow(2).add(x.im.pow(2)).sqrt(MathContext.DECIMAL128);
+    }
+
+    private static BigComplex gaussianRem(BigComplex a, BigComplex b) {
+        BigComplex prod = a.multiply(b.conjugate());
+        BigDecimal p = prod.re.divide(b.absSquare(MathContext.DECIMAL128), MathContext.DECIMAL128);
+        BigDecimal q = prod.im.divide(b.absSquare(MathContext.DECIMAL128), MathContext.DECIMAL128);
+        BigComplex gamma = BigComplex.valueOf(p.setScale(0, RoundingMode.HALF_EVEN), q.setScale(0, RoundingMode.HALF_EVEN));
+        BigComplex rho = a.subtract(gamma.multiply(b));
+        return rho;
+    }
+
+    private static BigComplex gcd(BigComplex alpha, BigComplex beta) {
+        if(gaussianRem(alpha, beta).equals(BigComplex.ZERO))
+            return beta;
+        return gcd(beta, gaussianRem(alpha, beta));
     }
 
     public static void install(Environment env) {
@@ -224,9 +240,19 @@ public class MathLib {
             private Atom IDENTITY = new Atom(BigDecimal.ZERO);
 
             private Atom gcd2(Atom a1, Atom a2) {
-                a1.guardType("First argument to 'gcd'", Type.NUMBER);
-                a2.guardType("Second argument to 'gcd'", Type.NUMBER);
-                return new Atom(new BigDecimal(a1.getNumber().get().toBigInteger().gcd(a2.getNumber().get().toBigInteger())));
+                a1.guardType("First argument to 'gcd'", Type.NUMBER, Type.COMPLEX);
+                a2.guardType("Second argument to 'gcd'", Type.NUMBER, Type.COMPLEX);
+                if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
+                    return new Atom(new BigDecimal(a1.getNumber().get().toBigInteger().gcd(a2.getNumber().get().toBigInteger())));
+                } else {
+                    BigComplex a, b;
+                    if(a1.getType() == Type.NUMBER) { a = BigComplex.valueOf(a1.getNumber().get(), BigDecimal.ZERO); }
+                    else { a = a1.getComplex().get(); }
+                    if(a2.getType() == Type.NUMBER) { b = BigComplex.valueOf(a2.getNumber().get(), BigDecimal.ZERO); }
+                    else { b = a2.getComplex().get(); }
+                    // compute gcd(a, b).
+                    return new Atom(gcd(a, b));
+                }
             }
 
             @Override
@@ -243,9 +269,18 @@ public class MathLib {
             private Atom IDENTITY = new Atom(BigDecimal.ZERO);
 
             private Atom gcd2(Atom a1, Atom a2) {
-                a1.guardType("First argument to 'lcm'", Type.NUMBER);
-                a2.guardType("Second argument to 'lcm'", Type.NUMBER);
-                return new Atom(a1.getNumber().get().multiply(a2.getNumber().get()).divide(new BigDecimal(a1.getNumber().get().toBigInteger().gcd(a2.getNumber().get().toBigInteger()))));
+                a1.guardType("First argument to 'lcm'", Type.NUMBER, Type.COMPLEX);
+                a2.guardType("Second argument to 'lcm'", Type.NUMBER, Type.COMPLEX);
+                if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
+                    return new Atom(a1.getNumber().get().multiply(a2.getNumber().get()).divide(new BigDecimal(a1.getNumber().get().toBigInteger().gcd(a2.getNumber().get().toBigInteger()))));
+                } else {
+                    BigComplex a, b;
+                    if(a1.getType() == Type.NUMBER) { a = BigComplex.valueOf(a1.getNumber().get(), BigDecimal.ZERO); }
+                    else { a = a1.getComplex().get(); }
+                    if(a2.getType() == Type.NUMBER) { b = BigComplex.valueOf(a2.getNumber().get(), BigDecimal.ZERO); }
+                    else { b = a2.getComplex().get(); }
+                    return new Atom(a.multiply(b).divide(gcd(a, b), MathContext.DECIMAL128));
+                }
             }
 
             @Override
