@@ -70,8 +70,13 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'sec'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'sec'", Type.NUMBER);
-                    return BigDecimal.valueOf(1).divide(BigDecimalMath.cos(a.getNumber().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'sec'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimal.valueOf(1).divide(BigDecimalMath.cos(a.getNumber().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                    } else {
+                        return BigComplex.valueOf(BigDecimal.ONE, BigDecimal.ONE)
+                                .divide(BigComplexMath.cos(a.getComplex().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
@@ -83,8 +88,12 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'tan'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'tan'", Type.NUMBER);
-                    return BigDecimalMath.tan(a.getNumber().get(), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'tan'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.tan(a.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        return BigComplexMath.tan(a.getComplex().get(), MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
@@ -96,8 +105,13 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'ctan'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'ctan'", Type.NUMBER);
-                    return BigDecimal.valueOf(1).divide(BigDecimalMath.tan(a.getNumber().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'ctan'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimal.valueOf(1).divide(BigDecimalMath.tan(a.getNumber().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                    } else {
+                        return BigComplex.valueOf(BigDecimal.ONE, BigDecimal.ONE)
+                                .divide(BigComplexMath.tan(a.getComplex().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
@@ -135,8 +149,12 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'arcsin'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'arcsin'", Type.NUMBER);
-                    return BigDecimalMath.asin(a.getNumber().get(), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'arcsin'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.asin(a.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        return BigComplexMath.asin(a.getComplex().get(), MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
@@ -148,8 +166,12 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'arccos'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'arccos'", Type.NUMBER);
-                    return BigDecimalMath.acos(a.getNumber().get(), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'arccos'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.acos(a.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        return BigComplexMath.acos(a.getComplex().get(), MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
@@ -161,8 +183,12 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'arctan'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'arctan'", Type.NUMBER);
-                    return BigDecimalMath.atan(a.getNumber().get(), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'arctan'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.atan(a.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        return BigComplexMath.atan(a.getComplex().get(), MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
@@ -189,8 +215,12 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'arcctan'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'arcctan'", Type.NUMBER);
-                    return BigDecimalMath.acot(a.getNumber().get(), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'arcctan'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.acot(a.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        return BigComplexMath.acot(a.getComplex().get(), MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
@@ -202,8 +232,12 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'arcsec'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'arcsec'", Type.NUMBER);
-                    return BigDecimalMath.acos(BigDecimal.ONE.divide(a.getNumber().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'arcsec'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.acos(BigDecimal.ONE.divide(a.getNumber().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                    } else {
+                        return BigComplexMath.acos(BigComplex.ONE.divide(a.getComplex().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
@@ -215,8 +249,12 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'arccsec'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'arccsec'", Type.NUMBER);
-                    return BigDecimalMath.asin(BigDecimal.ONE.divide(a.getNumber().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'arccsec'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.asin(BigDecimal.ONE.divide(a.getNumber().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                    } else {
+                        return BigComplexMath.asin(BigComplex.ONE.divide(a.getComplex().get(), MathContext.DECIMAL128), MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
@@ -228,8 +266,15 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'sinh'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'sinh'", Type.NUMBER);
-                    return BigDecimalMath.sinh(a.getNumber().get(), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'sinh'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.sinh(a.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        return BigComplex.valueOf(
+                                BigDecimalMath.sinh(a.getComplex().get().re, MathContext.DECIMAL128).multiply(BigDecimalMath.cos(a.getComplex().get().im, MathContext.DECIMAL128)),
+                                BigDecimalMath.cosh(a.getComplex().get().re, MathContext.DECIMAL128).multiply(BigDecimalMath.sin(a.getComplex().get().im, MathContext.DECIMAL128))
+                        );
+                    }
                 }));
             }
         }));
@@ -241,8 +286,15 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'cosh'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'cosh'", Type.NUMBER);
-                    return BigDecimalMath.cosh(a.getNumber().get(), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'cosh'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.cosh(a.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        return BigComplex.valueOf(
+                                BigDecimalMath.cosh(a.getComplex().get().re, MathContext.DECIMAL128).multiply(BigDecimalMath.cos(a.getComplex().get().im, MathContext.DECIMAL128)),
+                                BigDecimalMath.sinh(a.getComplex().get().re, MathContext.DECIMAL128).multiply(BigDecimalMath.sin(a.getComplex().get().im, MathContext.DECIMAL128))
+                        );
+                    }
                 }));
             }
         }));
@@ -254,8 +306,22 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'tanh'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'tanh'", Type.NUMBER);
-                    return BigDecimalMath.tanh(a.getNumber().get(), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'tanh'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.cosh(a.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        BigComplex sine = BigComplex.valueOf(
+                                BigDecimalMath.sinh(a.getComplex().get().re, MathContext.DECIMAL128).multiply(BigDecimalMath.cos(a.getComplex().get().im, MathContext.DECIMAL128)),
+                                BigDecimalMath.cosh(a.getComplex().get().re, MathContext.DECIMAL128).multiply(BigDecimalMath.sin(a.getComplex().get().im, MathContext.DECIMAL128))
+                        );
+
+                        BigComplex cosine = BigComplex.valueOf(
+                                BigDecimalMath.cosh(a.getComplex().get().re, MathContext.DECIMAL128).multiply(BigDecimalMath.cos(a.getComplex().get().im, MathContext.DECIMAL128)),
+                                BigDecimalMath.sinh(a.getComplex().get().re, MathContext.DECIMAL128).multiply(BigDecimalMath.sin(a.getComplex().get().im, MathContext.DECIMAL128))
+                        );
+
+                        return sine.divide(cosine, MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
@@ -267,8 +333,22 @@ public class Trigonometry {
                     throw new Error("Invalid invocation to 'ctanh'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
-                    a.guardType("First argument to 'ctanh'", Type.NUMBER);
-                    return BigDecimalMath.coth(a.getNumber().get(), MathContext.DECIMAL128);
+                    a.guardType("First argument to 'ctanh'", Type.NUMBER, Type.COMPLEX);
+                    if(a.getType() == Type.NUMBER) {
+                        return BigDecimalMath.coth(a.getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        BigComplex sine = BigComplex.valueOf(
+                                BigDecimalMath.sinh(a.getComplex().get().re, MathContext.DECIMAL128).multiply(BigDecimalMath.cos(a.getComplex().get().im, MathContext.DECIMAL128)),
+                                BigDecimalMath.cosh(a.getComplex().get().re, MathContext.DECIMAL128).multiply(BigDecimalMath.sin(a.getComplex().get().im, MathContext.DECIMAL128))
+                        );
+
+                        BigComplex cosine = BigComplex.valueOf(
+                                BigDecimalMath.cosh(a.getComplex().get().re, MathContext.DECIMAL128).multiply(BigDecimalMath.cos(a.getComplex().get().im, MathContext.DECIMAL128)),
+                                BigDecimalMath.sinh(a.getComplex().get().re, MathContext.DECIMAL128).multiply(BigDecimalMath.sin(a.getComplex().get().im, MathContext.DECIMAL128))
+                        );
+
+                        return cosine.divide(sine, MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
@@ -321,56 +401,6 @@ public class Trigonometry {
                     Atom a = arguments.get(0);
                     a.guardType("First argument to 'arcctanh'", Type.NUMBER);
                     return BigDecimalMath.acoth(a.getNumber().get(), MathContext.DECIMAL128);
-                }));
-            }
-        }));
-
-        env.push("arcsech", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'arcsech'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    Atom a = arguments.get(0);
-                    a.guardType("First argument to 'arcsech'", Type.NUMBER);
-                    BigDecimal x = a.getNumber().get();
-                    if(x.compareTo(BigDecimal.ZERO) != 1 || x.compareTo(BigDecimal.ONE) == 1)
-                        throw new Error("The domain of arccsech is (0, 1>");
-                    // A1 = 1 - x^2
-                    BigDecimal A1 = BigDecimal.ONE.subtract(x.multiply(x));
-                    // A2 = 1 + sqrt(A1)
-                    BigDecimal A2 = BigDecimalMath.sqrt(A1, MathContext.DECIMAL128).add(BigDecimal.ONE);
-                    // A3 = A2 / x
-                    BigDecimal A3 = A2.divide(x, MathContext.DECIMAL128);
-                    // return ln(A3) = ln(A2 / x) = ln((1 + sqrt(1 - x^2)) / x)
-                    return BigDecimalMath.log(A3, MathContext.DECIMAL128);
-                }));
-            }
-        }));
-
-        env.push("arccsech", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'arccsech'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    Atom a = arguments.get(0);
-                    a.guardType("First argument to 'arccsech'", Type.NUMBER);
-                    BigDecimal x = a.getNumber().get();
-                    if(x.compareTo(BigDecimal.ZERO) == 0)
-                        throw new Error("The domain of arccsech is x /= 0");
-                    // A1 = 1 / x
-                    BigDecimal A1 = BigDecimal.ONE.divide(x, MathContext.DECIMAL128);
-                    // A2 = A1^2 = 1 / x^2
-                    BigDecimal A2 = A1.multiply(A1);
-                    // A3 = A2 + 1
-                    BigDecimal A3 = A2.add(BigDecimal.ONE);
-                    // A4 = sqrt(A3)
-                    BigDecimal A4 = BigDecimalMath.sqrt(A3, MathContext.DECIMAL128);
-                    // A5 = A1 + A4
-                    BigDecimal A5 = A1.add(A4);
-                    // return ln(A5)
-                    return BigDecimalMath.log(A5, MathContext.DECIMAL128);
                 }));
             }
         }));
