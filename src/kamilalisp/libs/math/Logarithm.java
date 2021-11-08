@@ -58,8 +58,14 @@ public class Logarithm {
                 if(arguments.size() != 1)
                     throw new Error("Invalid invocation to 'log2'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'log'.", Type.NUMBER);
-                    return BigDecimalMath.log2(arguments.get(0).getNumber().get(), MathContext.DECIMAL128);
+                    arguments.get(0).guardType("First argument to 'log'.", Type.NUMBER, Type.COMPLEX);
+                    if(arguments.get(0).getType() == Type.NUMBER) {
+                        return BigDecimalMath.log2(arguments.get(0).getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        return BigComplexMath.log(arguments.get(0).getComplex().get(), MathContext.DECIMAL128)
+                                .divide(BigComplexMath.log(BigComplex.valueOf(new BigDecimal(2), new BigDecimal(0)),
+                                        MathContext.DECIMAL128), MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
@@ -70,8 +76,12 @@ public class Logarithm {
                 if(arguments.size() != 1)
                     throw new Error("Invalid invocation to 'ln'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'ln'.", Type.NUMBER);
-                    return BigDecimalMath.log(arguments.get(0).getNumber().get(), MathContext.DECIMAL128);
+                    arguments.get(0).guardType("First argument to 'ln'.", Type.NUMBER, Type.COMPLEX);
+                    if(arguments.get(0).getType() == Type.NUMBER) {
+                        return BigDecimalMath.log(arguments.get(0).getNumber().get(), MathContext.DECIMAL128);
+                    } else {
+                        return BigComplexMath.log(arguments.get(0).getComplex().get(), MathContext.DECIMAL128);
+                    }
                 }));
             }
         }));
