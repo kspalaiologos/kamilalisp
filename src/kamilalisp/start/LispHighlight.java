@@ -30,7 +30,7 @@ public class LispHighlight implements Highlighter {
         if(isKw)
             return new AttributedStyle().foreground(AttributedStyle.MAGENTA);
         switch(t.getType()) {
-            case GrammarLexer.BIN: case GrammarLexer.FLOAT: case GrammarLexer.HEX: case GrammarLexer.LONG:
+            case GrammarLexer.BIN: case GrammarLexer.FLOAT: case GrammarLexer.HEX: case GrammarLexer.LONG: case GrammarLexer.COMPLEX:
                 return new AttributedStyle().foreground(AttributedStyle.YELLOW);
             case GrammarLexer.NAME:
                 return new AttributedStyle();
