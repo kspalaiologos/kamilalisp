@@ -10,6 +10,7 @@ import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
 import kamilalisp.libs.math.*;
 import kamilalisp.libs.primitives.Add;
+import kamilalisp.libs.primitives.Product;
 import kamilalisp.libs.primitives.Subtract;
 import kamilalisp.matrix.Matrix;
 
@@ -25,8 +26,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MathLib {
-    // apparently, english people call it "norm".
-    // well, except the square root.
     private static BigDecimal modulus(BigComplex x) {
         return x.re.pow(2).add(x.im.pow(2)).sqrt(MathContext.DECIMAL128);
     }
@@ -76,56 +75,7 @@ public class MathLib {
 
         env.push("-", new Atom(new Subtract()));
 
-        env.push("*", new Atom(new Closure() {
-            private Atom IDENTITY = new Atom(BigDecimal.ZERO);
-
-            private Atom mul2(Atom a1, Atom a2) {
-                if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
-                    return new Atom(a1.getNumber().get().multiply(a2.getNumber().get()));
-                } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
-                    return new Atom(a1.getComplex().get().multiply(a2.getComplex().get()));
-                } else if(a1.getType() == Type.MATRIX && a2.getType() == Type.MATRIX) {
-                    // (def a (mat-mix '((1 2) (3 4) (5 6))))
-                    // (def b (transpose a))
-                    Matrix a = a1.getMatrix().get();
-                    Matrix b = a2.getMatrix().get();
-                    if(a.getRows() != b.getCols())
-                        throw new Error("Invalid matrix multiplication: " + a.getRows() + "x" + a.getCols() + " and " + b.getRows() + "x" + b.getCols() + ".");
-                    List<List<Atom>> lRows = a.rows().collect(Collectors.toList());
-                    List<List<Atom>> lCols = b.cols().collect(Collectors.toList());
-                    return new Atom(Matrix.of((row, col) -> {
-                        return Streams.zip(lRows.get(row).stream(), lCols.get(col).stream(), (x, y) -> mul2(x, y)).reduce(Add::add2).get();
-                    }, a.getRows(), b.getCols()));
-                } else if(a1.getType() == Type.NUMBER && a2.getType() == Type.STRING_CONSTANT) {
-                    return new Atom(new StringConstant(a2.getStringConstant().get().get().repeat(a1.getNumber().get().intValue())));
-                } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.NUMBER) {
-                    return new Atom(new StringConstant(a1.getStringConstant().get().get().repeat(a2.getNumber().get().intValue())));
-                } else {
-                    throw new Error("* unsupported on operands of type " + a1.getType().name() + " and " + a2.getType().name());
-                }
-            }
-
-            public Object mul1(Atom a) {
-                a.guardType("Argument to monadic *", Type.NUMBER, Type.COMPLEX, Type.MATRIX);
-                if(a.getType() == Type.NUMBER) {
-                    return new BigDecimal(a.getNumber().get().compareTo(BigDecimal.ZERO));
-                } else if(a.getType() == Type.COMPLEX) {
-                    return new BigDecimal(modulus(a.getComplex().get()).compareTo(BigDecimal.ZERO));
-                } else if(a.getType() == Type.MATRIX) {
-                    return a.getMatrix().get().transmogrifyRank0(x -> new Atom(new LbcSupplier<>(() -> mul1(x))));
-                } else
-                    throw new Error("unreachable.");
-            }
-
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() == 0 || arguments.size() > 2)
-                    throw new Error("Invalid * invocation.");
-                if(arguments.size() == 1)
-                    return new Atom(new LbcSupplier<>(() -> mul1(arguments.get(0))));
-                return new Atom(new LbcSupplier<>(() -> mul2(arguments.get(0), arguments.get(1)).get().get()));
-            }
-        }));
+        env.push("*", new Atom(new Product()));
 
         env.push("/", new Atom(new Closure() {
             private Atom IDENTITY = new Atom(BigDecimal.ZERO);
