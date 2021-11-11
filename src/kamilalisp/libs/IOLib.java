@@ -28,5 +28,13 @@ public class IOLib {
                 return Evaluation.evalAtom(env.env, s.nextLine());
             }
         }));
+
+        env.push("read-str", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                Scanner s = new Scanner(System.in);
+                return new Atom(new StringConstant(s.nextLine()));
+            }
+        }));
     }
 }
