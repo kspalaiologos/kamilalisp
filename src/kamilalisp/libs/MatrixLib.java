@@ -150,5 +150,28 @@ public class MatrixLib {
                 }));
             }
         }));
+
+        env.push("mat-trace", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1 && arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'mat-trace'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'mat-trace'", Type.MATRIX);
+                    Matrix m = arguments.get(0).getMatrix().get();
+                    Callable c;
+                    if(arguments.size() == 2) {
+                        arguments.get(1).guardType("Second argument to 'mat-trace'", Type.CLOSURE, Type.MACRO);
+                        c = arguments.get(1).getCallable().get();
+                    } else {
+                        c = new Add();
+                    }
+                    Atom acc = m.get(0, 0);
+                    for(int i = 1; i < Math.min(m.getRows(), m.getCols()); i++)
+                        acc = c.apply(env, List.of(acc, m.get(i, i)));
+                    return acc.get().get();
+                }));
+            }
+        }));
     }
 }
