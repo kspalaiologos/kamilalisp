@@ -33,5 +33,15 @@ public class LinearAlgebra {
                 List.of(new Atom(new BigDecimal("7.5")), new Atom(new BigDecimal("12.5"))),
                 List.of(new Atom(new BigDecimal("4.0")), new Atom(new BigDecimal("7.5")))
         )));
+
+        assertEquals(Evaluation.evalString(env, "(+ a 0.5)").get(0).getMatrix().get(), Matrix.from(List.of(
+                List.of(new Atom(new BigDecimal("2.0")), new Atom(new BigDecimal("4.0"))),
+                List.of(new Atom(new BigDecimal("1.0")), new Atom(new BigDecimal("6.0")))
+        )));
+    }
+
+    @Test
+    void testConjugate() {
+        assertTrue(Evaluation.evalString("(= (+ (mat-mix '((1J2 2J-3) (1J8.5 -3.5J6)))) (mat-mix '((1J-2 2J3) (1J-8.5 -3.5J-6))))").get(0).coerceBool());
     }
 }

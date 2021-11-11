@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
 import kamilalisp.libs.math.*;
+import kamilalisp.matrix.Matrix;
 
 import java.io.StringWriter;
 import java.math.BigDecimal;
@@ -75,10 +76,29 @@ public class MathLib {
                 if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
                     return new Atom(a1.getNumber().get().add(a2.getNumber().get()));
                 } else if(a1.getType() == Type.MATRIX && a2.getType() == Type.MATRIX) {
-                    if(a1.getMatrix().get().getRows() != a2.getMatrix().get().getRows() || a1.getMatrix().get().getCols() != a2.getMatrix().get().getCols())
+                    if (a1.getMatrix().get().getRows() != a2.getMatrix().get().getRows() || a1.getMatrix().get().getCols() != a2.getMatrix().get().getCols())
                         throw new Error("Matrix dimensions must match");
                     return new Atom(a1.getMatrix().get().transmogrifyRank0((x, y) ->
-                        new Atom(new LbcSupplier<>(() -> add2(x, y).get().get())), a2.getMatrix().get()));
+                            new Atom(new LbcSupplier<>(() -> add2(x, y).get().get())), a2.getMatrix().get()));
+                } else if((a1.getType() == Type.MATRIX && a2.isNumeric()) || (a1.isNumeric() && a2.getType() == Type.MATRIX)) {
+                    Atom number;
+                    Matrix mat;
+
+                    if(a1.getType() == Type.MATRIX) {
+                        mat = a1.getMatrix().get();
+                    } else {
+                        mat = a2.getMatrix().get();
+                    }
+
+                    if(a1.isNumeric()) {
+                        number = a1;
+                    } else {
+                        number = a2;
+                    }
+
+                    return new Atom(mat.transmogrifyRank0(x ->
+                        new Atom(new LbcSupplier<>(() -> add2(x, number).get().get()))
+                    ));
                 } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
                     return new Atom(a1.getComplex().get().add(a2.getComplex().get()));
                 } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.STRING_CONSTANT) {

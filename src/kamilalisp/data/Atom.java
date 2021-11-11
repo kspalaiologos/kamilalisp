@@ -71,6 +71,9 @@ public class Atom {
     public boolean isCallable() {
         return getType() == Type.CLOSURE || getType() == Type.MACRO;
     }
+    public boolean isNumeric() {
+        return getType() == Type.NUMBER || getType() == Type.COMPLEX;
+    }
 
     @Override
     public String toString() {
