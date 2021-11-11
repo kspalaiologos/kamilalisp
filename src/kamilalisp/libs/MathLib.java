@@ -145,6 +145,29 @@ public class MathLib {
             private Atom sub2(Atom a1, Atom a2) {
                 if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
                     return new Atom(a1.getNumber().get().subtract(a2.getNumber().get()));
+                } else if(a1.getType() == Type.MATRIX && a2.getType() == Type.MATRIX) {
+                    if (a1.getMatrix().get().getRows() != a2.getMatrix().get().getRows() || a1.getMatrix().get().getCols() != a2.getMatrix().get().getCols())
+                        throw new Error("Matrix dimensions must match");
+                    return new Atom(a1.getMatrix().get().transmogrifyRank0((x, y) ->
+                            new Atom(new LbcSupplier<>(() -> sub2(x, y).get().get())), a2.getMatrix().get()));
+                } else if((a1.getType() == Type.MATRIX && a2.isNumeric()) || (a1.isNumeric() && a2.getType() == Type.MATRIX)) {
+                    Matrix mat;
+
+                    if(a1.getType() == Type.MATRIX) {
+                        mat = a1.getMatrix().get();
+                    } else {
+                        mat = a2.getMatrix().get();
+                    }
+
+                    if(a1.isNumeric()) {
+                        return new Atom(mat.transmogrifyRank0(x ->
+                                new Atom(new LbcSupplier<>(() -> sub2(a1, x).get().get()))
+                        ));
+                    } else {
+                        return new Atom(mat.transmogrifyRank0(x ->
+                                new Atom(new LbcSupplier<>(() -> sub2(x, a2).get().get()))
+                        ));
+                    }
                 } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
                     return new Atom(a1.getComplex().get().subtract(a2.getComplex().get()));
                 } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.STRING_CONSTANT) {
@@ -163,11 +186,14 @@ public class MathLib {
             }
 
             private Object sub1(Atom a) {
-                a.guardType("Argument to monadic -", Type.NUMBER, Type.COMPLEX);
+                a.guardType("Argument to monadic -", Type.NUMBER, Type.COMPLEX, Type.MATRIX);
                 if(a.getType() == Type.NUMBER) {
                     return a.getNumber().get().negate();
                 } else if(a.getType() == Type.COMPLEX) {
                     return a.getComplex().get().negate();
+                } else if(a.getType() == Type.MATRIX) {
+                    return a.getMatrix().get().transmogrifyRank0(x ->
+                            new Atom(new LbcSupplier<>(() -> sub1(x))));
                 }
                 throw new Error("Unreachable");
             }
