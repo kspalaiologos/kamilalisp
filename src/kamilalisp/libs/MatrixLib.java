@@ -1,8 +1,14 @@
 package kamilalisp.libs;
 
+import ch.obermuhlner.math.big.BigComplex;
+import ch.obermuhlner.math.big.BigComplexMath;
+import com.google.common.collect.Streams;
 import kamilalisp.data.*;
+import kamilalisp.libs.primitives.Add;
+import kamilalisp.libs.primitives.Product;
 import kamilalisp.matrix.Matrix;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -98,6 +104,49 @@ public class MatrixLib {
                         else
                             return m1.get(row, col);
                     }, m1.getRows(), m1.getCols());
+                }));
+            }
+        }));
+
+        env.push("frobenius-prod", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2 && arguments.size() != 5)
+                    throw new Error("Invalid invocation to 'frobenius-prod'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    if(arguments.size() == 2) {
+                        arguments.get(0).guardType("First argument to 'frobenius-prod'", Type.MATRIX);
+                        arguments.get(1).guardType("Second argument to 'frobenius-prod'", Type.MATRIX);
+                        Matrix m1 = arguments.get(0).getMatrix().get();
+                        Matrix m2 = arguments.get(1).getMatrix().get();
+                        if (m1.getRows() != m2.getRows() || m1.getCols() != m2.getCols())
+                            throw new Error("'frobenius-prod': matrices must have same dimensions.");
+                        List<Atom> m1r = m1.ravel().stream().map(x -> {
+                            if(x.getType() == Type.COMPLEX)
+                                return new Atom(new LbcSupplier<>(() -> x.getComplex().get().conjugate()));
+                            else if(x.getType() == Type.NUMBER)
+                                return x;
+                            else
+                                throw new Error("'frobenius-prod': invalid type in matrix.");
+                        }).collect(Collectors.toList()), m2r = m2.ravel();
+                        return Streams.zip(m1r.stream(), m2r.stream(), Product::mul2).reduce(Add::add2).orElse(new Atom(BigDecimal.ZERO)).get().get();
+                    } else {
+                        arguments.get(0).guardType("First argument to 'frobenius-prod'", Type.MATRIX);
+                        arguments.get(1).guardType("Second argument to 'frobenius-prod'", Type.MATRIX);
+                        arguments.get(2).guardType("Third argument to 'frobenius-prod'", Type.CLOSURE, Type.MACRO);
+                        arguments.get(3).guardType("Fourth argument to 'frobenius-prod'", Type.CLOSURE, Type.MACRO);
+                        arguments.get(4).guardType("Fifth argument to 'frobenius-prod'", Type.CLOSURE, Type.MACRO);
+                        Matrix m1 = arguments.get(0).getMatrix().get();
+                        Matrix m2 = arguments.get(1).getMatrix().get();
+                        Callable c = arguments.get(2).getCallable().get();
+                        Callable d = arguments.get(3).getCallable().get();
+                        Callable e = arguments.get(4).getCallable().get();
+                        if (m1.getRows() != m2.getRows() || m1.getCols() != m2.getCols())
+                            throw new Error("'frobenius-prod': matrices must have same dimensions.");
+                        List<Atom> m1r = m1.ravel().stream().map(x -> e.apply(env, List.of(x))).collect(Collectors.toList()), m2r = m2.ravel();
+                        return Streams.zip(m1r.stream(), m2r.stream(), (a, b) -> c.apply(env, List.of(a, b)))
+                                .reduce((a, b) -> d.apply(env, List.of(a, b))).orElse(new Atom(BigDecimal.ZERO)).get().get();
+                    }
                 }));
             }
         }));

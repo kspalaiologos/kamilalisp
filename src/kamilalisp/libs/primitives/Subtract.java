@@ -1,5 +1,6 @@
 package kamilalisp.libs.primitives;
 
+import ch.obermuhlner.math.big.BigComplex;
 import kamilalisp.data.*;
 import kamilalisp.matrix.Matrix;
 
@@ -36,6 +37,10 @@ public class Subtract implements Closure {
                 }
             } else if (a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
                 return a1.getComplex().get().subtract(a2.getComplex().get());
+            } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.NUMBER) {
+                return a1.getComplex().get().subtract(a2.getNumber().get());
+            } else if(a1.getType() == Type.NUMBER && a2.getType() == Type.COMPLEX) {
+                return BigComplex.valueOf(a1.getNumber().get()).subtract(a2.getComplex().get());
             } else if (a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.STRING_CONSTANT) {
                 final String lookup = a2.getStringConstant().get().get();
                 return new StringConstant(a1.getStringConstant().get().get()

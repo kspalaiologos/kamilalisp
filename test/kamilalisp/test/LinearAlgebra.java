@@ -1,5 +1,6 @@
 package kamilalisp.test;
 
+import ch.obermuhlner.math.big.BigComplex;
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.Atom;
 import kamilalisp.data.Environment;
@@ -43,5 +44,11 @@ public class LinearAlgebra {
     @Test
     void testConjugate() {
         assertTrue(Evaluation.evalString("(= (+ (mat-mix '((1J2 2J-3) (1J8.5 -3.5J6)))) (mat-mix '((1J-2 2J3) (1J-8.5 -3.5J-6))))").get(0).coerceBool());
+    }
+
+    @Test
+    void testFrobeniusProd() {
+        assertEquals(Evaluation.evalString("(frobenius-prod (mat-mix '((2 0 6) (1 -1 2))) (mat-mix '((8 -3 2) (4 1 -5))))").get(0).getNumber().get(), new BigDecimal("21"));
+        assertEquals(Evaluation.evalString("(frobenius-prod (mat-mix '((1J1 0J-2) (3 -5))) (mat-mix '((-2 0J3) (4J-3 6))))").get(0).getComplex().get(), BigComplex.valueOf(new BigDecimal("-26"), new BigDecimal("-7")));
     }
 }

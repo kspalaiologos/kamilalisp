@@ -1,5 +1,6 @@
 package kamilalisp.libs.primitives;
 
+import ch.obermuhlner.math.big.BigComplex;
 import ch.obermuhlner.math.big.BigComplexMath;
 import kamilalisp.data.*;
 import kamilalisp.matrix.Matrix;
@@ -16,6 +17,10 @@ public class Add implements Closure {
                     throw new Error("Matrix dimensions must match");
                 return a1.getMatrix().get().transmogrifyRank0((x, y) ->
                         new Atom(new LbcSupplier<>(() -> add2(x, y).get().get())), a2.getMatrix().get());
+            } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.NUMBER) {
+                return a1.getComplex().get().add(a2.getNumber().get());
+            } else if(a1.getType() == Type.NUMBER && a2.getType() == Type.COMPLEX) {
+                return BigComplex.valueOf(a1.getNumber().get()).add(a2.getComplex().get());
             } else if ((a1.getType() == Type.MATRIX && a2.isNumeric()) || (a1.isNumeric() && a2.getType() == Type.MATRIX)) {
                 Atom number;
                 Matrix mat;

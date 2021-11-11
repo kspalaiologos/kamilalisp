@@ -15,12 +15,16 @@ public class Product implements Closure {
         return x.re.pow(2).add(x.im.pow(2)).sqrt(MathContext.DECIMAL128);
     }
 
-    private Atom mul2(Atom a1, Atom a2) {
+    public static Atom mul2(Atom a1, Atom a2) {
         return new Atom(new LbcSupplier<>(() -> {
             if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
                 return a1.getNumber().get().multiply(a2.getNumber().get());
             } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
                 return a1.getComplex().get().multiply(a2.getComplex().get());
+            } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.NUMBER) {
+                return a1.getComplex().get().multiply(a2.getNumber().get());
+            } else if(a1.getType() == Type.NUMBER && a2.getType() == Type.COMPLEX) {
+                return BigComplex.valueOf(a1.getNumber().get()).multiply(a2.getComplex().get());
             } else if(a1.getType() == Type.MATRIX && a2.getType() == Type.MATRIX) {
                 Matrix a = a1.getMatrix().get();
                 Matrix b = a2.getMatrix().get();
@@ -39,7 +43,7 @@ public class Product implements Closure {
         }));
     }
 
-    public Atom mul1(Atom a) {
+    public static Atom mul1(Atom a) {
         return new Atom(new LbcSupplier<>(() -> {
             a.guardType("Argument to monadic *", Type.NUMBER, Type.COMPLEX, Type.MATRIX);
             if(a.getType() == Type.NUMBER) {
