@@ -5,9 +5,12 @@ import ch.obermuhlner.math.big.BigComplexMath;
 import ch.obermuhlner.math.big.BigDecimalMath;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Streams;
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
 import kamilalisp.libs.math.*;
+import kamilalisp.libs.primitives.Add;
+import kamilalisp.libs.primitives.Subtract;
 import kamilalisp.matrix.Matrix;
 
 import java.io.StringWriter;
@@ -69,144 +72,9 @@ public class MathLib {
         LambertW.install(env);
         MobiusMu.install(env);
 
-        env.push("+", new Atom(new Closure() {
-            private Atom IDENTITY = new Atom(BigDecimal.ZERO);
+        env.push("+", new Atom(new Add()));
 
-            private Atom add2(Atom a1, Atom a2) {
-                if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
-                    return new Atom(a1.getNumber().get().add(a2.getNumber().get()));
-                } else if(a1.getType() == Type.MATRIX && a2.getType() == Type.MATRIX) {
-                    if (a1.getMatrix().get().getRows() != a2.getMatrix().get().getRows() || a1.getMatrix().get().getCols() != a2.getMatrix().get().getCols())
-                        throw new Error("Matrix dimensions must match");
-                    return new Atom(a1.getMatrix().get().transmogrifyRank0((x, y) ->
-                            new Atom(new LbcSupplier<>(() -> add2(x, y).get().get())), a2.getMatrix().get()));
-                } else if((a1.getType() == Type.MATRIX && a2.isNumeric()) || (a1.isNumeric() && a2.getType() == Type.MATRIX)) {
-                    Atom number;
-                    Matrix mat;
-
-                    if(a1.getType() == Type.MATRIX) {
-                        mat = a1.getMatrix().get();
-                    } else {
-                        mat = a2.getMatrix().get();
-                    }
-
-                    if(a1.isNumeric()) {
-                        number = a1;
-                    } else {
-                        number = a2;
-                    }
-
-                    return new Atom(mat.transmogrifyRank0(x ->
-                        new Atom(new LbcSupplier<>(() -> add2(x, number).get().get()))
-                    ));
-                } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
-                    return new Atom(a1.getComplex().get().add(a2.getComplex().get()));
-                } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.STRING_CONSTANT) {
-                    return new Atom(new StringConstant(a1.getStringConstant().get().get() + a2.getStringConstant().get().get()));
-                } else if(a1.getType() == Type.NUMBER && a2.getType() == Type.STRING_CONSTANT) {
-                    return new Atom(new StringConstant(a1.getNumber().get().toPlainString() + a2.getStringConstant().get().get()));
-                } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.NUMBER) {
-                    return new Atom(new StringConstant(a1.getStringConstant().get().get() + a2.getNumber().get().toPlainString()));
-                } else {
-                    throw new Error("+ unsupported on operands of type " + a1.getType().name() + " and " + a2.getType().name());
-                }
-            }
-
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() == 0 || arguments.size() > 2)
-                    throw new Error("Invalid + invocation.");
-                else if(arguments.size() == 1) {
-                    return new Atom(new LbcSupplier<>(() -> {
-                        if(arguments.get(0).getType() == Type.COMPLEX) {
-                            return BigComplexMath.conjugate(arguments.get(0).getComplex().get());
-                        } else if(arguments.get(0).getType() == Type.MATRIX) {
-                            return arguments.get(0).getMatrix().get().transmogrifyRank0(x ->
-                                new Atom(new LbcSupplier<>(() -> {
-                                    if(x.getType() == Type.COMPLEX) {
-                                        return BigComplexMath.conjugate(x.getComplex().get());
-                                    } else {
-                                        return x.get().get();
-                                    }
-                                }))
-                            );
-                        } else {
-                            return arguments.get(0).get().get();
-                        }
-                    }));
-                }
-                return new Atom(new LbcSupplier<>(() -> add2(arguments.get(0), arguments.get(1)).get().get()));
-            }
-        }));
-
-        env.push("-", new Atom(new Closure() {
-            private Atom IDENTITY = new Atom(BigDecimal.ZERO);
-
-            private Atom sub2(Atom a1, Atom a2) {
-                if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
-                    return new Atom(a1.getNumber().get().subtract(a2.getNumber().get()));
-                } else if(a1.getType() == Type.MATRIX && a2.getType() == Type.MATRIX) {
-                    if (a1.getMatrix().get().getRows() != a2.getMatrix().get().getRows() || a1.getMatrix().get().getCols() != a2.getMatrix().get().getCols())
-                        throw new Error("Matrix dimensions must match");
-                    return new Atom(a1.getMatrix().get().transmogrifyRank0((x, y) ->
-                            new Atom(new LbcSupplier<>(() -> sub2(x, y).get().get())), a2.getMatrix().get()));
-                } else if((a1.getType() == Type.MATRIX && a2.isNumeric()) || (a1.isNumeric() && a2.getType() == Type.MATRIX)) {
-                    Matrix mat;
-
-                    if(a1.getType() == Type.MATRIX) {
-                        mat = a1.getMatrix().get();
-                    } else {
-                        mat = a2.getMatrix().get();
-                    }
-
-                    if(a1.isNumeric()) {
-                        return new Atom(mat.transmogrifyRank0(x ->
-                                new Atom(new LbcSupplier<>(() -> sub2(a1, x).get().get()))
-                        ));
-                    } else {
-                        return new Atom(mat.transmogrifyRank0(x ->
-                                new Atom(new LbcSupplier<>(() -> sub2(x, a2).get().get()))
-                        ));
-                    }
-                } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
-                    return new Atom(a1.getComplex().get().subtract(a2.getComplex().get()));
-                } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.STRING_CONSTANT) {
-                    final String lookup = a2.getStringConstant().get().get();
-                    return new Atom(new StringConstant(a1.getStringConstant().get().get()
-                            .chars().filter(x -> lookup.indexOf(x) != -1).collect(StringWriter::new, StringWriter::write,
-                                    (swl, swr) -> swl.write(swr.toString())).toString()));
-                } else if(a1.getType() == Type.NUMBER && a2.getType() == Type.STRING_CONSTANT) {
-                    return new Atom(new StringConstant(a2.getStringConstant().get().get().substring(a1.getNumber().get().intValue())));
-                } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.NUMBER) {
-                    String s = a1.getStringConstant().get().get();
-                    return new Atom(new StringConstant(s.substring(0, s.length() - a2.getNumber().get().intValue())));
-                } else {
-                    throw new Error("- unsupported on operands of type " + a1.getType().name() + " and " + a2.getType().name());
-                }
-            }
-
-            private Object sub1(Atom a) {
-                a.guardType("Argument to monadic -", Type.NUMBER, Type.COMPLEX, Type.MATRIX);
-                if(a.getType() == Type.NUMBER) {
-                    return a.getNumber().get().negate();
-                } else if(a.getType() == Type.COMPLEX) {
-                    return a.getComplex().get().negate();
-                } else if(a.getType() == Type.MATRIX) {
-                    return a.getMatrix().get().transmogrifyRank0(x ->
-                            new Atom(new LbcSupplier<>(() -> sub1(x))));
-                }
-                throw new Error("Unreachable");
-            }
-
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() == 0 || arguments.size() > 2)
-                    throw new Error("Invalid - invocation.");
-                else if(arguments.size() == 1)
-                    return new Atom(new LbcSupplier<>(() -> sub1(arguments.get(0))));
-                return new Atom(new LbcSupplier<>(() -> sub2(arguments.get(0), arguments.get(1)).get().get()));
-            }
-        }));
+        env.push("-", new Atom(new Subtract()));
 
         env.push("*", new Atom(new Closure() {
             private Atom IDENTITY = new Atom(BigDecimal.ZERO);
@@ -216,6 +84,18 @@ public class MathLib {
                     return new Atom(a1.getNumber().get().multiply(a2.getNumber().get()));
                 } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
                     return new Atom(a1.getComplex().get().multiply(a2.getComplex().get()));
+                } else if(a1.getType() == Type.MATRIX && a2.getType() == Type.MATRIX) {
+                    // (def a (mat-mix '((1 2) (3 4) (5 6))))
+                    // (def b (transpose a))
+                    Matrix a = a1.getMatrix().get();
+                    Matrix b = a2.getMatrix().get();
+                    if(a.getRows() != b.getCols())
+                        throw new Error("Invalid matrix multiplication: " + a.getRows() + "x" + a.getCols() + " and " + b.getRows() + "x" + b.getCols() + ".");
+                    List<List<Atom>> lRows = a.rows().collect(Collectors.toList());
+                    List<List<Atom>> lCols = b.cols().collect(Collectors.toList());
+                    return new Atom(Matrix.of((row, col) -> {
+                        return Streams.zip(lRows.get(row).stream(), lCols.get(col).stream(), (x, y) -> mul2(x, y)).reduce(Add::add2).get();
+                    }, a.getRows(), b.getCols()));
                 } else if(a1.getType() == Type.NUMBER && a2.getType() == Type.STRING_CONSTANT) {
                     return new Atom(new StringConstant(a2.getStringConstant().get().get().repeat(a1.getNumber().get().intValue())));
                 } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.NUMBER) {
@@ -226,11 +106,13 @@ public class MathLib {
             }
 
             public Object mul1(Atom a) {
-                a.guardType("Argument to monadic *", Type.NUMBER, Type.COMPLEX);
+                a.guardType("Argument to monadic *", Type.NUMBER, Type.COMPLEX, Type.MATRIX);
                 if(a.getType() == Type.NUMBER) {
                     return new BigDecimal(a.getNumber().get().compareTo(BigDecimal.ZERO));
                 } else if(a.getType() == Type.COMPLEX) {
                     return new BigDecimal(modulus(a.getComplex().get()).compareTo(BigDecimal.ZERO));
+                } else if(a.getType() == Type.MATRIX) {
+                    return a.getMatrix().get().transmogrifyRank0(x -> new Atom(new LbcSupplier<>(() -> mul1(x))));
                 } else
                     throw new Error("unreachable.");
             }

@@ -79,6 +79,10 @@ public abstract class Matrix {
         return new MatrixImpl(a, rows, cols);
     }
 
+    public static Matrix of(BiFunction<Integer, Integer, Atom> generator, int rows, int cols) {
+        return from(IntStream.range(0, rows).mapToObj(i -> IntStream.range(0, cols).mapToObj(j -> generator.apply(i, j)).collect(Collectors.toList())).collect(Collectors.toList()));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
