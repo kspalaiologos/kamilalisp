@@ -12,6 +12,8 @@ import org.jline.reader.impl.DefaultParser.Bracket;
 import org.jline.reader.impl.history.DefaultHistory;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class Main {
     private static void banner() {
@@ -20,7 +22,16 @@ public class Main {
         System.out.println();
     }
 
+    public static void evalScript(Environment env, String source) throws IOException {
+        Evaluation.evalString(env, Files.readString(Path.of(source))).stream().forEach(x -> x.get().get());
+    }
+
     public static void main(String[] args) throws IOException {
+        if(args.length == 1) {
+            evalScript(Evaluation.createDefaultEnv(), args[0]);
+            return;
+        } else if(args.length != 0)
+            throw new IllegalArgumentException("Please pass no arguments to start a REPL, or pass a single argument with the KamilaLisp script file.");
         Environment env = Evaluation.createDefaultEnv();
         banner();
         DefaultParser parser = new DefaultParser();

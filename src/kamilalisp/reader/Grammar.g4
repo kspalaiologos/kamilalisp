@@ -2,13 +2,15 @@ grammar Grammar;
 
 file_: form * EOF;
 
-form: reader_macro
-    | fork
-    | bind
-    | form '@' form
-    | any_list
-    | literal
+form: form_rem ('@' form_rem)*
     ;
+
+form_rem: reader_macro
+        | fork
+        | bind
+        | any_list
+        | literal
+        ;
 
 forms: form* ;
 

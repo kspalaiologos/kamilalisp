@@ -28,6 +28,16 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitForm(GrammarParser.FormContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link GrammarParser#form_rem}.
+	 * @param ctx the parse tree
+	 */
+	void enterForm_rem(GrammarParser.Form_remContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#form_rem}.
+	 * @param ctx the parse tree
+	 */
+	void exitForm_rem(GrammarParser.Form_remContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link GrammarParser#forms}.
 	 * @param ctx the parse tree
 	 */

@@ -23,6 +23,12 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitForm(GrammarParser.FormContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link GrammarParser#form_rem}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForm_rem(GrammarParser.Form_remContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link GrammarParser#forms}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

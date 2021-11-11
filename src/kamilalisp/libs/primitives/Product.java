@@ -33,6 +33,25 @@ public class Product implements Closure {
                 List<List<Atom>> lRows = a.rows().collect(Collectors.toList());
                 List<List<Atom>> lCols = b.cols().collect(Collectors.toList());
                 return Matrix.of((row, col) -> Streams.zip(lRows.get(row).stream(), lCols.get(col).stream(), (x, y) -> mul2(x, y)).reduce(Add::add2).get(), a.getRows(), b.getCols());
+            } else if ((a1.getType() == Type.MATRIX && a2.isNumeric()) || (a1.isNumeric() && a2.getType() == Type.MATRIX)) {
+                Atom number;
+                Matrix mat;
+
+                if (a1.getType() == Type.MATRIX) {
+                    mat = a1.getMatrix().get();
+                } else {
+                    mat = a2.getMatrix().get();
+                }
+
+                if (a1.isNumeric()) {
+                    number = a1;
+                } else {
+                    number = a2;
+                }
+
+                return mat.transmogrifyRank0(x ->
+                        new Atom(new LbcSupplier<>(() -> mul2(x, number).get().get()))
+                );
             } else if(a1.getType() == Type.NUMBER && a2.getType() == Type.STRING_CONSTANT) {
                 return new StringConstant(a2.getStringConstant().get().get().repeat(a1.getNumber().get().intValue()));
             } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.NUMBER) {
