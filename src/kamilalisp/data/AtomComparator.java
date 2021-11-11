@@ -2,6 +2,7 @@ package kamilalisp.data;
 
 import ch.obermuhlner.math.big.BigComplex;
 import ch.obermuhlner.math.big.BigComplexMath;
+import kamilalisp.matrix.Matrix;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -70,6 +71,18 @@ public class AtomComparator implements Comparator<Atom> {
             Macro m1 = o1.getMacro().get();
             Macro m2 = o2.getMacro().get();
             return m1.representation().compareTo(m2.representation());
+        }
+
+        // 9. Handle matrices.
+        if (o1.getType() == Type.MATRIX) {
+            Matrix m1 = o1.getMatrix().get();
+            Matrix m2 = o2.getMatrix().get();
+            if(m1.getRows() != m2.getRows())
+                return m1.getRows() - m2.getRows();
+            else if(m1.getCols() != m2.getCols())
+                return m1.getCols() - m2.getCols();
+            else
+                return m1.ravel().size() - m2.ravel().size();
         }
 
         throw new Error("Default 'sort' comparator: Unhandled type: " + o1.getType());

@@ -74,6 +74,11 @@ public class MathLib {
             private Atom add2(Atom a1, Atom a2) {
                 if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
                     return new Atom(a1.getNumber().get().add(a2.getNumber().get()));
+                } else if(a1.getType() == Type.MATRIX && a2.getType() == Type.MATRIX) {
+                    if(a1.getMatrix().get().getRows() != a2.getMatrix().get().getRows() || a1.getMatrix().get().getCols() != a2.getMatrix().get().getCols())
+                        throw new Error("Matrix dimensions must match");
+                    return new Atom(a1.getMatrix().get().transmogrifyRank0((x, y) ->
+                        new Atom(new LbcSupplier<>(() -> add2(x, y).get().get())), a2.getMatrix().get()));
                 } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
                     return new Atom(a1.getComplex().get().add(a2.getComplex().get()));
                 } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.STRING_CONSTANT) {
@@ -95,8 +100,19 @@ public class MathLib {
                     return new Atom(new LbcSupplier<>(() -> {
                         if(arguments.get(0).getType() == Type.COMPLEX) {
                             return BigComplexMath.conjugate(arguments.get(0).getComplex().get());
-                        } else
+                        } else if(arguments.get(0).getType() == Type.MATRIX) {
+                            return arguments.get(0).getMatrix().get().transmogrifyRank0(x ->
+                                new Atom(new LbcSupplier<>(() -> {
+                                    if(x.getType() == Type.COMPLEX) {
+                                        return BigComplexMath.conjugate(x.getComplex().get());
+                                    } else {
+                                        return x.get().get();
+                                    }
+                                }))
+                            );
+                        } else {
                             return arguments.get(0).get().get();
+                        }
                     }));
                 }
                 return new Atom(new LbcSupplier<>(() -> add2(arguments.get(0), arguments.get(1)).get().get()));
