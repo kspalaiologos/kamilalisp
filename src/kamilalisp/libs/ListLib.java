@@ -530,6 +530,7 @@ public class ListLib {
                             x.guardType("'replicate' argument list contents", Type.NUMBER);
                             return x.getNumber().get().intValue();
                         }).collect(Collectors.toList());
+                        arguments.get(1).guardType("'replicate' argument", Type.LIST);
                         List<Atom> l2 = arguments.get(1).getList().get();
                         if(l1.size() != l2.size())
                             throw new Error("'replicate' expects two lists of the same size.");
