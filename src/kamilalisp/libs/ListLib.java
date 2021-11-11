@@ -3,6 +3,8 @@ package kamilalisp.libs;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import kamilalisp.data.*;
+import kamilalisp.libs.primitives.Add;
+import kamilalisp.matrix.Matrix;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -747,21 +749,37 @@ public class ListLib {
                 return new Atom(new LbcSupplier<>(() -> {
                     arguments.get(0).guardType("First argument to 'inner-prod'.", Type.CLOSURE, Type.MACRO);
                     arguments.get(1).guardType("Second argument to 'inner-prod'.", Type.CLOSURE, Type.MACRO);
-                    arguments.get(2).guardType("Third argument to 'inner-prod'.", Type.LIST);
-                    arguments.get(3).guardType("Fourth argument to 'inner-prod'.", Type.LIST);
-                    List<Atom> l1 = arguments.get(2).getList().get();
-                    List<Atom> l2 = arguments.get(3).getList().get();
-                    Callable f = arguments.get(0).getCallable().get();
-                    Callable g = arguments.get(1).getCallable().get();
-                    if(l1.size() != l2.size())
-                        throw new Error("The length of lists provided to 'inner-prod' doesn't match.");
-                    else if(l1.size() == 0)
-                        return Atom.NULL.get().get();
-                    else if(l1.size() == 1)
-                        return g.apply(env, List.of(l1.get(0), l2.get(0))).get().get();
-                    else
-                        return Streams.zip(l1.stream(), l2.stream(), (x, y) -> g.apply(env, List.of(x, y)))
-                                .reduce((x, y) -> f.apply(env, List.of(x, y))).get().get().get();
+                    arguments.get(2).guardType("Third argument to 'inner-prod'.", Type.LIST, Type.MATRIX);
+                    arguments.get(3).guardType("Fourth argument to 'inner-prod'.", Type.LIST, Type.MATRIX);
+                    if(arguments.get(2).getType() != arguments.get(3).getType())
+                        throw new Error("Invalid invocation to 'inner-prod'. Expected two matrices or lists.");
+                    if(arguments.get(2).getType() == Type.LIST) {
+                        List<Atom> l1 = arguments.get(2).getList().get();
+                        List<Atom> l2 = arguments.get(3).getList().get();
+                        Callable f = arguments.get(0).getCallable().get();
+                        Callable g = arguments.get(1).getCallable().get();
+                        if (l1.size() != l2.size())
+                            throw new Error("The length of lists provided to 'inner-prod' doesn't match.");
+                        else if (l1.size() == 0)
+                            return Atom.NULL.get().get();
+                        else if (l1.size() == 1)
+                            return g.apply(env, List.of(l1.get(0), l2.get(0))).get().get();
+                        else
+                            return Streams.zip(l1.stream(), l2.stream(), (x, y) -> g.apply(env, List.of(x, y)))
+                                    .reduce((x, y) -> f.apply(env, List.of(x, y))).get().get().get();
+                    } else {
+                        Matrix a = arguments.get(2).getMatrix().get();
+                        Matrix b = arguments.get(3).getMatrix().get();
+                        Callable f = arguments.get(0).getCallable().get();
+                        Callable g = arguments.get(1).getCallable().get();
+                        if(a.getRows() != b.getCols())
+                            throw new Error("Invalid matrix inner product: " + a.getRows() + "x" + a.getCols() + " and " + b.getRows() + "x" + b.getCols() + ".");
+                        List<List<Atom>> lRows = a.rows().collect(Collectors.toList());
+                        List<List<Atom>> lCols = b.cols().collect(Collectors.toList());
+                        return Matrix.of((row, col) ->
+                                Streams.zip(lRows.get(row).stream(), lCols.get(col).stream(), (x, y) -> g.apply(env, List.of(x, y)))
+                                        .reduce((x, y) -> f.apply(env, List.of(x, y))).get(), a.getRows(), b.getCols());
+                    }
                 }));
             }
         }));
