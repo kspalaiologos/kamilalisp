@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import kamilalisp.data.Atom;
 import kamilalisp.data.Type;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -79,7 +80,7 @@ public class MatrixImpl extends Matrix {
     public Matrix reshape(int rows, int cols) {
         List<Atom> currentRavel = ravelData;
         if(currentRavel.size() < rows * cols)
-            currentRavel.addAll(Collections.nCopies(rows * cols - currentRavel.size(), Atom.NULL));
+            currentRavel.addAll(Collections.nCopies(rows * cols - currentRavel.size(), isNumeric() ? new Atom(BigDecimal.ZERO) : Atom.NULL));
         return new MatrixImpl(ravelData, rows, cols);
     }
 
@@ -120,7 +121,7 @@ public class MatrixImpl extends Matrix {
             public Matrix reshape(int rows, int cols) {
                 List<Atom> currentRavel = ravelData;
                 if(currentRavel.size() < rows * cols)
-                    currentRavel.addAll(Collections.nCopies(rows * cols - currentRavel.size(), Atom.NULL));
+                    currentRavel.addAll(Collections.nCopies(rows * cols - currentRavel.size(), isNumeric() ? new Atom(BigDecimal.ZERO) : Atom.NULL));
                 return new MatrixImpl(ravelData, rows, cols).transpose();
             }
 
