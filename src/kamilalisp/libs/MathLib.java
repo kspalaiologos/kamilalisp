@@ -367,6 +367,43 @@ public class MathLib {
             }
         }));
 
+        env.push("xor", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'xor'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.NUMBER) {
+                        return new BigDecimal(
+                                arguments
+                                        .get(0)
+                                        .getNumber()
+                                        .get()
+                                        .toBigInteger()
+                                        .xor(arguments.get(1).getNumber().get().toBigInteger()));
+                    } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
+                        return new StringConstant(arguments.get(0).getStringConstant().get().get().concat(arguments.get(1).getStringConstant().get().get())
+                                .codePoints()
+                                .distinct()
+                                .filter(x -> arguments.get(0).getStringConstant().get().get().codePoints().anyMatch(y -> y == x)
+                                          || arguments.get(1).getStringConstant().get().get().codePoints().anyMatch(y -> y == x))
+                                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                                .toString());
+                    } else if(arguments.get(0).getType() == Type.LIST && arguments.get(1).getType() == Type.LIST) {
+                        Set<Object> result = new LinkedHashSet<>();
+                        result.addAll(arguments.get(0).getList().get().stream().map(x -> x.get().get()).collect(Collectors.toList()));
+                        result.addAll(arguments.get(1).getList().get().stream().map(x -> x.get().get()).collect(Collectors.toList()));
+                        Set<Object> intersection = new LinkedHashSet<>();
+                        intersection.addAll(arguments.get(0).getList().get().stream().map(x -> x.get().get()).collect(Collectors.toList()));
+                        intersection.retainAll(arguments.get(1).getList().get().stream().map(x -> x.get().get()).collect(Collectors.toList()));
+                        result.removeAll(intersection);
+                        return result.stream().map(x -> new Atom(new LbcSupplier<>(() -> x))).collect(Collectors.toList());
+                    } else
+                        throw new Error("Invalid invocation to 'xor'. Expected two numbers, two strings or two lists.");
+                }));
+            }
+        }));
+
         env.push(">=", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
