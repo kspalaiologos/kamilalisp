@@ -62,7 +62,7 @@ public class MatrixImpl extends Matrix {
     }
 
     private List<Atom> getCol(int col) {
-        return IntStream.range(0, iRows).mapToObj(x -> get(col, x)).collect(Collectors.toList());
+        return IntStream.range(0, iRows).mapToObj(x -> get(x, col)).collect(Collectors.toList());
     }
 
     @Override
@@ -103,7 +103,7 @@ public class MatrixImpl extends Matrix {
 
             @Override
             public List<Atom> ravel() {
-                return MatrixImpl.this.rows().flatMap(Collection::stream).collect(Collectors.toList());
+                return MatrixImpl.this.cols().flatMap(Collection::stream).collect(Collectors.toList());
             }
 
             @Override

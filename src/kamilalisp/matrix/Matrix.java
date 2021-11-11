@@ -133,6 +133,6 @@ public abstract class Matrix {
             result += "+" + String.join("+", columnWidths.stream().map(w -> "-".repeat(w + 2)).collect(Collectors.toList())) + "+\n";
         }
 
-        return result;
+        return result.trim();
     }
 }

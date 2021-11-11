@@ -56,6 +56,7 @@ public class Evaluation {
         MathLib.install(globEnv);
         ListLib.install(globEnv);
         FoldLib.install(globEnv);
+        MatrixLib.install(globEnv);
         globEnv.owner = null;
         return globEnv;
     }
