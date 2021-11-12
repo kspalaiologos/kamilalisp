@@ -770,6 +770,8 @@ public class MathLib {
         // Except that they're easier to maintain.
         Evaluation.evalString(env, "(def sum (bind foldl' + 0))");
         Evaluation.evalString(env, "(def prod (bind foldl' * 1))");
+        Evaluation.evalString(env, "(def succ $(+ 1))");
+        Evaluation.evalString(env, "(def pred $(- _ 1))");
         Evaluation.evalString(env, "(defun totient (x) (let ((y (p-factors x))) (prod (zip-with - y (unique-mask y)))))");
     }
 }
