@@ -2,15 +2,20 @@ package kamilalisp.libs;
 
 import ch.obermuhlner.math.big.BigComplex;
 import ch.obermuhlner.math.big.BigComplexMath;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import kamilalisp.data.*;
 import kamilalisp.libs.primitives.Add;
 import kamilalisp.libs.primitives.Product;
 import kamilalisp.matrix.Matrix;
+import kamilalisp.matrix.MatrixImpl;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MatrixLib {
     public static void install(Environment env) {
@@ -170,6 +175,129 @@ public class MatrixLib {
                     for(int i = 1; i < Math.min(m.getRows(), m.getCols()); i++)
                         acc = c.apply(env, List.of(acc, m.get(i, i)));
                     return acc.get().get();
+                }));
+            }
+        }));
+
+        env.push("take", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2 && arguments.size() != 3)
+                    throw new Error("Invalid invocation to 'take'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    int rowDim = -1, colDim = -1;
+                    Atom x;
+                    if(arguments.size() == 2) {
+                        arguments.get(0).guardType("First argument to 'take'", Type.NUMBER);
+                        colDim = arguments.get(0).getNumber().get().intValue();
+                        x = arguments.get(1);
+                    } else {
+                        arguments.get(0).guardType("First argument to 'take'", Type.NUMBER);
+                        arguments.get(1).guardType("Second argument to 'take'", Type.NUMBER);
+                        colDim = arguments.get(0).getNumber().get().intValue();
+                        rowDim = arguments.get(1).getNumber().get().intValue();
+                        x = arguments.get(2);
+                    }
+                    if(x.getType() == Type.MATRIX) {
+                        if(rowDim == -1) {
+                            // turn a matrix into a list of size N
+                            return x.getMatrix().get().ravel().subList(0, colDim);
+                        } else {
+                            // simply reshape a matrix.
+                            return x.getMatrix().get().reshape(rowDim, colDim, false);
+                        }
+                    } else if(x.getType() == Type.LIST) {
+                        if(rowDim == -1) {
+                            // trim/extend a vector with 0 (numeric) or NIL (other).
+                            List<Atom> l = x.getList().get();
+                            if(colDim >= 0) {
+                                if (colDim < l.size())
+                                    return l.subList(0, colDim);
+                                else {
+                                    if (l.stream().anyMatch(a -> a.getType() != Type.COMPLEX && a.getType() != Type.NUMBER))
+                                        return Stream.concat(l.stream(), Stream.generate(() -> Atom.NULL)).limit(colDim).collect(Collectors.toList());
+                                    else
+                                        return Stream.concat(l.stream(), Stream.generate(() -> new Atom(BigDecimal.ZERO))).limit(colDim).collect(Collectors.toList());
+                                }
+                            } else {
+                                if(-colDim > l.size())
+                                    throw new Error("Can't take " + colDim + " elements from a " + l.size() + " element list.");
+                                return Lists.reverse(Lists.reverse(l).stream().limit(-colDim).collect(Collectors.toList()));
+                            }
+                        } else {
+                            // reshape a list into a matrix using matrix reshape.
+                            List<Atom> l = x.getList().get();
+                            if(l.stream().anyMatch(a -> a.getType() != Type.COMPLEX && a.getType() != Type.NUMBER))
+                                l = Stream.concat(l.stream(), Stream.generate(() -> Atom.NULL)).limit(colDim * rowDim).collect(Collectors.toList());
+                            else
+                                l = Stream.concat(l.stream(), Stream.generate(() -> new Atom(BigDecimal.ZERO))).limit(colDim * rowDim).collect(Collectors.toList());
+                            return Matrix.from(l, rowDim, colDim);
+                        }
+                    } else {
+                        if(rowDim == -1) {
+                            // (a a a a) - a times colDim (Type.LIST)
+                            return Collections.nCopies(colDim, x);
+                        } else {
+                            // [a a a a] - coldim x rowdim (Type.MATRIX)
+                            // [a a a a]
+                            return Matrix.of((a, b) -> x, rowDim, colDim);
+                        }
+                    }
+                }));
+            }
+        }));
+
+        env.push("reshape", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2 && arguments.size() != 3)
+                    throw new Error("Invalid invocation to 'reshape'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    int rowDim = -1, colDim = -1;
+                    Atom x;
+                    if(arguments.size() == 2) {
+                        arguments.get(0).guardType("First argument to 'reshape'", Type.NUMBER);
+                        colDim = arguments.get(0).getNumber().get().intValue();
+                        x = arguments.get(1);
+                    } else {
+                        arguments.get(0).guardType("First argument to 'reshape'", Type.NUMBER);
+                        arguments.get(1).guardType("Second argument to 'reshape'", Type.NUMBER);
+                        colDim = arguments.get(0).getNumber().get().intValue();
+                        rowDim = arguments.get(1).getNumber().get().intValue();
+                        x = arguments.get(2);
+                    }
+                    if(x.getType() == Type.MATRIX) {
+                        if(rowDim == -1) {
+                            // turn a matrix into a list of size N
+                            return x.getMatrix().get().ravel().subList(0, colDim);
+                        } else {
+                            // simply reshape a matrix.
+                            return x.getMatrix().get().reshape(rowDim, colDim, true);
+                        }
+                    } else if(x.getType() == Type.LIST) {
+                        if(rowDim == -1) {
+                            // trim/extend a vector with 0 (numeric) or NIL (other).
+                            List<Atom> l = x.getList().get();
+                            if(colDim < l.size())
+                                return l.subList(0, colDim);
+                            else {
+                                return Streams.stream(Iterables.cycle(l)).limit(colDim).collect(Collectors.toList());
+                            }
+                        } else {
+                            // reshape a list into a matrix using matrix reshape.
+                            List<Atom> l = x.getList().get();
+                            return Matrix.from(Streams.stream(Iterables.cycle(l)).limit(colDim * rowDim).collect(Collectors.toList()), rowDim, colDim);
+                        }
+                    } else {
+                        if(rowDim == -1) {
+                            // (a a a a) - a times colDim (Type.LIST)
+                            return Collections.nCopies(colDim, x);
+                        } else {
+                            // [a a a a] - coldim x rowdim (Type.MATRIX)
+                            // [a a a a]
+                            return Matrix.of((a, b) -> x, rowDim, colDim);
+                        }
+                    }
                 }));
             }
         }));

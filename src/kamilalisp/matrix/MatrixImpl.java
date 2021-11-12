@@ -1,6 +1,8 @@
 package kamilalisp.matrix;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Streams;
 import kamilalisp.data.Atom;
 import kamilalisp.data.Type;
 
@@ -77,11 +79,19 @@ public class MatrixImpl extends Matrix {
     }
 
     @Override
-    public Matrix reshape(int rows, int cols) {
+    public Matrix reshape(int rows, int cols, boolean recycle) {
         List<Atom> currentRavel = ravelData;
-        if(currentRavel.size() < rows * cols)
-            currentRavel.addAll(Collections.nCopies(rows * cols - currentRavel.size(), isNumeric() ? new Atom(BigDecimal.ZERO) : Atom.NULL));
-        return new MatrixImpl(ravelData, rows, cols);
+        if(!recycle) {
+            if (currentRavel.size() < rows * cols)
+                return new MatrixImpl(Stream.concat(currentRavel.stream(), Stream.generate(() -> isNumeric() ? new Atom(BigDecimal.ZERO) : Atom.NULL).limit(rows * cols - currentRavel.size())).collect(Collectors.toList()), rows, cols);
+        } else {
+            if (currentRavel.size() < rows * cols)
+                return new MatrixImpl(Streams.stream(Iterables.cycle(currentRavel)).limit(rows * cols).collect(Collectors.toList()), rows, cols);
+        }
+        if (currentRavel.size() > rows * cols)
+            return new MatrixImpl(currentRavel.subList(0, rows * cols), rows, cols);
+        else
+            return new MatrixImpl(currentRavel, rows, cols);
     }
 
     @Override
@@ -118,11 +128,19 @@ public class MatrixImpl extends Matrix {
             }
 
             @Override
-            public Matrix reshape(int rows, int cols) {
+            public Matrix reshape(int rows, int cols, boolean recycle) {
                 List<Atom> currentRavel = ravelData;
-                if(currentRavel.size() < rows * cols)
-                    currentRavel.addAll(Collections.nCopies(rows * cols - currentRavel.size(), isNumeric() ? new Atom(BigDecimal.ZERO) : Atom.NULL));
-                return new MatrixImpl(ravelData, rows, cols).transpose();
+                if(!recycle) {
+                    if (currentRavel.size() < rows * cols)
+                        return new MatrixImpl(Stream.concat(currentRavel.stream(), Stream.generate(() -> isNumeric() ? new Atom(BigDecimal.ZERO) : Atom.NULL).limit(rows * cols - currentRavel.size())).collect(Collectors.toList()), rows, cols).transpose();
+                } else {
+                    if (currentRavel.size() < rows * cols)
+                        return new MatrixImpl(Streams.stream(Iterables.cycle(currentRavel)).limit(rows * cols).collect(Collectors.toList()), rows, cols).transpose();
+                }
+                if (currentRavel.size() > rows * cols)
+                    return new MatrixImpl(currentRavel.subList(0, rows * cols), rows, cols).transpose();
+                else
+                    return new MatrixImpl(currentRavel, rows, cols).transpose();
             }
 
             @Override

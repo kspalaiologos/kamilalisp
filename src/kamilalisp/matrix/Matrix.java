@@ -21,7 +21,7 @@ public abstract class Matrix {
     public abstract Stream<List<Atom>> rows();
     public abstract Stream<List<Atom>> cols();
 
-    public abstract Matrix reshape(int rows, int cols);
+    public abstract Matrix reshape(int rows, int cols, boolean recycle);
 
     public abstract Matrix transpose();
 

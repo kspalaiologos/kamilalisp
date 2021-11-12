@@ -542,27 +542,6 @@ public class ListLib {
             }
         }));
 
-        env.push("take", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 2)
-                    throw new Error("Invalid invocation to 'take'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'take'", Type.NUMBER);
-                    arguments.get(1).guardType("Second argument to 'take'", Type.LIST);
-                    int n = arguments.get(0).getNumber().get().intValue();
-                    if(n > arguments.get(1).getList().get().size())
-                        throw new Error("'take' argument 1 is greater than the size of argument 2.");
-                    if(n == 0)
-                        return Atom.NULL.get().get();
-                    else if(n > 0)
-                        return arguments.get(1).getList().get().stream().limit(n).collect(Collectors.toList());
-                    else
-                        return Lists.reverse(Lists.reverse(arguments.get(1).getList().get()).stream().limit(-n).collect(Collectors.toList()));
-                }));
-            }
-        }));
-
         env.push("drop", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
