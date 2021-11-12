@@ -72,7 +72,7 @@ callable/syn
 
 ## Function composition and partial application
 
-The current topic is the cream of crop of functional programming. Let's see how to do it in KamilaLisp.
+The current topic is the cream of the crop of functional programming. Let's see how to do it in KamilaLisp.
 
 ```
 --> (defun f (x) [x + 5])
