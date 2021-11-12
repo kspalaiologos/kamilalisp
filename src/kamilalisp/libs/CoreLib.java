@@ -421,7 +421,7 @@ public class CoreLib {
                     arguments.get(1).guardType("Argument to 'lift'.", Type.LIST);
                     Callable c = arguments.get(0).getCallable().get();
                     List<Atom> l = arguments.get(1).getList().get();
-                    return c.apply(env, l);
+                    return c.apply(env, l).get().get();
                 }));
             }
         }));
