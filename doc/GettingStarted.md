@@ -69,3 +69,81 @@ callable/syn
 --> (square 5)
 25
 ```
+
+## Function composition and partial application
+
+The current topic is the cream of crop of functional programming. Let's see how to do it in KamilaLisp.
+
+```
+--> (defun f (x) [x + 5])
+(λ x . (+ x 5))
+--> (defun g (x) [3 * x])
+(λ x . (* 3 x))
+--> (f (g 5))
+20
+--> (g (f 5))
+30
+```
+
+We can define function composition as two-element forks:
+
+```
+--> (def f-over-g #(f g))
+callable/syn
+--> (def g-over-f #(g f))
+callable/syn
+--> (f-over-g 5)
+20
+--> (g-over-f 5)
+30
+```
+
+The question arises - how do more than two-element forks work? Let's unpack these two examples:
+
+```
+--> (def is-p? #(= #0 reverse))
+callable/syn
+--> (is-p? "kajak")
+1
+--> (is-p? "anne")
+0
+--> (def avg #(/ sum size))
+callable/syn
+--> (avg '(1 2 3 4))
+2.5
+```
+
+For a fork `#(f g h)`, the arguments to it are preprocessed by `g` and `h` before calling the `f` functions on the results this yields. Consequently, `f` must be a dyadic function in this case (the arity is `n-1` where `n` is the amount of members of a fork), while `g` and `h`'s varity depends passed on the arguments to the fork. Simply put, `(#(f g h) ...)` is equivelent to `(f (g ...) (h ...))`.
+
+There is a different, much nicer option - using `@`:
+
+```
+--> (def f-over-g f@g)
+callable/syn
+--> (f-over-g 5)
+20
+--> (g@f 5)
+30
+```
+
+`@` lets you stack arbitrary amounts of arbitrary functions, what will be demonstrated later on.
+
+Let's think of a different but related concept - partial application:
+
+```
+--> (def add5 $(+ 5))
+callable/syn
+--> (add5 5)
+10
+```
+
+Generally speaking, `$(f ...)` is an abbreviation / syntactic sugar over `(bind f ...)`.
+
+A function that takes the reciprocal of and negates it's input, and then adds 5 to it would be defined as follows:
+
+```
+--> (def f $(+ 5)@-@/)
+callable/syn
+--> (f 6)
+4.8333333333333333333333333333333333
+```

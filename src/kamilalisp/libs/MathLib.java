@@ -105,7 +105,7 @@ public class MathLib {
             public Object div1(Atom a) {
                 a.guardType("Argument to monadic /", Type.NUMBER, Type.COMPLEX);
                 if(a.getType() == Type.NUMBER) {
-                    return BigDecimal.ONE.divide(a.getNumber().get());
+                    return BigDecimal.ONE.divide(a.getNumber().get(), MathContext.DECIMAL128);
                 } else if(a.getType() == Type.COMPLEX) {
                     return a.getComplex().get().reciprocal(MathContext.DECIMAL128);
                 } else
