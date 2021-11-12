@@ -520,7 +520,7 @@ public class CoreLib {
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 1)
                     throw new Error("Invalid invocation to 'to-string'.");
-                return new Atom(new LbcSupplier<>(() -> arguments.get(0).toString()));
+                return new Atom(new LbcSupplier<>(() -> new StringConstant(arguments.get(0).toString())));
             }
         }));
 
@@ -533,13 +533,11 @@ public class CoreLib {
                     arguments.get(0).guardType("First argument to 'parse-num'.", Type.STRING_CONSTANT);
                     String s = arguments.get(0).getStringConstant().get().get();
 
-                    return new Atom(new LbcSupplier<>(() -> {
-                        try {
-                            return new BigDecimal(s);
-                        } catch(NumberFormatException e) {
-                            throw new Error("Invalid number format: " + s);
-                        }
-                    }));
+                    try {
+                        return new BigDecimal(s);
+                    } catch(NumberFormatException e) {
+                        throw new Error("Invalid number format: " + s);
+                    }
                 }));
             }
         }));
