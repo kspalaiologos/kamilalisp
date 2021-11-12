@@ -22,6 +22,8 @@ A lazily evaluated, functional, flexible and concise Lisp modelled after Haskell
 (println@sum@filter #(& ~@$(% _ 2) $(> 4000000)) (map fib (iota 40)))
 ```
 
+**[Learn me!](doc)**
+
 ## Setup
 
 ```

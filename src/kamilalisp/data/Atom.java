@@ -89,7 +89,13 @@ public class Atom {
             }
             case STRING: return getString().get();
             case LIST:
-                return "(" + getList().get().stream().map(x -> x.toString()).collect(Collectors.joining(" ")) + ")";
+                return "(" + getList().get().stream().map(x -> {
+                    String s = x.toString();
+                    if(s.contains("\n"))
+                        return "\n" + s + "\n";
+                    else
+                        return s;
+                }).collect(Collectors.joining(" ")) + ")";
         }
 
         return "??";

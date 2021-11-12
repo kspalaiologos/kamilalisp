@@ -48,6 +48,8 @@ public class Add implements Closure {
                 return new StringConstant(a1.getNumber().get().toPlainString() + a2.getStringConstant().get().get());
             } else if (a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.NUMBER) {
                 return new StringConstant(a1.getStringConstant().get().get() + a2.getNumber().get().toPlainString());
+            } else if (a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.COMPLEX) {
+                return new StringConstant(a1.getStringConstant().get().get() + a2);
             } else {
                 throw new Error("+ unsupported on operands of type " + a1.getType().name() + " and " + a2.getType().name());
             }
