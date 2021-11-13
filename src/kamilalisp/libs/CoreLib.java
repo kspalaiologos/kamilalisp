@@ -61,7 +61,6 @@ public class CoreLib {
                 params = arguments.get(0).getList().get(); code = arguments.get(1);
                 if(params.stream().anyMatch(x -> x.getType() != Type.STRING))
                     throw new Error("Invalid macro argument name.");
-                Environment newEnv = outerEnv.env.getTopmostAncestor().descendant("Macro");
                 Atom result = new Atom(new Closure() {
                     @Override
                     public String representation() {
@@ -75,15 +74,15 @@ public class CoreLib {
 
                     @Override
                     public Atom apply(Executor env, List<Atom> innerArgs) {
+                        Environment newEnv = outerEnv.env.getTopmostAncestor().descendant("Macro");
                         if(innerArgs.size() != params.size())
-                            throw new Error("Invalid invocation to a lambda expression.");
+                            throw new Error("Invalid invocation to a macro expression.");
                         for(int i = 0; i < params.size(); i++)
-                            newEnv.push(params.get(i).getString().get(), env.evaluate(innerArgs.get(i)));
+                            newEnv.push(params.get(i).getString().get(), innerArgs.get(i));
                         Executor lambdaExecutor = new Executor(newEnv);
                         return lambdaExecutor.evaluate(code);
                     }
                 });
-                newEnv.owner = result;
                 return result;
             }
         }));
