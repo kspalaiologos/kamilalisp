@@ -14,12 +14,22 @@ A lazily evaluated, functional, flexible and concise Lisp modelled after Haskell
 (println@foldl1' max (map parse-num (filter is-p? tab)))
 
 ;; ProjectEuler, problem 2.
-(def fib (memo (monad (seq (
-    if [x < 2]
-        x
-        [(fib [x - 1]) + (fib [x - 2])])))))
-
 (println@sum@filter #(& ~@$(% _ 2) $(> 4000000)) (map fib (iota 40)))
+
+
+;; SKI calculus implementation using KamilaLisp macros and pattern matching.
+(defmacro ski (x) (match x
+    ((a b c) (S a b c) [(tie a c b c) / 2])
+    ((a b)   (K a b)   a)
+    ((a)     (I a)     a)
+    ((a b)   (a b)     (tie (ski a) (ski b)))
+    (x)
+))
+
+(def ski-red $(iterate /= ski))
+
+;; an example expression
+(println@ski-red '(S I I K))
 ```
 
 **[Learn me!](doc)**
