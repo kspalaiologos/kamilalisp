@@ -2,36 +2,45 @@ package kamilalisp.test;
 
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.Environment;
+import kamilalisp.start.Main;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EulerTests {
-    // Note: IntelliJ + language version 12 should generally support raw strings.
-    // Unfortunately, it doesn't.
+    private final PrintStream standardOut = System.out;
+    private final ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-    @Test
-    void problem1() {
-        Environment env = Evaluation.createDefaultEnv();
-        assertEquals(Evaluation.evalString(env, "(def divides $(= 0)@%)\n" +
-                "(sum@filter (lambda (x) (| (divides x 5) (divides x 3))) (iota 1000))").get(1).getNumber().get(), new BigDecimal("233168"));
+    @BeforeEach
+    private void setUp() {
+        System.setOut(new PrintStream(output));
     }
 
-    @Test
-    void problem2() {
-        Environment env = Evaluation.createDefaultEnv();
-        assertEquals(Evaluation.evalString(env, "(def fib (memo (monad (seq (\n" +
-                "    if [x < 2]\n" +
-                "        x\n" +
-                "        [(fib [x - 1]) + (fib [x - 2])])))))" +
-                "(sum@filter #(& ~@$(% _ 2) $(> 4000000)) (map fib (iota 40)))").get(1).getNumber().get(), new BigDecimal("4613732"));
+    @AfterEach
+    private void tearDown() {
+        System.setOut(standardOut);
     }
 
-    @Test
-    void problem3() {
-        Environment env = Evaluation.createDefaultEnv();
-        assertEquals(Evaluation.evalString(env, "(foldl1' max (p-factors 600851475143))").get(0).getNumber().get(), new BigDecimal("6857"));
+    private String runProblem(String name) {
+        try {
+            Main.evalScript(Evaluation.createDefaultEnv(), "euler/" + name + ".lisp");
+        } catch (IOException e) {
+            fail(e);
+        }
+
+        return output.toString().trim();
     }
+
+    @Test void problem1() { assertEquals(runProblem("p1"), "233168"); }
+    @Test void problem2() { assertEquals(runProblem("p2"), "4613732"); }
+    @Test void problem3() { assertEquals(runProblem("p3"), "6857"); }
+    @Test void problem4() { assertEquals(runProblem("p4"), "906609"); }
+    @Test void problem5() { assertEquals(runProblem("p5"), "232792560"); }
 }
