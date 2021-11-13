@@ -271,6 +271,21 @@ public class ListLib {
             }
         }));
 
+        env.push("str-split", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'str-split'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'str-split'", Type.STRING_CONSTANT);
+                    arguments.get(1).guardType("Second argument to 'str-split'", Type.STRING_CONSTANT);
+                    String s = arguments.get(0).getStringConstant().get().get();
+                    String delim = arguments.get(1).getStringConstant().get().get();
+                    return Arrays.stream(s.split(delim)).map(x -> new Atom(new StringConstant(x))).collect(Collectors.toList());
+                }));
+            }
+        }));
+
         env.push("cons", new Atom(new Closure() {
             private List<Atom> cons2(Atom element, Atom list) {
                 list.guardType("Second argument to 'cons'", Type.LIST);
