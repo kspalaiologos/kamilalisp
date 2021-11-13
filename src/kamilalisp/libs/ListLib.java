@@ -781,6 +781,21 @@ public class ListLib {
             }
         }));
 
+        env.push("range", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'range'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'range'", Type.NUMBER);
+                    arguments.get(1).guardType("First argument to 'range'", Type.NUMBER);
+                    BigDecimal start = arguments.get(0).getNumber().get();
+                    BigDecimal end = arguments.get(1).getNumber().get();
+                    return Stream.iterate(start, x -> x.compareTo(end) < 0, x -> x.add(BigDecimal.ONE)).map(Atom::new).collect(Collectors.toList());
+                }));
+            }
+        }));
+
         env.push("keys", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
