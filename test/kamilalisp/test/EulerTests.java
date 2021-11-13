@@ -52,4 +52,6 @@ public class EulerTests {
     @Test void problem13() { assertEquals(runProblem("p13"), "5537376230"); }
     @Test void problem15() { assertEquals(runProblem("p15"), "137846528820"); }
     @Test void problem16() { assertEquals(runProblem("p16"), "1366"); }
+    @Test void problem18() { assertEquals(runProblem("p18"), "1074"); }
+    @Test void problem20() { assertEquals(runProblem("p20"), "648"); }
 }

@@ -4,6 +4,7 @@ import ch.obermuhlner.math.big.BigComplex;
 import ch.obermuhlner.math.big.BigComplexMath;
 import ch.obermuhlner.math.big.BigDecimalMath;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import kamilalisp.api.Evaluation;
@@ -21,6 +22,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class MathLib {
     private static BigDecimal modulus(Environment env, BigComplex x) {
@@ -588,10 +590,28 @@ public class MathLib {
                     Atom a = arguments.get(0);
                     a.guardType("First argument to '!'", Type.NUMBER, Type.COMPLEX);
                     if(a.getType() == Type.NUMBER) {
-                        return BigDecimalMath.factorial(a.getNumber().get(), Constant.getFr(env.env));
+                        return BigDecimalMath.factorial(a.getNumber().get().intValue());
                     } else {
                         return BigComplexMath.factorial(a.getComplex().get(), Constant.getFr(env.env));
                     }
+                }));
+            }
+        }));
+
+        env.push("pvec", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'pvec'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    a.guardType("First argument to 'pvec'", Type.NUMBER);
+                    int n = a.getNumber().get().intValue();
+                    return new ArrayList<>(Collections2.permutations(
+                                IntStream.range(0, n)
+                                        .mapToObj(x -> new Atom(new BigDecimal(x)))
+                                        .collect(Collectors.toList())))
+                            .stream().map(Atom::new).collect(Collectors.toList());
                 }));
             }
         }));
