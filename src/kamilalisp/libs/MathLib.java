@@ -850,7 +850,7 @@ public class MathLib {
                                 return x.getString().get();
                             }).collect(Collectors.toList());
                         else
-                            boundNames = List.of(binds.getString().get());
+                            boundNames = new LinkedList<>(List.of(binds.getString().get()));
                         // Now, match `pattern` against `source`.
                         // Ignore all entries present in `boundNames`.
                         if(visit(pattern, source, boundNames, bindings) && boundNames.isEmpty()) {
