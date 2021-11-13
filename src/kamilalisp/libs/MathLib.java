@@ -799,6 +799,72 @@ public class MathLib {
             }
         }));
 
+        env.push("match", new Atom(new Macro() {
+            private boolean visit(Atom pattern, Atom source, List<String> boundNames, HashMap<String, Atom> valueMap) {
+                if(pattern.getType() == Type.LIST) {
+                    if(source.getType() != Type.LIST)
+                        return false;
+                    List<Atom> p = pattern.getList().get();
+                    List<Atom> s = source.getList().get();
+                    if(p.size() != s.size())
+                        return false;
+                    return Streams.zip(p.stream(), s.stream(), (x, y) -> visit(x, y, boundNames, valueMap)).noneMatch(x -> x.booleanValue() == false);
+                } else if(pattern.getType() == Type.STRING) {
+                    String s = pattern.getString().get();
+                    if(valueMap.containsKey(s) && !valueMap.get(s).equals(source))
+                        return false;
+                    if(!boundNames.contains(s))
+                        return pattern.equals(source);
+                    valueMap.put(s, source);
+                    boundNames.remove(s);
+                    return true;
+                } else {
+                    return pattern.equals(source);
+                }
+            }
+
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() < 2)
+                    throw new Error("'match' expects at least one case handler.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom source = env.evaluate(arguments.get(0));
+                    List<Atom> clauses = arguments.subList(1, arguments.size());
+
+                    for(Atom clause : clauses) {
+                        clause.guardType("'match' case", Type.LIST);
+                        List<Atom> data = clause.getList().get();
+                        if(data.size() == 1)
+                            return env.evaluate(data.get(0)).get().get();
+                        if(data.size() != 3)
+                            throw new Error("'match' clause most contain one or three elements.");
+                        Atom binds = data.get(0);
+                        Atom pattern = data.get(1);
+                        Atom handler = data.get(2);
+                        List<String> boundNames;
+                        HashMap<String, Atom> bindings = new HashMap<>();
+                        binds.guardType("Bind section of the 'match' case", Type.STRING, Type.LIST);
+                        if(binds.getType() == Type.LIST)
+                            boundNames = binds.getList().get().stream().map(x -> {
+                                x.guardType("Bound variable in 'match' case", Type.STRING);
+                                return x.getString().get();
+                            }).collect(Collectors.toList());
+                        else
+                            boundNames = List.of(binds.getString().get());
+                        // Now, match `pattern` against `source`.
+                        // Ignore all entries present in `boundNames`.
+                        if(visit(pattern, source, boundNames, bindings) && boundNames.isEmpty()) {
+                            Environment de = env.env.descendant("'match' handler section");
+                            bindings.forEach(de::push);
+                            return new Executor(de).evaluate(handler).get().get();
+                        }
+                    }
+
+                    throw new Error("Unexhaustive 'match'.");
+                }));
+            }
+        }));
+
         // Math utilities implemented in Lisp for no real reason.
         // Except that they're easier to maintain.
         Evaluation.evalString(env, "(def sum (bind foldl' + 0))");
