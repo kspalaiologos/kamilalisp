@@ -766,6 +766,42 @@ public class MathLib {
             }
         }));
 
+        env.push("p-until", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'p-until'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'p-until'", Type.NUMBER);
+                    BigInteger n = arguments.get(0).getNumber().get().toBigInteger();
+                    List<Atom> primes = new LinkedList<>();
+                    for(BigInteger i = new BigInteger("2"); i.compareTo(n) < 0; i = i.add(BigInteger.ONE)) {
+                        if(i.isProbablePrime(50))
+                            primes.add(new Atom(new BigDecimal(i)));
+                    }
+                    return primes;
+                }));
+            }
+        }));
+
+        env.push("p-no", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'p-no'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'p-no'", Type.NUMBER);
+                    int n = arguments.get(0).getNumber().get().intValue();
+                    List<Atom> primes = new LinkedList<>();
+                    for(BigInteger i = new BigInteger("2"); primes.size() != n; i = i.add(BigInteger.ONE)) {
+                        if(i.isProbablePrime(50))
+                            primes.add(new Atom(new BigDecimal(i)));
+                    }
+                    return primes;
+                }));
+            }
+        }));
+
         // Math utilities implemented in Lisp for no real reason.
         // Except that they're easier to maintain.
         Evaluation.evalString(env, "(def sum (bind foldl' + 0))");

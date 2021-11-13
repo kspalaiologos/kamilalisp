@@ -44,4 +44,6 @@ public class EulerTests {
     @Test void problem4() { assertEquals(runProblem("p4"), "906609"); }
     @Test void problem5() { assertEquals(runProblem("p5"), "232792560"); }
     @Test void problem6() { assertEquals(runProblem("p6"), "25164150"); }
+    @Test void problem7() { assertEquals(runProblem("p7"), "104743"); }
+    @Test void problem8() { assertEquals(runProblem("p8"), "23514624000"); }
 }

@@ -2,6 +2,7 @@ package kamilalisp.libs;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
+import com.google.common.primitives.Chars;
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
 
@@ -189,12 +190,20 @@ public class CoreLib {
                     throw new Error("Invalid invocation to 'map'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     arguments.get(0).guardType("First argument to 'map'", Type.CLOSURE, Type.MACRO);
-                    arguments.get(1).guardType("Second argument to 'map'", Type.LIST);
-                    return arguments.get(1).getList().get().stream().map(x ->
+                    arguments.get(1).guardType("Second argument to 'map'", Type.LIST, Type.STRING_CONSTANT);
+                    if(arguments.get(1).getType() == Type.LIST) {
+                        return arguments.get(1).getList().get().stream().map(x ->
+                                new Atom(new LbcSupplier<>(() ->
+                                        arguments.get(0).getCallable().get().apply(env, Collections.singletonList(x)).get().get()
+                                ))
+                        ).collect(Collectors.toList());
+                    } else {
+                        return Chars.asList(arguments.get(1).getStringConstant().get().get().toCharArray()).stream().map(x ->
                             new Atom(new LbcSupplier<>(() ->
-                                    arguments.get(0).getCallable().get().apply(env, Collections.singletonList(x)).get().get()
+                                    arguments.get(0).getCallable().get().apply(env, Collections.singletonList(new Atom(new StringConstant(String.valueOf(x))))).get().get()
                             ))
-                    ).collect(Collectors.toList());
+                        ).collect(Collectors.toList());
+                    }
                 }));
             }
         }));
