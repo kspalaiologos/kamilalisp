@@ -200,6 +200,46 @@ public class ListLib {
             }
         }));
 
+        env.push("first", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'first'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'first'", Type.CLOSURE, Type.MACRO);
+                    arguments.get(1).guardType("Second argument to 'first'", Type.LIST);
+                    Callable c = arguments.get(0).getCallable().get();
+                    List<Atom> l = arguments.get(1).getList().get();
+                    for(int i = 0; i < l.size(); i++) {
+                        Atom a = l.get(i);
+                        if (c.apply(env, List.of(a)).coerceBool())
+                            return a.get().get();
+                    }
+                    return Atom.NULL.get().get();
+                }));
+            }
+        }));
+
+        env.push("first-idx", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'first'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'first'", Type.CLOSURE, Type.MACRO);
+                    arguments.get(1).guardType("Second argument to 'first'", Type.LIST);
+                    Callable c = arguments.get(0).getCallable().get();
+                    List<Atom> l = arguments.get(1).getList().get();
+                    for(int i = 0; i < l.size(); i++) {
+                        Atom a = l.get(i);
+                        if (c.apply(env, List.of(a)).coerceBool())
+                            return new BigDecimal(i);
+                    }
+                    return Atom.NULL.get().get();
+                }));
+            }
+        }));
+
         env.push("any", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
@@ -809,16 +849,23 @@ public class ListLib {
                             for(int j = i + 1; j < l.size(); j++)
                                 if(l.get(i).equals(l.get(j)))
                                     l.remove(j--);
-                        LinkedHashMap<Atom, List<Atom>> o = new LinkedHashMap<>();
-                        for(Atom a : l)
-                            o.put(a, new LinkedList<>());
-                        AtomicInteger position = new AtomicInteger();
+                        List<Atom> atoms = new LinkedList<>();
+                        List<List<Atom>> values = new LinkedList<>();
+                        for(Atom a : l) {
+                            atoms.add(a);
+                            values.add(new LinkedList<>());
+                        }
+                        AtomicInteger position = new AtomicInteger(0);
                         arguments.get(0).getList().get().forEach(x -> {
-                            o.get(x).add(new Atom(new BigDecimal(position.get())));
-                            position.incrementAndGet();
+                            for(int i = 0; i < atoms.size(); i++) {
+                                if(atoms.get(i).equals(x)) {
+                                    values.get(i).add(new Atom(new BigDecimal(position.get())));
+                                    position.incrementAndGet();
+                                    break;
+                                }
+                            }
                         });
-                        return new LinkedList<>(o.entrySet()).stream()
-                                .map(x -> new Atom(List.of(x.getKey(), new Atom(x.getValue())))).collect(Collectors.toList());
+                        return Streams.zip(atoms.stream(), values.stream(), (x, y) -> new Atom(List.of(x, new Atom(y)))).collect(Collectors.toList());
                     } else if(arguments.get(0).getType() == Type.STRING_CONSTANT) {
                         String s = arguments.get(0).getStringConstant().get().get();
                         IntStream uniques = s.codePoints().distinct();

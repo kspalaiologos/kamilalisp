@@ -416,7 +416,7 @@ public class MathLib {
                             new Atom("|"),
                             new Atom(List.of(new Atom("="), a1, a2)),
                             new Atom(List.of(new Atom(">"), a1, a2))
-                    )));
+                    ))).get().get();
                 }));
             }
         }));
@@ -433,7 +433,7 @@ public class MathLib {
                             new Atom("|"),
                             new Atom(List.of(new Atom("="), a1, a2)),
                             new Atom(List.of(new Atom("<"), a1, a2))
-                    )));
+                    ))).get().get();
                 }));
             }
         }));

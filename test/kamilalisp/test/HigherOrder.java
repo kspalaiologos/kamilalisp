@@ -2,6 +2,7 @@ package kamilalisp.test;
 
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.Atom;
+import kamilalisp.data.Environment;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

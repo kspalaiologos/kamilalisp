@@ -214,7 +214,7 @@ public class FoldLib {
                     if(data.isEmpty())
                         throw new Error("Cannot fold an empty list.");
                     else if(data.size() == 1)
-                        return data.get(0);
+                        return data.get(0).get().get();
                     else {
                         return data.stream().reduce((x, y) ->
                                 arguments.get(0).getCallable().get().apply(env, Arrays.asList(x, y))
@@ -236,7 +236,7 @@ public class FoldLib {
                     if(data.isEmpty())
                         throw new Error("Cannot fold an empty list.");
                     else if(data.size() == 1)
-                        return data.get(0);
+                        return data.get(0).get().get();
                     else {
                         return Lists.reverse(data).stream().reduce((x, y) ->
                                 arguments.get(0).getCallable().get().apply(env, Arrays.asList(y, x))
@@ -258,7 +258,7 @@ public class FoldLib {
                     if(data.isEmpty())
                         throw new Error("Cannot fold an empty list.");
                     else if(data.size() == 1)
-                        return data.get(0);
+                        return data.get(0).get().get();
                     else {
                         return data.stream().reduce((x, y) ->
                                 arguments.get(0).getCallable().get().apply(env, Arrays.asList(x.eager(), y.eager())).eager()
@@ -280,7 +280,7 @@ public class FoldLib {
                     if(data.isEmpty())
                         throw new Error("Cannot fold an empty list.");
                     else if(data.size() == 1)
-                        return data.get(0);
+                        return data.get(0).get().get();
                     else {
                         return Lists.reverse(data).stream().reduce((x, y) ->
                                 arguments.get(0).getCallable().get().apply(env, Arrays.asList(y.eager(), x.eager())).eager()
@@ -304,7 +304,7 @@ public class FoldLib {
                     if(data.isEmpty())
                         throw new Error("Cannot fold an empty list.");
                     else if(data.size() == 1)
-                        return data.get(0);
+                        return data.get(0).get().get();
                     else {
                         result.add(data.get(0));
                         data.stream().reduce((x, y) -> {
@@ -331,7 +331,7 @@ public class FoldLib {
                     if(data.isEmpty())
                         throw new Error("Cannot fold an empty list.");
                     else if(data.size() == 1)
-                        return data.get(0);
+                        return data.get(0).get().get();
                     else {
                         result.add(data.get(data.size() - 1));
                         Lists.reverse(data).stream().reduce((x, y) -> {
@@ -358,7 +358,7 @@ public class FoldLib {
                     if(data.isEmpty())
                         throw new Error("Cannot fold an empty list.");
                     else if(data.size() == 1)
-                        return data.get(0);
+                        return data.get(0).get().get();
                     else {
                         result.add(data.get(0));
                         data.stream().reduce((x, y) -> {
@@ -385,7 +385,7 @@ public class FoldLib {
                     if(data.isEmpty())
                         throw new Error("Cannot fold an empty list.");
                     else if(data.size() == 1)
-                        return data.get(0);
+                        return data.get(0).get().get();
                     else {
                         result.add(data.get(data.size() - 1));
                         Lists.reverse(data).stream().reduce((x, y) -> {

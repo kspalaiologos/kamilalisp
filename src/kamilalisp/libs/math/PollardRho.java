@@ -56,6 +56,8 @@ public class PollardRho {
                 return new Atom(new LbcSupplier<>(() -> {
                     arguments.get(0).guardType("First argument to 'p-factors'", Type.NUMBER);
                     PollardRho p = new PollardRho();
+                    if(arguments.get(0).getNumber().get().compareTo(BigDecimal.ZERO) == 0)
+                        throw new Error("'p-factors' - can't factor 0.");
                     p.factor(arguments.get(0).getNumber().get().toBigInteger());
                     return p.getFactors().stream().map(x -> new Atom(new BigDecimal(x))).collect(Collectors.toList());
                 }));
