@@ -45,7 +45,6 @@ public class Evaluation {
         ParseTree tree = parser.form();
         DefaultVisitor visitor = new DefaultVisitor();
         Atom atom = visitor.visit(tree);
-        System.out.println(atom);
         Executor executor = new Executor(globEnv);
         return executor.evaluate(atom);
     }
