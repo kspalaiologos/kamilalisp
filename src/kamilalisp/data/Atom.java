@@ -82,7 +82,7 @@ public class Atom {
             case CLOSURE: return getClosure().get().representation();
             case MACRO: return getMacro().get().representation();
             case STRING_CONSTANT: return "\"" + getStringConstant().get().get() + "\"";
-            case NUMBER: return getNumber().get().toPlainString();
+            case NUMBER: return getNumber().get().stripTrailingZeros().toPlainString();
             case MATRIX: return getMatrix().get().toString();
             case COMPLEX: {
                 BigComplex c = getComplex().get();
