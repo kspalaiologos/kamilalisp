@@ -288,7 +288,7 @@ public class ListBasic {
     @Test
     void testIterate() {
         assertTrue(Evaluation.evalString("(iterate 0 (lambda (x) [x + 1]) 10)").get(0).getNumber().get().intValue() == 10);
-        assertTrue(Evaluation.evalString("(iterate (monad [x < 10]) (monad [x + 1]) 0)").get(0).getNumber().get().intValue() == 10);
+        assertTrue(Evaluation.evalString("(iterate (dyad [y < 10]) (monad [x + 1]) 0)").get(0).getNumber().get().intValue() == 10);
     }
 
     @Test
@@ -354,7 +354,7 @@ public class ListBasic {
 
     @Test
     void testScanterate() {
-        assertTrue(Evaluation.evalString("(scanterate (lambda (x) [x + 2]) (lambda (x) [x < 10]) 0)").get(0).getList().get().equals(List.of(
+        assertTrue(Evaluation.evalString("(scanterate (lambda (x) [x + 2]) (lambda (x y) [y < 10]) 0)").get(0).getList().get().equals(List.of(
                 new Atom(new BigDecimal("0")),
                 new Atom(new BigDecimal("2")),
                 new Atom(new BigDecimal("4")),

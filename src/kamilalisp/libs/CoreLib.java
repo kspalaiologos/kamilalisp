@@ -192,7 +192,7 @@ public class CoreLib {
                     arguments.get(0).guardType("First argument to 'map'", Type.CLOSURE, Type.MACRO);
                     arguments.get(1).guardType("Second argument to 'map'", Type.LIST, Type.STRING_CONSTANT);
                     if(arguments.get(1).getType() == Type.LIST) {
-                        return arguments.get(1).getList().get().stream().map(x ->
+                        return arguments.get(1).getList().get().stream().parallel().map(x ->
                                 new Atom(new LbcSupplier<>(() ->
                                         arguments.get(0).getCallable().get().apply(env, Collections.singletonList(x)).get().get()
                                 ))
@@ -452,8 +452,11 @@ public class CoreLib {
                             rest.set(0, c.apply(env, rest));
                     } else if(arguments.get(0).isCallable()) {
                         Callable f = arguments.get(0).getCallable().get();
-                        while(f.apply(env, List.of(rest.get(0))).coerceBool())
+                        Atom prev = Atom.NULL;
+                        while(f.apply(env, List.of(prev, rest.get(0))).coerceBool()) {
+                            prev = rest.get(0);
                             rest.set(0, c.apply(env, rest));
+                        }
                     }
 
                     return rest.get(0).get().get();
@@ -479,7 +482,7 @@ public class CoreLib {
                             result.add(rest.set(0, c.apply(env, rest)));
                     } else if(arguments.get(1).isCallable()) {
                         Callable f = arguments.get(1).getCallable().get();
-                        while(f.apply(env, List.of(rest.get(0))).coerceBool())
+                        while(f.apply(env, List.of(result.size() > 0 ? result.get(result.size() - 1) : Atom.NULL, rest.get(0))).coerceBool())
                             result.add(rest.set(0, c.apply(env, rest)));
                     }
 
@@ -598,18 +601,15 @@ public class CoreLib {
                     throw new Error("Invalid invocation to 'memo'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     parentArgs.get(0).guardType("First argument to 'memo'.", Type.CLOSURE);
-                    // XXX: Can't use a map. Weirdness with hash codes and comparisons. Not worth it.
-                    List<List<Atom>> keys = new ArrayList<>();
-                    List<Atom> values = new ArrayList<>();
+                    HashMap<List<Atom>, Atom> memo = new HashMap<>();
                     return new Closure() {
                         @Override
                         public Atom apply(Executor env, List<Atom> arguments) {
-                            if(keys.contains(arguments))
-                                return values.get(keys.indexOf(arguments));
+                            if(memo.containsKey(arguments))
+                                return memo.get(arguments);
                             else {
                                 Atom result = parentArgs.get(0).getClosure().get().apply(env, arguments);
-                                keys.add(arguments);
-                                values.add(result);
+                                memo.put(arguments, result);
                                 return result;
                             }
                         }

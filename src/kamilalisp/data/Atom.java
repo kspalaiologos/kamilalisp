@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Atom {
@@ -124,6 +125,22 @@ public class Atom {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        switch(getType()) {
+            case CLOSURE: return getClosure().get().representation().hashCode();
+            case MACRO: return getMacro().get().representation().hashCode();
+            case STRING_CONSTANT: return getStringConstant().get().get().hashCode();
+            case NUMBER: return getNumber().get().toString().hashCode();
+            case MATRIX: return Objects.hash(getMatrix().get().ravel().hashCode(), getMatrix().get().getCols(), getMatrix().get().getRows());
+            case COMPLEX: return getComplex().get().toString().hashCode();
+            case STRING: return getString().get().hashCode();
+            case LIST: return getList().get().hashCode();
+        }
+
+        throw new Error("Attempting to hash an atom of unknown type.");
     }
 
     public void guardType(String cause, Type... t) throws Error {
