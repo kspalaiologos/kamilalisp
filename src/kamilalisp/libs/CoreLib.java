@@ -52,6 +52,46 @@ public class CoreLib {
             }
         }));
 
+        env.push("fork", new Atom(new Macro() {
+            @Override
+            public Atom apply(Executor env, List<Atom> tmp) {
+                // #(f g h) <=> (f (g ...) (h ...))
+                // #(f g) <=> (f (g ...))
+                return new Atom(new Closure() {
+                    @Override
+                    public Atom apply(Executor innerEnv, List<Atom> arguments) {
+                        return new Atom(new LbcSupplier<>(() -> {
+                            Atom first = env.evaluate(tmp.get(0));
+                            first.guardType("fork head", Type.CLOSURE, Type.MACRO);
+                            List<Atom> forkData = tmp.subList(1, tmp.size()).stream().map(x -> {
+                                Atom a = env.evaluate(x);
+                                a.guardType("fork child", Type.CLOSURE, Type.MACRO);
+                                return a.getCallable().get().apply(innerEnv, arguments);
+                            }).collect(Collectors.toList());
+                            return first.getCallable().get().apply(innerEnv, forkData).get().get();
+                        }));
+                    }
+                });
+            }
+        }));
+
+        env.push("atop", new Atom(new Macro() {
+            @Override
+            public Atom apply(Executor env, List<Atom> components) {
+                return new Atom(new Closure() {
+                    @Override
+                    public Atom apply(Executor innerEnv, List<Atom> arguments) {
+                        return new Atom(new LbcSupplier<>(() -> {
+                            Atom x = env.evaluate(components.get(0)).getCallable().get().apply(innerEnv, arguments);
+                            for(int i = 1; i < components.size(); i++)
+                                x = env.evaluate(components.get(i)).getCallable().get().apply(innerEnv, List.of(x));
+                            return x.get().get();
+                        }));
+                    }
+                });
+            }
+        }));
+
         env.push("macro", new Atom(new Macro() {
             @Override
             public Atom apply(Executor outerEnv, List<Atom> arguments) {

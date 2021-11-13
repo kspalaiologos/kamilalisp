@@ -24,17 +24,7 @@ public class DefaultVisitor extends AbstractParseTreeVisitor<Atom> implements Gr
     public Atom visitForm(GrammarParser.FormContext ctx) {
         if(ctx.form_rem().size() > 1) {
             List<Atom> components = Lists.reverse(ctx.form_rem().stream().map(x -> visitChildren(x)).collect(Collectors.toList()));
-            return new Atom(new Closure() {
-                @Override
-                public Atom apply(Executor env, List<Atom> arguments) {
-                    return new Atom(new LbcSupplier<>(() -> {
-                        Atom x = env.evaluate(components.get(0)).getCallable().get().apply(env, arguments);
-                        for(int i = 1; i < components.size(); i++)
-                            x = env.evaluate(components.get(i)).getCallable().get().apply(env, List.of(x));
-                        return x.get().get();
-                    }));
-                }
-            });
+            return new Atom(Stream.concat(Stream.of(new Atom("atop")), components.stream()).collect(Collectors.toList()));
         } else {
             return visit(ctx.form_rem(0));
         }
@@ -87,23 +77,7 @@ public class DefaultVisitor extends AbstractParseTreeVisitor<Atom> implements Gr
         List<Atom> tmp = visit(ctx.any_list()).getList().get();
         if(tmp.size() < 2)
             throw new Error("a fork can't be created out of less than two functions.");
-        return new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                // #(f g h) <=> (f (g ...) (h ...))
-                // #(f g) <=> (f (g ...))
-                return new Atom(new LbcSupplier<>(() -> {
-                    Atom first = env.evaluate(tmp.get(0));
-                    first.guardType("fork head", Type.CLOSURE, Type.MACRO);
-                    List<Atom> forkData = tmp.subList(1, tmp.size()).stream().map(x -> {
-                        Atom a = env.evaluate(x);
-                        a.guardType("fork child", Type.CLOSURE, Type.MACRO);
-                        return a.getCallable().get().apply(env, arguments);
-                    }).collect(Collectors.toList());
-                    return first.getCallable().get().apply(env, forkData).get().get();
-                }));
-            }
-        });
+        return new Atom(Stream.concat(Stream.of(new Atom("fork")), tmp.stream()).collect(Collectors.toList()));
     }
 
     @Override
