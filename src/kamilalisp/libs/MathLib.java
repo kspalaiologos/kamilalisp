@@ -23,31 +23,31 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class MathLib {
-    private static BigDecimal modulus(BigComplex x) {
-        return x.re.pow(2).add(x.im.pow(2)).sqrt(MathContext.DECIMAL128);
+    private static BigDecimal modulus(Environment env, BigComplex x) {
+        return x.re.pow(2).add(x.im.pow(2)).sqrt(Constant.getFr(env));
     }
 
-    private static BigComplex gaussianRem(BigComplex a, BigComplex b) {
+    private static BigComplex gaussianRem(Environment env, BigComplex a, BigComplex b) {
         BigComplex prod = a.multiply(b.conjugate());
-        BigDecimal p = prod.re.divide(b.absSquare(MathContext.DECIMAL128), MathContext.DECIMAL128);
-        BigDecimal q = prod.im.divide(b.absSquare(MathContext.DECIMAL128), MathContext.DECIMAL128);
+        BigDecimal p = prod.re.divide(b.absSquare(Constant.getFr(env)), Constant.getFr(env));
+        BigDecimal q = prod.im.divide(b.absSquare(Constant.getFr(env)), Constant.getFr(env));
         BigComplex gamma = BigComplex.valueOf(p.setScale(0, RoundingMode.HALF_EVEN), q.setScale(0, RoundingMode.HALF_EVEN));
         BigComplex rho = a.subtract(gamma.multiply(b));
         return rho;
     }
 
-    private static BigComplex gcd(BigComplex alpha, BigComplex beta) {
-        if(gaussianRem(alpha, beta).equals(BigComplex.ZERO))
+    private static BigComplex gcd(Environment env, BigComplex alpha, BigComplex beta) {
+        if(gaussianRem(env, alpha, beta).equals(BigComplex.ZERO))
             return beta;
-        return gcd(beta, gaussianRem(alpha, beta));
+        return gcd(env, beta, gaussianRem(env, alpha, beta));
     }
 
     private static void assertGaussian(BigComplex x) {
         assert x.re.stripTrailingZeros().scale() <= 0 && x.im.stripTrailingZeros().scale() <= 0;
     }
 
-    private static boolean isPrime(BigComplex n) {
-        if(n.absSquare(MathContext.DECIMAL128).toBigInteger().isProbablePrime(50))
+    private static boolean isPrime(Environment env, BigComplex n) {
+        if(n.absSquare(Constant.getFr(env)).toBigInteger().isProbablePrime(50))
             return true;
         if(n.re.compareTo(BigDecimal.ZERO) != 0 && n.im.compareTo(BigDecimal.ZERO) == 0) {
             if(n.re.abs().remainder(BigDecimal.valueOf(4)).compareTo(BigDecimal.valueOf(3)) == 0 && n.re.toBigInteger().isProbablePrime(50))
@@ -61,6 +61,8 @@ public class MathLib {
     }
 
     public static void install(Environment env) {
+        env.push("fr", new Atom(new BigDecimal(100)));
+
         Logarithm.install(env);
         Constant.install(env);
         Trigonometry.install(env);
@@ -77,9 +79,9 @@ public class MathLib {
         env.push("/", new Atom(new Closure() {
             private Atom IDENTITY = new Atom(BigDecimal.ZERO);
 
-            private Atom div2(Atom a1, Atom a2) {
+            private Atom div2(Environment env, Atom a1, Atom a2) {
                 if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
-                    return new Atom(a1.getNumber().get().divide(a2.getNumber().get(), MathContext.DECIMAL128));
+                    return new Atom(a1.getNumber().get().divide(a2.getNumber().get(), Constant.getFr(env)));
                 } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.NUMBER) {
                     String s = a1.getStringConstant().get().get();
                     return new Atom(Lists.newLinkedList(
@@ -90,7 +92,7 @@ public class MathLib {
                             .map(x -> new Atom(new StringConstant(x)))
                             .collect(Collectors.toList()));
                 } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
-                    return new Atom(a1.getComplex().get().divide(a2.getComplex().get(), MathContext.DECIMAL128));
+                    return new Atom(a1.getComplex().get().divide(a2.getComplex().get(), Constant.getFr(env)));
                 } else if(a1.getType() == Type.LIST && a2.getType() == Type.NUMBER) {
                     List<Atom> s = a1.getList().get();
                     return new Atom(Lists.partition(s, s.size() / a2.getNumber().get().intValue()).stream().map(x -> new Atom(x)).collect(Collectors.toList()));
@@ -99,12 +101,12 @@ public class MathLib {
                 }
             }
 
-            public Object div1(Atom a) {
+            public Object div1(Environment env, Atom a) {
                 a.guardType("Argument to monadic /", Type.NUMBER, Type.COMPLEX);
                 if(a.getType() == Type.NUMBER) {
-                    return BigDecimal.ONE.divide(a.getNumber().get(), MathContext.DECIMAL128);
+                    return BigDecimal.ONE.divide(a.getNumber().get(), Constant.getFr(env));
                 } else if(a.getType() == Type.COMPLEX) {
-                    return a.getComplex().get().reciprocal(MathContext.DECIMAL128);
+                    return a.getComplex().get().reciprocal(Constant.getFr(env));
                 } else
                     throw new Error("unreachable.");
             }
@@ -114,8 +116,8 @@ public class MathLib {
                 if(arguments.size() == 0 || arguments.size() > 2)
                     throw new Error("Invalid / invocation.");
                 if(arguments.size() == 1)
-                    return new Atom(new LbcSupplier<>(() -> div1(arguments.get(0))));
-                return new Atom(new LbcSupplier<>(() -> div2(arguments.get(0), arguments.get(1)).get().get()));
+                    return new Atom(new LbcSupplier<>(() -> div1(env.env, arguments.get(0))));
+                return new Atom(new LbcSupplier<>(() -> div2(env.env, arguments.get(0), arguments.get(1)).get().get()));
             }
         }));
 
@@ -131,7 +133,7 @@ public class MathLib {
                         if(arguments.get(0).getType() == Type.NUMBER) {
                             return arguments.get(0).getNumber().get().abs();
                         } else if(arguments.get(0).getType() == Type.COMPLEX) {
-                            return modulus(arguments.get(0).getComplex().get());
+                            return modulus(env.env, arguments.get(0).getComplex().get());
                         }
 
                         throw new Error("unreachable.");
@@ -148,7 +150,7 @@ public class MathLib {
         env.push("gcd", new Atom(new Closure() {
             private Atom IDENTITY = new Atom(BigDecimal.ZERO);
 
-            private Atom gcd2(Atom a1, Atom a2) {
+            private Atom gcd2(Environment env, Atom a1, Atom a2) {
                 a1.guardType("First argument to 'gcd'", Type.NUMBER, Type.COMPLEX);
                 a2.guardType("Second argument to 'gcd'", Type.NUMBER, Type.COMPLEX);
                 if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
@@ -162,7 +164,7 @@ public class MathLib {
                     assertGaussian(a);
                     assertGaussian(b);
                     // compute gcd(a, b).
-                    return new Atom(gcd(a, b));
+                    return new Atom(gcd(env, a, b));
                 }
             }
 
@@ -172,14 +174,14 @@ public class MathLib {
                     throw new Error("Invalid 'gcd' invocation.");
                 if(arguments.size() == 1)
                     return arguments.get(0);
-                return new Atom(new LbcSupplier<>(() -> gcd2(arguments.get(0), arguments.get(1)).get().get()));
+                return new Atom(new LbcSupplier<>(() -> gcd2(env.env, arguments.get(0), arguments.get(1)).get().get()));
             }
         }));
 
         env.push("lcm", new Atom(new Closure() {
             private Atom IDENTITY = new Atom(BigDecimal.ZERO);
 
-            private Atom gcd2(Atom a1, Atom a2) {
+            private Atom gcd2(Environment env, Atom a1, Atom a2) {
                 a1.guardType("First argument to 'lcm'", Type.NUMBER, Type.COMPLEX);
                 a2.guardType("Second argument to 'lcm'", Type.NUMBER, Type.COMPLEX);
                 if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
@@ -192,7 +194,7 @@ public class MathLib {
                     else { b = a2.getComplex().get(); }
                     assertGaussian(a);
                     assertGaussian(b);
-                    return new Atom(a.multiply(b).divide(gcd(a, b), MathContext.DECIMAL128));
+                    return new Atom(a.multiply(b).divide(gcd(env, a, b), Constant.getFr(env)));
                 }
             }
 
@@ -202,7 +204,7 @@ public class MathLib {
                     throw new Error("Invalid 'lcm' invocation.");
                 if(arguments.size() == 1)
                     return arguments.get(0);
-                return new Atom(new LbcSupplier<>(() -> gcd2(arguments.get(0), arguments.get(1)).get().get()));
+                return new Atom(new LbcSupplier<>(() -> gcd2(env.env, arguments.get(0), arguments.get(1)).get().get()));
             }
         }));
 
@@ -266,7 +268,7 @@ public class MathLib {
                     if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.NUMBER) {
                         return arguments.get(0).getNumber().get().compareTo(arguments.get(1).getNumber().get()) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
                     } else if(arguments.get(0).getType() == Type.COMPLEX && arguments.get(1).getType() == Type.COMPLEX) {
-                        return modulus(arguments.get(0).getComplex().get()).compareTo(modulus(arguments.get(1).getComplex().get())) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+                        return modulus(env.env, arguments.get(0).getComplex().get()).compareTo(modulus(env.env, arguments.get(1).getComplex().get())) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
                     } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
                         return arguments.get(0).getStringConstant().get().get().compareTo(arguments.get(1).getStringConstant().get().get()) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
                     } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.NUMBER) {
@@ -289,7 +291,7 @@ public class MathLib {
                     if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.NUMBER) {
                         return arguments.get(0).getNumber().get().compareTo(arguments.get(1).getNumber().get()) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
                     } else if(arguments.get(0).getType() == Type.COMPLEX && arguments.get(1).getType() == Type.COMPLEX) {
-                        return modulus(arguments.get(0).getComplex().get()).compareTo(modulus(arguments.get(1).getComplex().get())) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+                        return modulus(env.env, arguments.get(0).getComplex().get()).compareTo(modulus(env.env, arguments.get(1).getComplex().get())) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
                     } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
                         return arguments.get(0).getStringConstant().get().get().compareTo(arguments.get(1).getStringConstant().get().get()) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
                     } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.NUMBER) {
@@ -464,7 +466,7 @@ public class MathLib {
                     if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
                         return a1.getNumber().get().min(a2.getNumber().get());
                     } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
-                        return modulus(a1.getComplex().get()).compareTo(modulus(a2.getComplex().get())) < 0 ? a1.get().get() : a2.get().get();
+                        return modulus(env.env, a1.getComplex().get()).compareTo(modulus(env.env, a2.getComplex().get())) < 0 ? a1.get().get() : a2.get().get();
                     } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.STRING_CONSTANT) {
                         return a1.getStringConstant().get().get().compareTo(a2.getStringConstant().get().get()) < 0 ? a1.get().get() : a2.get().get();
                     } else if(a1.getType() == Type.LIST && a2.getType() == Type.LIST) {
@@ -486,7 +488,7 @@ public class MathLib {
                     if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
                         return a1.getNumber().get().max(a2.getNumber().get());
                     } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
-                        return modulus(a1.getComplex().get()).compareTo(modulus(a2.getComplex().get())) > 0 ? a1.get().get() : a2.get().get();
+                        return modulus(env.env, a1.getComplex().get()).compareTo(modulus(env.env, a2.getComplex().get())) > 0 ? a1.get().get() : a2.get().get();
                     } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.STRING_CONSTANT) {
                         return a1.getStringConstant().get().get().compareTo(a2.getStringConstant().get().get()) > 0 ? a1.get().get() : a2.get().get();
                     } else if(a1.getType() == Type.LIST && a2.getType() == Type.LIST) {
@@ -523,9 +525,9 @@ public class MathLib {
                     Atom a = arguments.get(0);
                     a.guardType("First argument to 'sqrt'", Type.NUMBER, Type.COMPLEX);
                     if(a.getType() == Type.NUMBER) {
-                        return BigDecimalMath.sqrt(a.getNumber().get(), MathContext.DECIMAL128);
+                        return BigDecimalMath.sqrt(a.getNumber().get(), Constant.getFr(env.env));
                     } else {
-                        return BigComplexMath.sqrt(a.getComplex().get(), MathContext.DECIMAL128);
+                        return BigComplexMath.sqrt(a.getComplex().get(), Constant.getFr(env.env));
                     }
                 }));
             }
@@ -540,9 +542,9 @@ public class MathLib {
                     Atom a = arguments.get(0);
                     a.guardType("First argument to 'exp'", Type.NUMBER, Type.COMPLEX);
                     if(a.getType() == Type.NUMBER) {
-                        return BigDecimalMath.exp(a.getNumber().get(), MathContext.DECIMAL128);
+                        return BigDecimalMath.exp(a.getNumber().get(), Constant.getFr(env.env));
                     } else {
-                        return BigComplexMath.exp(a.getComplex().get(), MathContext.DECIMAL128);
+                        return BigComplexMath.exp(a.getComplex().get(), Constant.getFr(env.env));
                     }
                 }));
             }
@@ -559,7 +561,10 @@ public class MathLib {
                     a1.guardType("First argument to '**'", Type.NUMBER, Type.COMPLEX);
                     a2.guardType("Second argument to '**'", Type.NUMBER, Type.COMPLEX);
                     if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
-                        return BigDecimalMath.pow(a1.getNumber().get(), a2.getNumber().get(), MathContext.DECIMAL128);
+                        if(a2.getNumber().get().stripTrailingZeros().scale() > 0)
+                            return BigDecimalMath.pow(a1.getNumber().get(), a2.getNumber().get(), Constant.getFr(env.env));
+                        else
+                            return a1.getNumber().get().pow(a2.getNumber().get().intValue());
                     } else {
                         BigComplex a, b;
                         if(a1.getType() == Type.NUMBER) { a = BigComplex.valueOf(a1.getNumber().get(), BigDecimal.ZERO); }
@@ -568,7 +573,7 @@ public class MathLib {
                         else { b = a2.getComplex().get(); }
                         assertGaussian(a);
                         assertGaussian(b);
-                        return BigComplexMath.pow(a, b, MathContext.DECIMAL128);
+                        return BigComplexMath.pow(a, b, Constant.getFr(env.env));
                     }
                 }));
             }
@@ -583,9 +588,9 @@ public class MathLib {
                     Atom a = arguments.get(0);
                     a.guardType("First argument to '!'", Type.NUMBER, Type.COMPLEX);
                     if(a.getType() == Type.NUMBER) {
-                        return BigDecimalMath.factorial(a.getNumber().get(), MathContext.DECIMAL128);
+                        return BigDecimalMath.factorial(a.getNumber().get(), Constant.getFr(env.env));
                     } else {
-                        return BigComplexMath.factorial(a.getComplex().get(), MathContext.DECIMAL128);
+                        return BigComplexMath.factorial(a.getComplex().get(), Constant.getFr(env.env));
                     }
                 }));
             }
@@ -601,10 +606,10 @@ public class MathLib {
                     Atom b = arguments.get(1);
                     a.guardType("First argument to 'binomial'", Type.NUMBER);
                     b.guardType("Second argument to 'binomial'", Type.NUMBER);
-                    BigDecimal aBang = BigDecimalMath.factorial(a.getNumber().get(), MathContext.DECIMAL128);
-                    BigDecimal bBang = BigDecimalMath.factorial(b.getNumber().get(), MathContext.DECIMAL128);
-                    BigDecimal abBang = BigDecimalMath.factorial(a.getNumber().get().subtract(b.getNumber().get()), MathContext.DECIMAL128);
-                    return aBang.divide(bBang.multiply(abBang), MathContext.DECIMAL128);
+                    BigDecimal aBang = BigDecimalMath.factorial(a.getNumber().get(), Constant.getFr(env.env));
+                    BigDecimal bBang = BigDecimalMath.factorial(b.getNumber().get(), Constant.getFr(env.env));
+                    BigDecimal abBang = BigDecimalMath.factorial(a.getNumber().get().subtract(b.getNumber().get()), Constant.getFr(env.env));
+                    return aBang.divide(bBang.multiply(abBang), Constant.getFr(env.env));
                 }));
             }
         }));
@@ -620,11 +625,11 @@ public class MathLib {
                     a.guardType("First argument to 'root'", Type.NUMBER, Type.COMPLEX);
                     b.guardType("Second argument to 'root'", Type.NUMBER, Type.COMPLEX);
                     if(a.getType() == Type.NUMBER && b.getType() == Type.NUMBER) {
-                        return BigDecimalMath.root(b.getNumber().get(), a.getNumber().get(), MathContext.DECIMAL128);
+                        return BigDecimalMath.root(b.getNumber().get(), a.getNumber().get(), Constant.getFr(env.env));
                     } else {
                         BigComplex x = a.getComplex().get();
                         BigComplex y = b.getComplex().get();
-                        return BigComplexMath.root(x, y, MathContext.DECIMAL128);
+                        return BigComplexMath.root(x, y, Constant.getFr(env.env));
                     }
                 }));
             }
@@ -700,7 +705,7 @@ public class MathLib {
                         return a.getNumber().get().toBigInteger().isProbablePrime(50) ? BigDecimal.ONE : BigDecimal.ZERO;
                     } else {
                         assertGaussian(a.getComplex().get());
-                        return isPrime(a.getComplex().get()) ? BigDecimal.ONE : BigDecimal.ZERO;
+                        return isPrime(env.env, a.getComplex().get()) ? BigDecimal.ONE : BigDecimal.ZERO;
                     }
                 }));
             }

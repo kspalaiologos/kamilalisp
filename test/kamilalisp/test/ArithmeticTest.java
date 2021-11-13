@@ -166,7 +166,6 @@ class ArithmeticTest {
     @Test
     void testTanSec() {
         assertEquals(Evaluation.evalString("[(- (tan (rad 45)) 1.61) < 0.1]").get(0).getNumber().get(), BigDecimal.valueOf(1));
-        assertEquals(Evaluation.evalString("[(tan (rad 90)) < 0.00000001]").get(0).getNumber().get(), BigDecimal.valueOf(1));
         assertEquals(Evaluation.evalString("[(tan (rad 135)) < 0.00000001]").get(0).getNumber().get(), BigDecimal.valueOf(1));
         assertEquals(Evaluation.evalString("[(tan (rad 180)) < 0.00000001]").get(0).getNumber().get(), BigDecimal.valueOf(1));
         assertEquals(Evaluation.evalString("[(- (tan (rad 45)) 1) < 0.00000001]").get(0).getNumber().get(), BigDecimal.valueOf(1));

@@ -3,6 +3,7 @@ package kamilalisp.libs.primitives;
 import ch.obermuhlner.math.big.BigComplex;
 import com.google.common.collect.Streams;
 import kamilalisp.data.*;
+import kamilalisp.libs.math.Constant;
 import kamilalisp.matrix.Matrix;
 
 import java.math.BigDecimal;
@@ -11,8 +12,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Product implements Closure {
-    private static BigDecimal norm(BigComplex x) {
-        return x.re.pow(2).add(x.im.pow(2)).sqrt(MathContext.DECIMAL128);
+    private static BigDecimal norm(Environment env, BigComplex x) {
+        return x.re.pow(2).add(x.im.pow(2)).sqrt(Constant.getFr(env));
     }
 
     public static Atom mul2(Atom a1, Atom a2) {
@@ -62,15 +63,15 @@ public class Product implements Closure {
         }));
     }
 
-    public static Atom mul1(Atom a) {
+    public static Atom mul1(Environment env, Atom a) {
         return new Atom(new LbcSupplier<>(() -> {
             a.guardType("Argument to monadic *", Type.NUMBER, Type.COMPLEX, Type.MATRIX);
             if(a.getType() == Type.NUMBER) {
                 return new BigDecimal(a.getNumber().get().compareTo(BigDecimal.ZERO));
             } else if(a.getType() == Type.COMPLEX) {
-                return norm(a.getComplex().get()).compareTo(BigDecimal.ZERO);
+                return norm(env, a.getComplex().get()).compareTo(BigDecimal.ZERO);
             } else if(a.getType() == Type.MATRIX) {
-                return a.getMatrix().get().transmogrifyRank0(x -> new Atom(new LbcSupplier<>(() -> mul1(x))));
+                return a.getMatrix().get().transmogrifyRank0(x -> new Atom(new LbcSupplier<>(() -> mul1(env, x))));
             } else
                 throw new Error("unreachable.");
         }));
@@ -81,7 +82,7 @@ public class Product implements Closure {
         if(arguments.size() == 0 || arguments.size() > 2)
             throw new Error("Invalid * invocation.");
         if(arguments.size() == 1)
-            return mul1(arguments.get(0));
+            return mul1(env.env, arguments.get(0));
         else
             return mul2(arguments.get(0), arguments.get(1));
     }
