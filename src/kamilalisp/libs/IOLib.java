@@ -3,6 +3,9 @@ package kamilalisp.libs;
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Scanner;
 
@@ -58,6 +61,21 @@ public class IOLib {
             public Atom apply(Executor env, List<Atom> arguments) {
                 Scanner s = new Scanner(System.in);
                 return new Atom(new StringConstant(s.nextLine()));
+            }
+        }));
+
+        env.push("file-get", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("'file-get' expects exactly one argument");
+                arguments.get(0).guardType("First argument to 'file-get'", Type.STRING_CONSTANT);
+
+                try {
+                    return new Atom(new StringConstant(Files.readString(Path.of(arguments.get(0).getStringConstant().get().get()))));
+                } catch (IOException e) {
+                    return Atom.NULL;
+                }
             }
         }));
     }

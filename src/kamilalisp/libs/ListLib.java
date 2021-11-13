@@ -2,6 +2,7 @@ package kamilalisp.libs;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
+import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
 import kamilalisp.libs.primitives.Add;
 import kamilalisp.matrix.Matrix;
@@ -1009,5 +1010,8 @@ public class ListLib {
                 }));
             }
         }));
+
+        Evaluation.evalString(env, "(defun str-explode (x) (str-split x \"\"))");
+        Evaluation.evalString(env, "(defun str-join (x) (foldl + \"\" x))");
     }
 }
