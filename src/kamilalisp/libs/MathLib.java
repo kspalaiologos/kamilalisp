@@ -458,6 +458,44 @@ public class MathLib {
             }
         }));
 
+        env.push("odd-f", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("invalid invocation to 'odd-f'.");
+                return new Atom(new LbcSupplier(() -> {
+                    arguments.get(0).guardType("Argument to 'odd-f'", Type.NUMBER, Type.COMPLEX);
+                    Atom a = arguments.get(0);
+                    if(a.getType() == Type.NUMBER) {
+                        BigDecimal n = a.getNumber().get();
+                        return n.multiply(BigDecimal.valueOf(2)).add(BigDecimal.ONE);
+                    } else {
+                        BigComplex n = a.getComplex().get();
+                        return n.multiply(BigComplex.valueOf(new BigDecimal(2), new BigDecimal(2))).add(BigComplex.valueOf(BigDecimal.ONE, BigDecimal.ONE));
+                    }
+                }));
+            }
+        }));
+
+        env.push("even-f", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("invalid invocation to 'even-f'.");
+                return new Atom(new LbcSupplier(() -> {
+                    arguments.get(0).guardType("Argument to 'even-f'", Type.NUMBER, Type.COMPLEX);
+                    Atom a = arguments.get(0);
+                    if(a.getType() == Type.NUMBER) {
+                        BigDecimal n = a.getNumber().get();
+                        return n.multiply(BigDecimal.valueOf(2));
+                    } else {
+                        BigComplex n = a.getComplex().get();
+                        return n.multiply(BigComplex.valueOf(new BigDecimal(2), new BigDecimal(2)));
+                    }
+                }));
+            }
+        }));
+
         env.push("min", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
