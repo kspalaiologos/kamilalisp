@@ -8,13 +8,13 @@ A lazily evaluated, functional, flexible and concise Lisp modelled after Haskell
 (println "Hello, world!")
 
 ;; ProjectEuler, problem 4.
-(def n (map $(+ 100) (iota 900)))
-(def tab (map to-string [* outer-prod n n]))
+(def n (:$(+ 100)@iota 900))
+(def tab (:to-string@outer-prod * n n))
 (def is-p? #(= #0 reverse))
-(println@foldl1' max (map parse-num (filter is-p? tab)))
+(println@foldl1' max (:parse-num@filter is-p? tab))
 
 ;; ProjectEuler, problem 2.
-(println@sum@filter #(& ~@$(% _ 2) $(> 4000000)) (map fib (iota 40)))
+(println@sum@filter #(& ~@$(% _ 2) $(> 4000000)) (:fib@iota 40))
 
 
 ;; SKI calculus implementation using KamilaLisp macros and pattern matching.
