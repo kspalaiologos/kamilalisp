@@ -111,7 +111,7 @@ public class ListBasic {
 
     @Test
     void testZipWith() {
-        assertTrue(Evaluation.evalString("(zip-with + '(1 2 3) '(4 5 6))").get(0).equals(new Atom(List.of(
+        assertTrue(Evaluation.evalString("(map + '(1 2 3) '(4 5 6))").get(0).equals(new Atom(List.of(
                 new Atom(BigDecimal.valueOf(5)),
                 new Atom(BigDecimal.valueOf(7)),
                 new Atom(BigDecimal.valueOf(9))

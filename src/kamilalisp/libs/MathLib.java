@@ -939,6 +939,6 @@ public class MathLib {
         Evaluation.evalString(env, "(def prod (bind foldl' * 1))");
         Evaluation.evalString(env, "(def succ $(+ 1))");
         Evaluation.evalString(env, "(def pred $(- _ 1))");
-        Evaluation.evalString(env, "(defun totient (x) (let ((y (p-factors x))) (prod (zip-with - y (unique-mask y)))))");
+        Evaluation.evalString(env, "(defun totient (x) (let ((y (p-factors x))) (prod (map - y (unique-mask y)))))");
     }
 }

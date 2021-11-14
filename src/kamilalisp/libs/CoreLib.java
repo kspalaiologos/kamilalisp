@@ -9,6 +9,7 @@ import kamilalisp.data.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -225,23 +226,37 @@ public class CoreLib {
         env.push("map", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 2)
+                if(arguments.size() < 2)
                     throw new Error("Invalid invocation to 'map'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     arguments.get(0).guardType("First argument to 'map'", Type.CLOSURE, Type.MACRO);
-                    arguments.get(1).guardType("Second argument to 'map'", Type.LIST, Type.STRING_CONSTANT);
-                    if(arguments.get(1).getType() == Type.LIST) {
-                        return arguments.get(1).getList().get().stream().parallel().map(x ->
-                                new Atom(new LbcSupplier<>(() ->
-                                        arguments.get(0).getCallable().get().apply(env, Collections.singletonList(x)).get().get()
-                                ))
-                        ).collect(Collectors.toList());
+                    if(arguments.size() == 2) {
+                        arguments.get(1).guardType("Second argument to 'map'", Type.LIST, Type.STRING_CONSTANT);
+                        if (arguments.get(1).getType() == Type.LIST) {
+                            return arguments.get(1).getList().get().stream().parallel().map(x ->
+                                    new Atom(new LbcSupplier<>(() ->
+                                            arguments.get(0).getCallable().get().apply(env, Collections.singletonList(x)).get().get()
+                                    ))
+                            ).collect(Collectors.toList());
+                        } else {
+                            return Chars.asList(arguments.get(1).getStringConstant().get().get().toCharArray()).stream().map(x ->
+                                    new Atom(new LbcSupplier<>(() ->
+                                            arguments.get(0).getCallable().get().apply(env, Collections.singletonList(new Atom(new StringConstant(String.valueOf(x))))).get().get()
+                                    ))
+                            ).collect(Collectors.toList());
+                        }
                     } else {
-                        return Chars.asList(arguments.get(1).getStringConstant().get().get().toCharArray()).stream().map(x ->
-                            new Atom(new LbcSupplier<>(() ->
-                                    arguments.get(0).getCallable().get().apply(env, Collections.singletonList(new Atom(new StringConstant(String.valueOf(x))))).get().get()
-                            ))
-                        ).collect(Collectors.toList());
+                        Callable f = arguments.get(0).getCallable().get();
+                        AtomicInteger minLen = new AtomicInteger(-1);
+                        List<List<Atom>> sl = arguments.subList(1, arguments.size()).stream().map(x -> {
+                            x.guardType("Arguments to 'map'", Type.LIST);
+                            if(minLen.get() > x.getList().get().size() || minLen.get() == -1)
+                                minLen.set(x.getList().get().size());
+                            return x.getList().get();
+                        }).map(x -> x.subList(0, minLen.get())).collect(Collectors.toList());
+                        return IntStream.range(0, minLen.get())
+                                .mapToObj(i -> f.apply(env, sl.stream().map(x -> x.get(i)).collect(Collectors.toList())))
+                                .collect(Collectors.toList());
                     }
                 }));
             }
@@ -273,22 +288,6 @@ public class CoreLib {
                     return new BigDecimal(arguments.get(1).getList().get().stream().filter(x ->
                             arguments.get(0).getCallable().get().apply(env, Collections.singletonList(x)).coerceBool()
                     ).count());
-                }));
-            }
-        }));
-
-        env.push("zip-with", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 3)
-                    throw new Error("Invalid invocation to 'zip-with'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'zip-with'", Type.CLOSURE, Type.MACRO);
-                    arguments.get(1).guardType("Second argument to 'zip-with'", Type.LIST);
-                    arguments.get(2).guardType("Second argument to 'zip-with'", Type.LIST);
-                    List<Atom> a = arguments.get(1).getList().get();
-                    List<Atom> b = arguments.get(2).getList().get();
-                    return Streams.zip(a.stream(), b.stream(), (x, y) -> arguments.get(0).getCallable().get().apply(env, Arrays.asList(x, y))).collect(Collectors.toList());
                 }));
             }
         }));
