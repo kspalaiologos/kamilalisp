@@ -120,7 +120,7 @@ public class Atom {
         else if(getType() == Type.LIST && other.getList().get().size() == getList().get().size()) {
             List<Atom> l1 = other.getList().get(), l2 = getList().get();
             for(int i = 0; i < l1.size(); i++)
-                if(!l1.get(0).get().get().equals(l2.get(0).get().get()))
+                if(!l1.get(i).equals(l2.get(i)))
                     return false;
             return true;
         }
