@@ -3,6 +3,7 @@ package kamilalisp.libs.math;
 import ch.obermuhlner.math.big.BigDecimalMath;
 import kamilalisp.data.*;
 
+import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.List;
@@ -35,6 +36,23 @@ public class Constant {
                     return new Atom(new LbcSupplier<>(() -> {
                         arguments.get(0).guardType("Argument to 'e'", Type.NUMBER);
                         return BigDecimalMath.e(new MathContext(arguments.get(0).getNumber().get().intValue()));
+                    }));
+            }
+        }));
+
+        env.push("golden-ratio", new Atom(new Closure() {
+            private BigDecimal goldenRatio(MathContext precision) {
+                return BigDecimal.valueOf(5L).sqrt(precision).add(BigDecimal.ONE).divide(BigDecimal.valueOf(2L), precision);
+            }
+
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() == 0)
+                    return new Atom(new LbcSupplier<>(() -> goldenRatio(Constant.getFr(env.env))));
+                else
+                    return new Atom(new LbcSupplier<>(() -> {
+                        arguments.get(0).guardType("Argument to 'golden-ratio'", Type.NUMBER);
+                        return goldenRatio(new MathContext(arguments.get(0).getNumber().get().intValue()));
                     }));
             }
         }));
