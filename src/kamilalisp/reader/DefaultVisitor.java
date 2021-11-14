@@ -73,6 +73,13 @@ public class DefaultVisitor extends AbstractParseTreeVisitor<Atom> implements Gr
     }
 
     @Override
+    public Atom visitMap(GrammarParser.MapContext ctx) {
+        // (bind map a)
+        Atom a = visit(ctx.form_rem());
+        return new Atom(List.of(new Atom("bind"), new Atom("map"), a));
+    }
+
+    @Override
     public Atom visitFork(GrammarParser.ForkContext ctx) {
         List<Atom> tmp = visit(ctx.any_list()).getList().get();
         if(tmp.size() < 2)

@@ -65,6 +65,12 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitQuote(GrammarParser.QuoteContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link GrammarParser#map}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMap(GrammarParser.MapContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link GrammarParser#fork}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

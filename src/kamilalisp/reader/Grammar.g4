@@ -10,6 +10,7 @@ form_rem: reader_macro
         | bind
         | any_list
         | literal
+        | map
         ;
 
 forms: form* ;
@@ -26,6 +27,10 @@ reader_macro
 
 quote
     : '\'' form
+    ;
+
+map
+    : ':' form_rem
     ;
 
 fork
@@ -108,7 +113,7 @@ fragment
 NOTID: ~('@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';') ;
 
 fragment
-NOTID_START: ~('#' | '$' | '\'' | '@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';');
+NOTID_START: ~('#' | '$' | '\'' | '@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | ':');
 
 NAME: NOTID_START NOTID* ;
 
