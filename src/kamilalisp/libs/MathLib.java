@@ -6,6 +6,7 @@ import ch.obermuhlner.math.big.BigDecimalMath;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.collect.Streams;
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
@@ -616,6 +617,26 @@ public class MathLib {
             }
         }));
 
+        env.push("cvec", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'cvec'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    Atom b = arguments.get(1);
+                    a.guardType("First argument to 'cvec'", Type.NUMBER);
+                    b.guardType("Second argument to 'cvec'", Type.NUMBER);
+                    int pick = a.getNumber().get().intValue();
+                    int all = b.getNumber().get().intValue();
+                    Set<Set<Atom>> combinations = Sets.combinations(IntStream.range(0, all)
+                            .mapToObj(x -> new Atom(new BigDecimal(x)))
+                            .collect(Collectors.toSet()), pick);
+                    return combinations.stream().map(x -> new Atom(Lists.newArrayList(x))).collect(Collectors.toList());
+                }));
+            }
+        }));
+
         env.push("binomial", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
@@ -784,6 +805,28 @@ public class MathLib {
                         return s;
                     }
                     throw new Error("First argument to 'decode' must be a number or a list.");
+                }));
+            }
+        }));
+
+        env.push("encode", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'encode'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a = arguments.get(0);
+                    Atom b = arguments.get(1);
+                    a.guardType("First argument to 'encode'", Type.NUMBER);
+                    b.guardType("Second argument to 'encode'", Type.NUMBER);
+                    BigInteger base = a.getNumber().get().toBigInteger();
+                    BigInteger s = b.getNumber().get().toBigInteger();
+                    List<Atom> l = Lists.reverse(new ArrayList<>());
+                    while(s.compareTo(BigInteger.ZERO) != 0) {
+                        l.add(new Atom(new BigDecimal(s.remainder(base))));
+                        s = s.divide(base);
+                    }
+                    return Lists.reverse(l);
                 }));
             }
         }));
