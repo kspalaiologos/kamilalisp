@@ -37,7 +37,11 @@ A lazily evaluated, functional, flexible and concise Lisp modelled after Haskell
 (println@ski-red '(S I I K))
 ```
 
-**[Learn me!](doc)**
+Useful links:
+
+- **[Learn me!](doc)**
+- **[Channel on the /r/PL Discord server](https://discord.gg/xr5VapADw7)**
+- **[My Discord server](https://discord.gg/m4Wcenn)**
 
 ## Setup
 
