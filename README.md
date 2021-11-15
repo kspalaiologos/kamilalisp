@@ -1,4 +1,9 @@
 
+<p align="center">
+  <img src="https://github.com/kspalaiologos/kamilalisp/raw/main/doc/logo.png">
+</p>
+
+
 # KamilaLisp
 
 A lazily evaluated, functional, flexible and concise Lisp modelled after Haskell and APL, among others.
