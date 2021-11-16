@@ -464,11 +464,14 @@ public class ListLib {
                     Atom a = arguments.get(0);
                     Atom b = arguments.get(1);
                     a.guardType("First argument to 'index'", Type.LIST);
-                    b.guardType("Second argument to 'index'", Type.LIST);
+                    b.guardType("Second argument to 'index'", Type.LIST, Type.STRING_CONSTANT);
                     List<Atom> l = a.getList().get();
-                    List<Atom> r = b.getList().get();
                     l.forEach(x -> x.guardType("First 'index' list", Type.NUMBER));
-                    return l.stream().map(x -> r.get(x.getNumber().get().intValue())).collect(Collectors.toList());
+                    if(b.getType() == Type.LIST) {
+                        return l.stream().map(x -> b.getList().get().get(x.getNumber().get().intValue())).collect(Collectors.toList());
+                    } else {
+                        return l.stream().map(x -> String.valueOf(b.getStringConstant().get().get().charAt(x.getNumber().get().intValue()))).collect(Collectors.toList());
+                    }
                 }));
             }
         }));
