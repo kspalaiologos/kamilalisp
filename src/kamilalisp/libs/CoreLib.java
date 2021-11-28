@@ -142,6 +142,29 @@ public class CoreLib {
             }
         }));
 
+        env.push("with-repr", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'with-repr'.");
+                Atom closure = arguments.get(0);
+                Atom repr = arguments.get(1);
+                closure.guardType("First argument to 'with-repr'", Type.CLOSURE, Type.MACRO);
+                repr.guardType("Second argument to 'with-repr'", Type.STRING_CONSTANT);
+                return new Atom(new Closure() {
+                    @Override
+                    public String representation() {
+                        return repr.getStringConstant().get().get();
+                    }
+
+                    @Override
+                    public Atom apply(Executor env, List<Atom> arguments) {
+                        return closure.getCallable().get().apply(env, arguments);
+                    }
+                });
+            }
+        }));
+
         env.push("defun", new Atom(new Macro() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
