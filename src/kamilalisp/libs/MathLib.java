@@ -39,6 +39,46 @@ public class MathLib {
         return rho;
     }
 
+    private static int decimalPlaces(BigDecimal number) {
+        int scale = number.stripTrailingZeros().scale();
+        return scale > 0 ? scale : 0;
+    }
+
+    private static Atom gcdAtom(Environment env, Atom a1, Atom a2) {
+        a1.guardType("First argument to 'gcd'", Type.NUMBER, Type.COMPLEX);
+        a2.guardType("Second argument to 'gcd'", Type.NUMBER, Type.COMPLEX);
+        if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
+            BigDecimal a = a1.getNumber().get();
+            BigDecimal b = a2.getNumber().get();
+            BigDecimal base = BigDecimal.ONE;
+            int dpA = decimalPlaces(a);
+            if(dpA > 0) {
+                BigDecimal scale = BigDecimal.TEN.pow(dpA);
+                a = a.multiply(scale);
+                b = b.multiply(scale);
+                base = base.multiply(scale);
+            }
+            int dpB = decimalPlaces(b);
+            if(dpB > 0) {
+                BigDecimal scale = BigDecimal.TEN.pow(dpB);
+                a = a.multiply(scale);
+                b = b.multiply(scale);
+                base = base.multiply(scale);
+            }
+            return new Atom(new BigDecimal(a.toBigInteger().gcd(b.toBigInteger())).divide(base, Constant.getFr(env)));
+        } else {
+            BigComplex a, b;
+            if(a1.getType() == Type.NUMBER) { a = BigComplex.valueOf(a1.getNumber().get(), BigDecimal.ZERO); }
+            else { a = a1.getComplex().get(); }
+            if(a2.getType() == Type.NUMBER) { b = BigComplex.valueOf(a2.getNumber().get(), BigDecimal.ZERO); }
+            else { b = a2.getComplex().get(); }
+            assertGaussian(a);
+            assertGaussian(b);
+            // compute gcd(a, b).
+            return new Atom(gcd(env, a, b));
+        }
+    }
+
     private static BigComplex gcd(Environment env, BigComplex alpha, BigComplex beta) {
         if(gaussianRem(env, alpha, beta).equals(BigComplex.ZERO))
             return beta;
@@ -153,42 +193,24 @@ public class MathLib {
         env.push("gcd", new Atom(new Closure() {
             private Atom IDENTITY = new Atom(BigDecimal.ZERO);
 
-            private Atom gcd2(Environment env, Atom a1, Atom a2) {
-                a1.guardType("First argument to 'gcd'", Type.NUMBER, Type.COMPLEX);
-                a2.guardType("Second argument to 'gcd'", Type.NUMBER, Type.COMPLEX);
-                if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
-                    return new Atom(new BigDecimal(a1.getNumber().get().toBigInteger().gcd(a2.getNumber().get().toBigInteger())));
-                } else {
-                    BigComplex a, b;
-                    if(a1.getType() == Type.NUMBER) { a = BigComplex.valueOf(a1.getNumber().get(), BigDecimal.ZERO); }
-                    else { a = a1.getComplex().get(); }
-                    if(a2.getType() == Type.NUMBER) { b = BigComplex.valueOf(a2.getNumber().get(), BigDecimal.ZERO); }
-                    else { b = a2.getComplex().get(); }
-                    assertGaussian(a);
-                    assertGaussian(b);
-                    // compute gcd(a, b).
-                    return new Atom(gcd(env, a, b));
-                }
-            }
-
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() == 0 || arguments.size() > 2)
                     throw new Error("Invalid 'gcd' invocation.");
                 if(arguments.size() == 1)
                     return arguments.get(0);
-                return new Atom(new LbcSupplier<>(() -> gcd2(env.env, arguments.get(0), arguments.get(1)).get().get()));
+                return new Atom(new LbcSupplier<>(() -> gcdAtom(env.env, arguments.get(0), arguments.get(1)).get().get()));
             }
         }));
 
         env.push("lcm", new Atom(new Closure() {
             private Atom IDENTITY = new Atom(BigDecimal.ZERO);
 
-            private Atom gcd2(Environment env, Atom a1, Atom a2) {
+            private Atom lcm(Environment env, Atom a1, Atom a2) {
                 a1.guardType("First argument to 'lcm'", Type.NUMBER, Type.COMPLEX);
                 a2.guardType("Second argument to 'lcm'", Type.NUMBER, Type.COMPLEX);
                 if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
-                    return new Atom(a1.getNumber().get().multiply(a2.getNumber().get()).divide(new BigDecimal(a1.getNumber().get().toBigInteger().gcd(a2.getNumber().get().toBigInteger()))));
+                    return new Atom(a1.getNumber().get().multiply(a2.getNumber().get()).divide(gcdAtom(env, a1, a2).getNumber().get()));
                 } else {
                     BigComplex a, b;
                     if(a1.getType() == Type.NUMBER) { a = BigComplex.valueOf(a1.getNumber().get(), BigDecimal.ZERO); }
@@ -207,7 +229,7 @@ public class MathLib {
                     throw new Error("Invalid 'lcm' invocation.");
                 if(arguments.size() == 1)
                     return arguments.get(0);
-                return new Atom(new LbcSupplier<>(() -> gcd2(env.env, arguments.get(0), arguments.get(1)).get().get()));
+                return new Atom(new LbcSupplier<>(() -> lcm(env.env, arguments.get(0), arguments.get(1)).get().get()));
             }
         }));
 
