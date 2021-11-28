@@ -912,9 +912,65 @@ public class MathLib {
                         return false;
                     List<Atom> p = pattern.getList().get();
                     List<Atom> s = source.getList().get();
+
+                    if(p.size() < s.size() && p.size() > 0) {
+                        // Check for kleene star presence.
+                        Atom pLast = p.get(p.size() - 1);
+                        if(pLast.getType() != Type.STRING || !pLast.getString().get().endsWith("..."))
+                            return false;
+                        String name = pLast.getString().get().substring(0, pLast.getString().get().length() - 3);
+                        if(!boundNames.contains(name) && !valueMap.containsKey(name)) {
+                            // eek, it's a verbatim value.
+                            // don't match because the size is wrong.
+                            return false;
+                        }
+                        // match as much as we can.
+                        // example:
+                        //    /------\ /----\
+                        // s: ((1 0) 1 1 0 0)
+                        // p: ((1 0) 1 a...)
+                        List<Atom> part1P = p.subList(0, p.size() - 1);
+                        List<Atom> part1S = s.subList(0, p.size() - 1);
+                        // now take the rest...
+                        List<Atom> part2S = s.subList(p.size() - 1, s.size());
+                        // check if 1P and 1S match.
+                        if(visit(new Atom(part1P), new Atom(part1S), boundNames, valueMap)) {
+                            // put part2S bound as a..., or verify if matched correctly.
+                            if(valueMap.containsKey(name))
+                                return valueMap.get(name).getList().get().equals(part2S);
+                            boundNames.remove(name);
+                            valueMap.put(name, new Atom(part2S));
+                            return true;
+                        }
+                    }
+
                     if(p.size() != s.size())
                         return false;
-                    return Streams.zip(p.stream(), s.stream(), (x, y) -> visit(x, y, boundNames, valueMap)).noneMatch(x -> x.booleanValue() == false);
+                    if(p.size() == 0)
+                        return true;
+                    Atom pLast = p.get(p.size() - 1);
+                    if(pLast.getType() != Type.STRING || !pLast.getString().get().endsWith("..."))
+                        return Streams.zip(p.stream(), s.stream(), (x, y) -> visit(x, y, boundNames, valueMap)).noneMatch(x -> x.booleanValue() == false);
+                    else {
+                        // kleene star in lists of equal size.
+                        // match as much as we can, assign the leftover to x...
+                        // example:
+                        //    /------\ /---\
+                        // s: ((1 0) 1 1)
+                        // p: ((1 0) 1 a...)
+
+                        // First pair: bound variable and corresponding element
+                        Atom x1 = new Atom(pLast.getString().get().substring(0, pLast.getString().get().length() - 3));
+                        Atom x2 = s.get(s.size() - 1);
+                        // Second pair: corresponding lists.
+                        Atom y1 = new Atom(p.subList(0, p.size() - 1));
+                        Atom y2 = new Atom(s.subList(0, s.size() - 1));
+                        // First match y1 and y2...
+                        if(!visit(y1, y2, boundNames, valueMap))
+                            return false;
+                        // Now match x1 and x2...
+                        return visit(x1, x2, boundNames, valueMap);
+                    }
                 } else if(pattern.getType() == Type.STRING) {
                     String s = pattern.getString().get();
                     if(valueMap.containsKey(s) && !valueMap.get(s).equals(source))
@@ -942,28 +998,34 @@ public class MathLib {
                         List<Atom> data = clause.getList().get();
                         if(data.size() == 1)
                             return env.evaluate(data.get(0)).get().get();
-                        if(data.size() != 3)
-                            throw new Error("'match' clause most contain one or three elements.");
-                        Atom binds = data.get(0);
-                        Atom pattern = data.get(1);
-                        Atom handler = data.get(2);
-                        List<String> boundNames;
-                        HashMap<String, Atom> bindings = new HashMap<>();
-                        binds.guardType("Bind section of the 'match' case", Type.STRING, Type.LIST);
-                        if(binds.getType() == Type.LIST)
-                            boundNames = binds.getList().get().stream().map(x -> {
-                                x.guardType("Bound variable in 'match' case", Type.STRING);
-                                return x.getString().get();
-                            }).collect(Collectors.toList());
-                        else
-                            boundNames = new LinkedList<>(List.of(binds.getString().get()));
-                        // Now, match `pattern` against `source`.
-                        // Ignore all entries present in `boundNames`.
-                        if(visit(pattern, source, boundNames, bindings) && boundNames.isEmpty()) {
-                            Environment de = env.env.descendant("'match' handler section");
-                            bindings.forEach(de::push);
-                            return new Executor(de).evaluate(handler).get().get();
-                        }
+                        else if(data.size() == 3) {
+                            Atom binds = data.get(0);
+                            Atom pattern = data.get(1);
+                            Atom handler = data.get(2);
+                            List<String> boundNames;
+                            HashMap<String, Atom> bindings = new HashMap<>();
+                            binds.guardType("Bind section of the 'match' case", Type.STRING, Type.LIST);
+                            if (binds.getType() == Type.LIST)
+                                boundNames = binds.getList().get().stream().map(x -> {
+                                    x.guardType("Bound variable in 'match' case", Type.STRING);
+                                    return x.getString().get();
+                                }).collect(Collectors.toList());
+                            else
+                                boundNames = new LinkedList<>(List.of(binds.getString().get()));
+                            // Now, match `pattern` against `source`.
+                            // Ignore all entries present in `boundNames`.
+                            if (visit(pattern, source, boundNames, bindings) && boundNames.isEmpty()) {
+                                Environment de = env.env.descendant("'match' handler section");
+                                bindings.forEach(de::push);
+                                return new Executor(de).evaluate(handler).get().get();
+                            }
+                        } else if(data.size() == 2) {
+                            Atom pattern = data.get(0);
+                            Atom handler = data.get(1);
+                            if(pattern.equals(source))
+                                return new Executor(env.env.descendant("'match' handler section")).evaluate(handler).get().get();
+                        } else
+                            throw new Error("'match' case clause must have 1, 2 or 3 elements.");
                     }
 
                     throw new Error("Unexhaustive 'match'.");

@@ -110,6 +110,11 @@ public class ListBasic {
     }
 
     @Test
+    void testMatchKleeneStar() {
+        assertTrue(Evaluation.evalString("(match '((1 0) 1 1 0 0) (a ((1 0) a...) 1))").get(0).coerceBool());
+    }
+
+    @Test
     void testZipWith() {
         assertTrue(Evaluation.evalString("(map + '(1 2 3) '(4 5 6))").get(0).equals(new Atom(List.of(
                 new Atom(BigDecimal.valueOf(5)),
