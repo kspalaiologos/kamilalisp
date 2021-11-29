@@ -1,6 +1,8 @@
 package kamilalisp.data;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Environment {
     public HashMap<String, Atom> data = new HashMap<>();
@@ -18,6 +20,10 @@ public class Environment {
             data.replace(key, value);
         else
             data.put(key, value);
+    }
+
+    public List<String> entries() {
+        return new LinkedList<String>(data.keySet());
     }
 
     public Atom get(String key) {

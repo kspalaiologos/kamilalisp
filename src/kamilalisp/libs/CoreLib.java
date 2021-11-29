@@ -708,5 +708,17 @@ public class CoreLib {
                 }));
             }
         }));
+
+        env.push("list-env", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                Environment scope = env.env;
+                List<Atom> frames = new ArrayList<>();
+                do
+                    frames.add(new Atom(scope.entries().stream().map(x -> new Atom(new StringConstant(x))).collect(Collectors.toList())));
+                while(scope.ancestor != null);
+                return new Atom(frames);
+            }
+        }));
     }
 }
