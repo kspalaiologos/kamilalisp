@@ -1,10 +1,12 @@
 package kamilalisp.test;
 
 import kamilalisp.api.Evaluation;
+import kamilalisp.data.Atom;
 import kamilalisp.data.Environment;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -36,6 +38,70 @@ public class Lambda {
                 "(defun square1 (x) (* x x))" +
                      "(def square2 (monad (* x x)))" +
                      "(= (square1 5) (square2 5))").get(2).coerceBool());
+    }
+
+    @Test
+    void optionalArgs() {
+        Environment env = Evaluation.createDefaultEnv();
+        Evaluation.evalString(env, "(defun tieid (x y ?z) (tie x y z))");
+        Evaluation.evalString(env, "(defun tieid2 (x ?y ?z) (tie x y z))");
+        assertEquals(Evaluation.evalString(env, "(tieid 1 2 3)").get(0).getList().get(), List.of(
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("2")),
+                new Atom(new BigDecimal("3"))
+        ));
+        assertEquals(Evaluation.evalString(env, "(tieid2 1 2 3)").get(0).getList().get(), List.of(
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("2")),
+                new Atom(new BigDecimal("3"))
+        ));
+        assertEquals(Evaluation.evalString(env, "(tieid 1 2)").get(0).getList().get(), List.of(
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("2")),
+                Atom.NULL
+        ));
+        assertEquals(Evaluation.evalString(env, "(tieid2 1 2)").get(0).getList().get(), List.of(
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("2")),
+                Atom.NULL
+        ));
+        assertEquals(Evaluation.evalString(env, "(tieid2 1)").get(0).getList().get(), List.of(
+                new Atom(new BigDecimal("1")),
+                Atom.NULL,
+                Atom.NULL
+        ));
+    }
+
+    @Test
+    void optionalArgsMacro() {
+        Environment env = Evaluation.createDefaultEnv();
+        Evaluation.evalString(env, "(defmacro tieid (x y ?z) (tie x y z))");
+        Evaluation.evalString(env, "(defmacro tieid2 (x ?y ?z) (tie x y z))");
+        assertEquals(Evaluation.evalString(env, "(tieid 1 2 3)").get(0).getList().get(), List.of(
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("2")),
+                new Atom(new BigDecimal("3"))
+        ));
+        assertEquals(Evaluation.evalString(env, "(tieid2 1 2 3)").get(0).getList().get(), List.of(
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("2")),
+                new Atom(new BigDecimal("3"))
+        ));
+        assertEquals(Evaluation.evalString(env, "(tieid 1 2)").get(0).getList().get(), List.of(
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("2")),
+                Atom.NULL
+        ));
+        assertEquals(Evaluation.evalString(env, "(tieid2 1 2)").get(0).getList().get(), List.of(
+                new Atom(new BigDecimal("1")),
+                new Atom(new BigDecimal("2")),
+                Atom.NULL
+        ));
+        assertEquals(Evaluation.evalString(env, "(tieid2 1)").get(0).getList().get(), List.of(
+                new Atom(new BigDecimal("1")),
+                Atom.NULL,
+                Atom.NULL
+        ));
     }
 
     @Test

@@ -1,5 +1,6 @@
 package kamilalisp.libs;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import com.google.common.primitives.Chars;
@@ -41,10 +42,24 @@ public class CoreLib {
                     public Atom apply(Executor env, List<Atom> innerArgs) {
                         Environment newEnv = outerEnv.env.descendant("Lambda expression");
                         newEnv.owner = new Atom(this);
-                        if(innerArgs.size() != params.size())
+                        // process optional arguments.
+                        long optional = Lists.reverse(params).stream().takeWhile(x -> x.getString().get().startsWith("?")).count();
+                        if(optional != Lists.reverse(params).stream().filter(x -> x.getString().get().startsWith("?")).count())
+                            throw new Error("Misplaced optional lambda argument in parameter list.");
+                        // evaluate parameters.
+                        if(innerArgs.size() > params.size() || innerArgs.size() < params.size() - optional)
                             throw new Error("Invalid invocation to a lambda expression.");
-                        for(int i = 0; i < params.size(); i++)
+                        for(int i = 0; i < params.size() - optional; i++) {
                             newEnv.push(params.get(i).getString().get(), innerArgs.get(i));
+                        }
+                        // process optional arguments.
+                        for(int i = 0; i < optional; i++) {
+                            String name = params.get((int) (params.size() - optional + i)).getString().get().substring(1);
+                            if(i + params.size() - optional < innerArgs.size())
+                                newEnv.push(name, innerArgs.get((int) (i + params.size() - optional)));
+                            else
+                                newEnv.push(name, Atom.NULL);
+                        }
                         Executor lambdaExecutor = new Executor(newEnv);
                         return lambdaExecutor.evaluate(code);
                     }
@@ -116,10 +131,24 @@ public class CoreLib {
                     @Override
                     public Atom apply(Executor env, List<Atom> innerArgs) {
                         Environment newEnv = outerEnv.env.getTopmostAncestor().descendant("Macro");
-                        if(innerArgs.size() != params.size())
+                        // process optional arguments.
+                        long optional = Lists.reverse(params).stream().takeWhile(x -> x.getString().get().startsWith("?")).count();
+                        if(optional != Lists.reverse(params).stream().filter(x -> x.getString().get().startsWith("?")).count())
+                            throw new Error("Misplaced optional macro argument in parameter list.");
+                        // evaluate parameters.
+                        if(innerArgs.size() > params.size() || innerArgs.size() < params.size() - optional)
                             throw new Error("Invalid invocation to a macro expression.");
-                        for(int i = 0; i < params.size(); i++)
+                        for(int i = 0; i < params.size() - optional; i++) {
                             newEnv.push(params.get(i).getString().get(), innerArgs.get(i));
+                        }
+                        // process optional arguments.
+                        for(int i = 0; i < optional; i++) {
+                            String name = params.get((int) (params.size() - optional + i)).getString().get().substring(1);
+                            if(i + params.size() - optional < innerArgs.size())
+                                newEnv.push(name, innerArgs.get((int) (i + params.size() - optional)));
+                            else
+                                newEnv.push(name, Atom.NULL);
+                        }
                         Executor lambdaExecutor = new Executor(newEnv);
                         return lambdaExecutor.evaluate(code);
                     }
