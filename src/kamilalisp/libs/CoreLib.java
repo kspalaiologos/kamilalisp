@@ -254,19 +254,20 @@ public class CoreLib {
                 return new Atom(new LbcSupplier<>(() -> {
                     arguments.get(0).guardType("First argument to 'map'", Type.CLOSURE, Type.MACRO);
                     if(arguments.size() == 2) {
-                        arguments.get(1).guardType("Second argument to 'map'", Type.LIST, Type.STRING_CONSTANT);
                         if (arguments.get(1).getType() == Type.LIST) {
                             return arguments.get(1).getList().get().stream().parallel().map(x ->
                                     new Atom(new LbcSupplier<>(() ->
                                             arguments.get(0).getCallable().get().apply(env, Collections.singletonList(x)).get().get()
                                     ))
                             ).collect(Collectors.toList());
-                        } else {
+                        } else if (arguments.get(1).getType() == Type.STRING_CONSTANT) {
                             return Chars.asList(arguments.get(1).getStringConstant().get().get().toCharArray()).stream().map(x ->
                                     new Atom(new LbcSupplier<>(() ->
                                             arguments.get(0).getCallable().get().apply(env, Collections.singletonList(new Atom(new StringConstant(String.valueOf(x))))).get().get()
                                     ))
                             ).collect(Collectors.toList());
+                        } else {
+                            return arguments.get(0).getCallable().get().apply(env, List.of(arguments.get(1))).get().get();
                         }
                     } else {
                         Callable f = arguments.get(0).getCallable().get();
