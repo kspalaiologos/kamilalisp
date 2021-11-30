@@ -11,6 +11,7 @@ form_rem: reader_macro
         | any_list
         | literal
         | map
+        | partition
         ;
 
 forms: form* ;
@@ -23,6 +24,10 @@ sqlist: '[' forms ']' ;
 reader_macro
     : quote
     | tack
+    ;
+
+partition
+    : '\\'
     ;
 
 quote
@@ -113,7 +118,7 @@ fragment
 NOTID: ~('@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';') ;
 
 fragment
-NOTID_START: ~('#' | '$' | '\'' | '@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | ':');
+NOTID_START: ~('#' | '$' | '\\' | '\'' | '@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | ':');
 
 NAME: NOTID_START NOTID* ;
 

@@ -88,6 +88,16 @@ public interface GrammarListener extends ParseTreeListener {
 	 */
 	void exitReader_macro(GrammarParser.Reader_macroContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link GrammarParser#partition}.
+	 * @param ctx the parse tree
+	 */
+	void enterPartition(GrammarParser.PartitionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GrammarParser#partition}.
+	 * @param ctx the parse tree
+	 */
+	void exitPartition(GrammarParser.PartitionContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link GrammarParser#quote}.
 	 * @param ctx the parse tree
 	 */

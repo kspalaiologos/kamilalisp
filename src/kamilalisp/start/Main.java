@@ -36,9 +36,8 @@ public class Main {
         banner();
         DefaultParser parser = new DefaultParser();
         parser.setEofOnUnclosedBracket(Bracket.ROUND, Bracket.SQUARE);
-        parser.setEofOnUnclosedQuote(true);
-        parser.setEscapeChars(new char[]{'\\'});
-        parser.setQuoteChars(new char[]{'\"'});
+        parser.setEscapeChars(new char[]{});
+        parser.setQuoteChars(new char[]{});
         LineReader r = LineReaderBuilder
                 .builder()
                 .appName("KamilaLisp")

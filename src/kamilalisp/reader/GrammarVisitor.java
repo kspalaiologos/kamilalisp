@@ -59,6 +59,12 @@ public interface GrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitReader_macro(GrammarParser.Reader_macroContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link GrammarParser#partition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPartition(GrammarParser.PartitionContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link GrammarParser#quote}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

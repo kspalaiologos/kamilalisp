@@ -48,6 +48,18 @@ public class DefaultVisitor extends AbstractParseTreeVisitor<Atom> implements Gr
     @Override
     public Atom visitList_(GrammarParser.List_Context ctx) {
         List<Atom> l = ctx.forms().form().stream().map(this::visit).collect(LinkedList::new, List::add, List::addAll);
+        if(l.contains(new Atom("\\"))) {
+            List<Atom> result = new LinkedList<>();
+            for(Atom a : l) {
+                if(a.getType() == Type.STRING && a.getString().get().equals("\\")) {
+                    result.add(new Atom(l.subList(result.size() + 1, l.size())));
+                    break;
+                } else {
+                    result.add(a);
+                }
+            }
+            l = result;
+        }
         return new Atom(l);
     }
 
@@ -59,12 +71,29 @@ public class DefaultVisitor extends AbstractParseTreeVisitor<Atom> implements Gr
             l.set(1, l.get(0));
             l.set(0, tmp);
         }
+        if(l.contains(new Atom("\\"))) {
+            List<Atom> result = new LinkedList<>();
+            for(Atom a : l) {
+                if(a.getString().equals("\\")) {
+                    result.add(new Atom(l.subList(result.size(), l.size())));
+                    break;
+                } else {
+                    result.add(a);
+                }
+            }
+            l = result;
+        }
         return new Atom(l);
     }
 
     @Override
     public Atom visitReader_macro(GrammarParser.Reader_macroContext ctx) {
         return visitChildren(ctx);
+    }
+
+    @Override
+    public Atom visitPartition(GrammarParser.PartitionContext ctx) {
+        return new Atom("\\");
     }
 
     @Override
