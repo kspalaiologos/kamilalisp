@@ -23,7 +23,7 @@ public class Environment {
     }
 
     public List<String> entries() {
-        return new LinkedList<String>(data.keySet());
+        return new LinkedList<>(data.keySet());
     }
 
     public Atom get(String key) {
