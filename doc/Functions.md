@@ -53,3 +53,15 @@ Returns the successor of x. Equivalent to `(+ x 1)`.
 ### `(pred x)`
 
 Returns the predecessor of x. Equivalent to `(- x 1)`.
+
+### `(totient x)`
+
+Return the Euler's totient value for x.
+
+For a prime number `p`, returns `p - 1`. For a composite number, returns the product of the predecessors of its prime factors.
+
+The algorithm KamilaLisp implements is different and equivalent to the following:
+
+```lisp
+(defun totient (x) (let ((y (p-factors x))) (prod (map - y (unique-mask y)))))
+```
