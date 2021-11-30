@@ -74,8 +74,8 @@ public class DefaultVisitor extends AbstractParseTreeVisitor<Atom> implements Gr
         if(l.contains(new Atom("\\"))) {
             List<Atom> result = new LinkedList<>();
             for(Atom a : l) {
-                if(a.getString().equals("\\")) {
-                    result.add(new Atom(l.subList(result.size(), l.size())));
+                if(a.getType() == Type.STRING && a.getString().get().equals("\\")) {
+                    result.add(new Atom(l.subList(result.size() + 1, l.size())));
                     break;
                 } else {
                     result.add(a);
