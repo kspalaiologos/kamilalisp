@@ -3,7 +3,6 @@ package kamilalisp.libs;
 import ch.obermuhlner.math.big.BigComplex;
 import ch.obermuhlner.math.big.BigComplexMath;
 import ch.obermuhlner.math.big.BigDecimalMath;
-import com.google.common.base.Splitter;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -11,15 +10,13 @@ import com.google.common.collect.Streams;
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
 import kamilalisp.libs.math.*;
-import kamilalisp.libs.primitives.Add;
-import kamilalisp.libs.primitives.Product;
-import kamilalisp.libs.primitives.Subtract;
-import kamilalisp.matrix.Matrix;
+import kamilalisp.libs.primitives.math.Add;
+import kamilalisp.libs.primitives.math.Product;
+import kamilalisp.libs.primitives.math.Quotient;
+import kamilalisp.libs.primitives.math.Subtract;
 
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -119,50 +116,7 @@ public class MathLib {
 
         env.push("*", new Atom(new Product()));
 
-        env.push("/", new Atom(new Closure() {
-            private Atom IDENTITY = new Atom(BigDecimal.ZERO);
-
-            private Atom div2(Environment env, Atom a1, Atom a2) {
-                if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
-                    return new Atom(a1.getNumber().get().divide(a2.getNumber().get(), Constant.getFr(env)));
-                } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.NUMBER) {
-                    String s = a1.getStringConstant().get().get();
-                    return new Atom(Lists.newLinkedList(
-                            Splitter
-                                    .fixedLength(s.length() / a2.getNumber().get().intValue())
-                                    .split(s)
-                        ).stream()
-                            .map(x -> new Atom(new StringConstant(x)))
-                            .collect(Collectors.toList()));
-                } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
-                    return new Atom(a1.getComplex().get().divide(a2.getComplex().get(), Constant.getFr(env)));
-                } else if(a1.getType() == Type.LIST && a2.getType() == Type.NUMBER) {
-                    List<Atom> s = a1.getList().get();
-                    return new Atom(Lists.partition(s, s.size() / a2.getNumber().get().intValue()).stream().map(x -> new Atom(x)).collect(Collectors.toList()));
-                } else {
-                    throw new Error("/ unsupported on operands of type " + a1.getType().name() + " and " + a2.getType().name());
-                }
-            }
-
-            public Object div1(Environment env, Atom a) {
-                a.guardType("Argument to monadic /", Type.NUMBER, Type.COMPLEX);
-                if(a.getType() == Type.NUMBER) {
-                    return BigDecimal.ONE.divide(a.getNumber().get(), Constant.getFr(env));
-                } else if(a.getType() == Type.COMPLEX) {
-                    return a.getComplex().get().reciprocal(Constant.getFr(env));
-                } else
-                    throw new Error("unreachable.");
-            }
-
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() == 0 || arguments.size() > 2)
-                    throw new Error("Invalid / invocation.");
-                if(arguments.size() == 1)
-                    return new Atom(new LbcSupplier<>(() -> div1(env.env, arguments.get(0))));
-                return new Atom(new LbcSupplier<>(() -> div2(env.env, arguments.get(0), arguments.get(1)).get().get()));
-            }
-        }));
+        env.push("/", new Atom(new Quotient()));
 
         env.push("%", new Atom(new Closure() {
             @Override

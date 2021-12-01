@@ -1,4 +1,4 @@
-package kamilalisp.libs.primitives;
+package kamilalisp.libs.primitives.math;
 
 import ch.obermuhlner.math.big.BigComplex;
 import kamilalisp.data.*;

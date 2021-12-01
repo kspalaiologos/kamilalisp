@@ -1,4 +1,4 @@
-package kamilalisp.libs.primitives;
+package kamilalisp.libs.primitives.math;
 
 import ch.obermuhlner.math.big.BigComplex;
 import com.google.common.collect.Streams;
@@ -7,7 +7,6 @@ import kamilalisp.libs.math.Constant;
 import kamilalisp.matrix.Matrix;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.List;
 import java.util.stream.Collectors;
 

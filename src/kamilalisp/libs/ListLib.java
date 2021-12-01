@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
-import kamilalisp.libs.primitives.Add;
 import kamilalisp.matrix.Matrix;
 
 import java.math.BigDecimal;

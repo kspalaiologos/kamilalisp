@@ -1,19 +1,19 @@
 package kamilalisp.libs;
 
 import ch.obermuhlner.math.big.BigComplex;
-import ch.obermuhlner.math.big.BigComplexMath;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import kamilalisp.data.*;
-import kamilalisp.libs.primitives.Add;
-import kamilalisp.libs.primitives.Product;
+import kamilalisp.libs.primitives.linalg.Adjoint;
+import kamilalisp.libs.primitives.linalg.Determinant;
+import kamilalisp.libs.primitives.math.Add;
+import kamilalisp.libs.primitives.math.Product;
 import kamilalisp.matrix.Matrix;
-import kamilalisp.matrix.MatrixImpl;
 
 import java.math.BigDecimal;
-import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -209,9 +209,9 @@ public class MatrixLib {
                             return x.getMatrix().get().reshape(rowDim, colDim, false);
                         }
                     } else if(x.getType() == Type.LIST) {
+                        List<Atom> l = x.getList().get();
                         if(rowDim == -1) {
                             // trim/extend a vector with 0 (numeric) or NIL (other).
-                            List<Atom> l = x.getList().get();
                             if(colDim >= 0) {
                                 if (colDim < l.size())
                                     return l.subList(0, colDim);
@@ -228,7 +228,6 @@ public class MatrixLib {
                             }
                         } else {
                             // reshape a list into a matrix using matrix reshape.
-                            List<Atom> l = x.getList().get();
                             if(l.stream().anyMatch(a -> a.getType() != Type.COMPLEX && a.getType() != Type.NUMBER))
                                 l = Stream.concat(l.stream(), Stream.generate(() -> Atom.NULL)).limit(colDim * rowDim).collect(Collectors.toList());
                             else
@@ -249,77 +248,7 @@ public class MatrixLib {
             }
         }));
 
-        env.push("det", new Atom(new Closure() {
-            private Atom det(Matrix m) {
-                if(m.getRows() == 1) {
-                    return m.get(0, 0);
-                } else if(m.getRows() == 2) {
-                    Atom a1 = m.get(0, 0);
-                    Atom a2 = m.get(1, 1);
-                    Atom a3 = m.get(0, 1);
-                    Atom a4 = m.get(1, 0);
-                    if(a1.getType() == Type.COMPLEX || a2.getType() == Type.COMPLEX || a3.getType() == Type.COMPLEX || a4.getType() == Type.COMPLEX) {
-                        BigComplex a; if(a1.getType() == Type.COMPLEX) a = a1.getComplex().get(); else a = BigComplex.valueOf(a1.getNumber().get());
-                        BigComplex b; if(a2.getType() == Type.COMPLEX) b = a2.getComplex().get(); else b = BigComplex.valueOf(a2.getNumber().get());
-                        BigComplex c; if(a3.getType() == Type.COMPLEX) c = a3.getComplex().get(); else c = BigComplex.valueOf(a3.getNumber().get());
-                        BigComplex d; if(a4.getType() == Type.COMPLEX) d = a4.getComplex().get(); else d = BigComplex.valueOf(a4.getNumber().get());
-                        return new Atom(a.multiply(b).subtract(c.multiply(d)));
-                    } else {
-                        return new Atom(a1.getNumber().get().multiply(a2.getNumber().get()).subtract(a3.getNumber().get().multiply(a4.getNumber().get())));
-                    }
-                } else {
-                    BigComplex result = BigComplex.ZERO;
-                    int dim = m.getCols();
-
-                    for(int i = 0; i < dim; i++) {
-                        List<List<Atom>> temporary = new ArrayList<>();
-                        for(int q = 0; q < dim - 1; q++)
-                            temporary.add(new ArrayList<>(Collections.nCopies(dim - 1, new Atom(BigDecimal.ZERO))));
-
-                        for (int j = 1; j < dim; j++) {
-                            for (int k = 0; k < dim; k++) {
-                                if (k < i) {
-                                    temporary.get(j - 1).set(k, m.get(j, k));
-                                } else if (k > i) {
-                                    temporary.get(j - 1).set(k - 1, m.get(j, k));
-                                }
-                            }
-                        }
-
-                        Atom q = m.get(0, i);
-                        Atom p = det(Matrix.from(temporary));
-
-                        if(p.getType() == Type.COMPLEX || q.getType() == Type.COMPLEX) {
-                            BigComplex a; if(q.getType() == Type.COMPLEX) a = q.getComplex().get(); else a = BigComplex.valueOf(q.getNumber().get());
-                            BigComplex b; if(p.getType() == Type.COMPLEX) b = p.getComplex().get(); else b = BigComplex.valueOf(p.getNumber().get());
-                            result = result.add(a.multiply(b).multiply(BigDecimal.ONE.negate().pow(i)));
-                        } else {
-                            result = result.add(q.getNumber().get().multiply(p.getNumber().get()).multiply(BigDecimal.ONE.negate().pow(i)));
-                        }
-                    }
-
-                    if(result.im.compareTo(BigDecimal.ZERO) == 0)
-                        return new Atom(result.re);
-                    else
-                        return new Atom(result);
-                }
-            }
-
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1 && arguments.size() != 3)
-                    throw new Error("'det' takes exactly one or three arguments.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("Argument to 'det'", Type.MATRIX);
-                    Matrix m = arguments.get(0).getMatrix().get();
-                    if(!m.isNumeric())
-                        throw new Error("'det' expects a numeric matrix.");
-                    if(m.getRows() != m.getCols())
-                        throw new Error("'det' expects a square matrix.");
-                    return det(m).get().get();
-                }));
-            }
-        }));
+        env.push("det", new Atom(new Determinant()));
 
         env.push("reshape", new Atom(new Closure() {
             @Override
@@ -375,5 +304,7 @@ public class MatrixLib {
                 }));
             }
         }));
+
+        env.push("mat-adjoint", new Atom(new Adjoint()));
     }
 }
