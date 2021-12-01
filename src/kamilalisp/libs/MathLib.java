@@ -12,6 +12,9 @@ import kamilalisp.data.*;
 import kamilalisp.libs.math.*;
 import kamilalisp.libs.primitives.list.Sort;
 import kamilalisp.libs.primitives.math.*;
+import kamilalisp.libs.primitives.statistics.Average;
+import kamilalisp.libs.primitives.statistics.Median;
+import kamilalisp.libs.primitives.statistics.Variance;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -71,7 +74,7 @@ public class MathLib {
     }
 
     private static BigComplex gcd(Environment env, BigComplex alpha, BigComplex beta) {
-        if(gaussianRem(env, alpha, beta).equals(BigComplex.ZERO))
+        if (gaussianRem(env, alpha, beta).equals(BigComplex.ZERO))
             return beta;
         return gcd(env, beta, gaussianRem(env, alpha, beta));
     }
@@ -503,22 +506,7 @@ public class MathLib {
             }
         }));
 
-        env.push("sqrt", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'sqrt'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    Atom a = arguments.get(0);
-                    a.guardType("First argument to 'sqrt'", Type.NUMBER, Type.COMPLEX);
-                    if(a.getType() == Type.NUMBER) {
-                        return BigDecimalMath.sqrt(a.getNumber().get(), Constant.getFr(env.env));
-                    } else {
-                        return BigComplexMath.sqrt(a.getComplex().get(), Constant.getFr(env.env));
-                    }
-                }));
-            }
-        }));
+        env.push("sqrt", new Atom(new Sqrt()));
 
         env.push("exp", new Atom(new Closure() {
             @Override
@@ -537,34 +525,7 @@ public class MathLib {
             }
         }));
 
-        env.push("**", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 2)
-                    throw new Error("Invalid invocation to '**'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    Atom a1 = arguments.get(0);
-                    Atom a2 = arguments.get(1);
-                    a1.guardType("First argument to '**'", Type.NUMBER, Type.COMPLEX);
-                    a2.guardType("Second argument to '**'", Type.NUMBER, Type.COMPLEX);
-                    if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
-                        if(a2.getNumber().get().stripTrailingZeros().scale() > 0)
-                            return BigDecimalMath.pow(a1.getNumber().get(), a2.getNumber().get(), Constant.getFr(env.env));
-                        else
-                            return a1.getNumber().get().pow(a2.getNumber().get().intValue());
-                    } else {
-                        BigComplex a, b;
-                        if(a1.getType() == Type.NUMBER) { a = BigComplex.valueOf(a1.getNumber().get(), BigDecimal.ZERO); }
-                        else { a = a1.getComplex().get(); }
-                        if(a2.getType() == Type.NUMBER) { b = BigComplex.valueOf(a2.getNumber().get(), BigDecimal.ZERO); }
-                        else { b = a2.getComplex().get(); }
-                        assertGaussian(a);
-                        assertGaussian(b);
-                        return BigComplexMath.pow(a, b, Constant.getFr(env.env));
-                    }
-                }));
-            }
-        }));
+        env.push("**", new Atom(new Power()));
 
         env.push("!", new Atom(new Closure() {
             @Override
@@ -982,37 +943,23 @@ public class MathLib {
             }
         }));
 
-        env.push("median", new Atom(new Closure() {
+        env.push("median", new Atom(new Median()));
+        env.push("avg", new Atom(new Average()));
+
+        env.push("stddev", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 1)
-                    throw new Error("'median' expects exactly one argument.");
+                    throw new Error("'stddev' expects exactly one argument.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("Argument to 'median'", Type.LIST);
-                    List<Atom> list = Sort.sort(arguments.get(0).getList().get());
-                    if(list.size() % 2 == 0)
-                        return Quotient.div2(env.env, Add.add2(list.get(list.size() / 2), list.get(list.size() / 2 - 1)), new Atom(new BigDecimal(2))).get().get();
-                    else
-                        return list.get(list.size() / 2).get().get();
+                    Atom source = arguments.get(0);
+                    source.guardType("'stddev' argument", Type.LIST);
+                    return Sqrt.sqrt(Variance.variance(source, env), env).get().get();
                 }));
             }
         }));
 
-        env.push("avg", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("'avg' expects exactly one argument.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("Argument to 'avg'", Type.LIST);
-                    List<Atom> list = arguments.get(0).getList().get();
-                    Atom sum = new Atom(BigDecimal.ZERO);
-                    for(Atom x : list)
-                        sum = Add.add2(sum, x);
-                    return Quotient.div2(env.env, sum, new Atom(new BigDecimal(list.size()))).get().get();
-                }));
-            }
-        }));
+        env.push("variance", new Atom(new Variance()));
 
         // Math utilities implemented in Lisp for no real reason.
         // Except that they're easier to maintain.
