@@ -1003,10 +1003,13 @@ public class MathLib {
         Evaluation.evalString(env, "(def cumprod (bind scanl' * 1))");
         Evaluation.evalString(env, "(def maxl (bind foldl' max -1E100))");
         Evaluation.evalString(env, "(def minl (bind foldl' min 1E100))");
+        Evaluation.evalString(env, "(def cummax (bind scanl1' max))");
+        Evaluation.evalString(env, "(def cummin (bind scanl1' min))");
         Evaluation.evalString(env, "(def succ $(+ 1))");
         Evaluation.evalString(env, "(def pred $(- _ 1))");
         Evaluation.evalString(env, "(def bounds #(tie minl maxl))");
         Evaluation.evalString(env, "(defun totient (x) (let ((y (p-factors x))) (prod (map - y (unique-mask y)))))");
+        // Most frequent value in array
         Evaluation.evalString(env, "(def mode cadr@car@reverse@sort@:$(lift #(tie size@#1 #0))@keys)");
     }
 }
