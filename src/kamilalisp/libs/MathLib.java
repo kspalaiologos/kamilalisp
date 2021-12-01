@@ -10,10 +10,7 @@ import com.google.common.collect.Streams;
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
 import kamilalisp.libs.math.*;
-import kamilalisp.libs.primitives.math.Add;
-import kamilalisp.libs.primitives.math.Product;
-import kamilalisp.libs.primitives.math.Quotient;
-import kamilalisp.libs.primitives.math.Subtract;
+import kamilalisp.libs.primitives.math.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -23,10 +20,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class MathLib {
-    private static BigDecimal modulus(Environment env, BigComplex x) {
-        return x.re.pow(2).add(x.im.pow(2)).sqrt(Constant.getFr(env));
-    }
-
     private static BigComplex gaussianRem(Environment env, BigComplex a, BigComplex b) {
         BigComplex prod = a.multiply(b.conjugate());
         BigDecimal p = prod.re.divide(b.absSquare(Constant.getFr(env)), Constant.getFr(env));
@@ -118,31 +111,7 @@ public class MathLib {
 
         env.push("/", new Atom(new Quotient()));
 
-        env.push("%", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() == 0 || arguments.size() > 2)
-                    throw new Error("Invalid % invocation.");
-                if(arguments.size() == 1) {
-                    return new Atom(new LbcSupplier<>(() -> {
-                        arguments.get(0).guardType("Argument to monadic %", Type.NUMBER, Type.COMPLEX);
-
-                        if(arguments.get(0).getType() == Type.NUMBER) {
-                            return arguments.get(0).getNumber().get().abs();
-                        } else if(arguments.get(0).getType() == Type.COMPLEX) {
-                            return modulus(env.env, arguments.get(0).getComplex().get());
-                        }
-
-                        throw new Error("unreachable.");
-                    }));
-                } else
-                    return new Atom(new LbcSupplier<>(() -> {
-                        arguments.get(0).guardType("Argument to dyadic %", Type.NUMBER);
-                        arguments.get(1).guardType("Argument to dyadic %", Type.NUMBER);
-                        return arguments.get(0).getNumber().get().remainder(arguments.get(1).getNumber().get());
-                    }));
-            }
-        }));
+        env.push("%", new Atom(new Remainder()));
 
         env.push("gcd", new Atom(new Closure() {
             private Atom IDENTITY = new Atom(BigDecimal.ZERO);
@@ -247,7 +216,7 @@ public class MathLib {
                     if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.NUMBER) {
                         return arguments.get(0).getNumber().get().compareTo(arguments.get(1).getNumber().get()) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
                     } else if(arguments.get(0).getType() == Type.COMPLEX && arguments.get(1).getType() == Type.COMPLEX) {
-                        return modulus(env.env, arguments.get(0).getComplex().get()).compareTo(modulus(env.env, arguments.get(1).getComplex().get())) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+                        return Remainder.norm(env.env, arguments.get(0).getComplex().get()).compareTo(Remainder.norm(env.env, arguments.get(1).getComplex().get())) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
                     } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
                         return arguments.get(0).getStringConstant().get().get().compareTo(arguments.get(1).getStringConstant().get().get()) < 0 ? BigDecimal.ONE : BigDecimal.ZERO;
                     } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.NUMBER) {
@@ -270,7 +239,7 @@ public class MathLib {
                     if(arguments.get(0).getType() == Type.NUMBER && arguments.get(1).getType() == Type.NUMBER) {
                         return arguments.get(0).getNumber().get().compareTo(arguments.get(1).getNumber().get()) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
                     } else if(arguments.get(0).getType() == Type.COMPLEX && arguments.get(1).getType() == Type.COMPLEX) {
-                        return modulus(env.env, arguments.get(0).getComplex().get()).compareTo(modulus(env.env, arguments.get(1).getComplex().get())) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
+                        return Remainder.norm(env.env, arguments.get(0).getComplex().get()).compareTo(Remainder.norm(env.env, arguments.get(1).getComplex().get())) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
                     } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.STRING_CONSTANT) {
                         return arguments.get(0).getStringConstant().get().get().compareTo(arguments.get(1).getStringConstant().get().get()) > 0 ? BigDecimal.ONE : BigDecimal.ZERO;
                     } else if(arguments.get(0).getType() == Type.STRING_CONSTANT && arguments.get(1).getType() == Type.NUMBER) {
@@ -483,7 +452,7 @@ public class MathLib {
                     if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
                         return a1.getNumber().get().min(a2.getNumber().get());
                     } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
-                        return modulus(env.env, a1.getComplex().get()).compareTo(modulus(env.env, a2.getComplex().get())) < 0 ? a1.get().get() : a2.get().get();
+                        return Remainder.norm(env.env, a1.getComplex().get()).compareTo(Remainder.norm(env.env, a2.getComplex().get())) < 0 ? a1.get().get() : a2.get().get();
                     } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.STRING_CONSTANT) {
                         return a1.getStringConstant().get().get().compareTo(a2.getStringConstant().get().get()) < 0 ? a1.get().get() : a2.get().get();
                     } else if(a1.getType() == Type.LIST && a2.getType() == Type.LIST) {
@@ -505,7 +474,7 @@ public class MathLib {
                     if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
                         return a1.getNumber().get().max(a2.getNumber().get());
                     } else if(a1.getType() == Type.COMPLEX && a2.getType() == Type.COMPLEX) {
-                        return modulus(env.env, a1.getComplex().get()).compareTo(modulus(env.env, a2.getComplex().get())) > 0 ? a1.get().get() : a2.get().get();
+                        return Remainder.norm(env.env, a1.getComplex().get()).compareTo(Remainder.norm(env.env, a2.getComplex().get())) > 0 ? a1.get().get() : a2.get().get();
                     } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.STRING_CONSTANT) {
                         return a1.getStringConstant().get().get().compareTo(a2.getStringConstant().get().get()) > 0 ? a1.get().get() : a2.get().get();
                     } else if(a1.getType() == Type.LIST && a2.getType() == Type.LIST) {
