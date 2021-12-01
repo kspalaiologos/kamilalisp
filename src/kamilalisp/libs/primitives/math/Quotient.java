@@ -32,6 +32,12 @@ public class Quotient implements Closure {
         } else if(a1.getType() == Type.LIST && a2.getType() == Type.NUMBER) {
             List<Atom> s = a1.getList().get();
             return new Atom(Lists.partition(s, s.size() / a2.getNumber().get().intValue()).stream().map(x -> new Atom(x)).collect(Collectors.toList()));
+        } else if(a1.getType() == Type.MATRIX && a2.getType() == Type.MATRIX) {
+            Matrix m1 = a1.getMatrix().get();
+            Matrix m2 = a2.getMatrix().get();
+            if(m1.getRows() != m2.getRows() || m1.getCols() != m2.getCols() || m1.getCols() != m1.getRows() || m1.getCols() != m1.getRows())
+                throw new Error("Can't divide matrices of different sizes.");
+            return Product.mul2(a1, div1(env, a2));
         } else {
             throw new Error("/ unsupported on operands of type " + a1.getType().name() + " and " + a2.getType().name());
         }
