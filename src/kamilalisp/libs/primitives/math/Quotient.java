@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Quotient implements Closure {
-    public Atom div2(Environment env, Atom a1, Atom a2) {
+    public static Atom div2(Environment env, Atom a1, Atom a2) {
         if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
             return new Atom(a1.getNumber().get().divide(a2.getNumber().get(), Constant.getFr(env)));
         } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.NUMBER) {
@@ -43,7 +43,7 @@ public class Quotient implements Closure {
         }
     }
 
-    public Atom div1(Environment env, Atom a) {
+    public static Atom div1(Environment env, Atom a) {
         a.guardType("Argument to monadic /", Type.NUMBER, Type.COMPLEX, Type.MATRIX);
         if(a.getType() == Type.NUMBER) {
             return new Atom(BigDecimal.ONE.divide(a.getNumber().get(), Constant.getFr(env)));
