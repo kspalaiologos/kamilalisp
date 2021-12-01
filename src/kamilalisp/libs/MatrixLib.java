@@ -306,5 +306,19 @@ public class MatrixLib {
         }));
 
         env.push("mat-adjoint", new Atom(new Adjoint()));
+
+        env.push("mat-conjtran", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'mat-conjtran'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("Argument to 'mat-conjtran'", Type.MATRIX);
+                    if(!arguments.get(0).getMatrix().get().isNumeric())
+                        throw new Error("Argument to 'mat-conjtran' must be numeric.");
+                    return arguments.get(0).getMatrix().get().transmogrifyRank0(a -> Add.add1(a)).transpose();
+                }));
+            }
+        }));
     }
 }
