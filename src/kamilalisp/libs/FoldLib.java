@@ -34,7 +34,7 @@ public class FoldLib {
             }
         }));
 
-        Evaluation.evalString(env, "(defun n-foldl (n f i x) (:$(foldl f i)@window n x)");
+        Evaluation.evalString(env, "(defun n-foldl (n f i x) (:$(foldl f i)@window n x))");
 
         env.push("foldr", new Atom(new Closure() {
             @Override
@@ -57,7 +57,7 @@ public class FoldLib {
             }
         }));
 
-        Evaluation.evalString(env, "(defun n-foldr (n f i x) (:$(foldr f i)@window n x)");
+        Evaluation.evalString(env, "(defun n-foldr (n f i x) (:$(foldr f i)@window n x))");
 
         env.push("foldl'", new Atom(new Closure() {
             @Override
@@ -80,7 +80,7 @@ public class FoldLib {
             }
         }));
 
-        Evaluation.evalString(env, "(defun n-foldl' (n f i x) (:$(foldl' f i)@window n x)");
+        Evaluation.evalString(env, "(defun n-foldl' (n f i x) (:$(foldl' f i)@window n x))");
 
         env.push("foldr'", new Atom(new Closure() {
             @Override
@@ -103,7 +103,7 @@ public class FoldLib {
             }
         }));
 
-        Evaluation.evalString(env, "(defun n-foldr' (n f i x) (:$(foldr' f i)@window n x)");
+        Evaluation.evalString(env, "(defun n-foldr' (n f i x) (:$(foldr' f i)@window n x))");
 
         env.push("scanl", new Atom(new Closure() {
             @Override
@@ -233,7 +233,7 @@ public class FoldLib {
             }
         }));
 
-        Evaluation.evalString(env, "(defun n-foldl1 (n f x) (:$(foldl1 f)@window n x)");
+        Evaluation.evalString(env, "(defun n-foldl1 (n f x) (:$(foldl1 f)@window n x))");
 
         env.push("foldr1", new Atom(new Closure() {
             @Override
@@ -257,7 +257,7 @@ public class FoldLib {
             }
         }));
 
-        Evaluation.evalString(env, "(defun n-foldr1 (n f x) (:$(foldr1 f)@window n x)");
+        Evaluation.evalString(env, "(defun n-foldr1 (n f x) (:$(foldr1 f)@window n x))");
 
         env.push("foldl1'", new Atom(new Closure() {
             @Override
@@ -281,7 +281,7 @@ public class FoldLib {
             }
         }));
 
-        Evaluation.evalString(env, "(defun n-foldl1' (n f x) (:$(foldl1' f)@window n x)");
+        Evaluation.evalString(env, "(defun n-foldl1' (n f x) (:$(foldl1' f)@window n x))");
 
         env.push("foldr1'", new Atom(new Closure() {
             @Override
@@ -305,8 +305,8 @@ public class FoldLib {
             }
         }));
 
-        Evaluation.evalString(env, "(defun n-foldr1' (n f x) (:$(foldr1' f)@window n x)");
-        
+        Evaluation.evalString(env, "(defun n-foldr1' (n f x) (:$(foldr1' f)@window n x))");
+
         env.push("scanl1", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
