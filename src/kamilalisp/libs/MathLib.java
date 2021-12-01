@@ -10,6 +10,7 @@ import com.google.common.collect.Streams;
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
 import kamilalisp.libs.math.*;
+import kamilalisp.libs.primitives.list.Sort;
 import kamilalisp.libs.primitives.math.*;
 
 import java.math.BigDecimal;
@@ -977,6 +978,22 @@ public class MathLib {
                     }
 
                     throw new Error("Unexhaustive 'match'.");
+                }));
+            }
+        }));
+
+        env.push("median", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("'median' expects exactly one argument.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("Argument to 'median'", Type.LIST);
+                    List<Atom> list = Sort.sort(arguments.get(0).getList().get());
+                    if(list.size() % 2 == 0)
+                        return Quotient.div2(env.env, Add.add2(list.get(list.size() / 2), list.get(list.size() / 2 - 1)), new Atom(new BigDecimal(2))).get().get();
+                    else
+                        return list.get(list.size() / 2).get().get();
                 }));
             }
         }));

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
+import kamilalisp.libs.primitives.list.Sort;
 import kamilalisp.matrix.Matrix;
 
 import java.math.BigDecimal;
@@ -366,31 +367,7 @@ public class ListLib {
             }
         }));
 
-        env.push("sort", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() < 1)
-                    throw new Error("Invalid invocation to 'sort'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    if(arguments.size() == 1 && arguments.get(0).getType() == Type.LIST) {
-                        List<Atom> l = arguments.get(0).getList().get();
-                        return l.stream().sorted(new AtomComparator()).collect(Collectors.toList());
-                    } else if(arguments.size() == 2 && arguments.get(0).isCallable() && arguments.get(1).getType() == Type.LIST) {
-                        Callable c = arguments.get(0).getCallable().get();
-                        List<Atom> l = arguments.get(1).getList().get();
-                        return l.stream().sorted(new Comparator<Atom>() {
-                            @Override
-                            public int compare(Atom o1, Atom o2) {
-                                Atom r = c.apply(env, List.of(o1, o2));
-                                r.guardType("'sort' comparator", Type.NUMBER);
-                                return r.getNumber().get().intValue();
-                            }
-                        }).collect(Collectors.toList());
-                    } else
-                        throw new Error("'sort' expects (closure, list) arguments or a list");
-                }));
-            }
-        }));
+        env.push("sort", new Atom(new Sort()));
 
         env.push("grade-up", new Atom(new Closure() {
             @Override
