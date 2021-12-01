@@ -961,6 +961,40 @@ public class MathLib {
 
         env.push("variance", new Atom(new Variance()));
 
+        env.push("maxk", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("'maxk' expects exactly two arguments.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom source = arguments.get(0);
+                    Atom k = arguments.get(1);
+                    source.guardType("'maxk' argument", Type.LIST);
+                    k.guardType("'maxk' argument", Type.NUMBER);
+                    List<Atom> l = source.getList().get();
+                    int mv = arguments.get(1).getNumber().get().intValue();
+                    return Lists.reverse(Sort.sort(l)).subList(0, mv);
+                }));
+            }
+        }));
+
+        env.push("mink", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("'mink' expects exactly two arguments.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom source = arguments.get(0);
+                    Atom k = arguments.get(1);
+                    source.guardType("'mink' argument", Type.LIST);
+                    k.guardType("'mink' argument", Type.NUMBER);
+                    List<Atom> l = source.getList().get();
+                    int mv = arguments.get(1).getNumber().get().intValue();
+                    return Sort.sort(l).subList(0, mv);
+                }));
+            }
+        }));
+
         // Math utilities implemented in Lisp for no real reason.
         // Except that they're easier to maintain.
         Evaluation.evalString(env, "(def sum (bind foldl' + 0))");
@@ -971,7 +1005,7 @@ public class MathLib {
         Evaluation.evalString(env, "(def minl (bind foldl' min 1E100))");
         Evaluation.evalString(env, "(def succ $(+ 1))");
         Evaluation.evalString(env, "(def pred $(- _ 1))");
-        Evaluation.evalString(env, "(def bounds #(tie minl maxl))")
+        Evaluation.evalString(env, "(def bounds #(tie minl maxl))");
         Evaluation.evalString(env, "(defun totient (x) (let ((y (p-factors x))) (prod (map - y (unique-mask y)))))");
     }
 }
