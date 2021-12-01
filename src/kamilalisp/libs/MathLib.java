@@ -964,7 +964,9 @@ public class MathLib {
         // Math utilities implemented in Lisp for no real reason.
         // Except that they're easier to maintain.
         Evaluation.evalString(env, "(def sum (bind foldl' + 0))");
+        Evaluation.evalString(env, "(def cumsum (bind scanl' + 0))");
         Evaluation.evalString(env, "(def prod (bind foldl' * 1))");
+        Evaluation.evalString(env, "(def cumprod (bind scanl' * 1))");
         Evaluation.evalString(env, "(def succ $(+ 1))");
         Evaluation.evalString(env, "(def pred $(- _ 1))");
         Evaluation.evalString(env, "(defun totient (x) (let ((y (p-factors x))) (prod (map - y (unique-mask y)))))");
