@@ -998,6 +998,22 @@ public class MathLib {
             }
         }));
 
+        env.push("avg", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("'avg' expects exactly one argument.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("Argument to 'avg'", Type.LIST);
+                    List<Atom> list = arguments.get(0).getList().get();
+                    Atom sum = new Atom(BigDecimal.ZERO);
+                    for(Atom x : list)
+                        sum = Add.add2(sum, x);
+                    return Quotient.div2(env.env, sum, new Atom(new BigDecimal(list.size()))).get().get();
+                }));
+            }
+        }));
+
         // Math utilities implemented in Lisp for no real reason.
         // Except that they're easier to maintain.
         Evaluation.evalString(env, "(def sum (bind foldl' + 0))");
