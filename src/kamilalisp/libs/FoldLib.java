@@ -318,7 +318,7 @@ public class FoldLib {
                     List<Atom> data = arguments.get(1).getList().get();
                     List<Atom> result = new LinkedList<>();
                     if(data.isEmpty())
-                        throw new Error("Cannot fold an empty list.");
+                        return Atom.NULL.get().get();
                     else if(data.size() == 1)
                         return data.get(0).get().get();
                     else {
@@ -345,7 +345,7 @@ public class FoldLib {
                     List<Atom> data = arguments.get(1).getList().get();
                     List<Atom> result = new LinkedList<>();
                     if(data.isEmpty())
-                        throw new Error("Cannot fold an empty list.");
+                        return Atom.NULL.get().get();
                     else if(data.size() == 1)
                         return data.get(0).get().get();
                     else {
@@ -372,7 +372,7 @@ public class FoldLib {
                     List<Atom> data = arguments.get(1).getList().get();
                     List<Atom> result = new LinkedList<>();
                     if(data.isEmpty())
-                        throw new Error("Cannot fold an empty list.");
+                        return Atom.NULL.get().get();
                     else if(data.size() == 1)
                         return data.get(0).get().get();
                     else {
@@ -399,7 +399,7 @@ public class FoldLib {
                     List<Atom> data = arguments.get(1).getList().get();
                     List<Atom> result = new LinkedList<>();
                     if(data.isEmpty())
-                        throw new Error("Cannot fold an empty list.");
+                        return Atom.NULL.get().get();
                     else if(data.size() == 1)
                         return data.get(0).get().get();
                     else {
