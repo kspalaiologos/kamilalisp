@@ -720,5 +720,17 @@ public class CoreLib {
                 return new Atom(frames);
             }
         }));
+
+        env.push("str-trim", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'str-trim'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'str-trim'.", Type.STRING_CONSTANT);
+                    return new StringConstant(arguments.get(0).getStringConstant().get().get().trim());
+                }));
+            }
+        }));
     }
 }
