@@ -992,5 +992,6 @@ public class ListLib {
 
         Evaluation.evalString(env, "(defun str-explode (x) (str-split x \"\"))");
         Evaluation.evalString(env, "(defun str-join (x) (foldl + \"\" x))");
+        Evaluation.evalString(env, "(defun cadr (x) (car (cdr x)))");
     }
 }

@@ -1007,5 +1007,6 @@ public class MathLib {
         Evaluation.evalString(env, "(def pred $(- _ 1))");
         Evaluation.evalString(env, "(def bounds #(tie minl maxl))");
         Evaluation.evalString(env, "(defun totient (x) (let ((y (p-factors x))) (prod (map - y (unique-mask y)))))");
+        Evaluation.evalString(env, "(def mode cadr@car@reverse@sort@:$(lift #(tie size@#1 #0))@keys)");
     }
 }
