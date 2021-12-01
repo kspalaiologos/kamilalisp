@@ -7,8 +7,12 @@ import com.google.common.collect.Streams;
 import kamilalisp.data.*;
 import kamilalisp.libs.primitives.linalg.Adjoint;
 import kamilalisp.libs.primitives.linalg.Determinant;
+import kamilalisp.libs.primitives.linalg.Identity;
+import kamilalisp.libs.primitives.linalg.Trace;
 import kamilalisp.libs.primitives.math.Add;
 import kamilalisp.libs.primitives.math.Product;
+import kamilalisp.libs.primitives.math.Quotient;
+import kamilalisp.libs.primitives.math.Subtract;
 import kamilalisp.matrix.Matrix;
 
 import java.math.BigDecimal;
@@ -158,28 +162,7 @@ public class MatrixLib {
             }
         }));
 
-        env.push("mat-trace", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1 && arguments.size() != 2)
-                    throw new Error("Invalid invocation to 'mat-trace'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'mat-trace'", Type.MATRIX);
-                    Matrix m = arguments.get(0).getMatrix().get();
-                    Callable c;
-                    if(arguments.size() == 2) {
-                        arguments.get(1).guardType("Second argument to 'mat-trace'", Type.CLOSURE, Type.MACRO);
-                        c = arguments.get(1).getCallable().get();
-                    } else {
-                        c = new Add();
-                    }
-                    Atom acc = m.get(0, 0);
-                    for(int i = 1; i < Math.min(m.getRows(), m.getCols()); i++)
-                        acc = c.apply(env, List.of(acc, m.get(i, i)));
-                    return acc.get().get();
-                }));
-            }
-        }));
+        env.push("mat-trace", new Atom(new Trace()));
 
         env.push("take", new Atom(new Closure() {
             @Override
@@ -317,6 +300,51 @@ public class MatrixLib {
                     if(!arguments.get(0).getMatrix().get().isNumeric())
                         throw new Error("Argument to 'mat-conjtran' must be numeric.");
                     return arguments.get(0).getMatrix().get().transmogrifyRank0(a -> Add.add1(a)).transpose();
+                }));
+            }
+        }));
+
+        env.push("mat-id", new Atom(new Identity()));
+
+        env.push("faddeev-leverrier", new Atom(new Closure() {
+            private BigDecimal getC(int idx, Matrix A, Matrix M, Executor env) {
+                // c_idx = -trace(A * M_idx) / idx
+                return Quotient.div2(env.env,
+                                Subtract.sub1(Trace.trace(Product.mul2(new Atom(A), new Atom(M)).getMatrix().get(), env)),
+                                new Atom(new BigDecimal(idx)))
+                        .getNumber().get();
+            }
+
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'faddeev-leverrier'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("Argument to 'faddeev-leverrier'", Type.MATRIX);
+                    Matrix m = arguments.get(0).getMatrix().get();
+                    if(!m.isNumeric())
+                        throw new Error("Argument to 'faddeev-leverrier' must be numeric.");
+                    if(m.getRows() != m.getCols())
+                        throw new Error("Argument to 'faddeev-leverrier' must be square.");
+
+                    Matrix M = Matrix.of((a, b) -> new Atom(BigDecimal.ZERO), m.getRows(), m.getCols()); // M_0
+                    BigDecimal c = BigDecimal.ONE; // C_N
+
+                    List<Atom> cs = new ArrayList<>();
+
+                    Atom id = new Atom(Identity.of(m.getRows()));
+
+                    for(int i = 1; i <= m.getRows(); i++) {
+                        // M_k = A * M_k-1 + c_n+k-1 * I
+                        Atom cA = new Atom(c);
+                        M = Add.add2(Product.mul2(arguments.get(0), new Atom(M)), Product.mul2(cA, id)).getMatrix().get();
+                        cs.add(cA);
+                        c = getC(i, m, M, env);
+                    }
+
+                    cs.add(new Atom(c));
+
+                    return cs;
                 }));
             }
         }));
