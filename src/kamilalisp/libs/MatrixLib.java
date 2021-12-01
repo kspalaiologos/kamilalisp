@@ -348,5 +348,20 @@ public class MatrixLib {
                 }));
             }
         }));
+
+        env.push("rank0", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'rank0'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("Argument to 'rank0'", Type.CLOSURE);
+                    arguments.get(1).guardType("Argument to 'rank0'", Type.MATRIX);
+                    Closure c = arguments.get(0).getClosure().get();
+                    Matrix m = arguments.get(1).getMatrix().get();
+                    return m.transmogrifyRank0(f -> c.apply(env, List.of(f)));
+                }));
+            }
+        }));
     }
 }
