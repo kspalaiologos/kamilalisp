@@ -651,7 +651,10 @@ public class MathLib {
                     Atom a = arguments.get(0);
                     a.guardType("First argument to '!'", Type.NUMBER, Type.COMPLEX);
                     if(a.getType() == Type.NUMBER) {
-                        return BigDecimalMath.factorial(a.getNumber().get(), Constant.getFr(env.env));
+                        if(decimalPlaces(a.getNumber().get()) > 0)
+                            return BigDecimalMath.factorial(a.getNumber().get(), Constant.getFr(env.env));
+                        else
+                            return BigDecimalMath.factorial(a.getNumber().get().intValue());
                     } else {
                         return BigComplexMath.factorial(a.getComplex().get(), Constant.getFr(env.env));
                     }
