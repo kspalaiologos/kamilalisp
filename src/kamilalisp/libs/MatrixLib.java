@@ -363,5 +363,18 @@ public class MatrixLib {
                 }));
             }
         }));
+
+        env.push("diag", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'diag'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("Argument to 'diag'", Type.LIST);
+                    List<Atom> l = arguments.get(0).getList().get();
+                    return Matrix.of((x, y) -> x == y ? l.get(x) : new Atom(BigDecimal.ZERO), l.size(), l.size());
+                }));
+            }
+        }));
     }
 }
