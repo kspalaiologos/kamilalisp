@@ -1008,6 +1008,7 @@ public class MathLib {
         Evaluation.evalString(env, "(def succ $(+ 1))");
         Evaluation.evalString(env, "(def pred $(- _ 1))");
         Evaluation.evalString(env, "(def bounds #(tie minl maxl))");
+        Evaluation.evalString(env, "(def hypot sqrt@sum@:$(** _ 2)@tie)");
         Evaluation.evalString(env, "(defun aseq (a0 r) \\lambda (n) \\+ a0 \\* r n)");
         Evaluation.evalString(env, "(defun gseq (a0 q) \\lambda (n) \\* a0 \\** q n)");
         Evaluation.evalString(env, "(defun totient (x) (let ((y (p-factors x))) (prod (map - y (unique-mask y)))))");
