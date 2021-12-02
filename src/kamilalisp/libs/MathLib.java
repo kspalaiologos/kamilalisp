@@ -995,6 +995,55 @@ public class MathLib {
             }
         }));
 
+        // Exponent of next power of 2 after...
+        env.push("enp2", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("'enp2' expects exactly one argument.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom source = arguments.get(0);
+                    source.guardType("'enp2' argument", Type.NUMBER);
+                    if(decimalPlaces(source.getNumber().get()) != 0)
+                        throw new Error("'enp2' argument must be an integer.");
+                    return new BigDecimal(source.getNumber().get().toBigInteger().bitLength());
+                }));
+            }
+        }));
+
+        // re/im of a complex number.
+        env.push("re", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("'re' expects exactly one argument.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom source = arguments.get(0);
+                    source.guardType("'re' argument", Type.COMPLEX, Type.NUMBER);
+                    if(source.getType() == Type.COMPLEX)
+                        return source.getComplex().get().re();
+                    else
+                        return source.getNumber().get();
+                }));
+            }
+        }));
+
+        env.push("im", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("'im' expects exactly one argument.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom source = arguments.get(0);
+                    source.guardType("'im' argument", Type.COMPLEX, Type.NUMBER);
+                    if(source.getType() == Type.COMPLEX)
+                        return source.getComplex().get().im();
+                    else
+                        return BigDecimal.ZERO;
+                }));
+            }
+        }));
+
         // Math utilities implemented in Lisp for no real reason.
         // Except that they're easier to maintain.
         Evaluation.evalString(env, "(def sum (bind foldl' + 0))");
