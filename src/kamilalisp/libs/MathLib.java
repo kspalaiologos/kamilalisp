@@ -22,6 +22,7 @@ import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class MathLib {
     private static BigComplex gaussianRem(Environment env, BigComplex a, BigComplex b) {
@@ -1040,6 +1041,51 @@ public class MathLib {
                         return source.getComplex().get().im();
                     else
                         return BigDecimal.ZERO;
+                }));
+            }
+        }));
+
+        env.push("phasor", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("'phasor' expects exactly one argument.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom source = arguments.get(0);
+                    source.guardType("'phasor' argument", Type.COMPLEX, Type.NUMBER);
+                    BigComplex z;
+                    if(source.getType() == Type.COMPLEX)
+                        z = source.getComplex().get();
+                    else
+                        return BigDecimal.ZERO;
+                    return z.angle(Constant.getFr(env.env));
+                }));
+            }
+        }));
+
+        // Create a polynomial from roots.
+        env.push("poly", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("'poly' expects exactly one argument.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("'poly' argument", Type.LIST);
+                    List<Atom> roots = arguments.get(0).getList().get();
+                    LinkedList<Atom> p = new LinkedList<>();
+                    p.add(new Atom(BigDecimal.ONE));
+                    for(Atom r : roots) {
+                        // multiply polynomial p by (x - r).
+                        // p(x) * (x - r) = x * p(x) - r * p(x)
+                        // Compute p_1(x) = r * p(x)
+                        List<Atom> p1 = Streams.concat(p.stream().map(x -> Product.mul2(r, x)), Stream.of(new Atom(BigDecimal.ZERO))).collect(Collectors.toList());
+                        // Multiply polynomial times x - shift it.
+                        p.addFirst(new Atom(BigDecimal.ZERO));
+                        // imperatively: p(x) = p(x) - p1(x). Subtract corresponding coefficients.
+                        for(int i = 0; i < p.size(); i++)
+                            p.set(i, Subtract.sub2(p.get(i), p1.get(i)));
+                    }
+                    return Lists.reverse(p);
                 }));
             }
         }));
