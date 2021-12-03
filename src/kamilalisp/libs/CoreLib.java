@@ -575,7 +575,8 @@ public class CoreLib {
                         Callable f = arguments.get(1).getCallable().get();
                         while(f.apply(env, List.of(result.size() > 0 ? result.get(result.size() - 1) : Atom.NULL, rest.get(0))).coerceBool())
                             result.add(rest.set(0, c.apply(env, rest)));
-                    }
+                    } else
+                        throw new Error("Invalid invocation to 'scanterate'. Expected a callable or a number as the 2nd argument.");
 
                     result.add(rest.get(0));
 
