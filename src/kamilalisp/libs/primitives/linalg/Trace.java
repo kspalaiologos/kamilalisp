@@ -2,7 +2,7 @@ package kamilalisp.libs.primitives.linalg;
 
 import kamilalisp.data.*;
 import kamilalisp.libs.primitives.math.Add;
-import kamilalisp.matrix.Matrix;
+import kamilalisp.data.Matrix;
 
 import java.util.List;
 

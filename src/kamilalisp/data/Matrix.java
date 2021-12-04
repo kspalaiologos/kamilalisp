@@ -1,8 +1,7 @@
-package kamilalisp.matrix;
+package kamilalisp.data;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.Streams;
-import kamilalisp.data.Atom;
 
 import java.util.Arrays;
 import java.util.List;

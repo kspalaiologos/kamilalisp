@@ -7,9 +7,8 @@ import kamilalisp.data.*;
 import kamilalisp.libs.math.Constant;
 import kamilalisp.libs.primitives.linalg.Adjoint;
 import kamilalisp.libs.primitives.linalg.Determinant;
-import kamilalisp.matrix.Matrix;
+import kamilalisp.data.Matrix;
 
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;

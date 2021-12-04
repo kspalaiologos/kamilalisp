@@ -1,7 +1,7 @@
 package kamilalisp.libs.primitives.linalg;
 
 import kamilalisp.data.*;
-import kamilalisp.matrix.Matrix;
+import kamilalisp.data.Matrix;
 
 import java.math.BigDecimal;
 import java.util.List;

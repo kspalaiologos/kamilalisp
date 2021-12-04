@@ -5,7 +5,7 @@ import com.google.common.collect.Streams;
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
 import kamilalisp.libs.primitives.list.Sort;
-import kamilalisp.matrix.Matrix;
+import kamilalisp.data.Matrix;
 
 import java.math.BigDecimal;
 import java.util.*;

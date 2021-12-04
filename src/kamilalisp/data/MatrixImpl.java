@@ -1,14 +1,10 @@
-package kamilalisp.matrix;
+package kamilalisp.data;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
-import kamilalisp.data.Atom;
-import kamilalisp.data.Type;
 
 import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;

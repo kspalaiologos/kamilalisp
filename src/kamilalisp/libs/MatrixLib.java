@@ -1,6 +1,5 @@
 package kamilalisp.libs;
 
-import ch.obermuhlner.math.big.BigComplex;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
@@ -13,11 +12,10 @@ import kamilalisp.libs.primitives.math.Add;
 import kamilalisp.libs.primitives.math.Product;
 import kamilalisp.libs.primitives.math.Quotient;
 import kamilalisp.libs.primitives.math.Subtract;
-import kamilalisp.matrix.Matrix;
+import kamilalisp.data.Matrix;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;

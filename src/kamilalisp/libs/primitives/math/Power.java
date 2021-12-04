@@ -5,7 +5,7 @@ import ch.obermuhlner.math.big.BigComplexMath;
 import ch.obermuhlner.math.big.BigDecimalMath;
 import kamilalisp.data.*;
 import kamilalisp.libs.math.Constant;
-import kamilalisp.matrix.Matrix;
+import kamilalisp.data.Matrix;
 
 import java.math.BigDecimal;
 import java.util.List;

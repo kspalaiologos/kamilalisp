@@ -4,8 +4,7 @@ import ch.obermuhlner.math.big.BigComplex;
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.Atom;
 import kamilalisp.data.Environment;
-import kamilalisp.data.Executor;
-import kamilalisp.matrix.Matrix;
+import kamilalisp.data.Matrix;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

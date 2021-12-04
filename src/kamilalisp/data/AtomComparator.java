@@ -1,8 +1,6 @@
 package kamilalisp.data;
 
 import ch.obermuhlner.math.big.BigComplex;
-import ch.obermuhlner.math.big.BigComplexMath;
-import kamilalisp.matrix.Matrix;
 
 import java.math.BigDecimal;
 import java.util.Comparator;

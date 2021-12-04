@@ -4,7 +4,7 @@ import ch.obermuhlner.math.big.BigComplex;
 import com.google.common.collect.Streams;
 import kamilalisp.data.*;
 import kamilalisp.libs.math.Constant;
-import kamilalisp.matrix.Matrix;
+import kamilalisp.data.Matrix;
 
 import java.math.BigDecimal;
 import java.util.List;

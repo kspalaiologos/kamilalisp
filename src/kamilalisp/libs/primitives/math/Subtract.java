@@ -2,7 +2,7 @@ package kamilalisp.libs.primitives.math;
 
 import ch.obermuhlner.math.big.BigComplex;
 import kamilalisp.data.*;
-import kamilalisp.matrix.Matrix;
+import kamilalisp.data.Matrix;
 
 import java.io.StringWriter;
 import java.util.List;

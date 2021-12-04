@@ -3,7 +3,7 @@ package kamilalisp.libs.primitives.math;
 import ch.obermuhlner.math.big.BigComplex;
 import ch.obermuhlner.math.big.BigComplexMath;
 import kamilalisp.data.*;
-import kamilalisp.matrix.Matrix;
+import kamilalisp.data.Matrix;
 
 import java.util.List;
 

@@ -2,7 +2,6 @@ package kamilalisp.data;
 
 import ch.obermuhlner.math.big.BigComplex;
 import com.google.common.base.Joiner;
-import kamilalisp.matrix.Matrix;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
