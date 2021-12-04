@@ -1090,6 +1090,32 @@ public class MathLib {
             }
         }));
 
+        env.push("p-dirchlet", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("'p-dirchlet' expects exactly one argument.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("'p-dirchlet' argument", Type.NUMBER);
+                    BigInteger n = arguments.get(0).getNumber().get().toBigInteger();
+                    if(n.compareTo(BigInteger.valueOf(6)) < 0)
+                        throw new Error("'p-dirchlet' argument must be at least 6.");
+                    BigInteger nn = n.multiply(BigInteger.valueOf(2));
+                    // Find a 4k+1 & 4m+3 prime.
+                    // First, find the lowest multiple of 4 greater than n.
+                    BigInteger m = n.divide(BigInteger.valueOf(4)).add(BigInteger.valueOf(1)).multiply(BigInteger.valueOf(4));
+                    // Now, find the greatest multiple of 4 less than 2n.
+                    BigInteger k = nn.divide(BigInteger.valueOf(4)).subtract(BigInteger.valueOf(1)).multiply(BigInteger.valueOf(4));
+                    // Now, find the primes between `m` and `k`.
+                    List<Atom> primes = new ArrayList<>();
+                    for(BigInteger i = m; i.compareTo(k) <= 0; i = i.add(BigInteger.valueOf(1)))
+                        if(i.isProbablePrime(100))
+                            primes.add(new Atom(new BigDecimal(i)));
+                    return primes;
+                }));
+            }
+        }));
+
         // Math utilities implemented in Lisp for no real reason.
         // Except that they're easier to maintain.
         Evaluation.evalString(env, "(def sum (bind foldl' + 0))");
