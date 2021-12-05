@@ -34,8 +34,8 @@ public class CoreLib {
                     }
 
                     @Override
-                    public List requote() {
-                        return arguments;
+                    public Atom requote() {
+                        return code;
                     }
 
                     @Override
@@ -124,8 +124,8 @@ public class CoreLib {
                     }
 
                     @Override
-                    public List requote() {
-                        return arguments;
+                    public Atom requote() {
+                        return code;
                     }
 
                     @Override
@@ -730,6 +730,18 @@ public class CoreLib {
                 return new Atom(new LbcSupplier<>(() -> {
                     arguments.get(0).guardType("First argument to 'str-trim'.", Type.STRING_CONSTANT);
                     return new StringConstant(arguments.get(0).getStringConstant().get().get().trim());
+                }));
+            }
+        }));
+
+        env.push("requote", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'requote'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'requote'.", Type.CLOSURE);
+                    return arguments.get(0).getClosure().get().requote().get().get();
                 }));
             }
         }));
