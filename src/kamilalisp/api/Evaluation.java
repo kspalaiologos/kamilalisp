@@ -1,5 +1,6 @@
 package kamilalisp.api;
 
+import com.google.common.io.Resources;
 import kamilalisp.data.Atom;
 import kamilalisp.data.Environment;
 import kamilalisp.data.Executor;
@@ -11,6 +12,8 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,6 +62,11 @@ public class Evaluation {
         MatrixLib.install(globEnv);
         RegexLib.install(globEnv);
         SymLib.install(globEnv);
+        try {
+            Evaluation.evalString(globEnv, Resources.toString(Resources.getResource("kamilalisp/prelude.lisp"), StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         globEnv.owner = null;
         return globEnv;
     }

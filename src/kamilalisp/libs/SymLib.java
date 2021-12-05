@@ -8,6 +8,7 @@ import kamilalisp.libs.primitives.math.Product;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SymLib {
     public static void install(Environment env) {
@@ -168,6 +169,90 @@ public class SymLib {
                 throw new Error("'D': Can't compute the derivative of " + expr + ".");
             }
 
+            public Atom evaluateSimpNumeric(Executor env, Atom f) {
+                return env.evaluate(f);
+            }
+
+            public boolean isSimpConstant(Atom f) {
+                return f.getType() != Type.STRING && f.getType() != Type.LIST && f.getType() != Type.CLOSURE;
+            }
+
+            public Atom trySimp(Executor env, List<Atom> f, int arity) {
+                if(f.size() == arity && f.subList(1, f.size()).stream().allMatch(this::isSimpConstant))
+                    return evaluateSimpNumeric(env, new Atom(f));
+                else
+                    return null;
+            }
+
+            public Atom simplify(Executor env, Atom f) {
+                if(f.getType() != Type.LIST)
+                    return f;
+                List<Atom> expr = f.getList().get();
+                if(expr.isEmpty())
+                    throw new Error("'D': Simplification of an empty list is not supported.");
+                expr.get(0).guardType("'D' Simplification submodule function head", Type.STRING);
+                Atom result;
+                switch(expr.get(0).getString().get()) {
+                    case "+":
+                        // Try to simplify conj(x) and x + y.
+                        // Also, try to cancel out 0+x and x+0.
+                        if((result = trySimp(env, expr, 2)) != null)
+                            return result;
+                        else if((result = trySimp(env, expr, 3)) != null)
+                            return result;
+                        else if(expr.size() == 3 && (
+                                (expr.get(1).getType() == Type.NUMBER && expr.get(1).getNumber().get().compareTo(BigDecimal.ZERO) == 0)
+                                        || (expr.get(1).getType() == Type.COMPLEX && expr.get(1).getComplex().get().equals(BigComplex.ZERO))))
+                            return expr.get(2);
+                        else if(expr.size() == 3 && (
+                                (expr.get(2).getType() == Type.NUMBER && expr.get(2).getNumber().get().compareTo(BigDecimal.ZERO) == 0)
+                                        || (expr.get(2).getType() == Type.COMPLEX && expr.get(2).getComplex().get().equals(BigComplex.ZERO))))
+                            return expr.get(1);
+                        break;
+                    case "-":
+                        // Try to simplify -x and x - y.
+                        // Also, try to simplify 0-x as -x and x-0 as x.
+                        if((result = trySimp(env, expr, 2)) != null)
+                            return result;
+                        else if((result = trySimp(env, expr, 3)) != null)
+                            return result;
+                        else if(expr.size() == 3 && (
+                                (expr.get(1).getType() == Type.NUMBER && expr.get(1).getNumber().get().compareTo(BigDecimal.ONE) == 0)
+                                        || (expr.get(1).getType() == Type.COMPLEX && expr.get(1).getComplex().get().equals(BigComplex.ONE))))
+                            return new Atom(List.of(new Atom("-"), expr.get(2)));
+                        else if(expr.size() == 3 && (
+                                (expr.get(2).getType() == Type.NUMBER && expr.get(2).getNumber().get().compareTo(BigDecimal.ONE) == 0)
+                                        || (expr.get(2).getType() == Type.COMPLEX && expr.get(2).getComplex().get().equals(BigComplex.ONE))))
+                            return expr.get(1);
+                        break;
+                    case "*":
+                        // Try to simplify signum(x) and x * y.
+                        // Also, try to simplify 0*x and x*0 to both 0, and 1*x and x*1 to both x.
+                        if((result = trySimp(env, expr, 2)) != null)
+                            return result;
+                        else if((result = trySimp(env, expr, 3)) != null)
+                            return result;
+                        else if(expr.size() == 3 && (
+                                (expr.get(1).getType() == Type.NUMBER && expr.get(1).getNumber().get().compareTo(BigDecimal.ZERO) == 0)
+                                        || (expr.get(1).getType() == Type.COMPLEX && expr.get(1).getComplex().get().equals(BigComplex.ZERO))))
+                            return new Atom(new BigDecimal(0));
+                        else if(expr.size() == 3 && (
+                                (expr.get(2).getType() == Type.NUMBER && expr.get(2).getNumber().get().compareTo(BigDecimal.ZERO) == 0)
+                                        || (expr.get(2).getType() == Type.COMPLEX && expr.get(2).getComplex().get().equals(BigComplex.ZERO))))
+                            return new Atom(new BigDecimal(0));
+                        else if(expr.size() == 3 && (
+                                (expr.get(1).getType() == Type.NUMBER && expr.get(1).getNumber().get().compareTo(BigDecimal.ONE) == 0)
+                                        || (expr.get(1).getType() == Type.COMPLEX && expr.get(1).getComplex().get().equals(BigComplex.ONE))))
+                            return expr.get(2);
+                        else if(expr.size() == 3 && (
+                                (expr.get(2).getType() == Type.NUMBER && expr.get(2).getNumber().get().compareTo(BigDecimal.ONE) == 0)
+                                        || (expr.get(2).getType() == Type.COMPLEX && expr.get(2).getComplex().get().equals(BigComplex.ONE))))
+                            return expr.get(1);
+                        break;
+                }
+                return new Atom(expr.stream().map(x -> simplify(env, x)).collect(Collectors.toList()));
+            }
+
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 1 && arguments.size() != 2)
@@ -179,7 +264,13 @@ public class SymLib {
                         this.v = arguments.get(1).getString().get();
                     else
                         this.v = "x";
-                    return env.evaluate(new Atom(List.of(new Atom("lambda"), new Atom(List.of(new Atom(v))), D(code)))).get().get();
+                    Atom deriv = D(code);
+                    Atom prev = null;
+                    while(!deriv.equals(prev)) {
+                        prev = deriv;
+                        deriv = simplify(env, deriv);
+                    }
+                    return env.evaluate(new Atom(List.of(new Atom("lambda"), new Atom(List.of(new Atom(v))), deriv))).get().get();
                 }));
             }
         }));
