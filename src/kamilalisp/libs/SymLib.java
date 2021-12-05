@@ -249,6 +249,13 @@ public class SymLib {
                                         || (expr.get(2).getType() == Type.COMPLEX && expr.get(2).getComplex().get().equals(BigComplex.ONE))))
                             return expr.get(1);
                         break;
+                    case "**":
+                        // Simpify x ** 1 to x.
+                        if(expr.size() == 3 && (
+                                (expr.get(2).getType() == Type.NUMBER && expr.get(2).getNumber().get().compareTo(BigDecimal.ONE) == 0)
+                                        || (expr.get(2).getType() == Type.COMPLEX && expr.get(2).getComplex().get().equals(BigComplex.ONE))))
+                            return expr.get(1);
+                        break;
                 }
                 return new Atom(expr.stream().map(x -> simplify(env, x)).collect(Collectors.toList()));
             }
