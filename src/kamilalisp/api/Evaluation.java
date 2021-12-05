@@ -58,6 +58,7 @@ public class Evaluation {
         FoldLib.install(globEnv);
         MatrixLib.install(globEnv);
         RegexLib.install(globEnv);
+        SymLib.install(globEnv);
         globEnv.owner = null;
         return globEnv;
     }
