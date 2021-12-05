@@ -1115,25 +1115,5 @@ public class MathLib {
                 }));
             }
         }));
-
-        // Math utilities implemented in Lisp for no real reason.
-        // Except that they're easier to maintain.
-        Evaluation.evalString(env, "(def sum (bind foldl' + 0))");
-        Evaluation.evalString(env, "(def cumsum (bind scanl' + 0))");
-        Evaluation.evalString(env, "(def prod (bind foldl' * 1))");
-        Evaluation.evalString(env, "(def cumprod (bind scanl' * 1))");
-        Evaluation.evalString(env, "(def maxl (bind foldl' max -1E100))");
-        Evaluation.evalString(env, "(def minl (bind foldl' min 1E100))");
-        Evaluation.evalString(env, "(def cummax (bind scanl1' max))");
-        Evaluation.evalString(env, "(def cummin (bind scanl1' min))");
-        Evaluation.evalString(env, "(def succ $(+ 1))");
-        Evaluation.evalString(env, "(def pred $(- _ 1))");
-        Evaluation.evalString(env, "(def bounds #(tie minl maxl))");
-        Evaluation.evalString(env, "(def hypot sqrt@sum@:$(** _ 2)@tie)");
-        Evaluation.evalString(env, "(defun aseq (a0 r) \\lambda (n) \\+ a0 \\* r n)");
-        Evaluation.evalString(env, "(defun gseq (a0 q) \\lambda (n) \\* a0 \\** q n)");
-        Evaluation.evalString(env, "(defun totient (x) (let ((y (p-factors x))) (prod (map - y (unique-mask y)))))");
-        // Most frequent value in array
-        Evaluation.evalString(env, "(def mode cadr@car@reverse@sort@:$(lift #(tie size@#1 #0))@keys)");
     }
 }
