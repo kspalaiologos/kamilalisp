@@ -127,7 +127,7 @@ public class SymLib {
                         // d = f(x) * log(f(x)) * (d/dx g(x))
                         Atom a = new Atom(List.of(new Atom("**"), expr.get(1), new Atom(List.of(new Atom("-"), expr.get(2), new Atom(new BigDecimal(1))))));
                         Atom c = new Atom(List.of(new Atom("*"), expr.get(2), D(expr.get(1))));
-                        Atom d = new Atom(List.of(new Atom("*"), expr.get(1), new Atom(List.of(new Atom("ln"), D(expr.get(2))))));
+                        Atom d = new Atom(List.of(new Atom("*"), new Atom(List.of(new Atom("*"), expr.get(1), D(expr.get(2)))), new Atom(List.of(new Atom("ln"), expr.get(1)))));
                         return new Atom(List.of(new Atom("*"), a, new Atom(List.of(new Atom("+"), c, d))));
                     case "sin":
                         if(expr.size() != 2)
@@ -253,6 +253,16 @@ public class SymLib {
                 return new Atom(expr.stream().map(x -> simplify(env, x)).collect(Collectors.toList()));
             }
 
+            public Atom maxSimplify(Executor env, Atom a) {
+                Atom deriv = a;
+                Atom prev = null;
+                while(!deriv.equals(prev)) {
+                    prev = deriv;
+                    deriv = simplify(env, deriv);
+                }
+                return deriv;
+            }
+
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 1 && arguments.size() != 2)
@@ -264,13 +274,7 @@ public class SymLib {
                         this.v = arguments.get(1).getString().get();
                     else
                         this.v = "x";
-                    Atom deriv = D(code);
-                    Atom prev = null;
-                    while(!deriv.equals(prev)) {
-                        prev = deriv;
-                        deriv = simplify(env, deriv);
-                    }
-                    return env.evaluate(new Atom(List.of(new Atom("lambda"), new Atom(List.of(new Atom(v))), deriv))).get().get();
+                    return env.evaluate(new Atom(List.of(new Atom("lambda"), new Atom(List.of(new Atom(v))), maxSimplify(env, D(maxSimplify(env, code)))))).get().get();
                 }));
             }
         }));
