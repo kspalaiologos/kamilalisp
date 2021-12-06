@@ -34,6 +34,14 @@ public class MathLib {
         return rho;
     }
 
+    public static BigComplex asComplex(Atom a) {
+        a.guardType("Argument to 'asComplex'", Type.NUMBER, Type.COMPLEX);
+        if(a.getType() == Type.NUMBER)
+            return BigComplex.valueOf(a.getNumber().get(), BigDecimal.ZERO);
+        else
+            return a.getComplex().get();
+    }
+
     private static int decimalPlaces(BigDecimal number) {
         int scale = number.stripTrailingZeros().scale();
         return scale > 0 ? scale : 0;

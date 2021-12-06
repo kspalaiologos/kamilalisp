@@ -78,7 +78,10 @@ public class Logarithm {
                 return new Atom(new LbcSupplier<>(() -> {
                     arguments.get(0).guardType("First argument to 'ln'.", Type.NUMBER, Type.COMPLEX);
                     if(arguments.get(0).getType() == Type.NUMBER) {
-                        return BigDecimalMath.log(arguments.get(0).getNumber().get(), Constant.getFr(env.env));
+                        if(arguments.get(0).getNumber().get().compareTo(BigDecimal.ZERO) > 0)
+                            return BigDecimalMath.log(arguments.get(0).getNumber().get(), Constant.getFr(env.env));
+                        else
+                            return BigComplexMath.log(BigComplex.valueOf(arguments.get(0).getNumber().get(), new BigDecimal(0)), Constant.getFr(env.env));
                     } else {
                         return BigComplexMath.log(arguments.get(0).getComplex().get(), Constant.getFr(env.env));
                     }

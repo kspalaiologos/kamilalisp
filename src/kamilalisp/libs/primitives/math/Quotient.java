@@ -4,6 +4,7 @@ import ch.obermuhlner.math.big.BigComplex;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import kamilalisp.data.*;
+import kamilalisp.libs.MathLib;
 import kamilalisp.libs.math.Constant;
 import kamilalisp.libs.primitives.linalg.Adjoint;
 import kamilalisp.libs.primitives.linalg.Determinant;
@@ -31,6 +32,9 @@ public class Quotient implements Closure {
         } else if(a1.getType() == Type.LIST && a2.getType() == Type.NUMBER) {
             List<Atom> s = a1.getList().get();
             return new Atom(Lists.partition(s, s.size() / a2.getNumber().get().intValue()).stream().map(x -> new Atom(x)).collect(Collectors.toList()));
+        } else if((a1.getType() == Type.COMPLEX && a2.getType() == Type.NUMBER) || (a2.getType() == Type.COMPLEX && a1.getType() == Type.NUMBER)) {
+            BigComplex a = MathLib.asComplex(a1), b = MathLib.asComplex(a2);
+            return new Atom(a.divide(b, Constant.getFr(env)));
         } else if(a1.getType() == Type.MATRIX && a2.getType() == Type.MATRIX) {
             Matrix m1 = a1.getMatrix().get();
             Matrix m2 = a2.getMatrix().get();
