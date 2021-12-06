@@ -164,6 +164,35 @@ public class SymLib {
                         return new Atom(List.of(new Atom("*"),
                                 new Atom(List.of(new Atom("exp"), expr.get(1))),
                                 D(expr.get(1))));
+                    case "tan":
+                        if(expr.size() != 2)
+                            throw new Error("Invalid invocation to tan.");
+                        // d/dx tan(f(x)) = (d/dx f(x)) * sec^2(f(x))
+                        return new Atom(List.of(new Atom("*"),
+                                D(expr.get(1)),
+                                new Atom(List.of(new Atom("**"), new Atom(List.of(new Atom("sec"), expr.get(1))), new Atom(new BigDecimal(2))))));
+                    case "ctan":
+                        if(expr.size() != 2)
+                            throw new Error("Invalid invocation to ctan.");
+                        // d/dx ctan(f(x)) = (d/dx f(x)) * (- (csec^2(f(x))))
+                        return new Atom(List.of(new Atom("*"),
+                                D(expr.get(1)),
+                                new Atom(List.of(new Atom("*"), new Atom(new BigDecimal(-1)), new Atom(List.of(new Atom("**"), new Atom(List.of(new Atom("csec"), expr.get(1))), new Atom(new BigDecimal(2))))))));
+                    case "sec":
+                        if(expr.size() != 2)
+                            throw new Error("Invalid invocation to sec.");
+                        // d/dx sec(f(x)) = (d/dx f(x)) * (sec(f(x)) * tan(f(x)))
+                        return new Atom(List.of(new Atom("*"),
+                                D(expr.get(1)),
+                                new Atom(List.of(new Atom("*"), new Atom(List.of(new Atom("sec"), expr.get(1))), new Atom(List.of(new Atom("tan"), expr.get(1)))))));
+                    case "csec":
+                        if(expr.size() != 2)
+                            throw new Error("Invalid invocation to csec.");
+                        // d/dx csec(f(x)) = (d/dx f(x)) * (- (csec(f(x)) * ctan(f(x))))
+                        return new Atom(List.of(new Atom("*"),
+                                D(expr.get(1)),
+                                new Atom(List.of(new Atom("*"), new Atom(new BigDecimal(-1)),
+                                        new Atom(List.of(new Atom("*"), new Atom(List.of(new Atom("csec"), expr.get(1))), new Atom(List.of(new Atom("ctan"), expr.get(1)))))))));
                 }
 
                 throw new Error("'D': Can't compute the derivative of " + expr + ".");
