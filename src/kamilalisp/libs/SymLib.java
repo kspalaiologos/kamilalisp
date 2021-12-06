@@ -151,6 +151,20 @@ public class SymLib {
                                 D(expr.get(1)),
                                 new Atom(List.of(new Atom("*"), new Atom(new BigDecimal(-1)),
                                         new Atom(List.of(new Atom("*"), new Atom(List.of(new Atom("csec"), expr.get(1))), new Atom(List.of(new Atom("ctan"), expr.get(1)))))))));
+                    case "lambert-w":
+                        if(expr.size() != 2)
+                            throw new Error("Invalid invocation to lambert-w.");
+                        // d/dx W(f(x)) = (d/dx f(x)) * W(f(x)) / (f(x) * W(f(x)) + f(x))
+                        // d/dx W(f(x)) = a/b
+                        // a = W(f(x)) * d/dx f(x)
+                        // b = (f(x) * W(f(x))) + f(x) = f(x) * (W(f(x)) + 1)
+                        Atom fA = new Atom(List.of(new Atom("*"),
+                                new Atom(List.of(new Atom("lambert-w"), expr.get(1))),
+                                D(expr.get(1))));
+                        Atom fB = new Atom(List.of(new Atom("*"),
+                                expr.get(1),
+                                new Atom(List.of(new Atom("+"), new Atom(List.of(new Atom("lambert-w"), expr.get(1))), new Atom(new BigDecimal(1))))));
+                        return new Atom(List.of(new Atom("/"), fA, fB));
                 }
 
                 throw new Error("'D': Can't compute the derivative of " + expr + ".");
