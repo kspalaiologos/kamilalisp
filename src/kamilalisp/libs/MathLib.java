@@ -726,42 +726,42 @@ public class MathLib {
             }
         }));
 
-        env.push("decode", new Atom(new Closure() {
+        env.push("poly", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 2)
-                    throw new Error("Invalid invocation to 'decode'.");
+                    throw new Error("Invalid invocation to 'poly'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom a = arguments.get(0);
                     Atom b = arguments.get(1);
-                    b.guardType("Second argument to 'decode'", Type.LIST);
+                    b.guardType("Second argument to 'poly'", Type.LIST);
                     if(a.getType() == Type.NUMBER) {
                         BigDecimal n = new BigDecimal(1);
                         BigDecimal base = a.getNumber().get();
                         BigDecimal s = new BigDecimal(0);
                         List<Atom> l = Lists.reverse(b.getList().get());
                         for(int i = 0; i < l.size(); i++) {
-                            l.get(i).guardType("Element in list argument to 'decode'", Type.NUMBER);
+                            l.get(i).guardType("Element in list argument to 'poly'", Type.NUMBER);
                             s = s.add(l.get(i).getNumber().get().multiply(n));
                             n = n.multiply(base);
                         }
                         return s;
                     } else if(a.getType() == Type.LIST) {
                         List<BigDecimal> ns = a.getList().get().stream().map(x -> {
-                            x.guardType("Element in list argument to 'decode'", Type.NUMBER);
+                            x.guardType("Element in list argument to 'poly'", Type.NUMBER);
                             return x.getNumber().get();
                         }).collect(Collectors.toList());
                         BigDecimal s = new BigDecimal(0);
                         BigDecimal n = new BigDecimal(1);
                         List<Atom> l = b.getList().get();
                         for(int i = l.size() - 1; i >= 0; i--) {
-                            l.get(i).guardType("Element in list argument to 'decode'", Type.NUMBER);
+                            l.get(i).guardType("Element in list argument to 'poly'", Type.NUMBER);
                             s = s.add(l.get(i).getNumber().get().multiply(n));
                             n = n.multiply(ns.get(i));
                         }
                         return s;
                     }
-                    throw new Error("First argument to 'decode' must be a number or a list.");
+                    throw new Error("First argument to 'poly' must be a number or a list.");
                 }));
             }
         }));
@@ -1072,13 +1072,13 @@ public class MathLib {
         }));
 
         // Create a polynomial from roots.
-        env.push("poly", new Atom(new Closure() {
+        env.push("mkpoly", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 1)
-                    throw new Error("'poly' expects exactly one argument.");
+                    throw new Error("'mkpoly' expects exactly one argument.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("'poly' argument", Type.LIST);
+                    arguments.get(0).guardType("'mkpoly' argument", Type.LIST);
                     List<Atom> roots = arguments.get(0).getList().get();
                     LinkedList<Atom> p = new LinkedList<>();
                     p.add(new Atom(BigDecimal.ONE));
