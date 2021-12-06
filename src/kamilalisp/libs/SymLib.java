@@ -12,48 +12,6 @@ import java.util.stream.Collectors;
 
 public class SymLib {
     public static void install(Environment env) {
-        env.push("poly-fn", new Atom(new Closure() {
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 1)
-                    throw new Error("Invalid invocation to 'poly-fn'.");
-                return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("Argument to 'poly-fn'", Type.LIST);
-                    List<Atom> coeffs = arguments.get(0).getList().get();
-
-                    // [2, 5, 1, 2]
-                    // 2x^3 + 5x^2 + x + 2
-                    return new Polynomial() {
-                        @Override
-                        public List<Atom> getCoefficients() {
-                            return coeffs;
-                        }
-
-                        @Override
-                        public String representation() {
-                            return "polynomial " + coeffs;
-                        }
-
-                        @Override
-                        public Atom apply(Executor env, List<Atom> arguments) {
-                            if(arguments.size() != 1)
-                                throw new Error("Invalid invocation to 'poly-fn'.");
-                            return new Atom(new LbcSupplier<>(() -> {
-                                arguments.get(0).guardType("Argument to 'poly-fn'", Type.NUMBER);
-                                Atom x = new Atom(BigDecimal.ONE);
-                                Atom total = new Atom(BigDecimal.ZERO);
-                                for (Atom cf : Lists.reverse(coeffs)) {
-                                    total = Add.add2(total, Product.mul2(x, cf));
-                                    x = Product.mul2(x, arguments.get(0));
-                                }
-                                return total.get().get();
-                            }));
-                        }
-                    };
-                }));
-            }
-        }));
-
         env.push("D", new Atom(new Closure() {
             // Derivative with respect to...
             public String v;
@@ -69,7 +27,7 @@ public class SymLib {
                     else
                         return f;
                 else if(f.getType() != Type.LIST)
-                    throw new Error("'D': Derivative of " + f.getType() + " is not supported.");
+                    throw new Error("'D': Derivative of " + f.getType() + " is not supported: " + f.get().get());
 
                 List<Atom> expr = f.getList().get();
                 if(expr.isEmpty())
