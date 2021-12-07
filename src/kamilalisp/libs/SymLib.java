@@ -25,7 +25,7 @@ public class SymLib {
                     if(f.getString().get().equals(v))
                         return new Atom(BigDecimal.ONE);
                     else
-                        return f;
+                        return new Atom(BigDecimal.ZERO); // Partial derivative: treat variable as constant.
                 else if(f.getType() != Type.LIST)
                     throw new Error("'D': Derivative of " + f.getType() + " is not supported: " + f.get().get());
 
