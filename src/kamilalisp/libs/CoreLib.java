@@ -3,12 +3,16 @@ package kamilalisp.libs;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
+import com.google.common.io.Resources;
 import com.google.common.primitives.Chars;
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -65,6 +69,33 @@ public class CoreLib {
                     }
                 });
                 return result;
+            }
+        }));
+
+        env.push("import", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to `import`.");
+                arguments.get(0).guardType("Argument to 'import'", Type.STRING_CONSTANT);
+                String name = arguments.get(0).getStringConstant().get().get();
+                String code;
+                if(name.startsWith("!")) {
+                    name = name.substring(1);
+                    try {
+                        code = Resources.toString(Resources.getResource("kamilalisp/" + name), StandardCharsets.UTF_8);
+                    } catch (Exception e) {
+                        throw new Error("Could not read standard library file '" + name + "'.");
+                    }
+                } else {
+                    try {
+                        code = Files.readString(Path.of(arguments.get(0).getStringConstant().get().get()));
+                    } catch(Exception e) {
+                        throw new Error("Could not read file '" + arguments.get(0).getStringConstant().get().get() + "'.");
+                    }
+                }
+                Evaluation.evalString(env.env, code);
+                return Atom.NULL;
             }
         }));
 
