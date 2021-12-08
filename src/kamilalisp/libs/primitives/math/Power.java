@@ -38,8 +38,6 @@ public class Power implements Closure {
             else { a = a1.getComplex().get(); }
             if(a2.getType() == Type.NUMBER) { b = BigComplex.valueOf(a2.getNumber().get(), BigDecimal.ZERO); }
             else { b = a2.getComplex().get(); }
-            assertGaussian(a);
-            assertGaussian(b);
             return new Atom(BigComplexMath.pow(a, b, Constant.getFr(env.env)));
         }
     }
