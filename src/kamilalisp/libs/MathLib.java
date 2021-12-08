@@ -10,6 +10,8 @@ import com.google.common.collect.Streams;
 import kamilalisp.api.Evaluation;
 import kamilalisp.data.*;
 import kamilalisp.libs.math.*;
+import kamilalisp.libs.math.bigop.Bernoulli;
+import kamilalisp.libs.math.bigop.Rational;
 import kamilalisp.libs.primitives.list.Sort;
 import kamilalisp.libs.primitives.math.*;
 import kamilalisp.libs.primitives.statistics.Average;
@@ -294,6 +296,22 @@ public class MathLib {
                         return result.stream().map(x -> new Atom(new LbcSupplier<>(() -> x))).collect(Collectors.toList());
                     } else
                         throw new Error("Invalid invocation to '|'. Expected two numbers, two strings or two lists.");
+                }));
+            }
+        }));
+
+        env.push("bernoulli", new Atom(new Closure() {
+            private Bernoulli b = new Bernoulli();
+
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'bernoulli'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("Argument to 'bernoulli'", Type.NUMBER);
+                    BigDecimal p = arguments.get(0).getNumber().get();
+                    Rational r = b.at(p.intValue());
+                    return List.of(new Atom(new BigDecimal(r.numer())), new Atom(new BigDecimal(r.denom())));
                 }));
             }
         }));
