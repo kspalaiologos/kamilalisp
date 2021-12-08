@@ -831,6 +831,30 @@ public class ListLib {
             }
         }));
 
+        env.push("starts-with", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'starts-with'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom a1, a2;
+                    a1 = arguments.get(0);
+                    a2 = arguments.get(1);
+                    if(a1.getType() == Type.LIST && a2.getType() == Type.LIST) {
+                        List<Atom> l1 = a1.getList().get();
+                        List<Atom> l2 = a2.getList().get();
+                        return new BigDecimal(Streams.zip(l1.stream(), l2.stream(), (x, y) -> x.equals(y)).anyMatch(x -> !x) ? 0 : 1);
+                    } else if(a1.getType() == Type.STRING_CONSTANT && a2.getType() == Type.STRING_CONSTANT) {
+                        String s1 = a1.getStringConstant().get().get();
+                        String s2 = a2.getStringConstant().get().get();
+                        return s2.startsWith(s1) ? BigDecimal.ZERO : BigDecimal.ONE;
+                    } else {
+                        throw new Error("Invalid invocation to 'starts-with'. Expected two strings or two lists, got " + a1.getType() + " and " + a2.getType() + ".");
+                    }
+                }));
+            }
+        }));
+
         env.push("keys", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
