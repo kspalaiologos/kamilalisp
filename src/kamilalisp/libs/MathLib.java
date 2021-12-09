@@ -316,6 +316,39 @@ public class MathLib {
             }
         }));
 
+        env.push("digamma", new Atom(new Closure() {
+            private Bernoulli b = new Bernoulli();
+
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'digamma'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    boolean numeric = false;
+                    arguments.get(0).guardType("Argument to 'digamma'", Type.NUMBER, Type.COMPLEX);
+                    if(arguments.get(0).getType() == Type.NUMBER)
+                        numeric = true;
+                    BigComplex z = asComplex(arguments.get(0));
+
+                    // phi(z) = ln(z) - 1/2z + sum n=1 to inf zeta(1-2n)/z^2n
+                    // = ln(z) - 1/2z - sum n=1 to inf B_2n/2nz^2n
+                    BigComplex ln = BigComplexMath.log(z, Constant.getFr(env.env));
+                    BigComplex r2z = BigComplex.ONE.divide(z.multiply(BigComplex.valueOf(BigDecimal.valueOf(2))), Constant.getFr(env.env));
+                    // Compute the sum now.
+                    BigComplex sum = BigComplex.ZERO;
+                    if(z.abs(Constant.getFr(env.env)).compareTo(new BigDecimal(100)) >= 0) {
+                        for (int n = 1; n < Constant.getFr(env.env).getPrecision() / 10; n++) {
+                            BigComplex num = BigComplex.valueOf(b.at(2 * n).BigDecimalValue(Constant.getFr(env.env)));
+                            BigComplex den = BigComplexMath.pow(z, 2 * n, Constant.getFr(env.env)).multiply(BigComplex.valueOf(BigDecimal.valueOf(2 * n)));
+                            sum = sum.add(num.divide(den, Constant.getFr(env.env)));
+                        }
+                    }
+                    BigComplex result = ln.subtract(r2z).subtract(sum);
+                    return numeric ? result.re : result;
+                }));
+            }
+        }));
+
         env.push("&", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
