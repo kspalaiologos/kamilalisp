@@ -63,5 +63,25 @@ For a prime number `p`, returns `p - 1`. For a composite number, returns the pro
 The algorithm KamilaLisp implements is different and equivalent to the following:
 
 ```lisp
-(defun totient (x) (let ((y (p-factors x))) (prod (map - y (unique-mask y)))))
+(defun totient (x) (let (\y \p-factors x) (prod \map - y \unique-mask y)))
+```
+
+### `(digamma z)`
+
+Return the value of `digamma(z)` for any given `z`. Approximation for smaller numbers (`z < 100`) is performed using the following formula:
+
+```
+ln(x) - 1/(2z)
+```
+
+For `z > 100`, the Euler-MacLaurin formula is used to ease out the difference between the Dirchlet integral form and a closely related to it sum. From
+
+```
+sum n=1 to inf of 1/n - 1/(z+n)
+```
+
+We can derive that the final formula is
+
+```
+phi(z) = ln(z) - 1/2z + sum n=1 to inf zeta(1-2n)/z^2n = ln(z) - 1/2z - sum n=1 to inf B_2n/2nz^2n
 ```
