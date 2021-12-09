@@ -587,7 +587,7 @@ public class MathLib {
             }
         }));
 
-        env.push("**", new Atom(new Power()));
+        env.push("**", DyadicMultivariateFunction.of(new Power()));
 
         env.push("!", new Atom(new Closure() {
             @Override
