@@ -37,3 +37,5 @@
 (def ⍨ commute)
 (def ⍞ println)
 (def +/ sum)
+(def ∊↑ car)
+(def ∊↓ cdr)
