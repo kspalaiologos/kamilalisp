@@ -12,6 +12,7 @@ import kamilalisp.data.*;
 import kamilalisp.libs.math.*;
 import kamilalisp.libs.math.bigop.Bernoulli;
 import kamilalisp.libs.math.bigop.Rational;
+import kamilalisp.libs.primitives.DyadicMultivariateFunction;
 import kamilalisp.libs.primitives.list.Sort;
 import kamilalisp.libs.primitives.math.*;
 import kamilalisp.libs.primitives.statistics.Average;
@@ -119,13 +120,13 @@ public class MathLib {
         LambertW.install(env);
         MobiusMu.install(env);
 
-        env.push("+", new Atom(new Add()));
+        env.push("+", DyadicMultivariateFunction.of(new Add()));
 
-        env.push("-", new Atom(new Subtract()));
+        env.push("-", DyadicMultivariateFunction.of(new Subtract()));
 
-        env.push("*", new Atom(new Product()));
+        env.push("*", DyadicMultivariateFunction.of(new Product()));
 
-        env.push("/", new Atom(new Quotient()));
+        env.push("/", DyadicMultivariateFunction.of(new Quotient()));
 
         env.push("%", new Atom(new Remainder()));
 
