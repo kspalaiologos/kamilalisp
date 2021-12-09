@@ -72,10 +72,10 @@ Return the value of `digamma(z)` for any given `z`. Approximation for smaller nu
 
 ![\ln(z) - \frac{1}{2z}](digamma-f1.png)
 
-For `z > 100`, the Euler-MacLaurin formula is used to ease out the difference between the Dirchlet integral form and a closely related to it sum. From
+For `z > 100`, the Euler-MacLaurin formula is used to ease out the difference between the Dirchlet integral form and a closely related to it sum. From:
 
 ![\sum_{n=1}^{\infty} \frac{1}{n} - \frac{1}{z+n}](digamma-f2.png)
 
-We can derive that the final formula is
+we can derive that the final formula is:
 
 ![\varphi(z) = \ln(z) - \frac{1}{2z} + \sum_{n=1}^{\infty} \frac{\zeta(1-2n)}{z^{2n}} = \ln(z) - \frac{1}{2z} - \sum_{n=1}^{\infty} \frac{B_{2n}}{2nz^{2n}}](digamma-f3.png)
