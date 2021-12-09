@@ -507,7 +507,7 @@ public class MathLib {
             }
         }));
 
-        env.push("min", new Atom(new Closure() {
+        env.push("min", DyadicMultivariateFunction.of(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 2)
@@ -529,7 +529,7 @@ public class MathLib {
             }
         }));
 
-        env.push("max", new Atom(new Closure() {
+        env.push("max", DyadicMultivariateFunction.of(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
                 if(arguments.size() != 2)
