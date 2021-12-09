@@ -70,18 +70,12 @@ The algorithm KamilaLisp implements is different and equivalent to the following
 
 Return the value of `digamma(z)` for any given `z`. Approximation for smaller numbers (`z < 100`) is performed using the following formula:
 
-```
-ln(x) - 1/(2z)
-```
+![\ln(z) - \frac{1}{2z}](digamma-f1.png)
 
 For `z > 100`, the Euler-MacLaurin formula is used to ease out the difference between the Dirchlet integral form and a closely related to it sum. From
 
-```
-sum n=1 to inf of 1/n - 1/(z+n)
-```
+![\sum_{n=1}^{\infty} \frac{1}{n} - \frac{1}{z+n}](digamma-f2.png)
 
 We can derive that the final formula is
 
-```
-phi(z) = ln(z) - 1/2z + sum n=1 to inf zeta(1-2n)/z^2n = ln(z) - 1/2z - sum n=1 to inf B_2n/2nz^2n
-```
+![\varphi(z) = \ln(z) - \frac{1}{2z} + \sum_{n=1}^{\infty} \frac{\zeta(1-2n)}{z^{2n}} = \ln(z) - \frac{1}{2z} - \sum_{n=1}^{\infty} \frac{B_{2n}}{2nz^{2n}}](digamma-f3.png)
