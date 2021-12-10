@@ -571,13 +571,13 @@ public class CoreLib {
                     if(arguments.get(0).getType() == Type.NUMBER) {
                         int n = arguments.get(0).getNumber().get().intValue();
                         for (int i = 0; i < n; i++)
-                            rest.set(0, c.apply(env, rest));
+                            rest.set(0, c.apply(env, rest).eager());
                     } else if(arguments.get(0).isCallable()) {
                         Callable f = arguments.get(0).getCallable().get();
                         Atom prev = Atom.NULL;
                         while(f.apply(env, List.of(prev, rest.get(0))).coerceBool()) {
                             prev = rest.get(0);
-                            rest.set(0, c.apply(env, rest));
+                            rest.set(0, c.apply(env, rest).eager());
                         }
                     }
 
@@ -601,11 +601,11 @@ public class CoreLib {
                     if(arguments.get(1).getType() == Type.NUMBER) {
                         int n = arguments.get(1).getNumber().get().intValue();
                         for (int i = 0; i < n; i++)
-                            result.add(rest.set(0, c.apply(env, rest)));
+                            result.add(rest.set(0, c.apply(env, rest).eager()));
                     } else if(arguments.get(1).isCallable()) {
                         Callable f = arguments.get(1).getCallable().get();
                         while(f.apply(env, List.of(result.size() > 0 ? result.get(result.size() - 1) : Atom.NULL, rest.get(0))).coerceBool())
-                            result.add(rest.set(0, c.apply(env, rest)));
+                            result.add(rest.set(0, c.apply(env, rest).eager()));
                     } else
                         throw new Error("Invalid invocation to 'scanterate'. Expected a callable or a number as the 2nd argument.");
 

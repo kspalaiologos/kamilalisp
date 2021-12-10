@@ -27,3 +27,7 @@
 
 ;; Most frequent value in array.
 (def mode cadr@car@reverse@sort@:$(lift #(tie size@#1 #0))@keys)
+
+;; Insert f between each pair of elements. Perform this operation twice, then check if all elements are equal.
+;; e.g., (between < '(2 3 4)) yields 1, since 2<3 and 3<4.
+(defun between (f vec) (foldl1' & \n-foldl1' 2 f vec))
