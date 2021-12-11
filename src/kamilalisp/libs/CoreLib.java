@@ -619,7 +619,7 @@ public class CoreLib {
         env.push("bind", new Atom(new Macro() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() < 2)
+                if(arguments.size() < 1)
                     throw new Error("Invalid invocation to 'bind'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     Atom arg0 = env.evaluate(arguments.get(0));
