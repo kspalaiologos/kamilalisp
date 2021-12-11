@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 public class SymLib {
     public static void install(Environment env) {
         env.push("D", new Atom(new Derivative()));
+        
         // (nabla '(x y z) f) returns a function that yields the gradient vector of f given an argument.
         env.push("nabla", new Atom(new Closure() {
             Derivative derivativeEngine = new Derivative();

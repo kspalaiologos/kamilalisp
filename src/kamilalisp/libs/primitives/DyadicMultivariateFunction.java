@@ -18,7 +18,7 @@ public class DyadicMultivariateFunction {
                         return f.apply(env, arguments).get().get();
                     else {
                         return arguments.stream().reduce((x, y) ->
-                                f.apply(env, Arrays.asList(x.eager(), y.eager())).eager()
+                                f.apply(env, Arrays.asList(x, y))
                         ).get().get().get();
                     }
                 }));
