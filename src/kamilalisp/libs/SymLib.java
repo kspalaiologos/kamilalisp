@@ -32,7 +32,7 @@ public class SymLib {
                     return new Closure() {
                         @Override
                         public String representation() {
-                            return "∇f=(" + fns + ")";
+                            return "∇f=" + fns;
                         }
 
                         @Override
