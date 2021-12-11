@@ -4,9 +4,11 @@ import kamilalisp.data.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class RegexLib {
     public static void install(Environment env) {
@@ -80,6 +82,21 @@ public class RegexLib {
                         reader.appendTail(out);
                         return out.toString();
                     }
+                }));
+            }
+        }));
+
+        env.push("regex-split", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 2)
+                    throw new Error("Invalid invocation to 'regex-split'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("First argument to 'regex-split'", Type.STRING_CONSTANT);
+                    arguments.get(1).guardType("Second argument to 'regex-split'", Type.STRING_CONSTANT);
+                    String pattern = arguments.get(0).getStringConstant().get().get();
+                    String input = arguments.get(1).getStringConstant().get().get();
+                    return Arrays.stream(input.split(pattern)).map(x -> new Atom(new StringConstant(x))).collect(Collectors.toList());
                 }));
             }
         }));
