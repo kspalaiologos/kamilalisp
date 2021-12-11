@@ -173,7 +173,7 @@ public class MathLib {
             }
         }));
 
-        env.push("~", new Atom(new Closure() {
+        env.push("~", DyadicMultivariateFunction.of(new Closure() {
             public String reverseCase(String text) {
                 return text.chars()
                         .map(c -> Character.isUpperCase(c) ?
