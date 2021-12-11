@@ -616,6 +616,28 @@ public class CoreLib {
             }
         }));
 
+        // (f:g a b c) = (f (g a) (g b) (g c))
+        env.push("over", new Atom(new Macro() {
+            @Override
+            public Atom apply(Executor env, List<Atom> tmp) {
+                // #(f g h) <=> (f (g ...) (h ...))
+                // #(f g) <=> (f (g ...))
+                return new Atom(new Closure() {
+                    @Override
+                    public Atom apply(Executor innerEnv, List<Atom> arguments) {
+                        Atom first = env.evaluate(tmp.get(0));
+                        Atom second = env.evaluate(tmp.get(1));
+                        first.guardType("'over' head", Type.CLOSURE, Type.MACRO);
+                        second.guardType("'over' child", Type.CLOSURE, Type.MACRO);
+
+                        return first.getCallable().get().apply(innerEnv, arguments.stream()
+                                .map(x -> second.getCallable().get().apply(innerEnv, List.of(x)))
+                                .collect(Collectors.toList()));
+                    }
+                });
+            }
+        }));
+
         env.push("bind", new Atom(new Macro() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {

@@ -4,4 +4,4 @@
 (def dir \index-of (str-join@:car@:str-explode data) "ufd")
 (def aim \scanl1' + \:* x \:pred dir)
 (def fwd \:$(= 1) dir)
-(println@* (sum@:* fwd x) \sum@:* fwd \:* aim x)
+(println@*^$(sum@:* fwd) x \:* aim x)

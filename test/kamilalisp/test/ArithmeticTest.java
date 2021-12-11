@@ -238,9 +238,9 @@ class ArithmeticTest {
     @Test
     void testDecode() {
         Environment env = Evaluation.createDefaultEnv();
-        Evaluation.evalString(env, "(def hms-to-sec #((bind decode '(24 60 60)) tie))");
+        Evaluation.evalString(env, "(def hms-to-sec #((bind poly '(24 60 60)) tie))");
         assertEquals(Evaluation.evalString(env, "(hms-to-sec 2 46 40)").get(0).getNumber().get(), new BigDecimal(10000));
-        assertEquals(Evaluation.evalString("[2 decode '(1 1 0 1)]").get(0).getNumber().get(), new BigDecimal(13));
+        assertEquals(Evaluation.evalString("[2 poly '(1 1 0 1)]").get(0).getNumber().get(), new BigDecimal(13));
     }
 
     @Test

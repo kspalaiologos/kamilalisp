@@ -2,7 +2,10 @@ grammar Grammar;
 
 file_: form * EOF;
 
-form: form_rem ('@' form_rem)*
+form: form_at ('^' form_at)*
+    ;
+
+form_at: form_rem ('@' form_rem)*
     ;
 
 form_rem: reader_macro
@@ -115,10 +118,10 @@ NIL : 'nil';
 // Normally I'd have made a rule with NOTID and inverted it in a set.
 
 fragment
-NOTID: ~('@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';') ;
+NOTID: ~('@' | '^' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';') ;
 
 fragment
-NOTID_START: ~('#' | '$' | '\\' | '\'' | '@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | ':');
+NOTID_START: ~('#' | '^' | '$' | '\\' | '\'' | '@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | ':');
 
 NAME: NOTID_START NOTID* ;
 

@@ -22,6 +22,16 @@ public class DefaultVisitor extends AbstractParseTreeVisitor<Atom> implements Gr
 
     @Override
     public Atom visitForm(GrammarParser.FormContext ctx) {
+        if(ctx.form_at().size() > 1) {
+            List<Atom> components = ctx.form_at().stream().map(x -> visitForm_at(x)).collect(Collectors.toList());
+            return new Atom(Stream.concat(Stream.of(new Atom("over")), components.stream()).collect(Collectors.toList()));
+        } else {
+            return visit(ctx.form_at(0));
+        }
+    }
+
+    @Override
+    public Atom visitForm_at(GrammarParser.Form_atContext ctx) {
         if(ctx.form_rem().size() > 1) {
             List<Atom> components = Lists.reverse(ctx.form_rem().stream().map(x -> visitChildren(x)).collect(Collectors.toList()));
             return new Atom(Stream.concat(Stream.of(new Atom("atop")), components.stream()).collect(Collectors.toList()));
