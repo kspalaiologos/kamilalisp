@@ -315,7 +315,7 @@ public class CoreLib {
                     arguments.get(0).guardType("First argument to 'map'", Type.CLOSURE, Type.MACRO);
                     if(arguments.size() == 2) {
                         if (arguments.get(1).getType() == Type.LIST) {
-                            return arguments.get(1).getList().get().stream().parallel().map(x ->
+                            return arguments.get(1).getList().get().stream().map(x ->
                                     new Atom(new LbcSupplier<>(() ->
                                             arguments.get(0).getCallable().get().apply(env, Collections.singletonList(x)).get().get()
                                     ))
