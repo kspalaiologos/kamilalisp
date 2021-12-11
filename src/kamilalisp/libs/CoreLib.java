@@ -765,6 +765,61 @@ public class CoreLib {
             }
         }));
 
+        // Sequenced, scoped operations.
+        // (let-seq
+        //   (def x 3)
+        //   (defun add3 (y) (+ x y))
+        //   (add3 2))
+        env.push("let-seq", new Atom(new Macro() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                return new Atom(new LbcSupplier<>(() -> {
+                    Environment e = env.env.descendant("let-seq environment.");
+                    Executor exec = new Executor(e);
+                    loop: for(Atom a : arguments) {
+                        if(a.getType() == Type.LIST) {
+                            List<Atom> list = a.getList().get();
+                            if(list.size() > 0) {
+                                list.get(0).guardType("First element of 'let-seq' list.", Type.STRING);
+                                String name = list.get(0).getString().get();
+                                switch(name) {
+                                    case "def":
+                                        if(list.size() != 3)
+                                            throw new Error("Invalid invocation to 'def' in 'let-seq'.");
+                                        list.get(1).guardType("First argument to 'def' in 'let-seq'.", Type.STRING);
+                                        String varName = list.get(1).getString().get();
+                                        Atom value = exec.evaluate(list.get(2));
+                                        e.push(varName, value);
+                                        continue loop;
+                                    case "defun":
+                                        if(list.size() != 4)
+                                            throw new Error("Invalid invocation to 'defun' in 'let-seq'.");
+                                        list.get(1).guardType("First argument to 'defun' in 'let-seq'.", Type.STRING);
+                                        String funcName = list.get(1).getString().get();
+                                        Atom params = list.get(2);
+                                        Atom code = list.get(3);
+                                        e.push(funcName, exec.evaluate(new Atom(List.of(new Atom("lambda"), params, code))));
+                                        continue loop;
+                                    case "defmacro":
+                                        if(list.size() != 4)
+                                            throw new Error("Invalid invocation to 'defmacro' in 'let-seq'.");
+                                        list.get(1).guardType("First argument to 'defmacro' in 'let-seq'.", Type.STRING);
+                                        String macroName = list.get(1).getString().get();
+                                        Atom mparams = list.get(2);
+                                        Atom mcode = list.get(3);
+                                        e.push(macroName, exec.evaluate(new Atom(List.of(new Atom("macro"), mparams, mcode))));
+                                        continue loop;
+                                }
+                            }
+                        }
+
+                        return exec.evaluate(a).get().get();
+                    }
+                    return Atom.NULL.get().get();
+                }));
+            }
+        }));
+
         env.push("requote", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
