@@ -460,6 +460,30 @@ public class MathLib {
             }
         }));
 
+        env.push("brown", new Atom(new Closure() {
+            public BigDecimal brown(BigInteger n, Environment env) {
+                return BigDecimalMath.sqrt(new BigDecimal(brownSub(n)), Constant.getFr(env));
+            }
+
+            private BigInteger brownSub(BigInteger n) {
+                if (n.compareTo(BigInteger.ZERO) <= 0) {
+                    return BigInteger.ZERO;
+                } else {
+                    return BigInteger.TEN.multiply(brownSub(n.subtract(BigInteger.ONE))).add(n);
+                }
+            }
+
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 1)
+                    throw new Error("Invalid invocation to 'brown'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    arguments.get(0).guardType("Argument to 'brown'", Type.NUMBER);
+                    return brown(arguments.get(0).getNumber().get().toBigInteger(), env.env);
+                }));
+            }
+        }));
+
         env.push("/=", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
