@@ -38,8 +38,8 @@ public class CoreLib {
                     }
 
                     @Override
-                    public Atom requote() {
-                        return code;
+                    public List<Atom> requote() {
+                        return List.of(new Atom(params), code);
                     }
 
                     @Override
@@ -155,8 +155,8 @@ public class CoreLib {
                     }
 
                     @Override
-                    public Atom requote() {
-                        return code;
+                    public List<Atom> requote() {
+                        return List.of(new Atom(params), code);
                     }
 
                     @Override
@@ -772,7 +772,7 @@ public class CoreLib {
                     throw new Error("Invalid invocation to 'requote'.");
                 return new Atom(new LbcSupplier<>(() -> {
                     arguments.get(0).guardType("First argument to 'requote'.", Type.CLOSURE);
-                    return arguments.get(0).getClosure().get().requote().get().get();
+                    return arguments.get(0).getClosure().get().requote();
                 }));
             }
         }));
