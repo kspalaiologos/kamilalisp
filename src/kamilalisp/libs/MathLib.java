@@ -1107,7 +1107,7 @@ public class MathLib {
                     Atom source = arguments.get(0);
                     source.guardType("'re' argument", Type.COMPLEX, Type.NUMBER);
                     if(source.getType() == Type.COMPLEX)
-                        return source.getComplex().get().re();
+                        return source.getComplex().get().re;
                     else
                         return source.getNumber().get();
                 }));
@@ -1123,7 +1123,7 @@ public class MathLib {
                     Atom source = arguments.get(0);
                     source.guardType("'im' argument", Type.COMPLEX, Type.NUMBER);
                     if(source.getType() == Type.COMPLEX)
-                        return source.getComplex().get().im();
+                        return source.getComplex().get().im;
                     else
                         return BigDecimal.ZERO;
                 }));
