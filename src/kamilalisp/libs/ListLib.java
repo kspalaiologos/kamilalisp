@@ -244,14 +244,19 @@ public class ListLib {
         env.push("any", new Atom(new Closure() {
             @Override
             public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() != 2)
+                if(arguments.size() != 2 && arguments.size() != 1)
                     throw new Error("Invalid invocation to 'any'.");
                 return new Atom(new LbcSupplier<>(() -> {
-                    arguments.get(0).guardType("First argument to 'any'", Type.CLOSURE, Type.MACRO);
-                    arguments.get(1).guardType("Second argument to 'any'", Type.LIST);
-                    return arguments.get(1).getList().get().stream().anyMatch(x ->
-                            arguments.get(0).getCallable().get().apply(env, Collections.singletonList(x)).coerceBool()
-                    ) ? BigDecimal.ONE : BigDecimal.ZERO;
+                    if(arguments.size() == 2) {
+                        arguments.get(0).guardType("First argument to 'any'", Type.CLOSURE, Type.MACRO);
+                        arguments.get(1).guardType("Second argument to 'any'", Type.LIST);
+                        return arguments.get(1).getList().get().stream().anyMatch(x ->
+                                arguments.get(0).getCallable().get().apply(env, Collections.singletonList(x)).coerceBool()
+                        ) ? BigDecimal.ONE : BigDecimal.ZERO;
+                    } else {
+                        arguments.get(0).guardType("First argument to 'any'", Type.LIST);
+                        return arguments.get(0).getList().get().stream().anyMatch(Atom::coerceBool) ? BigDecimal.ONE : BigDecimal.ZERO;
+                    }
                 }));
             }
         }));

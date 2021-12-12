@@ -801,8 +801,7 @@ public class CoreLib {
                     loop: for(Atom a : arguments) {
                         if(a.getType() == Type.LIST) {
                             List<Atom> list = a.getList().get();
-                            if(list.size() > 0) {
-                                list.get(0).guardType("First element of 'let-seq' list.", Type.STRING);
+                            if(list.size() > 0 && list.get(0).getType() == Type.STRING) {
                                 String name = list.get(0).getString().get();
                                 switch(name) {
                                     case "def":
