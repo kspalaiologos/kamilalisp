@@ -86,3 +86,7 @@ KamilaLisp is distributed under the GNU General Public License v3. See [LICENSE]
 ---
 
 > kmalia is a cool name
+
+---
+
+> meow/10 ~tsuki software foundation
