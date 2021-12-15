@@ -3,6 +3,7 @@ package kamilalisp.data;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.Streams;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -16,6 +17,7 @@ public abstract class Matrix {
     public abstract int getCols();
 
     public abstract Atom get(int row, int col);
+    public abstract void set(int row, int col, Atom a);
     public abstract List<Atom> ravel();
     public abstract Stream<List<Atom>> rows();
     public abstract Stream<List<Atom>> cols();
@@ -25,6 +27,10 @@ public abstract class Matrix {
     public abstract Matrix transpose();
 
     public abstract boolean isNumeric();
+
+    public Matrix copy() {
+        return from(new ArrayList<>(ravel()), getRows(), getCols());
+    }
 
     public Matrix transmogrifyRank0(Function<Atom, Atom> f) {
         return from(ravel().stream().map(x -> f.apply(x)).collect(Collectors.toList()), getRows(), getCols());

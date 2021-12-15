@@ -15,6 +15,7 @@ import kamilalisp.libs.primitives.math.Subtract;
 import kamilalisp.data.Matrix;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -113,6 +114,46 @@ public class MatrixLib {
                         else
                             return m1.get(row, col);
                     }, m1.getRows(), m1.getCols());
+                }));
+            }
+        }));
+
+        env.push("mat-bresenham", new Atom(new Closure() {
+            @Override
+            public Atom apply(Executor env, List<Atom> arguments) {
+                if(arguments.size() != 5)
+                    throw new Error("Invalid invocation to 'mat-bresenham'.");
+                return new Atom(new LbcSupplier<>(() -> {
+                    Atom one = new Atom(BigDecimal.ONE);
+
+                    int x1, y1, x2, y2;
+                    Matrix mat;
+                    arguments.get(0).guardType("Argument to 'mat-bresenham'", Type.NUMBER);
+                    arguments.get(1).guardType("Argument to 'mat-bresenham'", Type.NUMBER);
+                    arguments.get(2).guardType("Argument to 'mat-bresenham'", Type.NUMBER);
+                    arguments.get(3).guardType("Argument to 'mat-bresenham'", Type.NUMBER);
+                    arguments.get(4).guardType("Final argument to 'mat-bresenham'", Type.MATRIX);
+                    x1 = arguments.get(0).getNumber().get().toBigInteger().intValue();
+                    y1 = arguments.get(1).getNumber().get().toBigInteger().intValue();
+                    x2 = arguments.get(2).getNumber().get().toBigInteger().intValue();
+                    y2 = arguments.get(3).getNumber().get().toBigInteger().intValue();
+                    mat = arguments.get(4).getMatrix().get().copy();
+
+                    int dx = x2 - x1;
+                    int dy = y2 - y1;
+                    int D = 2 * dy - dx;
+
+                    int y = y1;
+                    for(int x = x1; x < x2; x++) {
+                        mat.set(y, x, one);
+                        if(D > 0) {
+                            y++;
+                            D -= dx * 2;
+                        }
+                        D += dy * 2;
+                    }
+
+                    return mat;
                 }));
             }
         }));

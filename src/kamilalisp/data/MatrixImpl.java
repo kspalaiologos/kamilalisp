@@ -52,6 +52,11 @@ public class MatrixImpl extends Matrix {
     }
 
     @Override
+    public void set(int row, int col, Atom a) {
+        ravelData.set(row * iCols + col, a);
+    }
+
+    @Override
     public List<Atom> ravel() {
         return ravelData;
     }
@@ -106,6 +111,11 @@ public class MatrixImpl extends Matrix {
             @Override
             public Atom get(int row, int col) {
                 return MatrixImpl.this.get(col, row);
+            }
+
+            @Override
+            public void set(int row, int col, Atom a) {
+                MatrixImpl.this.set(row, col, a);
             }
 
             @Override
