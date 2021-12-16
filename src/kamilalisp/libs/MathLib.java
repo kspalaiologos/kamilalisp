@@ -132,35 +132,7 @@ public class MathLib {
 
         env.push("gcd", DyadicMultivariateFunction.of(new GCD()));
 
-        env.push("lcm", new Atom(new Closure() {
-            private Atom IDENTITY = new Atom(BigDecimal.ZERO);
-
-            private Atom lcm(Environment env, Atom a1, Atom a2) {
-                a1.guardType("First argument to 'lcm'", Type.NUMBER, Type.COMPLEX);
-                a2.guardType("Second argument to 'lcm'", Type.NUMBER, Type.COMPLEX);
-                if(a1.getType() == Type.NUMBER && a2.getType() == Type.NUMBER) {
-                    return new Atom(a1.getNumber().get().multiply(a2.getNumber().get()).divide(gcdAtom(env, a1, a2).getNumber().get()));
-                } else {
-                    BigComplex a, b;
-                    if(a1.getType() == Type.NUMBER) { a = BigComplex.valueOf(a1.getNumber().get(), BigDecimal.ZERO); }
-                    else { a = a1.getComplex().get(); }
-                    if(a2.getType() == Type.NUMBER) { b = BigComplex.valueOf(a2.getNumber().get(), BigDecimal.ZERO); }
-                    else { b = a2.getComplex().get(); }
-                    assertGaussian(a);
-                    assertGaussian(b);
-                    return new Atom(a.multiply(b).divide(gcd(env, a, b), Constant.getFr(env)));
-                }
-            }
-
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() == 0 || arguments.size() > 2)
-                    throw new Error("Invalid 'lcm' invocation.");
-                if(arguments.size() == 1)
-                    return arguments.get(0);
-                return new Atom(new LbcSupplier<>(() -> lcm(env.env, arguments.get(0), arguments.get(1)).get().get()));
-            }
-        }));
+        env.push("lcm", DyadicMultivariateFunction.of(new LCM()));
 
         env.push("~", DyadicMultivariateFunction.of(new Closure() {
             public String reverseCase(String text) {
