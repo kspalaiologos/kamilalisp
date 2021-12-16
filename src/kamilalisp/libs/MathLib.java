@@ -130,18 +130,7 @@ public class MathLib {
 
         env.push("%", new Atom(new Remainder()));
 
-        env.push("gcd", new Atom(new Closure() {
-            private Atom IDENTITY = new Atom(BigDecimal.ZERO);
-
-            @Override
-            public Atom apply(Executor env, List<Atom> arguments) {
-                if(arguments.size() == 0 || arguments.size() > 2)
-                    throw new Error("Invalid 'gcd' invocation.");
-                if(arguments.size() == 1)
-                    return arguments.get(0);
-                return new Atom(new LbcSupplier<>(() -> gcdAtom(env.env, arguments.get(0), arguments.get(1)).get().get()));
-            }
-        }));
+        env.push("gcd", DyadicMultivariateFunction.of(new GCD()));
 
         env.push("lcm", new Atom(new Closure() {
             private Atom IDENTITY = new Atom(BigDecimal.ZERO);
