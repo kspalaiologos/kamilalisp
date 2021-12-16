@@ -262,7 +262,7 @@ public class MathLib {
             }
         }));
 
-        env.push("&", new Atom(new And()));
+        env.push("&", DyadicMultivariateFunction.of(new And()));
 
         env.push("xor", new Atom(new Closure() {
             @Override
