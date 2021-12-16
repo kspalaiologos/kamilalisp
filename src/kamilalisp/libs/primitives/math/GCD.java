@@ -32,16 +32,20 @@ public class GCD implements Closure {
             }
             return new Atom(new BigDecimal(a.toBigInteger().gcd(b.toBigInteger())).divide(base, Constant.getFr(env)));
         } else {
-            BigComplex a, b;
-            if(a1.getType() == Type.NUMBER) { a = BigComplex.valueOf(a1.getNumber().get(), BigDecimal.ZERO); }
-            else { a = a1.getComplex().get(); }
-            if(a2.getType() == Type.NUMBER) { b = BigComplex.valueOf(a2.getNumber().get(), BigDecimal.ZERO); }
-            else { b = a2.getComplex().get(); }
+            BigComplex a = asComplex(a1), b = asComplex(a2);
             assertGaussian(a);
             assertGaussian(b);
             // compute gcd(a, b).
             return new Atom(gaussianGcd(env, a, b));
         }
+    }
+
+    public static BigComplex asComplex(Atom a) {
+        a.guardType("Argument to 'asComplex'", Type.NUMBER, Type.COMPLEX);
+        if(a.getType() == Type.NUMBER)
+            return BigComplex.valueOf(a.getNumber().get(), BigDecimal.ZERO);
+        else
+            return a.getComplex().get();
     }
 
     private static BigComplex gaussianRem(Environment env, BigComplex a, BigComplex b) {
