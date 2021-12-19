@@ -153,7 +153,8 @@ class list {
         }
 
         static list from(T... data) {
-            return from(std::rbegin(data), std::rend(data));
+            T tmp[] = { std::move(data)... };
+            return from(std::rbegin(tmp), std::rend(tmp));
         }
 
         static list from(T data) {

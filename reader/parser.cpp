@@ -32,7 +32,7 @@ struct token_queue {
         }
 };
 
-atom parse_tack(token t) {
+atom parse_tack(token & t) {
     std::string content = std::get<std::string>(*t.content);
     int tack_no;
     auto [ptr, ec] {
@@ -61,6 +61,67 @@ atom parse_map(token_queue & q){
         form
     );
     return make_atom(l);
+}
+
+atom parse_partition(token & t) {
+    return make_atom(identifier(L"\\"));
+}
+
+atom parse_quote(token_queue & q) {
+    atom form = parse_form(q);
+    return atom_list::from(
+        make_atom(identifier(L"quote")),
+        form
+    );
+}
+
+atom parse_list(token_queue & q) {
+    atom_list l{};
+    while(q.peek().type != token_type::TOKEN_RPAR)
+        l = l.unsafe_append(parse_form(q));
+    return make_atom(l);
+}
+
+atom parse_sqlist(token_queue & q) {
+    atom_list l{};
+    while(q.peek().type != token_type::TOKEN_RBRA)
+        l = l.unsafe_append(parse_form(q));
+    if(l.size() > 2) {
+        atom begin = l.car();
+        l.car() = l.cdr().car();
+        l.cdr().car() = begin;
+    }
+    return make_atom(l);
+}
+
+atom parse_bind(token_queue & q) {
+    token paren = q.next();
+    atom l;
+    
+    if(paren.type == token_type::TOKEN_LPAR) {
+        l = parse_list(q);
+    } else if(paren.type == token_type::TOKEN_LBRA) {
+        l = parse_sqlist(q);
+    } else {
+        throw new std::runtime_error("Expected ( or [ after $.");
+    }
+
+    return make_atom(l->get_list().cons(make_atom(identifier(L"bind"))));
+}
+
+atom parse_fork(token_queue & q) {
+    token paren = q.next();
+    atom l;
+    
+    if(paren.type == token_type::TOKEN_LPAR) {
+        l = parse_list(q);
+    } else if(paren.type == token_type::TOKEN_LBRA) {
+        l = parse_sqlist(q);
+    } else {
+        throw new std::runtime_error("Expected ( or [ after #.");
+    }
+
+    return make_atom(l->get_list().cons(make_atom(identifier(L"fork"))));
 }
 
 atom parse_form_rem(token_queue & q) {
@@ -101,7 +162,7 @@ atom parse_form_rem(token_queue & q) {
         case token_type::TOKEN_MAP:
             return parse_map(q);
         case token_type::TOKEN_SLASH:
-            return parse_partition(q);
+            return parse_partition(t);
         case token_type::TOKEN_TACK:
             return parse_tack(t);
         case token_type::TOKEN_LBRA:

@@ -2,6 +2,7 @@
 #ifndef _TOKEN_HPP
 #define _TOKEN_HPP
 
+#include <variant>
 #include <string>
 #include <optional>
 
