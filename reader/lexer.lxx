@@ -22,7 +22,7 @@ cmplx_pt       {float}|{integer}
 "("                             { return token(token_type::TOKEN_LPAR); }
 ")"                             { return token(token_type::TOKEN_RPAR); }
 "$"                             { return token(token_type::TOKEN_BIND); }
-"#"[0-9]+                       { return token(token_type::TOKEN_TACK); }
+"#"[0-9]+                       { return token(str(), token_type::TOKEN_TACK); }
 "#"                             { return token(token_type::TOKEN_FORK); }
 ":"                             { return token(token_type::TOKEN_MAP); }
 "@"                             { return token(token_type::TOKEN_ATOP); }
@@ -30,6 +30,7 @@ cmplx_pt       {float}|{integer}
 "^"                             { return token(token_type::TOKEN_OVER); }
 "["                             { return token(token_type::TOKEN_LBRA); }
 "]"                             { return token(token_type::TOKEN_RBRA); }
+"'"                             { return token(token_type::TOKEN_QUOT); }
 
 \"(\\.|\\\r?\n|[^\\\n"])*\"     { return token(wstr(), token_type::TOKEN_STR); }
 {integer}                       { return token(wstr(), token_type::TOKEN_INT); }

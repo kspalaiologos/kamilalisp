@@ -5,7 +5,7 @@
 #include <memory>
 
 template <typename T>
-class node {
+class node : std::enable_shared_from_this<node<T>> {
     public:
         node(std::shared_ptr<node> next, T value)
             : next(next), value(value) { }
@@ -18,14 +18,24 @@ class node {
             else
                 return nullptr;
         }
+
+        std::shared_ptr<node> last() {
+            if(next != nullptr)
+                return next->last();
+            else
+                return shared_from_this();
+        }
 };
 
 template <typename T>
 class list {
     private:
         list(std::shared_ptr<node<T>> node_data)
-            : node_data(node_data) { }
+            : node_data(node_data), last(node_data->last()) { }
+        list(std::shared_ptr<node<T>> node_data, std::shared_ptr<node<T>> last)
+            : node_data(node_data), last(last) { }
         std::shared_ptr<node<T>> node_data;
+        std::shared_ptr<node<T>> last;
 
     public:
         class iterator {
@@ -61,7 +71,7 @@ class list {
                 }
         };
 
-        list() : node_data(nullptr) { }
+        list() : node_data(nullptr), last(nullptr) { }
 
         T car() {
             return node_data->value;
@@ -76,11 +86,25 @@ class list {
         }
 
         list cdr() {
-            return list(node_data->next);
+            return list(node_data->next, last);
         }
 
         list cons(T value) {
-            return list(std::make_shared<node<T>>(node_data, value));
+            if(!is_empty())
+                return list(std::make_shared<node<T>>(node_data, value), last);
+            else {
+                std::shared_ptr<node<T>> ptr = std::make_shared<node<T>>(nullptr, value);
+                return list(ptr, ptr);
+            }
+        }
+
+        // unsafe append: everything that references the node data
+        // will see the operation being reflected. use with caution.
+        list unsafe_append(T value) {
+            if(!is_empty())
+                return list(node_data, last->next = std::make_shared<node<T>>(nullptr, value));
+            else
+                return list(std::make_shared<node<T>>(nullptr, value), std::make_shared<node<T>>(nullptr, value));
         }
 
         bool is_empty() {
@@ -126,6 +150,14 @@ class list {
             for (auto it = begin; it != end; it++)
                 result = result->cons(*it);
             return result;
+        }
+
+        static list from(T... data) {
+            return from(std::rbegin(data), std::rend(data));
+        }
+
+        static list from(T data) {
+            return list(std::make_shared<node<T>>(nullptr, data));
         }
 };
 
