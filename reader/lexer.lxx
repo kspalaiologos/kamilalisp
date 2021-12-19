@@ -1,0 +1,47 @@
+
+%top {
+    #include "token.hpp"
+%}
+
+%option token_type=token
+%option header-file=lexer.hpp
+
+%o fast unicode
+
+notid_start    [^\#\^\$\\\'\@\ \r\n\t\f\(\)\[\]\;]
+notid          [^\@\^\r\n\ \(\)\[\]\;]
+hexd           [0-9a-fA-F]
+integer        "-"?[0-9]+
+float_exp      [eE]{integer}
+float_dec      "."[0-9]+
+float          {integer}({float_exp}|{float_dec}{float_exp}?)
+cmplx_pt       {float}|{integer}
+
+%%
+
+"("                             { return token(token_type::TOKEN_LPAR); }
+")"                             { return token(token_type::TOKEN_RPAR); }
+"$"                             { return token(token_type::TOKEN_BIND); }
+"#"[0-9]+                       { return token(token_type::TOKEN_TACK); }
+"#"                             { return token(token_type::TOKEN_FORK); }
+":"                             { return token(token_type::TOKEN_MAP); }
+"@"                             { return token(token_type::TOKEN_ATOP); }
+\\                              { return token(token_type::TOKEN_SLASH); }
+"^"                             { return token(token_type::TOKEN_OVER); }
+"["                             { return token(token_type::TOKEN_LBRA); }
+"]"                             { return token(token_type::TOKEN_RBRA); }
+
+\"(\\.|\\\r?\n|[^\\\n"])*\"     { return token(wstr(), token_type::TOKEN_STR); }
+{integer}                       { return token(wstr(), token_type::TOKEN_INT); }
+"0"[hH]{hexd}+                  { return token(wstr(), token_type::TOKEN_HEX); }
+"0"[bB][10]+                    { return token(wstr(), token_type::TOKEN_BIN); }
+{float}                         { return token(wstr(), token_type::TOKEN_FPU); }
+{cmplx_pt}"J"{cmplx_pt}         { return token(wstr(), token_type::TOKEN_COMPLEX); }
+"nil"                           { return token(wstr(), token_type::TOKEN_NIL); }
+{notid_start}{notid}*           { return token(wstr(), token_type::TOKEN_ID); }
+
+// Ignore whitespace and comments.
+";".*$      { ; }
+[\t\r\n\f]+ { ; }
+
+%%

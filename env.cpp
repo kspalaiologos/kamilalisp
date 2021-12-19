@@ -1,0 +1,41 @@
+
+#include <memory>
+#include "env.hpp"
+
+atom environment::get(std::wstring key) {
+    auto it = data.find(key);
+    if (it != data.end()) {
+        return it->second;
+    } else if (ancestor != nullptr) {
+        return ancestor->get(key);
+    } else {
+        return null_atom;
+    }
+}
+
+void environment::set(std::wstring key, atom value) {
+    data[key] = value;
+}
+
+void environment::remove(std::wstring key) {
+    data.erase(key);
+}
+
+bool environment::has(std::wstring key) {
+    if(data.find(key) != data.end())
+        return true;
+    while(ancestor != nullptr) {
+        auto it = ancestor->data.find(key);
+        if(it != ancestor->data.end())
+            return true;
+        ancestor = ancestor->ancestor;
+    }
+    return false;
+}
+
+std::shared_ptr<environment> environment::get_topmost_ancestor() {
+    if (ancestor->ancestor == nullptr)
+        return ancestor;
+    else
+        return ancestor->get_topmost_ancestor();
+}
