@@ -1,3 +1,0 @@
-#!/bin/bash
-
-java -Xss20m -jar out/artifacts/kamilalisp_jar/kamilalisp.jar $@
