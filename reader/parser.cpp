@@ -124,6 +124,19 @@ atom parse_fork(token_queue & q) {
     return make_atom(l->get_list().cons(make_atom(identifier(L"fork"))));
 }
 
+atom parse_literal(token & t) {
+    switch(t.type) {
+        case token_type::TOKEN_STR:
+        case token_type::TOKEN_NIL:
+        case token_type::TOKEN_INT:
+        case token_type::TOKEN_ID:
+        case token_type::TOKEN_HEX:
+        case token_type::TOKEN_FPU:
+        case token_type::TOKEN_COMPLEX:
+        case token_type::TOKEN_BIN:
+    }
+}
+
 atom parse_form_rem(token_queue & q) {
     // form_rem :=
     //  decorator :=
