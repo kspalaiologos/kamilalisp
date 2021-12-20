@@ -78,6 +78,8 @@ class list {
         }
 
         iterator begin() {
+            if(is_empty())
+                return iterator(true);
             return iterator(node_data);
         }
 
