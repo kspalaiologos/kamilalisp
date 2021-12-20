@@ -54,9 +54,11 @@ int main(int argc, char * argv[]) {
             boost::trim(data);
             if(data.size() == 0 || data[0] == ';')
                 continue;
-            atom a = parse(data).car();
-            atom result = evaluate(a, env);
-            std::wcout << std::to_wstring(result) << std::endl;
+            atom_list a = parse(data);
+            for(atom & at : a) {
+                atom result = evaluate(at, env);
+                std::wcout << std::to_wstring(result) << std::endl;
+            }
         }
     }
 }

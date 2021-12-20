@@ -117,11 +117,16 @@ class list {
             return list(node_data->clone());
         }
 
-        T at(unsigned n) {
+        T at(std::size_t n) {
             auto it = node_data;
-            for(unsigned i = 0; i < n; i++)
+            for(std::size_t i = 0; i < n; i++)
                 it = it->next;
             return it->value;
+        }
+
+        void unsafe_reserve(std::size_t nodes, T value) {
+            for(std::size_t i = 0; i < nodes; i++)
+                last = last->next = std::make_shared<node<T>>(nullptr, value);
         }
 
         unsigned size() {
