@@ -320,3 +320,5 @@ std::string atom_::type_name() {
     
     return "??";
 }
+
+callable::~callable() { }

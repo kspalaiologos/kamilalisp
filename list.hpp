@@ -73,7 +73,7 @@ class list {
 
         list() : node_data(nullptr), last(nullptr) { }
 
-        T car() {
+        T & car() {
             return node_data->value;
         }
 
@@ -103,8 +103,10 @@ class list {
         list unsafe_append(T value) {
             if(!is_empty())
                 return list(node_data, last->next = std::make_shared<node<T>>(nullptr, value));
-            else
-                return list(std::make_shared<node<T>>(nullptr, value), std::make_shared<node<T>>(nullptr, value));
+            else {
+                std::shared_ptr<node<T>> p = std::make_shared<node<T>>(nullptr, value);
+                return list(p, p);
+            }
         }
 
         bool is_empty() {

@@ -9,7 +9,7 @@
 #include <iterator>
 #include <string>
 
-struct environment {
+class environment {
     private:
         std::unordered_map<std::wstring, atom> data;
 

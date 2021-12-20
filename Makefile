@@ -1,6 +1,6 @@
 
 CXX=clang++
-CXXFLAGS=-std=c++20 -Ofast -flto -march=native -mtune=native -IRE-flex/include
+CXXFLAGS=-std=c++20 -g3 -Wall -O0 -IRE-flex/include
 
 all: kamilalisp
 

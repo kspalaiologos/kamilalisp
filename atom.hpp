@@ -46,6 +46,8 @@ class callable {
         virtual std::tuple<atom_list, atom_list> requote() {
             throw "Can't requote.";
         }
+
+        virtual ~callable() = 0;
 };
 
 enum class atom_type {

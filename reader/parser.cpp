@@ -1,6 +1,7 @@
 
 #include <charconv>
 #include <string_view>
+#include "../atom.hpp"
 #include "parser.hpp"
 
 struct token_queue {
@@ -47,8 +48,9 @@ atom parse_tack(token & t) {
 
         public:
             tack(int tack_no) : tack_no(tack_no) { }
+            ~tack() { }
 
-            atom call(std::shared_ptr<environment> env, atom_list args) {
+            atom call(std::shared_ptr<environment> env, atom_list args) override {
                 return args.at(tack_no);
             }
     };
@@ -82,6 +84,7 @@ atom parse_list(token_queue & q) {
     atom_list l{};
     while(q.peek().type != token_type::TOKEN_RPAR)
         l = l.unsafe_append(parse_form(q));
+    q.next();
     return make_atom(l);
 }
 
@@ -89,7 +92,8 @@ atom parse_sqlist(token_queue & q) {
     atom_list l{};
     while(q.peek().type != token_type::TOKEN_RBRA)
         l = l.unsafe_append(parse_form(q));
-    if(l.size() > 2) {
+    q.next();
+    if(l.size() >= 2) {
         atom begin = l.car();
         l.car() = l.cdr().car();
         l.cdr().car() = begin;
