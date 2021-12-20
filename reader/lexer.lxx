@@ -33,11 +33,11 @@ cmplx_pt       {float}|{integer}
 "'"                             { return token(token_type::TOKEN_QUOT); }
 
 \"(\\.|\\\r?\n|[^\\\n"])*\"     { return token(wstr(), token_type::TOKEN_STR); }
-{integer}                       { return token(wstr(), token_type::TOKEN_INT); }
-"0"[hH]{hexd}+                  { return token(wstr(), token_type::TOKEN_HEX); }
-"0"[bB][10]+                    { return token(wstr(), token_type::TOKEN_BIN); }
-{float}                         { return token(wstr(), token_type::TOKEN_FPU); }
-{cmplx_pt}"J"{cmplx_pt}         { return token(wstr(), token_type::TOKEN_COMPLEX); }
+{integer}                       { return token(str(), token_type::TOKEN_INT); }
+"0"[hH]{hexd}+                  { return token(str(), token_type::TOKEN_HEX); }
+"0"[bB][10]+                    { return token(str(), token_type::TOKEN_BIN); }
+{float}                         { return token(str(), token_type::TOKEN_FPU); }
+{cmplx_pt}"J"{cmplx_pt}         { return token(str(), token_type::TOKEN_COMPLEX); }
 "nil"                           { return token(wstr(), token_type::TOKEN_NIL); }
 {notid_start}{notid}*           { return token(wstr(), token_type::TOKEN_ID); }
 

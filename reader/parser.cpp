@@ -127,13 +127,28 @@ atom parse_fork(token_queue & q) {
 atom parse_literal(token & t) {
     switch(t.type) {
         case token_type::TOKEN_STR:
+            return make_atom(std::get<std::wstring>(*t.content));
         case token_type::TOKEN_NIL:
-        case token_type::TOKEN_INT:
+            return null_atom;
         case token_type::TOKEN_ID:
+            return make_atom(identifier(std::get<std::wstring>(*t.content)));
+        case token_type::TOKEN_COMPLEX: {
+            std::string num = std::get<std::string>(*t.content);
+            std::size_t n = num.find('J');
+            std::string re = num.substr(0, n);
+            std::string im = num.substr(n + 1);
+            boost::multiprecision::mpc_complex res{};
+            res.imag(boost::multiprecision::mpfr_float{im});
+            res.real(boost::multiprecision::mpfr_float{re});
+            return make_atom(res);
+        }
         case token_type::TOKEN_HEX:
         case token_type::TOKEN_FPU:
-        case token_type::TOKEN_COMPLEX:
-        case token_type::TOKEN_BIN:
+        case token_type::TOKEN_INT:
+        case token_type::TOKEN_BIN: {
+            std::string s = std::get<std::string>(*t.content);
+            return make_atom(boost::multiprecision::mpz_int(s));
+        }
     }
 }
 
