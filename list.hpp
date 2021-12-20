@@ -23,7 +23,7 @@ class node : std::enable_shared_from_this<node<T>> {
             if(next != nullptr)
                 return next->last();
             else
-                return shared_from_this();
+                return this->shared_from_this();
         }
 };
 
@@ -145,19 +145,21 @@ class list {
         }
 
         template <typename IteratorType>
-        static list from(std::reverse_iterator<IteratorType> begin, std::reverse_iterator<IteratorType> end) {
-            list result = std::make_shared<list>();
+        static list<T> from(std::reverse_iterator<IteratorType> begin, std::reverse_iterator<IteratorType> end) {
+            list<T> result {};
             for (auto it = begin; it != end; it++)
-                result = result->cons(*it);
+                result = result.cons(*it);
             return result;
         }
 
-        static list from(T... data) {
-            T tmp[] = { std::move(data)... };
-            return from(std::rbegin(tmp), std::rend(tmp));
+        static constexpr list from(std::initializer_list<T> data) {
+            if(data.size() == 1)
+                return list(std::make_shared<node<T>>(nullptr, *(data.begin())));
+            else
+                return from(std::rbegin(data), std::rend(data));
         }
 
-        static list from(T data) {
+        static constexpr list from(T data) {
             return list(std::make_shared<node<T>>(nullptr, data));
         }
 };

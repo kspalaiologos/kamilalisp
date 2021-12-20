@@ -1,6 +1,6 @@
 
 CXX=clang++
-CXXFLAGS=-std=c++20 -Ofast -flto -march=native -mtune=native
+CXXFLAGS=-std=c++20 -Ofast -flto -march=native -mtune=native -IRE-flex/include
 
 all: kamilalisp
 
@@ -20,10 +20,13 @@ reader/lexer.cpp: reader/lexer.lxx
 	cd reader && ../RE-flex/bin/reflex lexer.lxx -o lexer.cpp
 
 reader/lexer.o: reader/lexer.cpp
-	$(CXX) $(CXXFLAGS) -IRE-flex/include -c -o $@ reader/lexer.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ reader/lexer.cpp
 
-kamilalisp: reader/lexer.o main.o executor.o env.o atom.o
-	$(CXX) $(CXXFLAGS) -o $@ main.o executor.o env.o atom.o -lmpc -lmpfr -lgmp RE-flex/lib/libreflex.a
+reader/parser.o: reader/parser.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ reader/parser.cpp
+
+kamilalisp: reader/lexer.o reader/parser.o main.o executor.o env.o atom.o
+	$(CXX) $(CXXFLAGS) -o $@ $^ -lmpc -lmpfr -lgmp RE-flex/lib/libreflex.a
 
 clean:
 	rm -f kamilalisp reader/*.o reader/lexer.cpp *.o

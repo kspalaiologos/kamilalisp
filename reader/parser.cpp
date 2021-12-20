@@ -32,6 +32,9 @@ struct token_queue {
         }
 };
 
+atom parse_form_rem(token_queue & q);
+atom parse_form(token_queue & q);
+
 atom parse_tack(token & t) {
     std::string content = std::get<std::string>(*t.content);
     int tack_no;
@@ -50,16 +53,16 @@ atom parse_tack(token & t) {
             }
     };
 
-    return make_atom(tack(tack_no));
+    return make_atom(std::make_shared<tack>(tack_no));
 }
 
 atom parse_map(token_queue & q){
     atom form = parse_form_rem(q);
-    atom_list l = atom_list::from(
+    atom_list l = atom_list::from({
         make_atom(identifier(L"bind")),
         make_atom(identifier(L"map")),
         form
-    );
+    });
     return make_atom(l);
 }
 
@@ -69,10 +72,10 @@ atom parse_partition(token & t) {
 
 atom parse_quote(token_queue & q) {
     atom form = parse_form(q);
-    return atom_list::from(
+    return make_atom(atom_list::from({
         make_atom(identifier(L"quote")),
         form
-    );
+    }));
 }
 
 atom parse_list(token_queue & q) {
@@ -149,6 +152,8 @@ atom parse_literal(token & t) {
             std::string s = std::get<std::string>(*t.content);
             return make_atom(boost::multiprecision::mpz_int(s));
         }
+        default:
+            throw std::runtime_error("Unknown literal type.");
     }
 }
 

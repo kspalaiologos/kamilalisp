@@ -1,6 +1,7 @@
 
 #include "env.hpp"
 #include "executor.hpp"
+#include "reader/parser.hpp"
 
 class add : public callable {
     public:
@@ -17,11 +18,6 @@ class add : public callable {
 int main() {
     std::shared_ptr<environment> env = std::make_shared<environment>();
     env->set(L"+", make_atom(std::make_shared<add>()));
-    atom_list l;
-    l = l.cons(make_atom(boost::multiprecision::mpz_int(2)));
-    l = l.cons(make_atom(boost::multiprecision::mpz_int(2)));
-    identifier id = std::wstring(L"+");
-    l = l.cons(make_atom(id));
-    atom result = evaluate(make_atom(l), env);
+    atom result = evaluate(parse(L"(+ 2 2)").car(), env);
     std::wcout << std::to_wstring(result) << std::endl;
 }
