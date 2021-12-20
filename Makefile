@@ -1,35 +1,31 @@
 
 CXX=clang++
-CXXFLAGS=-std=c++20 -g3 -Wall -O0 -IRE-flex/include
+CXXFLAGS=-std=c++20 -Wall -flto -O3 -IRE-flex/include -Ireplxx
+LIBS=-lmpc -lmpfr -lgmp -lreadline RE-flex/lib/libreflex.a
+
+srcs=\
+	atom.cpp env.cpp executor.cpp main.cpp reader/lexer.cpp reader/parser.cpp \
+	replxx/conversion.cxx replxx/ConvertUTF.cpp replxx/escape.cxx replxx/history.cxx \
+	replxx/prompt.cxx replxx/replxx.cxx replxx/replxx_impl.cxx replxx/terminal.cxx \
+	replxx/util.cxx replxx/wcwidth.cpp replxx/windows.cxx
+objs=$(patsubst %.cpp, %.o, $(patsubst %.cxx, %.o, $(srcs)))
 
 all: kamilalisp
 
-atom.o: atom.cpp atom.hpp
-	$(CXX) $(CXXFLAGS) -c -o $@ atom.cpp
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $^
 
-env.o: env.cpp env.hpp
-	$(CXX) $(CXXFLAGS) -c -o $@ env.cpp
-
-executor.o: executor.cpp executor.hpp
-	$(CXX) $(CXXFLAGS) -c -o $@ executor.cpp
-
-main.o: main.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ main.cpp
+%.o: %.cxx
+	$(CXX) $(CXXFLAGS) -c -o $@ $^
 
 reader/lexer.cpp: reader/lexer.lxx
 	cd reader && ../RE-flex/bin/reflex lexer.lxx -o lexer.cpp
 
-reader/lexer.o: reader/lexer.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ reader/lexer.cpp
-
-reader/parser.o: reader/parser.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ reader/parser.cpp
-
-kamilalisp: reader/lexer.o reader/parser.o main.o executor.o env.o atom.o
-	$(CXX) $(CXXFLAGS) -o $@ $^ -lmpc -lmpfr -lgmp RE-flex/lib/libreflex.a
+kamilalisp: $(objs)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
 clean:
-	rm -f kamilalisp reader/*.o reader/lexer.cpp *.o
+	rm -f kamilalisp reader/*.o reader/lexer.cpp replxx/*.o *.o
 
 get-deps:
 	git clone https://github.com/Genivia/RE-flex

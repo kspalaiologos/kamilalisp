@@ -39,3 +39,11 @@ std::shared_ptr<environment> environment::get_topmost_ancestor() {
     else
         return ancestor->get_topmost_ancestor();
 }
+
+#include "math-lib.hpp"
+
+std::shared_ptr<environment> environment::create_default_env() {
+    std::shared_ptr<environment> env = std::make_shared<environment>();
+    env->set(L"+", make_atom(std::make_shared<mathlib::add>()));
+    return env;
+}

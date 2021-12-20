@@ -25,6 +25,8 @@ class environment {
         bool has(std::wstring key);
         std::shared_ptr<environment> get_topmost_ancestor();
 
+        static std::shared_ptr<environment> create_default_env();
+
         template <typename BiFunctor>
         void for_each(BiFunctor f) {
             for (auto it = data.begin(); it != data.end(); it++)
