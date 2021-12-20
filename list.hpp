@@ -162,7 +162,7 @@ class list {
         }
 
         static constexpr list from(T data) {
-            return list(std::make_shared<node<T>>(nullptr, data));
+            return list(std::make_shared<node<T>>(nullptr, data), nullptr);
         }
 };
 

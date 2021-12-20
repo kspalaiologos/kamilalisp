@@ -8,7 +8,7 @@
 
 %o fast unicode
 
-notid_start    [^\#\^\$\\\'\@\ \r\n\t\f\(\)\[\]\;]
+notid_start    [^\#\^\$\\\:\'\@\ \r\n\t\f\(\)\[\]\;]
 notid          [^\@\^\r\n\ \(\)\[\]\;]
 hexd           [0-9a-fA-F]
 integer        "-"?[0-9]+

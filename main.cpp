@@ -18,10 +18,18 @@ class add : public callable {
 };
 
 int main() {
+    std::ios_base::sync_with_stdio(false);
+
+    std::locale locale("en_US.utf8");
+
+    std::wcin.imbue(locale);
+    std::wcerr.imbue(locale);
+    std::wcout.imbue(locale);
+
     std::shared_ptr<environment> env = std::make_shared<environment>();
     env->set(L"+", make_atom(std::make_shared<add>()));
-    atom a = parse(L"[2 + 2]").car();
-    std::wcout << std::quoted(std::to_wstring(a)) << std::endl;
+    atom a = parse(L"(println@car@:$(* 2) '(1 2 3))").car();
+    std::wcout << std::to_wstring(a) << std::endl;
     atom result = evaluate(a, env);
     std::wcout << std::to_wstring(result) << std::endl;
 }

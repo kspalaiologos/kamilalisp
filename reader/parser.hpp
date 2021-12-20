@@ -10,7 +10,8 @@
 template <typename Source>
 std::vector<token> lex_all(Source & in) {
     std::vector<token> tokens;
-    Lexer l = Lexer(in);
+    std::ostream bitBucket(0);
+    Lexer l = Lexer(in, bitBucket);
     while (true) {
         token t = l.lex();
         if (t.type == token_type::TOKEN_EMPTY)

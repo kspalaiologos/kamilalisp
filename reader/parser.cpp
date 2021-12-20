@@ -83,7 +83,10 @@ atom parse_quote(token_queue & q) {
 atom parse_list(token_queue & q) {
     atom_list l{};
     while(q.peek().type != token_type::TOKEN_RPAR)
-        l = l.unsafe_append(parse_form(q));
+        if(q.peek().type == token_type::TOKEN_EMPTY)
+            throw std::runtime_error("Unbalanced parenthesis.");
+        else
+            l = l.unsafe_append(parse_form(q));
     q.next();
     return make_atom(l);
 }
@@ -91,7 +94,10 @@ atom parse_list(token_queue & q) {
 atom parse_sqlist(token_queue & q) {
     atom_list l{};
     while(q.peek().type != token_type::TOKEN_RBRA)
-        l = l.unsafe_append(parse_form(q));
+        if(q.peek().type == token_type::TOKEN_EMPTY)
+            throw std::runtime_error("Unbalanced brackets.");
+        else
+            l = l.unsafe_append(parse_form(q));
     q.next();
     if(l.size() >= 2) {
         atom begin = l.car();
@@ -161,6 +167,7 @@ atom parse_literal(token & t) {
     }
 }
 
+
 atom parse_form_rem(token_queue & q) {
     // form_rem :=
     //  decorator :=
@@ -221,10 +228,10 @@ atom parse_form(token_queue & q) {
         rems.push_back(parse_form_rem(q));
     }
     if(rems.size() != 1) {
-        atom_list l = atom_list::from(make_atom(identifier(L"atop")));
+        atom_list l {};
         for (auto it = rems.rbegin(); it != rems.rend(); ++it)
             l = l.cons(*it);
-        return make_atom(l);
+        return make_atom(l.cons(make_atom(identifier(L"atop"))));
     } else
         return first_form;
 }
