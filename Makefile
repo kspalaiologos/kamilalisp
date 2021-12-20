@@ -1,6 +1,6 @@
 
 CXX=clang++
-CXXFLAGS=-std=c++20 -Wall -flto -O3 -IRE-flex/include -Ireplxx
+CXXFLAGS=-std=c++20 -Wall -g3 -O2 -IRE-flex/include -Ireplxx
 LIBS=-lmpc -lmpfr -lgmp -lreadline RE-flex/lib/libreflex.a
 
 srcs=\

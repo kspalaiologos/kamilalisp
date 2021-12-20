@@ -4,6 +4,8 @@
 #include "reader/parser.hpp"
 #include "replxx/replxx.hxx"
 
+#include <boost/algorithm/string.hpp>
+
 #include <locale>
 #include <codecvt>
 
@@ -47,7 +49,11 @@ int main(int argc, char * argv[]) {
                 std::wcout << "\nBye." << std::endl;
                 return 0;
             }
+            repl.history_add(in);
             std::wstring data = cvt.from_bytes(in);
+            boost::trim(data);
+            if(data.size() == 0 || data[0] == ';')
+                continue;
             atom a = parse(data).car();
             atom result = evaluate(a, env);
             std::wcout << std::to_wstring(result) << std::endl;
