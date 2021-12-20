@@ -9,6 +9,7 @@
 #include <boost/multiprecision/gmp.hpp>
 #include <boost/multiprecision/mpc.hpp>
 
+#include "error.hpp"
 #include "list.hpp"
 
 class identifier {
@@ -44,7 +45,7 @@ class callable {
         }
 
         virtual std::tuple<atom_list, atom_list> requote() {
-            throw "Can't requote.";
+            kl_error("Can't requote.");
         }
 
         virtual ~callable() = 0;

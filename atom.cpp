@@ -2,6 +2,7 @@
 #include <numeric>
 #include <algorithm>
 #include <type_traits>
+#include "error.hpp"
 #include "atom.hpp"
 
 atom_::atom_(boost::multiprecision::mpz_int & n) {
@@ -64,7 +65,7 @@ boost::multiprecision::mpz_int atom_::get_integer() {
     if(std::holds_alternative<boost::multiprecision::mpz_int>(value)) {
         return std::get<boost::multiprecision::mpz_int>(value);
     } else {
-        throw std::runtime_error("Not an integer");
+        kl_error("Not an integer");
     }
 }
 
@@ -72,7 +73,7 @@ boost::multiprecision::mpf_float atom_::get_real() {
     if(std::holds_alternative<boost::multiprecision::mpf_float>(value)) {
         return std::get<boost::multiprecision::mpf_float>(value);
     } else {
-        throw std::runtime_error("Not a real");
+        kl_error("Not a real");
     }
 }
 
@@ -80,7 +81,7 @@ boost::multiprecision::mpc_complex atom_::get_complex() {
     if(std::holds_alternative<boost::multiprecision::mpc_complex>(value)) {
         return std::get<boost::multiprecision::mpc_complex>(value);
     } else {
-        throw std::runtime_error("Not a real");
+        kl_error("Not a real");
     }
 }
 
@@ -88,7 +89,7 @@ std::wstring atom_::get_string() {
     if(std::holds_alternative<std::wstring>(value)) {
         return std::get<std::wstring>(value);
     } else {
-        throw std::runtime_error("Not a string");
+        kl_error("Not a string");
     }
 }
 
@@ -96,7 +97,7 @@ atom_list atom_::get_list() {
     if(std::holds_alternative<atom_list>(value)) {
         return std::get<atom_list>(value);
     } else {
-        throw std::runtime_error("Not a list");
+        kl_error("Not a list");
     }
 }
 
@@ -104,7 +105,7 @@ identifier atom_::get_identifier() {
     if(std::holds_alternative<identifier>(value)) {
         return std::get<identifier>(value);
     } else {
-        throw std::runtime_error("Not an identifier");
+        kl_error("Not an identifier");
     }
 }
 
@@ -112,7 +113,7 @@ std::shared_ptr<callable> atom_::get_callable() {
     if(std::holds_alternative<std::shared_ptr<callable>>(value)) {
         return std::get<std::shared_ptr<callable>>(value);
     } else {
-        throw std::runtime_error("Not a callable.");
+        kl_error("Not a callable.");
     }
 }
 
@@ -274,7 +275,7 @@ atom_type atom_::get_type() {
         case 6: return atom_type::T_CALLABLE;
         case 7: return atom_type::T_ID;
     }
-    throw std::runtime_error("Unknown data type.");
+    kl_error("Unknown data type.");
 }
 
 namespace std {

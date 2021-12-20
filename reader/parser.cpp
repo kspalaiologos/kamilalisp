@@ -2,6 +2,7 @@
 #include <charconv>
 #include <string_view>
 #include "../atom.hpp"
+#include "../error.hpp"
 #include "parser.hpp"
 
 struct token_queue {
@@ -84,7 +85,7 @@ atom parse_list(token_queue & q) {
     atom_list l{};
     while(q.peek().type != token_type::TOKEN_RPAR)
         if(q.peek().type == token_type::TOKEN_EMPTY)
-            throw std::runtime_error("Unbalanced parenthesis.");
+            kl_error("Unbalanced parenthesis.");
         else
             l = l.unsafe_append(parse_form(q));
     q.next();
@@ -95,7 +96,7 @@ atom parse_sqlist(token_queue & q) {
     atom_list l{};
     while(q.peek().type != token_type::TOKEN_RBRA)
         if(q.peek().type == token_type::TOKEN_EMPTY)
-            throw std::runtime_error("Unbalanced brackets.");
+            kl_error("Unbalanced brackets.");
         else
             l = l.unsafe_append(parse_form(q));
     q.next();
@@ -116,7 +117,7 @@ atom parse_bind(token_queue & q) {
     } else if(paren.type == token_type::TOKEN_LBRA) {
         l = parse_sqlist(q);
     } else {
-        throw new std::runtime_error("Expected ( or [ after $.");
+        kl_error("Expected ( or [ after $.");
     }
 
     return make_atom(l->get_list().cons(make_atom(identifier(L"bind"))));
@@ -131,7 +132,7 @@ atom parse_fork(token_queue & q) {
     } else if(paren.type == token_type::TOKEN_LBRA) {
         l = parse_sqlist(q);
     } else {
-        throw new std::runtime_error("Expected ( or [ after #.");
+        kl_error("Expected ( or [ after #.");
     }
 
     return make_atom(l->get_list().cons(make_atom(identifier(L"fork"))));
@@ -163,7 +164,7 @@ atom parse_literal(token & t) {
             return make_atom(boost::multiprecision::mpz_int(s));
         }
         default:
-            throw std::runtime_error("Unknown literal type.");
+            kl_error("Unknown literal type.");
     }
 }
 

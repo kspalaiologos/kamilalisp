@@ -3,6 +3,7 @@
 #include "executor.hpp"
 #include "reader/parser.hpp"
 #include "replxx/replxx.hxx"
+#include "error.hpp"
 
 #include <fstream>
 #include <locale>
@@ -45,7 +46,7 @@ int main(int argc, char * argv[]) {
     } else {
         std::wifstream ifs(argv[1]);
         if(!ifs.good())
-            throw std::runtime_error("Couldn't open file " + std::string(argv[1]));
+            kl_error("Couldn't open file " + std::string(argv[1]));
         std::wstring data{std::istreambuf_iterator<wchar_t>(ifs),
                           std::istreambuf_iterator<wchar_t>()};
         atom_list a = parse(data);
