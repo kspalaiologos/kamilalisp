@@ -36,6 +36,7 @@ class list {
             : node_data(node_data), last(last) { }
         std::shared_ptr<node<T>> node_data;
         std::shared_ptr<node<T>> last;
+        std::size_t size_cache = 0;
 
     public:
         class iterator {
@@ -131,14 +132,18 @@ class list {
                 last = last->next = std::make_shared<node<T>>(nullptr, value);
         }
 
-        unsigned size() {
-            unsigned size = 0;
-            auto it = node_data;
-            while(it != nullptr) {
-                size++;
-                it = it->next;
+        std::size_t size() {
+            if(size_cache == 0) {
+                unsigned size = 0;
+                auto it = node_data;
+                while(it != nullptr) {
+                    size++;
+                    it = it->next;
+                }
+                return size_cache = size;
+            } else {
+                return size_cache;
             }
-            return size;
         }
 
         bool operator==(list<T> &other) {

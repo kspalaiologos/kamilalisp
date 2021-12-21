@@ -57,6 +57,10 @@ atom_::atom_(thunk & f) {
     value = f;
 }
 
+atom_::atom_(thunk && f) {
+    value = f;
+}
+
 atom_::atom_(std::shared_ptr<callable> m) {
     value = m;
 }

@@ -8,3 +8,5 @@ kamilalisp
 reader/lexer.cpp
 
 reader/lexer.hpp
+
+*.d

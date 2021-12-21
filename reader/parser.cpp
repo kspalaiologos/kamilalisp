@@ -39,10 +39,8 @@ atom parse_form(token_queue & q);
 
 atom parse_tack(token & t) {
     std::string content = std::get<std::string>(*t.content);
-    int tack_no;
-    auto [ptr, ec] {
-        std::from_chars(content.data() + 1, content.data() + content.size(), tack_no)
-    };
+    int tack_no = 0;
+    std::from_chars(content.data() + 1, content.data() + content.size(), tack_no);
 
     class tack : public callable {
         int tack_no;
@@ -52,6 +50,7 @@ atom parse_tack(token & t) {
             ~tack() { }
 
             atom call(std::shared_ptr<environment> env, atom_list args) override {
+                (void) env;
                 return args.at(tack_no);
             }
     };
@@ -70,6 +69,7 @@ atom parse_map(token_queue & q){
 }
 
 atom parse_partition(token & t) {
+    (void) t;
     return make_atom(identifier(L"\\"));
 }
 
