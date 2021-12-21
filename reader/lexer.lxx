@@ -14,7 +14,7 @@ hexd           [0-9a-fA-F]
 integer        "-"?[0-9]+
 float_exp      [eE]{integer}
 float_dec      "."[0-9]+
-float          {integer}({float_exp}|{float_dec}{float_exp}?)
+float          {integer}({float_exp}|({float_dec}({float_exp}?)))
 cmplx_pt       {float}|{integer}
 
 %%

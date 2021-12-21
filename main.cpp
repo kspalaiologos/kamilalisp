@@ -43,7 +43,7 @@ int main(int argc, char * argv[]) {
             atom_list a;
             try {
                 a = parse(data);
-            } catch(std::runtime_error e) {
+            } catch(std::runtime_error const & e) {
                 std::wcerr << e.what() << std::endl;
                 std::ostringstream buf;
                 buf << boost::stacktrace::stacktrace();
@@ -54,7 +54,7 @@ int main(int argc, char * argv[]) {
                     atom result = evaluate(at, env);
                     std::wcout << std::to_wstring(result) << std::endl;
                 }
-            } catch(std::runtime_error e) {
+            } catch(std::runtime_error const & e) {
                 std::wcerr << e.what() << std::endl;
                 std::ostringstream buf;
                 buf << boost::stacktrace::stacktrace();
