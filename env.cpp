@@ -44,6 +44,8 @@ std::shared_ptr<environment> environment::get_topmost_ancestor() {
 
 std::shared_ptr<environment> environment::create_default_env() {
     std::shared_ptr<environment> env = std::make_shared<environment>();
+    env->set(L"fr", make_atom(boost::multiprecision::mpz_int(50)));
     env->set(L"+", make_atom(std::make_shared<mathlib::add>()));
+    env->set(L"-", make_atom(std::make_shared<mathlib::subtract>()));
     return env;
 }

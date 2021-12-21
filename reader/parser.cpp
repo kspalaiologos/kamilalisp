@@ -156,8 +156,11 @@ atom parse_literal(token & t) {
             res.real(boost::multiprecision::mpfr_float{re});
             return make_atom(res);
         }
+        case token_type::TOKEN_FPU: {
+            std::string s = std::get<std::string>(*t.content);
+            return make_atom(boost::multiprecision::mpfr_float(s));
+        }
         case token_type::TOKEN_HEX:
-        case token_type::TOKEN_FPU:
         case token_type::TOKEN_INT:
         case token_type::TOKEN_BIN: {
             std::string s = std::get<std::string>(*t.content);

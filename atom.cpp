@@ -166,9 +166,10 @@ std::wstring atom_::stringify() {
             return to_wstring(get_integer().str());
         case atom_type::T_REAL:
             return to_wstring(get_real().str());
-        case atom_type::T_CMPLX:
-            return to_wstring(get_complex().str());
-        case atom_type::T_STR:
+        case atom_type::T_CMPLX: {
+            auto c = get_complex();
+            return to_wstring(c.real().str()) + L"J" + to_wstring(c.imag().str());
+        } case atom_type::T_STR:
             return L"\"" + get_string() + L"\"";
         case atom_type::T_ID:
             return get_identifier();

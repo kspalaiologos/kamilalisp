@@ -71,15 +71,17 @@ auto variant_cast(const std::variant<Args...> & v) -> variant_cast_proxy<Args...
     return { v };
 }
 
-using thunk =
-    std::function<std::variant<
+using thunk_type = std::variant<
         boost::multiprecision::mpz_int,
         boost::multiprecision::mpf_float,
         boost::multiprecision::mpc_complex,
         std::wstring,
         atom_list,
         std::shared_ptr<callable>,
-        identifier>()>;
+        identifier>;
+
+using thunk =
+    std::function<thunk_type()>;
 
 class atom_ {
     using data_type = std::variant<thunk,

@@ -5,6 +5,9 @@
 #include "replxx/replxx.hxx"
 #include "error.hpp"
 
+#include <sstream>
+#include <boost/stacktrace.hpp>
+
 #include <fstream>
 #include <locale>
 #include <codecvt>
@@ -37,10 +40,25 @@ int main(int argc, char * argv[]) {
             }
             repl.history_add(in);
             std::wstring data = cvt.from_bytes(in);
-            atom_list a = parse(data);
-            for(atom & at : a) {
-                atom result = evaluate(at, env);
-                std::wcout << std::to_wstring(result) << std::endl;
+            atom_list a;
+            try {
+                a = parse(data);
+            } catch(std::runtime_error e) {
+                std::wcerr << e.what() << std::endl;
+                std::ostringstream buf;
+                buf << boost::stacktrace::stacktrace();
+                std::wcerr << buf.str().c_str() << std::endl;
+            }
+            try {
+                for(atom & at : a) {
+                    atom result = evaluate(at, env);
+                    std::wcout << std::to_wstring(result) << std::endl;
+                }
+            } catch(std::runtime_error e) {
+                std::wcerr << e.what() << std::endl;
+                std::ostringstream buf;
+                buf << boost::stacktrace::stacktrace();
+                std::wcerr << buf.str().c_str() << std::endl;
             }
         }
     } else {
