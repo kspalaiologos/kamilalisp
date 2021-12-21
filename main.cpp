@@ -38,7 +38,7 @@ int main(int argc, char * argv[]) {
                 std::wcout << "\nBye." << std::endl;
                 return 0;
             }
-            repl.history_add(in);
+            repl.history_add(std::string(in));
             std::wstring data = cvt.from_bytes(in);
             atom_list a;
             try {
