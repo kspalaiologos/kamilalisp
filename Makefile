@@ -4,21 +4,21 @@ HFLAGS=-std=c++20 -Wall -Wextra -IRE-flex/include -Ireplxx
 LIBS=-lmpc -lmpfr -lgmp -lreadline RE-flex/lib/libreflex.a
 
 STRIPPER.debug := :
-STRIPPER.release := strip
+STRIPPER.release := strip --strip-all
 STRIPPER.profile := :
 STRIPPER := $(or ${STRIPPER.${target}},:)
 
 ifeq ($(CXX),g++)
 CXXFLAGS.debug := -O0 -g3 -fsanitize=address -fsanitize=leak -fsanitize=undefined \
 		 		  -fcf-protection=full -fstack-protector-strong -fstack-check
-CXXFLAGS.release := -O3 -march=native -funroll-loops -flto -flto=auto
+CXXFLAGS.release := -DNDEBUG -O3 -march=native -funroll-loops -flto -flto=auto
 CXXFLAGS.profile := $(CXXFLAGS.release) -g3
 CXXFLAGS := $(or ${CXXFLAGS.${target}},-Wall -Wextra -O0)
 else
 ifeq ($(CXX),clang++)
 CXXFLAGS.debug := -O0 -g3 -fsanitize=address -fsanitize=leak -fsanitize=undefined \
 		 		  -fcf-protection=full -fstack-protector-strong -fstack-check
-CXXFLAGS.release := -O3 -march=native -funroll-loops -flto \
+CXXFLAGS.release := -DNDEBUG -O3 -march=native -funroll-loops -flto \
 	-ffinite-loops -ffinite-math-only -fignore-exceptions -fno-math-errno -fno-stack-protector \
 	-funroll-loops -funsafe-math-optimizations -fvectorize -fwhole-program-vtables -fvirtual-function-elimination \
 	-fslp-vectorize # line 2 & 3 are dangerous as fuck, remove when there's some trouble.
@@ -54,6 +54,7 @@ reader/lexer.cpp: reader/lexer.lxx
 
 kamilalisp: $(objs)
 	$(CXX) $(HFLAGS) $(CXXFLAGS) -o $@ $^ $(LIBS)
+	$(STRIPPER) kamilalisp
 
 clean:
 	rm -f kamilalisp reader/lexer.cpp replxx/*.o *.o reader/*.o replxx/*.d *.d reader/*.d
