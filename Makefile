@@ -1,6 +1,6 @@
 
 CXX?=clang++
-HFLAGS=-std=c++20 -Wall -Wextra -IRE-flex/include -Ireplxx -DBOOST_STACKTRACE_USE_ADDR2LINE
+HFLAGS=-std=c++2a -Wall -Wextra -IRE-flex/include -Ireplxx -DBOOST_STACKTRACE_USE_ADDR2LINE
 LIBS=-lmpc -lmpfr -lgmp -ldl -lreadline RE-flex/lib/libreflex.a
 
 ifeq ($(CXX),g++)
