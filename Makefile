@@ -1,6 +1,6 @@
 
 CXX?=clang++
-HFLAGS=-std=c++20 -Wall -Wextra -IRE-flex/include -Ireplxx -g -DBOOST_STACKTRACE_USE_ADDR2LINE
+HFLAGS=-std=c++20 -Wall -Wextra -IRE-flex/include -Ireplxx -DBOOST_STACKTRACE_USE_ADDR2LINE
 LIBS=-lmpc -lmpfr -lgmp -ldl -lreadline RE-flex/lib/libreflex.a
 
 ifeq ($(CXX),g++)
@@ -8,16 +8,16 @@ CXXFLAGS.debug := -O0 -fsanitize=address -fsanitize=leak -fsanitize=undefined \
 		 		  -fcf-protection=full -fstack-protector-strong -fstack-check
 CXXFLAGS.release := -DNDEBUG -O3 -march=native -funroll-loops -flto -flto=auto
 CXXFLAGS.profile := $(CXXFLAGS.release) -g3
-CXXFLAGS := $(or ${CXXFLAGS.${target}},-Wall -Wextra -O0)
+CXXFLAGS := $(or ${CXXFLAGS.${target}},-Wall -Wextra -O2)
 else
 ifeq ($(CXX),clang++)
 CXXFLAGS.debug := -O0 -fsanitize=address -fsanitize=leak -fsanitize=undefined \
-		 		  -fcf-protection=full -fstack-protector-strong -fstack-check
+		 		  -fcf-protection=full -fstack-protector-strong -fstack-check -g3
 CXXFLAGS.release := -DNDEBUG -O3 -march=native -funroll-loops -flto -fslp-vectorize \
-	-ffinite-loops -ffinite-math-only -fno-math-errno -fno-stack-protector \
+	-ffinite-loops -ffinite-math-only -fno-math-errno -fno-stack-protector -gline-directives-only \
 	-funroll-loops -funsafe-math-optimizations -fvectorize -fwhole-program-vtables -fvirtual-function-elimination
 CXXFLAGS.profile := $(CXXFLAGS.release) -g3
-CXXFLAGS := $(or ${CXXFLAGS.${target}},-Wall -Wextra -O0)
+CXXFLAGS := $(or ${CXXFLAGS.${target}},-Wall -Wextra -O2)
 else
 CXXFLAGS := -O2
 endif
@@ -27,7 +27,7 @@ srcs=\
 	atom.cpp env.cpp executor.cpp main.cpp reader/lexer.cpp reader/parser.cpp \
 	replxx/conversion.cxx replxx/ConvertUTF.cpp replxx/escape.cxx replxx/history.cxx \
 	replxx/prompt.cxx replxx/replxx.cxx replxx/replxx_impl.cxx replxx/terminal.cxx \
-	replxx/util.cxx replxx/wcwidth.cpp replxx/windows.cxx
+	replxx/util.cxx replxx/wcwidth.cpp replxx/windows.cxx math-lib.cpp
 objs=$(patsubst %.cpp, %.o, $(patsubst %.cxx, %.o, $(srcs)))
 deps=$(objs:.o=.d)
 
