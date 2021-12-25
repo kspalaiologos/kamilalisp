@@ -15,7 +15,7 @@
 
 void highlighter(std::string const & input, replxx::Replxx::colors_t & c) {
     static std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> cvt;
-    static std::shared_ptr<environment> env = environment::create_default_env();
+    const static std::shared_ptr<environment> env = environment::create_default_env();
     std::wstring data = cvt.from_bytes(input.c_str());
     std::vector<token> lexemes = lex_greedy(data);
     try {
@@ -69,10 +69,10 @@ void highlighter(std::string const & input, replxx::Replxx::colors_t & c) {
                 case token_type::TOKEN_MAP: {
                     c.at(lexeme.loc) = replxx::Replxx::Color::BLUE;
                     break;
+                }
                 case token_type::TOKEN_EMPTY:
                     // Ignore.
                     break;
-                }
             }
         }
     } catch(std::exception const& e) {
@@ -105,9 +105,8 @@ int main(int argc, char * argv[]) {
 
     std::shared_ptr<environment> env = environment::create_default_env();
 
-    replxx::Replxx repl;
-
     if(argc == 1) {
+        replxx::Replxx repl;
         std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> cvt;
 
         std::wcout
@@ -130,17 +129,9 @@ int main(int argc, char * argv[]) {
                 return 0;
             }
             repl.history_add(std::string(in));
-            std::wstring data = cvt.from_bytes(in);
-            atom_list a;
             try {
-                a = parse(data);
-            } catch(std::runtime_error const & e) {
-                std::wcerr << e.what() << std::endl;
-                std::ostringstream buf;
-                buf << boost::stacktrace::stacktrace();
-                std::wcerr << buf.str().c_str() << std::endl;
-            }
-            try {
+                std::wstring data = cvt.from_bytes(in);
+                atom_list a = parse(data);
                 for(atom & at : a) {
                     atom result = evaluate(at, env);
                     std::wcout << std::to_wstring(result) << std::endl;

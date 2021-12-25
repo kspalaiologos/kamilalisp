@@ -179,7 +179,7 @@ std::wstring atom_::stringify() {
             for(atom a : l) {
                 result += a->stringify() + L" ";
             }
-            if(!result.empty())
+            if(result.size() != 1)
                 result.pop_back();
             return result + L")";
         }
