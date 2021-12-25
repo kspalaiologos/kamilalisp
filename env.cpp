@@ -47,5 +47,6 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"fr", make_atom(boost::multiprecision::mpz_int(50)));
     env->set(L"+", make_atom(std::make_shared<mathlib::add>()));
     env->set(L"-", make_atom(std::make_shared<mathlib::subtract>()));
+    env->set(L"def", make_atom(std::make_shared<mathlib::define>()));
     return env;
 }
