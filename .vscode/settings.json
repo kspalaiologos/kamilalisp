@@ -73,6 +73,7 @@
         "strstream": "cpp",
         "cfenv": "cpp",
         "*.ipp": "cpp",
-        "charconv": "cpp"
+        "charconv": "cpp",
+        "source_location": "cpp"
     }
 }
