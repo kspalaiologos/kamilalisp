@@ -38,10 +38,10 @@ deps=$(objs:.o=.d)
 all: kamilalisp
 
 %.o: %.cpp
-	$(CXX) -MMD -MF $(patsubst %.o,%.d,$@) $(HFLAGS) $(CXXFLAGS) -c -o $@ $^
+	$(CXX) -MMD -MF $(patsubst %.o,%.d,$@) $(HFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 %.o: %.cxx
-	$(CXX) -MMD -MF $(patsubst %.o,%.d,$@) $(HFLAGS) $(CXXFLAGS) -c -o $@ $^
+	$(CXX) -MMD -MF $(patsubst %.o,%.d,$@) $(HFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 reader/lexer.cpp: reader/lexer.lxx
 	cd reader && ../RE-flex/bin/reflex lexer.lxx -o lexer.cpp
