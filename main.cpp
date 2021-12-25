@@ -69,6 +69,9 @@ void highlighter(std::string const & input, replxx::Replxx::colors_t & c) {
                 case token_type::TOKEN_MAP: {
                     c.at(lexeme.loc) = replxx::Replxx::Color::BLUE;
                     break;
+                case token_type::TOKEN_EMPTY:
+                    // Ignore.
+                    break;
                 }
             }
         }
