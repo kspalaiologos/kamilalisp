@@ -74,7 +74,7 @@ namespace detail {
         return r;
     }
 
-    inline void unsupported_args(const std::string & loc, const std::string & cause, atom_list l) {
+    [[noreturn]] inline void unsupported_args(const std::string & loc, const std::string & cause, atom_list l) {
         std::vector<std::string> names;
         for(auto & a : l)
             names.push_back(a->type_name());
