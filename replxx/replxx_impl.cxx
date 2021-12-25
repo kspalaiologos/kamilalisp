@@ -749,9 +749,14 @@ void Replxx::ReplxxImpl::indent( void ) {
 	if ( ! _indentMultiline ) {
 		return;
 	}
-	for ( int i( 0 ); i < _prompt.indentation(); ++ i ) {
-		_display.push_back( ' ' );
+	if(_prompt.indentation() == 0)
+		return;
+	if(_prompt.indentation() == 1)
+		_display.push_back(' ');
+	for ( int i( 0 ); i < _prompt.indentation() - 1; ++ i ) {
+		_display.push_back( '.' );
 	}
+	_display.push_back(' ');
 }
 
 void Replxx::ReplxxImpl::render( char32_t ch ) {
