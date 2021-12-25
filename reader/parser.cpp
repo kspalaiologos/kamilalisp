@@ -83,6 +83,24 @@ atom parse_quote(token_queue & q) {
 
 #define src_loc(t) (std::string("<source ") + std::to_string(t.line) + ":" + std::to_string(t.col) + "> - ")
 
+atom_list fix_backslash(atom_list l) {
+    bool found = false;
+    for(auto e : l)
+        if(e->get_type() == atom_type::T_ID && e->get_identifier() == identifier(L"\\"))
+            found = true;
+    if(!found)
+        return l;
+    atom_list r { };
+    while(!l.is_empty()) {
+        if(l.car()->get_type() == atom_type::T_ID && l.car()->get_identifier() == identifier(L"\\"))
+            return r.unsafe_append(make_atom(fix_backslash(l.cdr())));
+        else
+            r = r.unsafe_append(l.car());
+        l = l.cdr();
+    }
+    return r;
+}
+
 atom parse_list(token_queue & q) {
     atom_list l{};
     while(q.peek().type != token_type::TOKEN_RPAR)
@@ -91,7 +109,7 @@ atom parse_list(token_queue & q) {
         else
             l = l.unsafe_append(parse_form(q));
     q.next();
-    return make_atom(l);
+    return make_atom(fix_backslash(l));
 }
 
 atom parse_sqlist(token_queue & q) {
@@ -107,7 +125,7 @@ atom parse_sqlist(token_queue & q) {
         l.car() = l.cdr().car();
         l.cdr().car() = begin;
     }
-    return make_atom(l);
+    return make_atom(fix_backslash(l));
 }
 
 atom parse_bind(token_queue & q) {

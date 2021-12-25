@@ -261,6 +261,7 @@ namespace mathlib {
                     r = r.unsafe_append(make_atom(boost::multiprecision::mpz_int(i)));
                 return thunk_type(r);
             }
+            __builtin_unreachable();
         }));
     } else {
         return make_atom(thunk([args, env]() mutable -> thunk_type {

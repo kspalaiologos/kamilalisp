@@ -133,6 +133,12 @@ class define : public callable {
         atom call(std::shared_ptr<environment> env, atom_list args) override;
 };
 
+class lambda : public callable {
+    public:
+        ~lambda() { }
+        atom call(std::shared_ptr<environment> env, atom_list args) override;
+};
+
 }
 
 #endif
