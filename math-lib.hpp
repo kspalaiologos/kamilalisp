@@ -115,6 +115,12 @@ class divide : public callable {
         atom call(std::shared_ptr<environment> env, atom_list args) override;
 };
 
+class iota : public callable {
+    public:
+        ~iota() { }
+        atom call(std::shared_ptr<environment> env, atom_list args) override;
+};
+
 class define : public callable {
     public:
         ~define() { }

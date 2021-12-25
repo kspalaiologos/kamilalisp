@@ -227,4 +227,19 @@ namespace mathlib {
     }));
 }
 
+[[gnu::flatten]] atom iota::call(std::shared_ptr<environment> env, atom_list args) {
+    detail::argno_exact<1>(location, "iota", args);
+    return make_atom(thunk([args, env]() mutable -> thunk_type {
+        auto [a] = detail::get_args<1>(args, env);
+        if(a->get_type() == atom_type::T_INT) {
+            atom_list l { };
+            for(int i = 0; i < a->get_integer(); ++i)
+                l = l.unsafe_append(make_atom(boost::multiprecision::mpz_int(i)));
+            return thunk_type(l);
+        } else {
+            detail::unsupported_args(location, "iota", args);
+        }
+    }));
+}
+
 }
