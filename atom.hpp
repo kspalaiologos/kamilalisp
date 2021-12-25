@@ -73,7 +73,7 @@ auto variant_cast(const std::variant<Args...> & v) -> variant_cast_proxy<Args...
 
 using thunk_type = std::variant<
         boost::multiprecision::mpz_int,
-        boost::multiprecision::mpfr_float,
+        boost::multiprecision::mpf_float,
         boost::multiprecision::mpc_complex,
         std::wstring,
         atom_list,
@@ -86,7 +86,7 @@ using thunk =
 class atom_ {
     using data_type = std::variant<thunk,
         boost::multiprecision::mpz_int,
-        boost::multiprecision::mpfr_float,
+        boost::multiprecision::mpf_float,
         boost::multiprecision::mpc_complex,
         std::wstring,
         atom_list,
@@ -99,10 +99,10 @@ class atom_ {
     public:
         /* Constructors */
         atom_(boost::multiprecision::mpz_int &);
-        atom_(boost::multiprecision::mpfr_float &);
+        atom_(boost::multiprecision::mpf_float &);
         atom_(boost::multiprecision::mpc_complex &);
         atom_(boost::multiprecision::mpz_int &&);
-        atom_(boost::multiprecision::mpfr_float &&);
+        atom_(boost::multiprecision::mpf_float &&);
         atom_(boost::multiprecision::mpc_complex &&);
         atom_(std::wstring &);
         atom_(std::wstring &&);
@@ -116,7 +116,7 @@ class atom_ {
 
         /* Accessors */
         boost::multiprecision::mpz_int get_integer();
-        boost::multiprecision::mpfr_float get_real();
+        boost::multiprecision::mpf_float get_real();
         boost::multiprecision::mpc_complex get_complex();
         std::wstring get_string();
         atom_list get_list();
@@ -126,6 +126,7 @@ class atom_ {
         /* Utility methods. */
         void force();
         std::wstring stringify();
+        std::wstring stringify(unsigned);
 
         /* Casting to boolean. */
         operator bool();

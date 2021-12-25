@@ -3,8 +3,10 @@
 
 #include <numeric>
 
-static boost::multiprecision::mpc_complex conjugate(boost::multiprecision::mpc_complex && v) {
-    return boost::multiprecision::mpc_complex(v.real(), -(v.imag()));
+namespace bmp = boost::multiprecision;
+
+static bmp::mpc_complex conjugate(bmp::mpc_complex && v) {
+    return bmp::mpc_complex(v.real(), -(v.imag()));
 }
 
 template <typename T>
@@ -140,23 +142,23 @@ namespace mathlib {
             auto [a] = detail::get_args<1>(args, env);
             if(a->get_type() == atom_type::T_INT) {
                 if(a->get_integer() < 0)
-                    return thunk_type(boost::multiprecision::mpz_int(-1));
+                    return thunk_type(bmp::mpz_int(-1));
                 else if(a->get_integer() > 0)
-                    return thunk_type(boost::multiprecision::mpz_int(1));
+                    return thunk_type(bmp::mpz_int(1));
                 else
-                    return thunk_type(boost::multiprecision::mpz_int(0));
+                    return thunk_type(bmp::mpz_int(0));
             } else if(a->get_type() == atom_type::T_REAL) {
                 if(a->get_real() < 0)
-                    return thunk_type(boost::multiprecision::mpz_int(-1));
+                    return thunk_type(bmp::mpz_int(-1));
                 else if(a->get_real() > 0)
-                    return thunk_type(boost::multiprecision::mpz_int(1));
+                    return thunk_type(bmp::mpz_int(1));
                 else
-                    return thunk_type(boost::multiprecision::mpz_int(0));
+                    return thunk_type(bmp::mpz_int(0));
             } else if(a->get_type() == atom_type::T_CMPLX) {
                 // sgn(z) = z / norm(z)
                 return thunk_type(a->get_complex() /
-                    boost::multiprecision::sqrt(boost::multiprecision::pow(a->get_complex().real(), 2)
-                        + boost::multiprecision::pow(a->get_complex().imag(), 2)));
+                    bmp::sqrt(bmp::pow(a->get_complex().real(), 2)
+                        + bmp::pow(a->get_complex().imag(), 2)));
             } else {
                 detail::unsupported_args(location, "-", args);
             }
@@ -197,14 +199,14 @@ namespace mathlib {
         return make_atom(thunk([args, env]() mutable -> thunk_type {
             auto [a] = detail::get_args<1>(args, env);
             if(a->get_type() == atom_type::T_INT) {
-                return thunk_type(1 / boost::multiprecision::mpfr_float(a->get_integer()));
+                return thunk_type(1 / bmp::mpf_float(a->get_integer()));
             } else if(a->get_type() == atom_type::T_REAL) {
-                return thunk_type(1 / boost::multiprecision::mpfr_float(a->get_real()));
+                return thunk_type(1 / bmp::mpf_float(a->get_real()));
             } else if(a->get_type() == atom_type::T_CMPLX) {
                 // 1/z = conjugate(z) / norm^2(z)
                 return thunk_type(conjugate(a->get_complex()) /
-                    abs(boost::multiprecision::pow(a->get_complex().real(), 2)
-                        + boost::multiprecision::pow(a->get_complex().imag(), 2)));
+                    abs(bmp::pow(a->get_complex().real(), 2)
+                        + bmp::pow(a->get_complex().imag(), 2)));
             } else {
                 detail::unsupported_args(location, "/", args);
             }
@@ -238,8 +240,53 @@ namespace mathlib {
 }
 
 [[gnu::flatten]] atom iota::call(std::shared_ptr<environment> env, atom_list args) {
-    detail::argno_either<1, 2>(location, "iota", args);
-    if(args.size() == 2) {
+    detail::argno_either<1, 2, 3>(location, "iota", args);
+    if(args.size() == 3) {
+        return make_atom(thunk([args, env]() mutable -> thunk_type {
+            auto [a, b, c] = detail::get_args<3>(args);
+            if(a->get_type() != atom_type::T_INT || b->get_type() != atom_type::T_INT || (c->get_type() != atom_type::T_REAL && c->get_type() != atom_type::T_INT))
+                detail::unsupported_args(location, "iota", args);
+            if(c->get_type() == atom_type::T_INT) {
+                long start = a->get_integer().convert_to<long>(), end = b->get_integer().convert_to<long>();
+                if(start == end)
+                    return thunk_type(atom_list::from(a));
+                else if(start > end) {
+                    // count down from start to end
+                    atom_list r { };
+                    for(long i = start; i >= end; i -= c->get_integer().convert_to<long>())
+                        r = r.unsafe_append(make_atom(bmp::mpz_int(i)));
+                    return thunk_type(r);
+                } else if(start < end) {
+                    // count up from start to end
+                    atom_list r { };
+                    for(long i = start; i <= end; i += c->get_integer().convert_to<long>())
+                        r = r.unsafe_append(make_atom(bmp::mpz_int(i)));
+                    return thunk_type(r);
+                }
+                __builtin_unreachable();
+            } else if(c->get_type() == atom_type::T_REAL) {
+                bmp::mpf_float start = a->get_integer(), end = b->get_integer();
+                if(start == end)
+                    return thunk_type(atom_list::from(a));
+                else if(start > end) {
+                    // count down from start to end
+                    atom_list r { };
+                    for(bmp::mpf_float i = start; i >= end; i -= c->get_real())
+                        r = r.unsafe_append(make_atom(i));
+                    return thunk_type(r);
+                } else if(start < end) {
+                    // count up from start to end
+                    atom_list r { };
+                    for(bmp::mpf_float i = start; i <= end; i += c->get_real())
+                        r = r.unsafe_append(make_atom(i));
+                    return thunk_type(r);
+                }
+                __builtin_unreachable();
+            } else {
+                __builtin_unreachable();
+            }
+        }));
+    } else if(args.size() == 2) {
         return make_atom(thunk([args, env]() mutable -> thunk_type {
             // Note: Dyadic iota (range) is inclusive on both ends.
             auto [a, b] = detail::get_args<2>(args, env);
@@ -252,30 +299,30 @@ namespace mathlib {
                 // count down from start to end
                 atom_list r { };
                 for(long i = start; i >= end; --i)
-                    r = r.unsafe_append(make_atom(boost::multiprecision::mpz_int(i)));
+                    r = r.unsafe_append(make_atom(bmp::mpz_int(i)));
                 return thunk_type(r);
             } else if(start < end) {
                 // count up from start to end
                 atom_list r { };
                 for(long i = start; i <= end; ++i)
-                    r = r.unsafe_append(make_atom(boost::multiprecision::mpz_int(i)));
+                    r = r.unsafe_append(make_atom(bmp::mpz_int(i)));
                 return thunk_type(r);
             }
             __builtin_unreachable();
         }));
-    } else {
+    } else if(args.size() == 1) {
         return make_atom(thunk([args, env]() mutable -> thunk_type {
             auto [a] = detail::get_args<1>(args, env);
             if(a->get_type() == atom_type::T_INT) {
                 if(a->get_integer() >= 0) {
                     atom_list l { };
                     for(unsigned long i = 0; i < a->get_integer(); ++i)
-                        l = l.unsafe_append(make_atom(boost::multiprecision::mpz_int(i)));
+                        l = l.unsafe_append(make_atom(bmp::mpz_int(i)));
                     return thunk_type(l);
                 } else {
                     atom_list l { };
                     for(long i = a->get_integer().convert_to<long>() + 1; i <= 0; ++i)
-                        l = l.unsafe_append(make_atom(boost::multiprecision::mpz_int(i)));
+                        l = l.unsafe_append(make_atom(bmp::mpz_int(i)));
                     return thunk_type(l);
                 }
             } else if(a->get_type() == atom_type::T_LIST) {
@@ -286,12 +333,12 @@ namespace mathlib {
                     if(x->get_integer() >= 0) {
                         std::vector<atom> l { };
                         for(unsigned long i = 0; i < x->get_integer(); ++i)
-                            l.push_back(make_atom(boost::multiprecision::mpz_int(i)));
+                            l.push_back(make_atom(bmp::mpz_int(i)));
                         data.push_back(std::move(l));
                     } else {
                         std::vector<atom> l { };
                         for(long i = x->get_integer().convert_to<long>() + 1; i <= 0; ++i)
-                            l.push_back(make_atom(boost::multiprecision::mpz_int(i)));
+                            l.push_back(make_atom(bmp::mpz_int(i)));
                         data.push_back(std::move(l));
                     }
                 }
@@ -323,6 +370,7 @@ namespace mathlib {
             }
         }));
     }
+    __builtin_unreachable();
 }
 
 }
