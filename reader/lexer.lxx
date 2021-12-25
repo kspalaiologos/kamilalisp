@@ -1,14 +1,23 @@
 
 %top {
     #include "token.hpp"
+    #include "../error.hpp"
 %}
 
 %option token_type=token
 %option header-file=lexer.hpp
 
+%class {
+    unsigned pos;
+}
+
+%init {
+    pos = 0;
+}
+
 %o fast unicode
 
-notid_start    [^\#\^\$\\\:\'\@\ \r\n\t\f\(\)\[\]\;]
+notid_start    [^\#\^\$\\\:\'\"\@\ \r\n\t\f\(\)\[\]\;]
 notid          [^\@\^\r\n\ \(\)\[\]\;]
 hexd           [0-9a-fA-F]
 integer        "-"?[0-9]+
@@ -19,30 +28,32 @@ cmplx_pt       {float}|{integer}
 
 %%
 
-"("                             { return token(token_type::TOKEN_LPAR); }
-")"                             { return token(token_type::TOKEN_RPAR); }
-"$"                             { return token(token_type::TOKEN_BIND); }
-"#"[0-9]+                       { return token(str(), token_type::TOKEN_TACK); }
-"#"                             { return token(token_type::TOKEN_FORK); }
-":"                             { return token(token_type::TOKEN_MAP); }
-"@"                             { return token(token_type::TOKEN_ATOP); }
-\\                              { return token(token_type::TOKEN_SLASH); }
-"^"                             { return token(token_type::TOKEN_OVER); }
-"["                             { return token(token_type::TOKEN_LBRA); }
-"]"                             { return token(token_type::TOKEN_RBRA); }
-"'"                             { return token(token_type::TOKEN_QUOT); }
+"("                             { pos += size(); return token(pos - size(), lineno(), columno(), token_type::TOKEN_LPAR); }
+")"                             { pos += size(); return token(pos - size(), lineno(), columno(), token_type::TOKEN_RPAR); }
+"$"                             { pos += size(); return token(pos - size(), lineno(), columno(), token_type::TOKEN_BIND); }
+"#"[0-9]+                       { pos += size(); return token(pos - size(), lineno(), columno(), str(), token_type::TOKEN_TACK); }
+"#"                             { pos += size(); return token(pos - size(), lineno(), columno(), token_type::TOKEN_FORK); }
+":"                             { pos += size(); return token(pos - size(), lineno(), columno(), token_type::TOKEN_MAP); }
+"@"                             { pos += size(); return token(pos - size(), lineno(), columno(), token_type::TOKEN_ATOP); }
+\\                              { pos += size(); return token(pos - size(), lineno(), columno(), token_type::TOKEN_SLASH); }
+"^"                             { pos += size(); return token(pos - size(), lineno(), columno(), token_type::TOKEN_OVER); }
+"["                             { pos += size(); return token(pos - size(), lineno(), columno(), token_type::TOKEN_LBRA); }
+"]"                             { pos += size(); return token(pos - size(), lineno(), columno(), token_type::TOKEN_RBRA); }
+"'"                             { pos += size(); return token(pos - size(), lineno(), columno(), token_type::TOKEN_QUOT); }
 
-\"(\\.|\\\r?\n|[^\\\n"])*\"     { return token(wstr(), token_type::TOKEN_STR); }
-{integer}                       { return token(str(), token_type::TOKEN_INT); }
-"0"[hH]{hexd}+                  { return token(str(), token_type::TOKEN_HEX); }
-"0"[bB][10]+                    { return token(str(), token_type::TOKEN_BIN); }
-{float}                         { return token(str(), token_type::TOKEN_FPU); }
-{cmplx_pt}"J"{cmplx_pt}         { return token(str(), token_type::TOKEN_COMPLEX); }
-"nil"                           { return token(wstr(), token_type::TOKEN_NIL); }
-{notid_start}{notid}*           { return token(wstr(), token_type::TOKEN_ID); }
+\"(\\.|\r?\n|[^\\\n"])*\"       { pos += size(); std::wstring x = wstr(); x.pop_back(); x.erase(x.begin()); return token(pos - size(), lineno(), columno(), x, token_type::TOKEN_STR); }
+{integer}                       { pos += size(); return token(pos - size(), lineno(), columno(), str(), token_type::TOKEN_INT); }
+"0"[hH]{hexd}+                  { pos += size(); return token(pos - size(), lineno(), columno(), str(), token_type::TOKEN_HEX); }
+"0"[bB][10]+                    { pos += size(); return token(pos - size(), lineno(), columno(), str(), token_type::TOKEN_BIN); }
+{float}                         { pos += size(); return token(pos - size(), lineno(), columno(), str(), token_type::TOKEN_FPU); }
+{cmplx_pt}"J"{cmplx_pt}         { pos += size(); return token(pos - size(), lineno(), columno(), str(), token_type::TOKEN_COMPLEX); }
+"nil"                           { pos += size(); return token(pos - size(), lineno(), columno(), wstr(), token_type::TOKEN_NIL); }
+{notid_start}{notid}*           { pos += size(); return token(pos - size(), lineno(), columno(), wstr(), token_type::TOKEN_ID); }
 
 // Ignore whitespace and comments.
-";".*$      { ; }
-[\t\r\n\f]+ { ; }
+";".*$        { pos += size(); }
+[\t\r\n\f\ ]+ { pos += size(); }
+
+.                               { kl_recoverable_error(std::string("Stray token - '") + str() + std::string("', ASCII ") + std::to_string((int) str()[0])); }
 
 %%

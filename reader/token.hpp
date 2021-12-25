@@ -19,18 +19,19 @@ class token {
     public:
         std::optional<std::variant<std::wstring, std::string>> content;
         token_type type;
+        unsigned line, col, loc;
 
-        token(std::wstring content, token_type type)
-            : content(content), type(type) { }
+        token(unsigned loc, unsigned line, unsigned col, std::wstring content, token_type type)
+            : content(content), type(type), line(line), col(col), loc(loc) { }
         
-        token(std::string content, token_type type)
-            : content(content), type(type) { }
+        token(unsigned loc, unsigned line, unsigned col, std::string content, token_type type)
+            : content(content), type(type), line(line), col(col), loc(loc) { }
         
-        token(token_type type)
-            : content(std::nullopt), type(type) { }
+        token(unsigned loc, unsigned line, unsigned col, token_type type)
+            : content(std::nullopt), type(type), line(line), col(col), loc(loc) { }
         
         token()
-            : content(std::nullopt), type(token_type::TOKEN_EMPTY) { }
+            : content(std::nullopt), type(token_type::TOKEN_EMPTY), line(-1), col(-1), loc(-1) { }
 };
 
 #endif
