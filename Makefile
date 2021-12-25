@@ -31,7 +31,7 @@ srcs=\
 objs=$(patsubst %.cpp, %.o, $(patsubst %.cxx, %.o, $(srcs)))
 deps=$(objs:.o=.d)
 
--include $(DEPS)
+-include $(deps)
 
 .PHONY: all clean get-deps
 

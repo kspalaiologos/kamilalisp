@@ -109,6 +109,12 @@ class multiply : public callable {
         atom call(std::shared_ptr<environment> env, atom_list args) override;
 };
 
+class divide : public callable {
+    public:
+        ~divide() { }
+        atom call(std::shared_ptr<environment> env, atom_list args) override;
+};
+
 class define : public callable {
     public:
         ~define() { }
