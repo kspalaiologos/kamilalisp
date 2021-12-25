@@ -9,7 +9,7 @@ atom_::atom_(boost::multiprecision::mpz_int & n) {
     value = n;
 }
 
-atom_::atom_(boost::multiprecision::mpf_float & n) {
+atom_::atom_(boost::multiprecision::mpfr_float & n) {
     value = n;
 }
 
@@ -21,7 +21,7 @@ atom_::atom_(boost::multiprecision::mpz_int && n) {
     value = n;
 }
 
-atom_::atom_(boost::multiprecision::mpf_float && n) {
+atom_::atom_(boost::multiprecision::mpfr_float && n) {
     value = n;
 }
 
@@ -73,9 +73,9 @@ boost::multiprecision::mpz_int atom_::get_integer() {
     }
 }
 
-boost::multiprecision::mpf_float atom_::get_real() {
-    if(std::holds_alternative<boost::multiprecision::mpf_float>(value)) {
-        return std::get<boost::multiprecision::mpf_float>(value);
+boost::multiprecision::mpfr_float atom_::get_real() {
+    if(std::holds_alternative<boost::multiprecision::mpfr_float>(value)) {
+        return std::get<boost::multiprecision::mpfr_float>(value);
     } else {
         kl_error("Not a real");
     }
@@ -134,7 +134,7 @@ atom_::operator bool() {
     force();
     return
         (std::holds_alternative<boost::multiprecision::mpz_int>(value) && std::get<boost::multiprecision::mpz_int>(value) != 0)
-    ||  (std::holds_alternative<boost::multiprecision::mpf_float>(value) && std::get<boost::multiprecision::mpf_float>(value) != 0)
+    ||  (std::holds_alternative<boost::multiprecision::mpfr_float>(value) && std::get<boost::multiprecision::mpfr_float>(value) != 0)
     ||  (std::holds_alternative<boost::multiprecision::mpc_complex>(value) && std::get<boost::multiprecision::mpc_complex>(value) != 0)
     ||  (std::holds_alternative<atom_list>(value) && !std::get<atom_list>(value).is_empty());
 }
@@ -143,7 +143,7 @@ bool atom_::is_numeric() {
     force();
     return
         std::holds_alternative<boost::multiprecision::mpz_int>(value)
-    ||  std::holds_alternative<boost::multiprecision::mpf_float>(value)
+    ||  std::holds_alternative<boost::multiprecision::mpfr_float>(value)
     ||  std::holds_alternative<boost::multiprecision::mpc_complex>(value);
 }
 
@@ -199,7 +199,7 @@ bool atom_::operator==(atom & other) {
         case atom_type::T_INT:
             return std::get<boost::multiprecision::mpz_int>(value) == std::get<boost::multiprecision::mpz_int>(other->value);
         case atom_type::T_REAL:
-            return std::get<boost::multiprecision::mpf_float>(value) == std::get<boost::multiprecision::mpf_float>(other->value);
+            return std::get<boost::multiprecision::mpfr_float>(value) == std::get<boost::multiprecision::mpfr_float>(other->value);
         case atom_type::T_CMPLX:
             return std::get<boost::multiprecision::mpc_complex>(value) == std::get<boost::multiprecision::mpc_complex>(other->value);
         case atom_type::T_STR:
@@ -228,8 +228,8 @@ std::weak_ordering atom_::operator<=>(atom & other) {
             else return std::weak_ordering::equivalent;
         }
         case atom_type::T_REAL: {
-            boost::multiprecision::mpf_float a = std::get<boost::multiprecision::mpf_float>(value);
-            boost::multiprecision::mpf_float b = std::get<boost::multiprecision::mpf_float>(other->value);
+            boost::multiprecision::mpfr_float a = std::get<boost::multiprecision::mpfr_float>(value);
+            boost::multiprecision::mpfr_float b = std::get<boost::multiprecision::mpfr_float>(other->value);
             if(a < b) return std::weak_ordering::less;
             else if(a > b) return std::weak_ordering::greater;
             else return std::weak_ordering::equivalent;
@@ -292,7 +292,7 @@ namespace std {
                 case atom_type::T_INT:
                     return std::hash<boost::multiprecision::mpz_int>()(s->get_integer());
                 case atom_type::T_REAL:
-                    return std::hash<boost::multiprecision::mpf_float>()(s->get_real());
+                    return std::hash<boost::multiprecision::mpfr_float>()(s->get_real());
                 case atom_type::T_CMPLX:
                     return std::hash<boost::multiprecision::mpc_complex>()(s->get_complex());
                 case atom_type::T_STR:
@@ -328,3 +328,16 @@ std::string atom_::type_name() {
 }
 
 callable::~callable() { }
+
+thunk_type atom_::thunk_forward() {
+    force();
+    switch(get_type()) {
+        case atom_type::T_INT: return get_integer();
+        case atom_type::T_REAL: return get_real();
+        case atom_type::T_CMPLX: return get_complex();
+        case atom_type::T_STR: return get_string();
+        case atom_type::T_LIST: return get_list();
+        case atom_type::T_CALLABLE: return get_callable();
+        case atom_type::T_ID: return get_identifier();
+    }
+}
