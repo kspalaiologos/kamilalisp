@@ -51,5 +51,6 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"/", make_atom(std::make_shared<mathlib::divide>()));
     env->set(L"def", make_atom(std::make_shared<mathlib::define>()));
     env->set(L"iota", make_atom(std::make_shared<mathlib::iota>()));
+    env->set(L"quote", make_atom(std::make_shared<mathlib::quote>()));
     return env;
 }
