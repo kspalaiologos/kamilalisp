@@ -78,6 +78,13 @@ class list {
             return node_data->value;
         }
 
+        list reverse() {
+            list<T> instance { };
+            for(auto it = this->begin(); it != this->end(); ++it)
+                instance = instance.cons(*it);
+            return instance;
+        }
+
         iterator begin() {
             if(is_empty())
                 return iterator(true);
@@ -174,7 +181,12 @@ class list {
         }
 
         static constexpr list from(T data) {
-            return list(std::make_shared<node<T>>(nullptr, data), nullptr);
+            auto ptr = std::make_shared<node<T>>(nullptr, data);
+            return list(ptr, ptr);
+        }
+        
+        static constexpr list from(const std::vector<T> & data) {
+            from(data.begin(), data.end());
         }
 };
 
