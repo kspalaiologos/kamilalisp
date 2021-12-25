@@ -1,6 +1,8 @@
 
 #include "math-lib.hpp"
 
+#include <numeric>
+
 static boost::multiprecision::mpc_complex conjugate(boost::multiprecision::mpc_complex && v) {
     return boost::multiprecision::mpc_complex(v.real(), -(v.imag()));
 }
@@ -227,19 +229,99 @@ namespace mathlib {
     }));
 }
 
-[[gnu::flatten]] atom iota::call(std::shared_ptr<environment> env, atom_list args) {
-    detail::argno_exact<1>(location, "iota", args);
+[[gnu::flatten]] atom quote::call(std::shared_ptr<environment> env, atom_list args) {
+    detail::argno_exact<1>(location, "quote", args);
     return make_atom(thunk([args, env]() mutable -> thunk_type {
-        auto [a] = detail::get_args<1>(args, env);
-        if(a->get_type() == atom_type::T_INT) {
-            atom_list l { };
-            for(int i = 0; i < a->get_integer(); ++i)
-                l = l.unsafe_append(make_atom(boost::multiprecision::mpz_int(i)));
-            return thunk_type(l);
-        } else {
-            detail::unsupported_args(location, "iota", args);
-        }
+        auto [a] = detail::get_args<1>(args);
+        return a->thunk_forward();
     }));
+}
+
+[[gnu::flatten]] atom iota::call(std::shared_ptr<environment> env, atom_list args) {
+    detail::argno_either<1, 2>(location, "iota", args);
+    if(args.size() == 2) {
+        return make_atom(thunk([args, env]() mutable -> thunk_type {
+            // Note: Dyadic iota (range) is inclusive on both ends.
+            auto [a, b] = detail::get_args<2>(args, env);
+            if(a->get_type() != atom_type::T_INT || b->get_type() != atom_type::T_INT)
+                detail::unsupported_args(location, "iota", args);
+            long start = a->get_integer().convert_to<long>(), end = b->get_integer().convert_to<long>();
+            if(start == end)
+                return thunk_type(atom_list::from(a));
+            else if(start > end) {
+                // count down from start to end
+                atom_list r { };
+                for(long i = start; i >= end; --i)
+                    r = r.unsafe_append(make_atom(boost::multiprecision::mpz_int(i)));
+                return thunk_type(r);
+            } else if(start < end) {
+                // count up from start to end
+                atom_list r { };
+                for(long i = start; i <= end; ++i)
+                    r = r.unsafe_append(make_atom(boost::multiprecision::mpz_int(i)));
+                return thunk_type(r);
+            }
+        }));
+    } else {
+        return make_atom(thunk([args, env]() mutable -> thunk_type {
+            auto [a] = detail::get_args<1>(args, env);
+            if(a->get_type() == atom_type::T_INT) {
+                if(a->get_integer() >= 0) {
+                    atom_list l { };
+                    for(unsigned long i = 0; i < a->get_integer(); ++i)
+                        l = l.unsafe_append(make_atom(boost::multiprecision::mpz_int(i)));
+                    return thunk_type(l);
+                } else {
+                    atom_list l { };
+                    for(long i = a->get_integer().convert_to<long>() + 1; i <= 0; ++i)
+                        l = l.unsafe_append(make_atom(boost::multiprecision::mpz_int(i)));
+                    return thunk_type(l);
+                }
+            } else if(a->get_type() == atom_type::T_LIST) {
+                std::vector<std::vector<atom>> data;
+                for(auto x : a->get_list()) {
+                    if(x->get_type() != atom_type::T_INT)
+                        detail::unsupported_args(location, "iota list", args);
+                    if(x->get_integer() >= 0) {
+                        std::vector<atom> l { };
+                        for(unsigned long i = 0; i < x->get_integer(); ++i)
+                            l.push_back(make_atom(boost::multiprecision::mpz_int(i)));
+                        data.push_back(std::move(l));
+                    } else {
+                        std::vector<atom> l { };
+                        for(long i = x->get_integer().convert_to<long>() + 1; i <= 0; ++i)
+                            l.push_back(make_atom(boost::multiprecision::mpz_int(i)));
+                        data.push_back(std::move(l));
+                    }
+                }
+                unsigned int it = 0;
+                thunk_type res = thunk_type(std::accumulate(data.rbegin(), data.rend(), atom_list { }, [&it](atom_list && a, const std::vector<atom> & b) {
+                    // Cartesian product between `a` and `b`.
+                    if(a.size() == 0) {
+                        ++it;
+                        return atom_list::from(b.rbegin(), b.rend());
+                    } else {
+                        atom_list result { };
+                        // 1st iteration => didn't form lists yet.
+                        // any other iteration => lists already formed, cons instead of making a new list.
+                        if(it == 1)
+                            for(auto & x : b)
+                                for(auto & y : a)
+                                    result = result.unsafe_append(make_atom(atom_list::from(y).cons(x)));
+                        else
+                            for(auto & x : a)
+                                for(auto & y : b)
+                                    result = result.unsafe_append(make_atom(x->get_list().cons(y)));
+                        ++it;
+                        return result;
+                    }
+                }));
+                return res;
+            } else {
+                detail::unsupported_args(location, "iota", args);
+            }
+        }));
+    }
 }
 
 }
