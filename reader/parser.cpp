@@ -81,11 +81,13 @@ atom parse_quote(token_queue & q) {
     }));
 }
 
+#define src_loc(t) (std::string("<source ") + std::to_string(t.line) + ":" + std::to_string(t.col) + "> - ")
+
 atom parse_list(token_queue & q) {
     atom_list l{};
     while(q.peek().type != token_type::TOKEN_RPAR)
         if(q.peek().type == token_type::TOKEN_EMPTY)
-            kl_error("Unbalanced parenthesis.");
+            kl_recoverable_error(src_loc(q.peek()) + "Unbalanced parenthesis.");
         else
             l = l.unsafe_append(parse_form(q));
     q.next();
@@ -96,7 +98,7 @@ atom parse_sqlist(token_queue & q) {
     atom_list l{};
     while(q.peek().type != token_type::TOKEN_RBRA)
         if(q.peek().type == token_type::TOKEN_EMPTY)
-            kl_error("Unbalanced brackets.");
+            kl_recoverable_error(src_loc(q.peek()) + "Unbalanced brackets.");
         else
             l = l.unsafe_append(parse_form(q));
     q.next();
@@ -117,7 +119,7 @@ atom parse_bind(token_queue & q) {
     } else if(paren.type == token_type::TOKEN_LBRA) {
         l = parse_sqlist(q);
     } else {
-        kl_error("Expected ( or [ after $.");
+        kl_error(src_loc(paren) + "Expected ( or [ after $.");
     }
 
     return make_atom(l->get_list().cons(make_atom(identifier(L"bind"))));
@@ -132,7 +134,7 @@ atom parse_fork(token_queue & q) {
     } else if(paren.type == token_type::TOKEN_LBRA) {
         l = parse_sqlist(q);
     } else {
-        kl_error("Expected ( or [ after #.");
+        kl_error(src_loc(paren) + "Expected ( or [ after #.");
     }
 
     return make_atom(l->get_list().cons(make_atom(identifier(L"fork"))));
@@ -152,13 +154,13 @@ atom parse_literal(token & t) {
             std::string re = num.substr(0, n);
             std::string im = num.substr(n + 1);
             boost::multiprecision::mpc_complex res{};
-            res.imag(boost::multiprecision::mpf_float{im});
-            res.real(boost::multiprecision::mpf_float{re});
+            res.imag(boost::multiprecision::mpfr_float{im});
+            res.real(boost::multiprecision::mpfr_float{re});
             return make_atom(res);
         }
         case token_type::TOKEN_FPU: {
             std::string s = std::get<std::string>(*t.content);
-            atom a = make_atom(boost::multiprecision::mpf_float(s));
+            atom a = make_atom(boost::multiprecision::mpfr_float(s));
             return a;
         }
         case token_type::TOKEN_HEX:
@@ -168,7 +170,7 @@ atom parse_literal(token & t) {
             return make_atom(boost::multiprecision::mpz_int(s));
         }
         default:
-            kl_error("Unknown literal type.");
+            kl_error(src_loc(t) + "Unknown literal type.");
     }
 }
 
