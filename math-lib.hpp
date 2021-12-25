@@ -103,6 +103,12 @@ class subtract : public callable {
         atom call(std::shared_ptr<environment> env, atom_list args) override;
 };
 
+class multiply : public callable {
+    public:
+        ~multiply() { }
+        atom call(std::shared_ptr<environment> env, atom_list args) override;
+};
+
 class define : public callable {
     public:
         ~define() { }
