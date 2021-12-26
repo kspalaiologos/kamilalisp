@@ -50,7 +50,7 @@ kamilalisp: $(objs)
 	$(CXX) $(HFLAGS) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
 clean:
-	rm -f kamilalisp reader/lexer.cpp replxx/*.o *.o reader/*.o replxx/*.d *.d reader/*.d
+	rm -f kamilalisp reader/lexer.cpp replxx/*.o *.o reader/*.o replxx/*.d *.d reader/*.d lib/*.o lib/*.d
 
 get-deps:
 	git clone https://github.com/Genivia/RE-flex
