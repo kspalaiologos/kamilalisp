@@ -31,7 +31,26 @@ class defm : public callable {
         std::shared_ptr<macro> gen;
 };
 
+class monad : public callable {
+    public:
+        monad(std::shared_ptr<lambda> gen) : gen(gen) { }
+        ~monad() { }
+        atom call(std::shared_ptr<environment> env, atom_list args) override;
+    private:
+        std::shared_ptr<lambda> gen;
+};
+
+class dyad : public callable {
+    public:
+        dyad(std::shared_ptr<lambda> gen) : gen(gen) { }
+        ~dyad() { }
+        atom call(std::shared_ptr<environment> env, atom_list args) override;
+    private:
+        std::shared_ptr<lambda> gen;
+};
+
 define_callable(bruijn);
+define_callable(kl_if);
 
 }
 

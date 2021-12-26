@@ -209,7 +209,7 @@ class atom_ {
         std::wstring stringify(unsigned);
 
         /* Casting to boolean. */
-        operator bool();
+        bool coerce_bool();
 
         /* Type heuristics. */
         bool is_numeric();

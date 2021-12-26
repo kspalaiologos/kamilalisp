@@ -130,7 +130,7 @@ void atom_::force() {
         value = variant_cast(std::get<thunk>(value)());
 }
 
-atom_::operator bool() {
+bool atom_::coerce_bool() {
     force();
     return
         (std::holds_alternative<boost::multiprecision::mpz_int>(value) && std::get<boost::multiprecision::mpz_int>(value) != 0)

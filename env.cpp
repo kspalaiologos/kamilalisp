@@ -57,8 +57,11 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"lambda", make_atom(lambda));
     env->set(L"macro", make_atom(macro));
     env->set(L"defun", make_atom(std::make_shared<corelib::defun>(lambda)));
+    env->set(L"monad", make_atom(std::make_shared<corelib::monad>(lambda)));
+    env->set(L"dyad", make_atom(std::make_shared<corelib::dyad>(lambda)));
     env->set(L"defm", make_atom(std::make_shared<corelib::defm>(macro)));
     env->set(L"quote", make_atom(std::make_shared<corelib::quote>()));
     env->set(L"bruijn", make_atom(std::make_shared<corelib::bruijn>()));
+    env->set(L"if", make_atom(std::make_shared<corelib::kl_if>()));
     return env;
 }

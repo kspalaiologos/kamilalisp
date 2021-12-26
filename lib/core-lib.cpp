@@ -160,6 +160,22 @@ namespace corelib {
     }));
 }
 
+[[gnu::flatten]] atom monad::call(std::shared_ptr<environment> env, atom_list args) {
+    auto generator = this->gen;
+    detail::argno_exact<1>(location, "monad", args);
+    auto [code] = detail::get_args<1>(args);
+    auto fn = generator->call(env, atom_list::from(code).cons(make_atom(atom_list::from(make_atom(identifier(L"x"))))));
+    return fn;
+}
+
+[[gnu::flatten]] atom dyad::call(std::shared_ptr<environment> env, atom_list args) {
+    auto generator = this->gen;
+    detail::argno_exact<1>(location, "dyad", args);
+    auto [code] = detail::get_args<1>(args);
+    auto fn = generator->call(env, atom_list::from(code).cons(make_atom(atom_list::from(make_atom(identifier(L"y"))).cons(make_atom(identifier(L"x"))))));
+    return fn;
+}
+
 [[gnu::flatten]] atom defm::call(std::shared_ptr<environment> env, atom_list args) {
     auto generator = this->gen;
     detail::argno_exact<3>(location, "defm", args);
@@ -176,28 +192,36 @@ namespace corelib {
 }
 
 [[gnu::flatten]] atom quote::call(std::shared_ptr<environment> env, atom_list args) {
+    (void) env; // The caller's environment is unnecessary.
     detail::argno_exact<1>(location, "quote", args);
-    return make_atom(thunk([args, env]() mutable -> thunk_type {
-        auto [a] = detail::get_args<1>(args);
-        return a->thunk_forward();
-    }));
+    return args.car();
 }
 
 [[gnu::flatten]] atom bruijn::call(std::shared_ptr<environment> env, atom_list args) {
     detail::argno_exact<1>(location, "bruijn", args);
+    auto [a] = detail::get_args<1>(args, env);
+    if(a->get_type() != atom_type::T_INT)
+        detail::unsupported_args(location, "bruijn", args);
+    unsigned depth = a->get_integer().convert_to<unsigned>();
+    for(unsigned i = 0; i < depth; i++) {
+        if(env->ancestor == nullptr)
+            kl_error("de Bruijn index out of bounds");
+        env = env->ancestor;
+    }
+    if(env->owner == nullptr)
+        kl_error("de Bruijn index does not point to an environment with an owner");
+    return make_atom(env->owner);
+}
+
+[[gnu::flatten]] atom kl_if::call(std::shared_ptr<environment> env, atom_list args) {
+    detail::argno_exact<3>(location, "if", args);
     return make_atom(thunk([args, env]() mutable -> thunk_type {
-        auto [a] = detail::get_args<1>(args, env);
-        if(a->get_type() != atom_type::T_INT)
-            detail::unsupported_args(location, "bruijn", args);
-        unsigned depth = a->get_integer().convert_to<unsigned>();
-        for(unsigned i = 0; i < depth; i++) {
-            if(env->ancestor == nullptr)
-                kl_error("de Bruijn index out of bounds");
-            env = env->ancestor;
-        }
-        if(env->owner == nullptr)
-            kl_error("de Bruijn index does not point to an environment with an owner");
-        return env->owner;
+        auto [c, t, f] = detail::get_args<3>(args);
+        c = evaluate(c, env);
+        if(c->coerce_bool())
+            return evaluate(t, env)->thunk_forward();
+        else
+            return evaluate(f, env)->thunk_forward();
     }));
 }
 
