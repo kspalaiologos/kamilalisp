@@ -44,6 +44,8 @@ std::shared_ptr<environment> environment::get_topmost_ancestor() {
 #include "lib/math-lib.hpp"
 
 std::shared_ptr<environment> environment::create_default_env() {
+    auto lambda = std::make_shared<corelib::lambda>();
+    auto macro = std::make_shared<corelib::macro>();
     std::shared_ptr<environment> env = std::make_shared<environment>();
     env->set(L"fr", make_atom(boost::multiprecision::mpz_int(20)));
     env->set(L"+", make_atom(std::make_shared<mathlib::add>()));
@@ -52,8 +54,10 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"/", make_atom(std::make_shared<mathlib::divide>()));
     env->set(L"def", make_atom(std::make_shared<corelib::define>()));
     env->set(L"iota", make_atom(std::make_shared<mathlib::iota>()));
-    env->set(L"lambda", make_atom(std::make_shared<corelib::lambda>()));
-    env->set(L"macro", make_atom(std::make_shared<corelib::macro>()));
+    env->set(L"lambda", make_atom(lambda));
+    env->set(L"macro", make_atom(macro));
+    env->set(L"defun", make_atom(std::make_shared<corelib::defun>(lambda)));
+    env->set(L"defm", make_atom(std::make_shared<corelib::defm>(macro)));
     env->set(L"quote", make_atom(std::make_shared<corelib::quote>()));
     return env;
 }

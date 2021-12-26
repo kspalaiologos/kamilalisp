@@ -234,14 +234,12 @@ namespace std {
 
 #define make_atom std::make_shared<atom_>
 
-// A macro for abbreviating callable definitions.
+// A macro for abbreviating plain callable definitions.
 #define define_callable(name, ...) \
     class name : public callable { \
         public: \
             ~name() { } \
             atom call(std::shared_ptr<environment> env, atom_list args) override; \
-        private: \
-            __VA_ARGS__ \
     };
 
 #endif

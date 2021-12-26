@@ -143,6 +143,36 @@ namespace corelib {
     }));
 }
 
+[[gnu::flatten]] atom defun::call(std::shared_ptr<environment> env, atom_list args) {
+    auto generator = this->gen;
+    detail::argno_exact<3>(location, "defun", args);
+    return make_atom(thunk([generator, args, env]() mutable -> thunk_type {
+        auto [name, params, code] = detail::get_args<3>(args);
+        if(name->get_type() != atom_type::T_ID)
+            detail::unsupported_args(location, "defun", args);
+        if(env->ancestor != nullptr)
+            kl_error("Binding a global name in a local environment is not supported");
+        auto fn = generator->call(env, atom_list::from(code).cons(params));
+        env->set(name->get_identifier(), fn);
+        return fn->thunk_forward();
+    }));
+}
+
+[[gnu::flatten]] atom defm::call(std::shared_ptr<environment> env, atom_list args) {
+    auto generator = this->gen;
+    detail::argno_exact<3>(location, "defm", args);
+    return make_atom(thunk([generator, args, env]() mutable -> thunk_type {
+        auto [name, params, code] = detail::get_args<3>(args);
+        if(name->get_type() != atom_type::T_ID)
+            detail::unsupported_args(location, "defm", args);
+        if(env->ancestor != nullptr)
+            kl_error("Binding a global name in a local environment is not supported");
+        auto fn = generator->call(env, atom_list::from(code).cons(params));
+        env->set(name->get_identifier(), fn);
+        return fn->thunk_forward();
+    }));
+}
+
 [[gnu::flatten]] atom quote::call(std::shared_ptr<environment> env, atom_list args) {
     detail::argno_exact<1>(location, "quote", args);
     return make_atom(thunk([args, env]() mutable -> thunk_type {
