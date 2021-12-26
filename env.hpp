@@ -15,9 +15,10 @@ class environment {
 
     public:
         std::shared_ptr<environment> ancestor;
+        std::shared_ptr<callable> owner;
 
-        environment() : ancestor(nullptr) { }
-        environment(std::shared_ptr<environment> ancestor) : ancestor(ancestor) { }
+        environment() : ancestor(nullptr), owner(nullptr) { }
+        environment(std::shared_ptr<environment> ancestor, std::shared_ptr<callable> owner) : ancestor(ancestor), owner(owner) { }
 
         atom get(std::wstring key);
         void set(std::wstring key, atom value);

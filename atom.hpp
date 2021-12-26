@@ -117,7 +117,7 @@ class atom_;
 using atom = std::shared_ptr<atom_>;
 using atom_list = list<atom>;
 
-class callable {
+class callable : public std::enable_shared_from_this<callable> {
     public:
         virtual atom call(std::shared_ptr<environment> env, atom_list args) = 0;
         virtual std::wstring repr() {

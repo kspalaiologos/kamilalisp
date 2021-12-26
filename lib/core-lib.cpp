@@ -20,14 +20,15 @@ namespace corelib {
             atom_list params;
             atom code;
             std::shared_ptr<environment> e;
+            std::shared_ptr<callable> owner;
 
         public:
-            this_lambda(atom_list params, atom code, std::shared_ptr<environment> e) : params(params), code(code), e(e) { }
+            this_lambda(atom_list params, atom code, std::shared_ptr<environment> e, std::shared_ptr<callable> owner) : params(params), code(code), e(e), owner(owner) { }
             ~this_lambda() { }
 
             atom call(std::shared_ptr<environment> env, atom_list args) override {
                 (void) env; // The caller's environment is unnecessary.
-                std::shared_ptr<environment> descEnv = std::make_shared<environment>(e);
+                std::shared_ptr<environment> descEnv = std::make_shared<environment>(e, owner);
                 // Process optional arguments.
                 atom_list l = params.reverse(); atom_list l_view = l; long n = 0;
                 while(!l.is_empty() && l.car()->get_identifier().value.starts_with(L"?"))
@@ -64,7 +65,7 @@ namespace corelib {
             }
     };
 
-    return make_atom(std::make_shared<this_lambda>(params, code, env));
+    return make_atom(std::make_shared<this_lambda>(params, code, env, shared_from_this()));
 }
 
 [[gnu::flatten]] atom macro::call(std::shared_ptr<environment> env, atom_list args) {
@@ -81,14 +82,15 @@ namespace corelib {
             atom_list params;
             atom code;
             std::shared_ptr<environment> e;
+            std::shared_ptr<callable> owner;
 
         public:
-            this_macro(atom_list params, atom code, std::shared_ptr<environment> e) : params(params), code(code), e(e) { }
+            this_macro(atom_list params, atom code, std::shared_ptr<environment> e, std::shared_ptr<callable> owner) : params(params), code(code), e(e), owner(owner) { }
             ~this_macro() { }
 
             atom call(std::shared_ptr<environment> env, atom_list args) override {
                 (void) env; // The caller's environment is unnecessary.
-                std::shared_ptr<environment> descEnv = std::make_shared<environment>(e);
+                std::shared_ptr<environment> descEnv = std::make_shared<environment>(e, owner);
                 // Process optional arguments.
                 atom_list l = params.reverse(); atom_list l_view = l; long n = 0;
                 while(!l.is_empty() && l.car()->get_identifier().value.starts_with(L"?"))
@@ -125,7 +127,7 @@ namespace corelib {
             }
     };
 
-    return make_atom(std::make_shared<this_macro>(params, code, env));
+    return make_atom(std::make_shared<this_macro>(params, code, env, shared_from_this()));
 }
 
 [[gnu::flatten]] atom define::call(std::shared_ptr<environment> env, atom_list args) {
