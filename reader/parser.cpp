@@ -171,9 +171,7 @@ atom parse_literal(token & t) {
             std::size_t n = num.find('J');
             std::string re = num.substr(0, n);
             std::string im = num.substr(n + 1);
-            boost::multiprecision::mpc_complex res{};
-            res.imag(boost::multiprecision::mpf_float{im});
-            res.real(boost::multiprecision::mpf_float{re});
+            kl_complex res{boost::multiprecision::mpf_float{im}, boost::multiprecision::mpf_float{re}};
             return make_atom(res);
         }
         case token_type::TOKEN_FPU: {

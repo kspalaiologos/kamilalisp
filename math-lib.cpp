@@ -5,8 +5,8 @@
 
 namespace bmp = boost::multiprecision;
 
-static bmp::mpc_complex conjugate(bmp::mpc_complex && v) {
-    return bmp::mpc_complex(v.real(), -(v.imag()));
+static kl_complex conjugate(kl_complex && v) {
+    return kl_complex(v.re, -(v.im));
 }
 
 template <typename T>
@@ -41,9 +41,9 @@ namespace mathlib {
             } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_REAL) {
                 return thunk_type(a->get_complex() + b->get_real());
             } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_CMPLX) {
-                return thunk_type(a->get_integer() + b->get_complex());
+                return thunk_type(kl_complex(a->get_integer()) + b->get_complex());
             } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_CMPLX) {
-                return thunk_type(a->get_real() + b->get_complex());
+                return thunk_type(kl_complex(a->get_real()) + b->get_complex());
             } else if(a->get_type() == atom_type::T_STR && b->is_numeric()) {
                 return thunk_type(a->get_string() + std::to_wstring(b));
             } else if(a->is_numeric() && b->get_type() == atom_type::T_STR) {
@@ -85,9 +85,9 @@ namespace mathlib {
             } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_REAL) {
                 return thunk_type(a->get_complex() - b->get_real());
             } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_CMPLX) {
-                return thunk_type(a->get_integer() - b->get_complex());
+                return thunk_type(kl_complex(a->get_integer()) - b->get_complex());
             } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_CMPLX) {
-                return thunk_type(a->get_real() - b->get_complex());
+                return thunk_type(kl_complex(a->get_real()) - b->get_complex());
             } else {
                 detail::unsupported_args(location, "-", args);
             }
@@ -130,9 +130,9 @@ namespace mathlib {
             } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_REAL) {
                 return thunk_type(a->get_complex() * b->get_real());
             } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_CMPLX) {
-                return thunk_type(a->get_integer() * b->get_complex());
+                return thunk_type(kl_complex(a->get_integer()) * b->get_complex());
             } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_CMPLX) {
-                return thunk_type(a->get_real() * b->get_complex());
+                return thunk_type(kl_complex(a->get_real()) * b->get_complex());
             } else {
                 detail::unsupported_args(location, "*", args);
             }
@@ -157,8 +157,8 @@ namespace mathlib {
             } else if(a->get_type() == atom_type::T_CMPLX) {
                 // sgn(z) = z / norm(z)
                 return thunk_type(a->get_complex() /
-                    bmp::sqrt(bmp::pow(a->get_complex().real(), 2)
-                        + bmp::pow(a->get_complex().imag(), 2)));
+                    bmp::sqrt(bmp::pow(a->get_complex().re, 2)
+                        + bmp::pow(a->get_complex().im, 2)));
             } else {
                 detail::unsupported_args(location, "-", args);
             }
@@ -188,9 +188,9 @@ namespace mathlib {
             } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_REAL) {
                 return thunk_type(a->get_complex() / b->get_real());
             } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_CMPLX) {
-                return thunk_type(a->get_integer() / b->get_complex());
+                return thunk_type(kl_complex(a->get_integer()) / b->get_complex());
             } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_CMPLX) {
-                return thunk_type(a->get_real() / b->get_complex());
+                return thunk_type(kl_complex(a->get_real()) / b->get_complex());
             } else {
                 detail::unsupported_args(location, "/", args);
             }
@@ -205,8 +205,8 @@ namespace mathlib {
             } else if(a->get_type() == atom_type::T_CMPLX) {
                 // 1/z = conjugate(z) / norm^2(z)
                 return thunk_type(conjugate(a->get_complex()) /
-                    abs(bmp::pow(a->get_complex().real(), 2)
-                        + bmp::pow(a->get_complex().imag(), 2)));
+                    abs(bmp::pow(a->get_complex().re, 2)
+                        + bmp::pow(a->get_complex().im, 2)));
             } else {
                 detail::unsupported_args(location, "/", args);
             }

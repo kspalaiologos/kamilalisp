@@ -13,7 +13,7 @@ atom_::atom_(boost::multiprecision::mpf_float & n) {
     value = n;
 }
 
-atom_::atom_(boost::multiprecision::mpc_complex & n) {
+atom_::atom_(kl_complex & n) {
     value = n;
 }
 
@@ -25,7 +25,7 @@ atom_::atom_(boost::multiprecision::mpf_float && n) {
     value = n;
 }
 
-atom_::atom_(boost::multiprecision::mpc_complex && n) {
+atom_::atom_(kl_complex && n) {
     value = n;
 }
 
@@ -81,9 +81,9 @@ boost::multiprecision::mpf_float atom_::get_real() {
     }
 }
 
-boost::multiprecision::mpc_complex atom_::get_complex() {
-    if(std::holds_alternative<boost::multiprecision::mpc_complex>(value)) {
-        return std::get<boost::multiprecision::mpc_complex>(value);
+kl_complex atom_::get_complex() {
+    if(std::holds_alternative<kl_complex>(value)) {
+        return std::get<kl_complex>(value);
     } else {
         kl_error("Not a real");
     }
@@ -135,7 +135,7 @@ atom_::operator bool() {
     return
         (std::holds_alternative<boost::multiprecision::mpz_int>(value) && std::get<boost::multiprecision::mpz_int>(value) != 0)
     ||  (std::holds_alternative<boost::multiprecision::mpf_float>(value) && std::get<boost::multiprecision::mpf_float>(value) != 0)
-    ||  (std::holds_alternative<boost::multiprecision::mpc_complex>(value) && std::get<boost::multiprecision::mpc_complex>(value) != 0)
+    ||  (std::holds_alternative<kl_complex>(value) && std::get<kl_complex>(value) != 0)
     ||  (std::holds_alternative<atom_list>(value) && !std::get<atom_list>(value).is_empty());
 }
 
@@ -144,7 +144,7 @@ bool atom_::is_numeric() {
     return
         std::holds_alternative<boost::multiprecision::mpz_int>(value)
     ||  std::holds_alternative<boost::multiprecision::mpf_float>(value)
-    ||  std::holds_alternative<boost::multiprecision::mpc_complex>(value);
+    ||  std::holds_alternative<kl_complex>(value);
 }
 
 namespace std {
@@ -166,7 +166,7 @@ std::wstring atom_::stringify() {
             return to_wstring(get_real().str());
         case atom_type::T_CMPLX: {
             auto c = get_complex();
-            return to_wstring(c.real().str()) + L"J" + to_wstring(c.imag().str());
+            return to_wstring(c.re.str()) + L"J" + to_wstring(c.im.str());
         } case atom_type::T_STR:
             return L"\"" + get_string() + L"\"";
         case atom_type::T_ID:
@@ -199,7 +199,7 @@ bool atom_::operator==(atom & other) {
         case atom_type::T_REAL:
             return std::get<boost::multiprecision::mpf_float>(value) == std::get<boost::multiprecision::mpf_float>(other->value);
         case atom_type::T_CMPLX:
-            return std::get<boost::multiprecision::mpc_complex>(value) == std::get<boost::multiprecision::mpc_complex>(other->value);
+            return std::get<kl_complex>(value) == std::get<kl_complex>(other->value);
         case atom_type::T_STR:
             return std::get<std::wstring>(value) == std::get<std::wstring>(other->value);
         case atom_type::T_LIST:
@@ -233,10 +233,10 @@ std::weak_ordering atom_::operator<=>(atom & other) {
             else return std::weak_ordering::equivalent;
         }
         case atom_type::T_CMPLX: {
-            boost::multiprecision::mpc_complex a = std::get<boost::multiprecision::mpc_complex>(value);
-            boost::multiprecision::mpc_complex b = std::get<boost::multiprecision::mpc_complex>(other->value);
-            if(norm(a) < norm(b)) return std::weak_ordering::less;
-            else if(norm(a) > norm(b)) return std::weak_ordering::greater;
+            kl_complex a = std::get<kl_complex>(value);
+            kl_complex b = std::get<kl_complex>(other->value);
+            if(a.norm() < b.norm()) return std::weak_ordering::less;
+            else if(a.norm() > b.norm()) return std::weak_ordering::greater;
             else return std::weak_ordering::equivalent;
         }
         case atom_type::T_STR:
@@ -292,7 +292,7 @@ namespace std {
                 case atom_type::T_REAL:
                     return std::hash<boost::multiprecision::mpf_float>()(s->get_real());
                 case atom_type::T_CMPLX:
-                    return std::hash<boost::multiprecision::mpc_complex>()(s->get_complex());
+                    return std::hash<boost::multiprecision::mpf_float>()(s->get_complex().re) + std::hash<boost::multiprecision::mpf_float>()(s->get_complex().im);
                 case atom_type::T_STR:
                     return std::hash<std::wstring>()(s->get_string());
                 case atom_type::T_LIST: {

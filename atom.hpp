@@ -12,6 +12,86 @@
 #include "error.hpp"
 #include "list.hpp"
 
+class kl_complex {
+    public:
+        boost::multiprecision::mpf_float re, im;
+
+        kl_complex(const kl_complex &) = default;
+        kl_complex(kl_complex &&) = default;
+        kl_complex & operator=(const kl_complex &) = default;
+        kl_complex & operator=(kl_complex &&) = default;
+        kl_complex(boost::multiprecision::mpf_float re, boost::multiprecision::mpf_float im) :
+            re(re), im(im) { }
+        kl_complex(boost::multiprecision::mpf_float re) :
+            re(re), im(0) { }
+        kl_complex(int re) :
+            re(re), im(0) { }
+        
+        bool operator==(const kl_complex & other) const {
+            return re == other.re && im == other.im;
+        }
+
+        bool operator!=(const kl_complex & other) const {
+            return !(*this == other);
+        }
+
+        bool operator<(const kl_complex & other) const {
+            return re < other.re || (re == other.re && im < other.im);
+        }
+
+        bool operator>(const kl_complex & other) const {
+            return re > other.re || (re == other.re && im > other.im);
+        }
+
+        bool operator<=(const kl_complex & other) const {
+            return !(*this > other);
+        }
+
+        bool operator>=(const kl_complex & other) const {
+            return !(*this < other);
+        }
+
+        kl_complex operator+(const kl_complex & other) const {
+            return kl_complex(re + other.re, im + other.im);
+        }
+
+        kl_complex operator+(boost::multiprecision::mpf_float other) const {
+            return kl_complex(re + other, im);
+        }
+
+        kl_complex operator-(const kl_complex & other) const {
+            return kl_complex(re - other.re, im - other.im);
+        }
+
+        kl_complex operator-(boost::multiprecision::mpf_float other) const {
+            return kl_complex(re - other, im);
+        }
+
+        kl_complex operator*(const kl_complex & other) const {
+            return kl_complex(re * other.re - im * other.im, re * other.im + im * other.re);
+        }
+
+        kl_complex operator*(const boost::multiprecision::mpf_float & other) const {
+            return kl_complex(re * other, im * other);
+        }
+
+        kl_complex operator/(const boost::multiprecision::mpf_float & other) const {
+            return kl_complex(re / other, im / other);
+        }
+
+        kl_complex operator/(const kl_complex & other) const {
+            return kl_complex(re * other.re + im * other.im, im * other.re - re * other.im) / (other.re * other.re + other.im * other.im);
+        }
+
+        kl_complex operator-() const {
+            return kl_complex(-re, -im);
+        }
+
+        boost::multiprecision::mpf_float norm() const {
+            return re * re + im * im;
+        }
+};
+
 class identifier {
     public:
         std::wstring value;
@@ -74,7 +154,7 @@ auto variant_cast(const std::variant<Args...> & v) -> variant_cast_proxy<Args...
 using thunk_type = std::variant<
         boost::multiprecision::mpz_int,
         boost::multiprecision::mpf_float,
-        boost::multiprecision::mpc_complex,
+        kl_complex,
         std::wstring,
         atom_list,
         std::shared_ptr<callable>,
@@ -87,7 +167,7 @@ class atom_ {
     using data_type = std::variant<thunk,
         boost::multiprecision::mpz_int,
         boost::multiprecision::mpf_float,
-        boost::multiprecision::mpc_complex,
+        kl_complex,
         std::wstring,
         atom_list,
         std::shared_ptr<callable>,
@@ -100,10 +180,10 @@ class atom_ {
         /* Constructors */
         atom_(boost::multiprecision::mpz_int &);
         atom_(boost::multiprecision::mpf_float &);
-        atom_(boost::multiprecision::mpc_complex &);
+        atom_(kl_complex &);
         atom_(boost::multiprecision::mpz_int &&);
         atom_(boost::multiprecision::mpf_float &&);
-        atom_(boost::multiprecision::mpc_complex &&);
+        atom_(kl_complex &&);
         atom_(std::wstring &);
         atom_(std::wstring &&);
         atom_(atom_list &);
@@ -117,7 +197,7 @@ class atom_ {
         /* Accessors */
         boost::multiprecision::mpz_int get_integer();
         boost::multiprecision::mpf_float get_real();
-        boost::multiprecision::mpc_complex get_complex();
+        kl_complex get_complex();
         std::wstring get_string();
         atom_list get_list();
         identifier get_identifier();
