@@ -59,5 +59,6 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"defun", make_atom(std::make_shared<corelib::defun>(lambda)));
     env->set(L"defm", make_atom(std::make_shared<corelib::defm>(macro)));
     env->set(L"quote", make_atom(std::make_shared<corelib::quote>()));
+    env->set(L"bruijn", make_atom(std::make_shared<corelib::bruijn>()));
     return env;
 }

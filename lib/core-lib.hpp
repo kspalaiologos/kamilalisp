@@ -31,6 +31,8 @@ class defm : public callable {
         std::shared_ptr<macro> gen;
 };
 
+define_callable(bruijn);
+
 }
 
 #endif

@@ -183,4 +183,22 @@ namespace corelib {
     }));
 }
 
+[[gnu::flatten]] atom bruijn::call(std::shared_ptr<environment> env, atom_list args) {
+    detail::argno_exact<1>(location, "bruijn", args);
+    return make_atom(thunk([args, env]() mutable -> thunk_type {
+        auto [a] = detail::get_args<1>(args, env);
+        if(a->get_type() != atom_type::T_INT)
+            detail::unsupported_args(location, "bruijn", args);
+        unsigned depth = a->get_integer().convert_to<unsigned>();
+        for(unsigned i = 0; i < depth; i++) {
+            if(env->ancestor == nullptr)
+                kl_error("de Bruijn index out of bounds");
+            env = env->ancestor;
+        }
+        if(env->owner == nullptr)
+            kl_error("de Bruijn index does not point to an environment with an owner");
+        return env->owner;
+    }));
+}
+
 }
