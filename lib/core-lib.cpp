@@ -40,6 +40,69 @@ namespace corelib {
                 if(m != n)
                     kl_error("misplaced optional lambda argument in parameter list");
                 // Process normal arguments.
+                if(args.size() > params.size() || args.size() < params.size() - n)
+                    kl_error("Invalid invocation to a lambda expression. Unexpected amount of arguments.");
+                atom_list params_view = params, args_view = args;
+                for(std::size_t i = 0; i < args.size() - n; i++) {
+                    descEnv->set(params_view.car()->get_identifier().value, args_view.car());
+                    params_view = params_view.cdr();
+                    args_view = args_view.cdr();
+                }
+                // Process optional arguments.
+                // We have to iterate from the back.
+                atom_list arg = args.reverse();
+                for(long i = 0; i < n; i++) {
+                    std::wstring name = l_view.car()->get_identifier().value.substr(1);
+                    if(i + params.size() - n < args.size()) {
+                        descEnv->set(name, evaluate(arg.car(), e));
+                        arg = arg.cdr();
+                    } else {
+                        descEnv->set(name, null_atom);
+                    }
+                }
+                return evaluate(code, descEnv);
+            }
+    };
+
+    return make_atom(std::make_shared<this_lambda>(params, code, env));
+}
+
+[[gnu::flatten]] atom macro::call(std::shared_ptr<environment> env, atom_list args) {
+    detail::argno_exact<2>(location, "macro", args);
+    auto [a, code] = detail::get_args<2>(args);
+    if(a->get_type() != atom_type::T_LIST)
+        detail::unsupported_args(location, "macro", args);
+    atom_list params = a->get_list();
+    for(auto & x : params)
+        if(x->get_type() != atom_type::T_ID)
+            detail::unsupported_args(location, "macro parameter list", args);
+    class this_macro : public callable {
+        private:
+            atom_list params;
+            atom code;
+            std::shared_ptr<environment> e;
+
+        public:
+            this_macro(atom_list params, atom code, std::shared_ptr<environment> e) : params(params), code(code), e(e) { }
+            ~this_macro() { }
+
+            atom call(std::shared_ptr<environment> env, atom_list args) override {
+                (void) env; // The caller's environment is unnecessary.
+                std::shared_ptr<environment> descEnv = std::make_shared<environment>(e);
+                // Process optional arguments.
+                atom_list l = params.reverse(); atom_list l_view = l; long n = 0;
+                while(!l.is_empty() && l.car()->get_identifier().value.starts_with(L"?"))
+                    l = l.cdr(), n++;
+                // Check if there are any misplaced optional arguments.
+                long m = 0;
+                for(auto & x : l_view)
+                    if(x->get_identifier().value.starts_with(L"?"))
+                        m++;
+                if(m != n)
+                    kl_error("misplaced optional macro argument in parameter list");
+                // Process normal arguments.
+                if(args.size() > params.size() || args.size() < params.size() - n)
+                    kl_error("Invalid invocation to a lambda expression. Unexpected amount of arguments.");
                 atom_list params_view = params, args_view = args;
                 for(std::size_t i = 0; i < args.size() - n; i++) {
                     descEnv->set(params_view.car()->get_identifier().value, args_view.car());
@@ -62,7 +125,7 @@ namespace corelib {
             }
     };
 
-    return make_atom(std::make_shared<this_lambda>(params, code, env));
+    return make_atom(std::make_shared<this_macro>(params, code, env));
 }
 
 [[gnu::flatten]] atom define::call(std::shared_ptr<environment> env, atom_list args) {

@@ -40,8 +40,8 @@ std::shared_ptr<environment> environment::get_topmost_ancestor() {
         return ancestor->get_topmost_ancestor();
 }
 
-#include "core-lib.hpp"
-#include "math-lib.hpp"
+#include "lib/core-lib.hpp"
+#include "lib/math-lib.hpp"
 
 std::shared_ptr<environment> environment::create_default_env() {
     std::shared_ptr<environment> env = std::make_shared<environment>();
@@ -53,6 +53,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"def", make_atom(std::make_shared<corelib::define>()));
     env->set(L"iota", make_atom(std::make_shared<mathlib::iota>()));
     env->set(L"lambda", make_atom(std::make_shared<corelib::lambda>()));
+    env->set(L"macro", make_atom(std::make_shared<corelib::macro>()));
     env->set(L"quote", make_atom(std::make_shared<corelib::quote>()));
     return env;
 }

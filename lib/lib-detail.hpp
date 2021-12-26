@@ -2,11 +2,11 @@
 #ifndef __LIB_DETAIL_HPP
 #define __LIB_DETAIL_HPP
 
-#include "atom.hpp"
-#include "env.hpp"
-#include "list.hpp"
-#include "error.hpp"
-#include "executor.hpp"
+#include "../atom.hpp"
+#include "../env.hpp"
+#include "../list.hpp"
+#include "../error.hpp"
+#include "../executor.hpp"
 
 #include <boost/math/special_functions.hpp>
 #include <boost/algorithm/string/join.hpp>
