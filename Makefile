@@ -27,7 +27,7 @@ srcs=\
 	atom.cpp env.cpp executor.cpp main.cpp reader/lexer.cpp reader/parser.cpp \
 	replxx/conversion.cxx replxx/ConvertUTF.cpp replxx/escape.cxx replxx/history.cxx \
 	replxx/prompt.cxx replxx/replxx.cxx replxx/replxx_impl.cxx replxx/terminal.cxx \
-	replxx/util.cxx replxx/wcwidth.cpp replxx/windows.cxx math-lib.cpp
+	replxx/util.cxx replxx/wcwidth.cpp replxx/windows.cxx math-lib.cpp core-lib.cpp
 objs=$(patsubst %.cpp, %.o, $(patsubst %.cxx, %.o, $(srcs)))
 deps=$(objs:.o=.d)
 

@@ -77,6 +77,11 @@ void highlighter(std::string const & input, replxx::Replxx::colors_t & c) {
         }
     } catch(std::exception const& e) {
         std::wcerr << "Exception thrown." << e.what() << std::endl;
+        std::ostringstream buf;
+        const boost::stacktrace::stacktrace* st = boost::get_error_info<traced>(e);
+        if (st)
+            buf << *st;
+        std::wcerr << buf.str().c_str() << std::endl;
     }
 }
 
@@ -141,7 +146,9 @@ int main(int argc, char * argv[]) {
             } catch(std::runtime_error const & e) {
                 std::wcerr << e.what() << std::endl;
                 std::ostringstream buf;
-                buf << boost::stacktrace::stacktrace();
+                const boost::stacktrace::stacktrace* st = boost::get_error_info<traced>(e);
+                if (st)
+                    buf << *st;
                 std::wcerr << buf.str().c_str() << std::endl;
             }
         }
