@@ -153,16 +153,33 @@ class list {
             }
         }
 
+        template<typename N>
+        struct is_ptr : std::false_type {};
+        template<typename N>
+        struct is_ptr<std::shared_ptr<N>> : std::true_type {};
+
         bool operator==(list<T> &other) {
-            auto it = node_data;
-            auto other_it = other.node_data;
-            while(it != nullptr && other_it != nullptr) {
-                if(it->value != other_it->value)
-                    return false;
-                it = it->next;
-                other_it = other_it->next;
+            if constexpr(is_ptr<T>::value) {
+                auto it = node_data;
+                auto other_it = other.node_data;
+                while(it != nullptr && other_it != nullptr) {
+                    if(it->value->operator!=(other_it->value))
+                        return false;
+                    it = it->next;
+                    other_it = other_it->next;
+                }
+                return it == nullptr && other_it == nullptr;
+            } else {
+                auto it = node_data;
+                auto other_it = other.node_data;
+                while(it != nullptr && other_it != nullptr) {
+                    if(it->value != other_it->value)
+                        return false;
+                    it = it->next;
+                    other_it = other_it->next;
+                }
+                return it == nullptr && other_it == nullptr;
             }
-            return it == nullptr && other_it == nullptr;
         }
 
         template <typename IteratorType>

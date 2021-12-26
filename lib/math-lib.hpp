@@ -14,6 +14,9 @@ define_callable(multiply);
 define_callable(divide);
 define_callable(iota);
 
+define_callable(equals);
+define_callable(not_equals);
+
 }
 
 #endif

@@ -216,6 +216,7 @@ class atom_ {
 
         /* Total ordering. */
         bool operator==(atom &);
+        bool operator!=(atom &);
         std::weak_ordering operator<=>(atom &);
 
         /* Atom type. */
@@ -227,6 +228,8 @@ class atom_ {
 };
 
 static atom null_atom = std::make_shared<atom_>(atom_list());
+static atom atom_true = std::make_shared<atom_>(boost::multiprecision::mpz_int(1));
+static atom atom_false = std::make_shared<atom_>(boost::multiprecision::mpz_int(0));
 
 namespace std {
     std::wstring to_wstring(atom);

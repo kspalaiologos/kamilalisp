@@ -213,6 +213,10 @@ bool atom_::operator==(atom & other) {
     return false;
 }
 
+bool atom_::operator!=(atom & other) {
+    return !(*this == other);
+}
+
 std::weak_ordering atom_::operator<=>(atom & other) {
     force(); other->force();
     if(value.index() != other->value.index())

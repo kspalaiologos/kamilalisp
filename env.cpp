@@ -52,6 +52,8 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"-", make_atom(std::make_shared<mathlib::subtract>()));
     env->set(L"*", make_atom(std::make_shared<mathlib::multiply>()));
     env->set(L"/", make_atom(std::make_shared<mathlib::divide>()));
+    env->set(L"=", make_atom(std::make_shared<mathlib::equals>()));
+    env->set(L"/=", make_atom(std::make_shared<mathlib::not_equals>()));
     env->set(L"def", make_atom(std::make_shared<corelib::define>()));
     env->set(L"iota", make_atom(std::make_shared<mathlib::iota>()));
     env->set(L"lambda", make_atom(lambda));

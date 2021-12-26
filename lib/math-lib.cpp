@@ -351,4 +351,20 @@ namespace mathlib {
     __builtin_unreachable();
 }
 
+[[gnu::flatten]] atom equals::call(std::shared_ptr<environment> env, atom_list args) {
+    detail::argno_exact<2>(location, "=", args);
+    return make_atom(thunk([args, env]() mutable -> thunk_type {
+        auto [a, b] = detail::get_args<2>(args, env);
+        return a->operator==(b) ? atom_true->thunk_forward() : atom_false->thunk_forward();
+    }));
+}
+
+[[gnu::flatten]] atom not_equals::call(std::shared_ptr<environment> env, atom_list args) {
+    detail::argno_exact<2>(location, "/=", args);
+    return make_atom(thunk([args, env]() mutable -> thunk_type {
+        auto [a, b] = detail::get_args<2>(args, env);
+        return a->operator==(b) ? atom_false->thunk_forward() : atom_true->thunk_forward();
+    }));
+}
+
 }
