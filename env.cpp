@@ -60,6 +60,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"/=", make_atom(std::make_shared<mathlib::not_equals>()));
     env->set(L"def", make_atom(std::make_shared<corelib::define>()));
     env->set(L"iota", make_atom(std::make_shared<mathlib::iota>()));
+    env->set(L"atop", make_atom(std::make_shared<corelib::atop>()));
     env->set(L"lambda", make_atom(lambda));
     env->set(L"macro", make_atom(macro));
     env->set(L"defun", make_atom(std::make_shared<corelib::defun>(lambda)));

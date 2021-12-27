@@ -145,6 +145,37 @@ namespace corelib {
     }));
 }
 
+[[gnu::flatten]] atom atop::call(std::shared_ptr<environment> env, atom_list args) {
+    (void) env; // The caller's environment is unnecessary.
+    detail::argno_more<1>(location, "atop", args);
+
+    class this_atop : public callable {
+        private:
+            atom_list args;
+
+        public:
+            this_atop(atom_list args)
+                : args(args) { }
+            ~this_atop() { }
+
+            atom call(std::shared_ptr<environment> innerEnv, atom_list innerArgs) override {
+                atom_list components = this->args;
+                return make_atom(thunk([innerEnv, innerArgs, components]() mutable -> thunk_type {
+                    // Atom x = env.evaluate(components.get(0)).getCallable().get().apply(innerEnv, arguments);
+                    auto x = evaluate(components.car(), innerEnv)->get_callable()->call(innerEnv, innerArgs);
+                    components = components.cdr();
+                    while(!components.is_empty()) {
+                        x = evaluate(components.car(), innerEnv)->get_callable()->call(innerEnv, atom_list::from(x));
+                        components = components.cdr();
+                    }
+                    return x->thunk_forward();
+                }));
+            }
+    };
+
+    return make_atom(std::make_shared<this_atop>(args));
+}
+
 [[gnu::flatten]] atom defun::call(std::shared_ptr<environment> env, atom_list args) {
     auto generator = this->gen;
     detail::argno_exact<3>(location, "defun", args);
