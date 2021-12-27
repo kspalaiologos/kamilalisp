@@ -53,6 +53,9 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"*", make_atom(std::make_shared<mathlib::multiply>()));
     env->set(L"/", make_atom(std::make_shared<mathlib::divide>()));
     env->set(L"%", make_atom(std::make_shared<mathlib::modulus>()));
+    env->set(L"sqrt", make_atom(std::make_shared<mathlib::sqrt>()));
+    env->set(L"**", make_atom(std::make_shared<mathlib::power>()));
+    env->set(L"nth-root", make_atom(std::make_shared<mathlib::nthroot>()));
     env->set(L"=", make_atom(std::make_shared<mathlib::equals>()));
     env->set(L"/=", make_atom(std::make_shared<mathlib::not_equals>()));
     env->set(L"def", make_atom(std::make_shared<corelib::define>()));

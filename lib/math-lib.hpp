@@ -13,6 +13,9 @@ define_callable(subtract);
 define_callable(multiply);
 define_callable(divide);
 define_callable(modulus);
+define_callable(sqrt);
+define_callable(power);
+define_callable(nthroot);
 define_callable(iota);
 
 define_callable(equals);

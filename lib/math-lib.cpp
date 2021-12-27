@@ -6,12 +6,8 @@
 
 namespace bmp = boost::multiprecision;
 
-static kl_complex conjugate(kl_complex && v) {
-    return kl_complex(v.re, -(v.im));
-}
-
-template <typename T>
-static T abs_f(T && v) {
+template <typename A>
+static A abs_f(A && v) {
     if(v < 0)
         return -v;
     else
@@ -42,9 +38,9 @@ namespace mathlib {
             } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_REAL) {
                 return thunk_type(a->get_complex() + b->get_real());
             } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_CMPLX) {
-                return thunk_type(kl_complex(a->get_integer()) + b->get_complex());
+                return thunk_type(bmp::mpc_complex(a->get_integer()) + b->get_complex());
             } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_CMPLX) {
-                return thunk_type(kl_complex(a->get_real()) + b->get_complex());
+                return thunk_type(bmp::mpc_complex(a->get_real()) + b->get_complex());
             } else if(a->get_type() == atom_type::T_STR && b->is_numeric()) {
                 return thunk_type(a->get_string() + std::to_wstring(b));
             } else if(a->is_numeric() && b->get_type() == atom_type::T_STR) {
@@ -57,7 +53,7 @@ namespace mathlib {
         return make_atom(thunk([args, env]() mutable -> thunk_type {
             auto [a] = detail::get_args<1>(args, env);
             if(a->get_type() == atom_type::T_CMPLX)
-                return thunk_type(conjugate(a->get_complex()));
+                return thunk_type(conj(a->get_complex()));
             else
                 return a->thunk_forward();
         }));
@@ -86,9 +82,9 @@ namespace mathlib {
             } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_REAL) {
                 return thunk_type(a->get_complex() - b->get_real());
             } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_CMPLX) {
-                return thunk_type(kl_complex(a->get_integer()) - b->get_complex());
+                return thunk_type(bmp::mpc_complex(a->get_integer()) - b->get_complex());
             } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_CMPLX) {
-                return thunk_type(kl_complex(a->get_real()) - b->get_complex());
+                return thunk_type(bmp::mpc_complex(a->get_real()) - b->get_complex());
             } else {
                 detail::unsupported_args(location, "-", args);
             }
@@ -131,9 +127,9 @@ namespace mathlib {
             } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_REAL) {
                 return thunk_type(a->get_complex() * b->get_real());
             } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_CMPLX) {
-                return thunk_type(kl_complex(a->get_integer()) * b->get_complex());
+                return thunk_type(bmp::mpc_complex(a->get_integer()) * b->get_complex());
             } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_CMPLX) {
-                return thunk_type(kl_complex(a->get_real()) * b->get_complex());
+                return thunk_type(bmp::mpc_complex(a->get_real()) * b->get_complex());
             } else {
                 detail::unsupported_args(location, "*", args);
             }
@@ -158,8 +154,8 @@ namespace mathlib {
             } else if(a->get_type() == atom_type::T_CMPLX) {
                 // sgn(z) = z / norm(z)
                 return thunk_type(a->get_complex() /
-                    bmp::sqrt(bmp::pow(a->get_complex().re, 2)
-                        + bmp::pow(a->get_complex().im, 2)));
+                    bmp::sqrt(bmp::pow(a->get_complex().real(), 2)
+                        + bmp::pow(a->get_complex().imag(), 2)));
             } else {
                 detail::unsupported_args(location, "-", args);
             }
@@ -189,9 +185,9 @@ namespace mathlib {
             } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_REAL) {
                 return thunk_type(a->get_complex() / b->get_real());
             } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_CMPLX) {
-                return thunk_type(kl_complex(a->get_integer()) / b->get_complex());
+                return thunk_type(bmp::mpc_complex(a->get_integer()) / b->get_complex());
             } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_CMPLX) {
-                return thunk_type(kl_complex(a->get_real()) / b->get_complex());
+                return thunk_type(bmp::mpc_complex(a->get_real()) / b->get_complex());
             } else {
                 detail::unsupported_args(location, "/", args);
             }
@@ -205,9 +201,9 @@ namespace mathlib {
                 return thunk_type(1 / bmp::mpf_float(a->get_real()));
             } else if(a->get_type() == atom_type::T_CMPLX) {
                 // 1/z = conjugate(z) / norm^2(z)
-                return thunk_type(conjugate(a->get_complex()) /
-                    abs_f(bmp::pow(a->get_complex().re, 2)
-                        + bmp::pow(a->get_complex().im, 2)));
+                return thunk_type(conj(a->get_complex()) /
+                    abs_f(bmp::pow(a->get_complex().real(), 2)
+                        + bmp::pow(a->get_complex().imag(), 2)));
             } else {
                 detail::unsupported_args(location, "/", args);
             }
@@ -234,7 +230,7 @@ namespace mathlib {
             } else if(a->get_type() == atom_type::T_REAL) {
                 return thunk_type(abs_f(a->get_real()));
             } else if(a->get_type() == atom_type::T_CMPLX) {
-                return thunk_type(bmp::sqrt(a->get_complex().norm()));
+                return thunk_type(bmp::sqrt(norm(a->get_complex())));
             } else {
                 detail::unsupported_args(location, "%", args);
             }
@@ -242,6 +238,82 @@ namespace mathlib {
     }
 
     __builtin_unreachable();
+}
+
+[[gnu::flatten]] atom sqrt::call(std::shared_ptr<environment> env, atom_list args) {
+    detail::argno_exact<1>(location, "sqrt", args);
+    return make_atom(thunk([args, env]() mutable -> thunk_type {
+        auto [a] = detail::get_args<1>(args, env);
+        if(a->get_type() == atom_type::T_INT) {
+            return thunk_type(bmp::sqrt(a->get_integer()));
+        } else if(a->get_type() == atom_type::T_REAL) {
+            return thunk_type(bmp::sqrt(a->get_real()));
+        } else if(a->get_type() == atom_type::T_CMPLX) {
+            auto z = a->get_complex();
+            if(z.imag() == 0 && z.real() < 0)
+                kl_error("sqrt when im=0 re<0 doesn't exist.");
+            auto n = bmp::sqrt(norm(z));
+            auto q = z + n;
+            auto m = q / bmp::sqrt(norm(q));
+            return thunk_type(m * bmp::sqrt(n));
+        } else {
+            detail::unsupported_args(location, "sqrt", args);
+        }
+    }));
+}
+
+[[gnu::flatten]] atom nthroot::call(std::shared_ptr<environment> env, atom_list args) {
+    detail::argno_exact<2>(location, "nth-root", args);
+    return make_atom(thunk([args, env]() mutable -> thunk_type {
+        auto [a, b] = detail::get_args<2>(args, env);
+        if(b->get_type() != atom_type::T_INT && b->get_type() != atom_type::T_REAL)
+            detail::unsupported_args(location, "nth-root", args);
+        bmp::mpf_float exponent;
+        if(b->get_type() == atom_type::T_INT) {
+            exponent = 1 / bmp::mpf_float(b->get_integer());
+        } else {
+            exponent = 1 / b->get_real();
+        }
+        if(a->get_type() == atom_type::T_INT) {
+            return thunk_type(bmp::pow(a->get_integer(), exponent).convert_to<bmp::mpz_int>());
+        } else if(a->get_type() == atom_type::T_REAL) {
+            return thunk_type(bmp::pow(a->get_real(), exponent));
+        } else if(a->get_type() == atom_type::T_CMPLX) {
+            return thunk_type(bmp::pow(a->get_complex(), exponent));
+        } else {
+            detail::unsupported_args(location, "sqrt", args);
+        }
+    }));
+}
+
+[[gnu::flatten]] atom power::call(std::shared_ptr<environment> env, atom_list args) {
+    detail::argno_exact<2>(location, "**", args);
+    return make_atom(thunk([args, env]() mutable -> thunk_type {
+        auto [a, b] = detail::get_args<2>(args, env);
+        if(b->get_type() == atom_type::T_INT) {
+            if(a->get_type() == atom_type::T_INT) {
+                return thunk_type(bmp::pow(a->get_integer(), b->get_integer().convert_to<long>()).convert_to<bmp::mpz_int>());
+            } else if(a->get_type() == atom_type::T_REAL) {
+                return thunk_type(bmp::pow(a->get_real(), b->get_integer().convert_to<long>()));
+            } else if(a->get_type() == atom_type::T_CMPLX) {
+                return thunk_type(bmp::pow(a->get_complex(), b->get_integer().convert_to<long>()));
+            } else {
+                detail::unsupported_args(location, "sqrt", args);
+            }
+        } else if(b->get_type() == atom_type::T_REAL) {
+            if(a->get_type() == atom_type::T_INT) {
+                return thunk_type(bmp::pow(a->get_integer(), b->get_real()).convert_to<bmp::mpf_float>());
+            } else if(a->get_type() == atom_type::T_REAL) {
+                return thunk_type(bmp::pow(a->get_real(), b->get_real()));
+            } else if(a->get_type() == atom_type::T_CMPLX) {
+                return thunk_type(bmp::pow(a->get_complex(), b->get_real()));
+            } else {
+                detail::unsupported_args(location, "sqrt", args);
+            }
+        } else {
+            detail::unsupported_args(location, "sqrt", args);
+        }
+    }));
 }
 
 [[gnu::flatten]] atom iota::call(std::shared_ptr<environment> env, atom_list args) {
