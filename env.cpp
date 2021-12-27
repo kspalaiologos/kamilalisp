@@ -61,6 +61,8 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"def", make_atom(std::make_shared<corelib::define>()));
     env->set(L"iota", make_atom(std::make_shared<mathlib::iota>()));
     env->set(L"atop", make_atom(std::make_shared<corelib::atop>()));
+    env->set(L"fork", make_atom(std::make_shared<corelib::fork>()));
+    env->set(L"tie", make_atom(std::make_shared<corelib::tie>()));
     env->set(L"lambda", make_atom(lambda));
     env->set(L"macro", make_atom(macro));
     env->set(L"defun", make_atom(std::make_shared<corelib::defun>(lambda)));

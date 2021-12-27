@@ -161,7 +161,6 @@ namespace corelib {
             atom call(std::shared_ptr<environment> innerEnv, atom_list innerArgs) override {
                 atom_list components = this->args;
                 return make_atom(thunk([innerEnv, innerArgs, components]() mutable -> thunk_type {
-                    // Atom x = env.evaluate(components.get(0)).getCallable().get().apply(innerEnv, arguments);
                     auto x = evaluate(components.car(), innerEnv)->get_callable()->call(innerEnv, innerArgs);
                     components = components.cdr();
                     while(!components.is_empty()) {
@@ -174,6 +173,47 @@ namespace corelib {
     };
 
     return make_atom(std::make_shared<this_atop>(args));
+}
+
+[[gnu::flatten]] atom fork::call(std::shared_ptr<environment> env, atom_list args) {
+    (void) env; // The caller's environment is unnecessary.
+    detail::argno_more<1>(location, "fork", args);
+
+    class this_fork : public callable {
+        private:
+            atom_list args;
+
+        public:
+            this_fork(atom_list args)
+                : args(args) { }
+            ~this_fork() { }
+
+            atom call(std::shared_ptr<environment> innerEnv, atom_list innerArgs) override {
+                atom_list components = this->args;
+                return make_atom(thunk([innerEnv, innerArgs, components]() mutable -> thunk_type {
+                    // #(f g h) <=> (f (g ...) (h ...))
+                    // #(f g) <=> (f (g ...))
+                    atom first = components.car();
+                    atom_list args { };
+                    for(atom_list rest = components.cdr(); !rest.is_empty(); rest = rest.cdr())
+                        args = args.unsafe_append(evaluate(rest.car(), innerEnv)->get_callable()->call(innerEnv, innerArgs));
+                    return evaluate(first, innerEnv)->get_callable()->call(innerEnv, args)->thunk_forward();
+                }));
+            }
+    };
+
+    return make_atom(std::make_shared<this_fork>(args));
+}
+
+[[gnu::flatten]] atom tie::call(std::shared_ptr<environment> env, atom_list args) {
+    return make_atom(thunk([args, env]() mutable -> thunk_type {
+        atom_list r { };
+        while(!args.is_empty()) {
+            r = r.unsafe_append(evaluate(args.car(), env));
+            args = args.cdr();
+        }
+        return r;
+    }));
 }
 
 [[gnu::flatten]] atom defun::call(std::shared_ptr<environment> env, atom_list args) {

@@ -81,6 +81,8 @@ void highlighter(std::string const & input, replxx::Replxx::colors_t & c) {
         const boost::stacktrace::stacktrace* st = boost::get_error_info<traced>(e);
         if (st)
             buf << *st;
+        else
+            buf << boost::stacktrace::stacktrace();
         std::wcerr << buf.str().c_str() << std::endl;
     }
 }
