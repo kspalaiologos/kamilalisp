@@ -56,6 +56,8 @@ define_callable(fork);
 define_callable(tie);
 define_callable(import);
 define_callable(map);
+define_callable(filter);
+define_callable(bind);
 
 }
 

@@ -119,6 +119,15 @@ class list {
             }
         }
 
+        list unsafe_append(list<T> value) {
+            if(!is_empty())
+                return list(node_data, last->next = value.node_data);
+            else {
+                std::shared_ptr<node<T>> p = value.node_data;
+                return list(p, p);
+            }
+        }
+
         bool is_empty() {
             return node_data == nullptr;
         }

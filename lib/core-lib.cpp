@@ -23,15 +23,14 @@ namespace corelib {
             atom_list params;
             atom code;
             std::shared_ptr<environment> e;
-            std::shared_ptr<callable> owner;
 
         public:
-            this_lambda(atom_list params, atom code, std::shared_ptr<environment> e, std::shared_ptr<callable> owner) : params(params), code(code), e(e), owner(owner) { }
+            this_lambda(atom_list params, atom code, std::shared_ptr<environment> e) : params(params), code(code), e(e) { }
             ~this_lambda() { }
 
             atom call(std::shared_ptr<environment> env, atom_list args) override {
                 (void) env; // The caller's environment is unnecessary.
-                std::shared_ptr<environment> descEnv = std::make_shared<environment>(e, owner);
+                std::shared_ptr<environment> descEnv = std::make_shared<environment>(e, shared_from_this());
                 // Process optional arguments.
                 atom_list l = params.reverse(); atom_list l_view = l; long n = 0;
                 while(!l.is_empty() && l.car()->get_identifier().value.starts_with(L"?"))
@@ -68,7 +67,7 @@ namespace corelib {
             }
     };
 
-    return make_atom(std::make_shared<this_lambda>(params, code, env, shared_from_this()));
+    return make_atom(std::make_shared<this_lambda>(params, code, env));
 }
 
 [[gnu::flatten]] atom macro::call(std::shared_ptr<environment> env, atom_list args) {
@@ -85,15 +84,14 @@ namespace corelib {
             atom_list params;
             atom code;
             std::shared_ptr<environment> e;
-            std::shared_ptr<callable> owner;
 
         public:
-            this_macro(atom_list params, atom code, std::shared_ptr<environment> e, std::shared_ptr<callable> owner) : params(params), code(code), e(e), owner(owner) { }
+            this_macro(atom_list params, atom code, std::shared_ptr<environment> e) : params(params), code(code), e(e) { }
             ~this_macro() { }
 
             atom call(std::shared_ptr<environment> env, atom_list args) override {
                 (void) env; // The caller's environment is unnecessary.
-                std::shared_ptr<environment> descEnv = std::make_shared<environment>(e, owner);
+                std::shared_ptr<environment> descEnv = std::make_shared<environment>(e, shared_from_this());
                 // Process optional arguments.
                 atom_list l = params.reverse(); atom_list l_view = l; long n = 0;
                 while(!l.is_empty() && l.car()->get_identifier().value.starts_with(L"?"))
@@ -130,7 +128,7 @@ namespace corelib {
             }
     };
 
-    return make_atom(std::make_shared<this_macro>(params, code, env, shared_from_this()));
+    return make_atom(std::make_shared<this_macro>(params, code, env));
 }
 
 [[gnu::flatten]] atom define::call(std::shared_ptr<environment> env, atom_list args) {
@@ -179,33 +177,79 @@ namespace corelib {
 }
 
 [[gnu::flatten]] atom fork::call(std::shared_ptr<environment> env, atom_list args) {
-    (void) env; // The caller's environment is unnecessary.
     detail::argno_more<1>(location, "fork", args);
 
     class this_fork : public callable {
         private:
             atom_list args;
+            std::shared_ptr<environment> parent_env;
 
         public:
-            this_fork(atom_list args)
-                : args(args) { }
+            this_fork(atom_list args, std::shared_ptr<environment> parent_env)
+                : args(args), parent_env(parent_env) { }
             ~this_fork() { }
 
             atom call(std::shared_ptr<environment> innerEnv, atom_list innerArgs) override {
                 atom_list components = this->args;
-                return make_atom(thunk([innerEnv, innerArgs, components]() mutable -> thunk_type {
+                std::shared_ptr<environment> parent_env = this->parent_env;
+                return make_atom(thunk([innerEnv, innerArgs, parent_env, components]() mutable -> thunk_type {
                     // #(f g h) <=> (f (g ...) (h ...))
                     // #(f g) <=> (f (g ...))
                     atom first = components.car();
                     atom_list args { };
                     for(atom_list rest = components.cdr(); !rest.is_empty(); rest = rest.cdr())
-                        args = args.unsafe_append(evaluate(rest.car(), innerEnv)->get_callable()->call(innerEnv, innerArgs));
-                    return evaluate(first, innerEnv)->get_callable()->call(innerEnv, args)->thunk_forward();
+                        args = args.unsafe_append(evaluate(rest.car(), parent_env)->get_callable()->call(innerEnv, innerArgs));
+                    return evaluate(first, parent_env)->get_callable()->call(innerEnv, args)->thunk_forward();
                 }));
             }
     };
 
-    return make_atom(std::make_shared<this_fork>(args));
+    return make_atom(std::make_shared<this_fork>(args, env));
+}
+
+[[gnu::flatten]] atom bind::call(std::shared_ptr<environment> env, atom_list args) {
+    detail::argno_more<1>(location, "bind", args);
+    return make_atom(thunk([args, env]() mutable -> thunk_type {
+        auto [f] = detail::get_args<1>(args, env);
+        args = args.cdr();
+
+        if(f->get_type() != atom_type::T_CALLABLE)
+            detail::unsupported_args(location, "bind", args);
+
+        class this_bind : public callable {
+            private:
+                atom_list args;
+                std::shared_ptr<callable> f;
+
+            public:
+                this_bind(atom_list args, std::shared_ptr<callable> f)
+                    : args(args), f(f) { }
+                ~this_bind() { }
+
+                atom call(std::shared_ptr<environment> innerEnv, atom_list innerArgs) override {
+                    atom_list components = this->args;
+                    std::shared_ptr<callable> f = this->f;
+                    return make_atom(thunk([innerEnv, innerArgs, components, f]() mutable -> thunk_type {
+                        unsigned consumed = 0;
+                        atom_list newArgs { };
+                        for(atom_list rest = components; !rest.is_empty(); rest = rest.cdr()) {
+                            atom a = evaluate(rest.car(), innerEnv);
+                            if(a->get_type() == atom_type::T_ID && a->get_identifier() == identifier(L"_")) {
+                                consumed++;
+                                newArgs = newArgs.unsafe_append(innerArgs.car());
+                                innerArgs = innerArgs.cdr();
+                            } else {
+                                newArgs = newArgs.unsafe_append(a);
+                            }
+                        }
+                        newArgs = newArgs.unsafe_append(innerArgs);
+                        return f->call(innerEnv, newArgs)->thunk_forward();
+                    }));
+                }
+        };
+
+        return std::make_shared<this_bind>(args, f->get_callable());
+    }));
 }
 
 [[gnu::flatten]] atom tie::call(std::shared_ptr<environment> env, atom_list args) {
@@ -340,6 +384,24 @@ namespace corelib {
             }
             return transposed;
         }
+    }));
+}
+
+[[gnu::flatten]] atom filter::call(std::shared_ptr<environment> env, atom_list args) {
+    detail::argno_exact<2>(location, "filter", args);
+    return make_atom(thunk([args, env]() mutable -> thunk_type {
+        auto [fn, l] = detail::get_args<2>(args, env);
+        if(l->get_type() != atom_type::T_LIST)
+            detail::unsupported_args(location, "filter", args);
+        if(fn->get_type() != atom_type::T_CALLABLE)
+            detail::unsupported_args(location, "filter", args);
+        auto f = fn->get_callable();
+        atom_list r { };
+        for(auto & a : l->get_list()) {
+            if(f->call(env, atom_list::from(a))->coerce_bool())
+                r = r.unsafe_append(a);
+        }
+        return r;
     }));
 }
 
