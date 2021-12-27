@@ -30,3 +30,7 @@
 ---
 
 > kamilalisp but c++ and gayer
+
+---
+
+> cute just like its owner
