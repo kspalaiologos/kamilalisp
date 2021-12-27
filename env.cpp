@@ -74,6 +74,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"quote", make_atom(std::make_shared<corelib::quote>()));
     env->set(L"bruijn", make_atom(std::make_shared<corelib::bruijn>()));
     env->set(L"if", make_atom(std::make_shared<corelib::kl_if>()));
+    env->set(L"map", make_atom(std::make_shared<corelib::map>()));
     env->set(L"println", make_atom(std::make_shared<iolib::println>()));
     return env;
 }

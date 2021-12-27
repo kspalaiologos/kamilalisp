@@ -299,6 +299,50 @@ namespace corelib {
     }));
 }
 
+[[gnu::flatten]] atom map::call(std::shared_ptr<environment> env, atom_list args) {
+    detail::argno_more<1>(location, "map", args);
+    return make_atom(thunk([args, env]() mutable -> thunk_type {
+        auto c = evaluate(args.car(), env); args = args.cdr();
+        if(c->get_type() != atom_type::T_CALLABLE)
+            detail::unsupported_args(location, "map", args);
+        auto fn = c->get_callable();
+        if(args.size() == 1) {
+            auto arg = evaluate(args.car(), env);
+            if(arg->get_type() == atom_type::T_LIST) {
+                atom_list r { };
+                for(auto & a : arg->get_list())
+                    r = r.unsafe_append(fn->call(env, atom_list::from(a)));
+                return r;
+            } else {
+                return fn->call(env, atom_list::from(arg))->thunk_forward();
+            }
+        } else {
+            unsigned min_width = 0;
+            atom_list r { };
+            for(auto & a : args) {
+                auto arg = evaluate(a, env);
+                r = r.unsafe_append(arg);
+                if(arg->get_type() != atom_type::T_LIST)
+                    detail::unsupported_args(location, "map", args);
+                if(min_width == 0)
+                    min_width = arg->get_list().size();
+                else if(arg->get_list().size() < min_width)
+                    min_width = arg->get_list().size();
+            }
+            atom_list transposed { };
+            for(unsigned i = 0; i < min_width; i++) {
+                atom_list row { };
+                for(auto & a : r) {
+                    row = row.unsafe_append(a->get_list().car());
+                    a->get_list() = a->get_list().cdr();
+                }
+                transposed = transposed.unsafe_append(fn->call(env, row));
+            }
+            return transposed;
+        }
+    }));
+}
+
 [[gnu::flatten]] atom import::call(std::shared_ptr<environment> env, atom_list args) {
     detail::argno_exact<1>(location, "import", args);
     auto [a] = detail::get_args<1>(args);

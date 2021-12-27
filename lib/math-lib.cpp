@@ -320,7 +320,7 @@ namespace mathlib {
     detail::argno_either<1, 2, 3>(location, "iota", args);
     if(args.size() == 3) {
         return make_atom(thunk([args, env]() mutable -> thunk_type {
-            auto [a, b, c] = detail::get_args<3>(args);
+            auto [a, b, c] = detail::get_args<3>(args, env);
             if(a->get_type() != atom_type::T_INT || b->get_type() != atom_type::T_INT || (c->get_type() != atom_type::T_REAL && c->get_type() != atom_type::T_INT))
                 detail::unsupported_args(location, "iota", args);
             if(c->get_type() == atom_type::T_INT) {
