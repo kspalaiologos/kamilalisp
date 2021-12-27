@@ -54,6 +54,7 @@ define_callable(kl_if);
 define_callable(atop);
 define_callable(fork);
 define_callable(tie);
+define_callable(import);
 
 }
 

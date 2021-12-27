@@ -1,6 +1,9 @@
 
 #include "core-lib.hpp"
 #include "lib-detail.hpp"
+#include <fstream>
+#include "../reader/parser.hpp"
+#include "../atom.hpp"
 
 namespace bmp = boost::multiprecision;
 
@@ -294,6 +297,21 @@ namespace corelib {
         else
             return evaluate(f, env)->thunk_forward();
     }));
+}
+
+[[gnu::flatten]] atom import::call(std::shared_ptr<environment> env, atom_list args) {
+    detail::argno_exact<1>(location, "import", args);
+    auto [a] = detail::get_args<1>(args);
+    if(a->get_type() != atom_type::T_STR)
+        detail::unsupported_args(location, "import", args);
+    std::wstring filename = a->get_string();
+    std::wifstream ifs(std::string(filename.begin(), filename.end()));
+    if(!ifs.good())
+        kl_error("Couldn't import " + std::string(filename.begin(), filename.end()));
+    std::wstring data{std::istreambuf_iterator<wchar_t>(ifs), std::istreambuf_iterator<wchar_t>()};
+    atom_list res = parse(data);
+    for(atom & at : res)
+        evaluate(at, env).get()->force();
 }
 
 }
