@@ -42,6 +42,7 @@ std::shared_ptr<environment> environment::get_topmost_ancestor() {
 
 #include "lib/core-lib.hpp"
 #include "lib/math-lib.hpp"
+#include "lib/io-lib.hpp"
 
 std::shared_ptr<environment> environment::create_default_env() {
     auto lambda = std::make_shared<corelib::lambda>();
@@ -73,5 +74,6 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"quote", make_atom(std::make_shared<corelib::quote>()));
     env->set(L"bruijn", make_atom(std::make_shared<corelib::bruijn>()));
     env->set(L"if", make_atom(std::make_shared<corelib::kl_if>()));
+    env->set(L"println", make_atom(std::make_shared<iolib::println>()));
     return env;
 }

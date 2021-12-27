@@ -41,7 +41,7 @@ void highlighter(std::string const & input, replxx::Replxx::colors_t & c) {
                 }
                 case token_type::TOKEN_STR: {
                     std::wstring s = std::get<std::wstring>(*lexeme.content);
-                    for(std::size_t i = 0; i < s.size(); i++)
+                    for(std::size_t i = 0; i < s.size() + 2; i++)
                         c.at(i + lexeme.loc) = replxx::Replxx::Color::GREEN;
                     break;
                 }
