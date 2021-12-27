@@ -312,6 +312,7 @@ namespace corelib {
     atom_list res = parse(data);
     for(atom & at : res)
         evaluate(at, env).get()->force();
+    return null_atom;
 }
 
 }
