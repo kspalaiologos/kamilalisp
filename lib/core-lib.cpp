@@ -166,32 +166,36 @@ namespace corelib {
 [[gnu::flatten]] atom atop::call(std::shared_ptr<environment> env, atom_list args) {
     detail::argno_more<1>(location, "atop", args);
 
-    class this_atop : public callable {
-        private:
-            atom_list args;
-            std::weak_ptr<environment> env;
+    return make_atom(thunk([args, env]() mutable -> thunk_type {
+        atom_list e_args { };
+        for(auto & x : args)
+            e_args = e_args.unsafe_append(evaluate(x, env));
 
-        public:
-            this_atop(atom_list args, std::weak_ptr<environment> env)
-                : args(args), env(env) { }
-            ~this_atop() { }
+        class this_atop : public callable {
+            private:
+                atom_list args;
 
-            atom call(std::shared_ptr<environment> innerEnv, atom_list innerArgs) override {
-                atom_list components = this->args;
-                std::weak_ptr<environment> env = this->env;
-                return make_atom(thunk([env, innerEnv, innerArgs, components]() mutable -> thunk_type {
-                    auto x = evaluate(components.car(), env.lock())->get_callable()->call(innerEnv, innerArgs);
-                    components = components.cdr();
-                    while(!components.is_empty()) {
-                        x = evaluate(components.car(), env.lock())->get_callable()->call(innerEnv, atom_list::from(x));
+            public:
+                this_atop(atom_list args)
+                    : args(args) { }
+                ~this_atop() { }
+
+                atom call(std::shared_ptr<environment> innerEnv, atom_list innerArgs) override {
+                    atom_list components = this->args;
+                    return make_atom(thunk([innerEnv, innerArgs, components]() mutable -> thunk_type {
+                        auto x = components.car()->get_callable()->call(innerEnv, innerArgs);
                         components = components.cdr();
-                    }
-                    return x->thunk_forward();
-                }));
-            }
-    };
+                        while(!components.is_empty()) {
+                            x = components.car()->get_callable()->call(innerEnv, atom_list::from(x));
+                            components = components.cdr();
+                        }
+                        return x->thunk_forward();
+                    }));
+                }
+        };
 
-    return make_atom(std::make_shared<this_atop>(args, env));
+        return std::make_shared<this_atop>(e_args);
+    }));
 }
 
 [[gnu::flatten]] atom fork::call(std::shared_ptr<environment> env, atom_list args) {
