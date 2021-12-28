@@ -242,6 +242,13 @@ namespace corelib {
 
         if(f->get_type() != atom_type::T_CALLABLE)
             detail::unsupported_args(location, "bind", args);
+        
+        atom_list e_args { };
+        for(auto & x : args)
+            if(x->get_type() == atom_type::T_ID && x->get_identifier() == identifier(L"_"))
+                e_args = e_args.unsafe_append(x);
+            else
+                e_args = e_args.unsafe_append(evaluate(x, env));
 
         class this_bind : public callable {
             private:
@@ -262,10 +269,10 @@ namespace corelib {
                         unsigned consumed = 0;
                         atom_list newArgs { };
                         for(atom_list rest = components; !rest.is_empty(); rest = rest.cdr()) {
-                            atom a = evaluate(rest.car(), parent_env.lock());
+                            atom a = rest.car();
                             if(a->get_type() == atom_type::T_ID && a->get_identifier() == identifier(L"_")) {
                                 consumed++;
-                                newArgs = newArgs.unsafe_append(innerArgs.car());
+                                newArgs = newArgs.unsafe_append(evaluate(innerArgs.car(), innerEnv));
                                 innerArgs = innerArgs.cdr();
                             } else {
                                 newArgs = newArgs.unsafe_append(a);
@@ -277,7 +284,7 @@ namespace corelib {
                 }
         };
 
-        return std::make_shared<this_bind>(args, f->get_callable(), env);
+        return std::make_shared<this_bind>(e_args, f->get_callable(), env);
     }));
 }
 
