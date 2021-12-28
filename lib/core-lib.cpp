@@ -81,13 +81,14 @@ namespace corelib {
 
 [[gnu::flatten]] atom macro::call(std::shared_ptr<environment> env, atom_list args) {
     detail::argno_exact<2>(location, "macro", args);
-    auto [a, code] = detail::get_args<2>(args);
+    auto [a, code_arg] = detail::get_args<2>(args);
     if(a->get_type() != atom_type::T_LIST)
         detail::unsupported_args(location, "macro", args);
     atom_list params = a->get_list();
     for(auto & x : params)
         if(x->get_type() != atom_type::T_ID)
             detail::unsupported_args(location, "macro parameter list", args);
+    auto code = code_arg;
     return make_atom(thunk([params, code, env]() mutable -> thunk_type {
         // Process optional arguments.
         atom_list l = params.reverse(); atom_list l_view = l; std::size_t n = 0;
