@@ -22,15 +22,15 @@ namespace corelib {
         private:
             atom_list params;
             atom code;
-            std::shared_ptr<environment> e;
+            std::weak_ptr<environment> e;
 
         public:
-            this_lambda(atom_list params, atom code, std::shared_ptr<environment> e) : params(params), code(code), e(e) { }
+            this_lambda(atom_list params, atom code, std::weak_ptr<environment> e) : params(params), code(code), e(e) { }
             ~this_lambda() { }
 
             atom call(std::shared_ptr<environment> env, atom_list args) override {
                 (void) env; // The caller's environment is unnecessary.
-                std::shared_ptr<environment> descEnv = std::make_shared<environment>(e, shared_from_this());
+                std::shared_ptr<environment> descEnv = std::make_shared<environment>(e.lock(), shared_from_this());
                 // Process optional arguments.
                 atom_list l = params.reverse(); atom_list l_view = l; long n = 0;
                 while(!l.is_empty() && l.car()->get_identifier().value.starts_with(L"?"))
@@ -57,7 +57,7 @@ namespace corelib {
                 for(long i = 0; i < n; i++) {
                     std::wstring name = l_view.car()->get_identifier().value.substr(1);
                     if(i + params.size() - n < args.size()) {
-                        descEnv->set(name, evaluate(arg.car(), e));
+                        descEnv->set(name, evaluate(arg.car(), e.lock()));
                         arg = arg.cdr();
                     } else {
                         descEnv->set(name, null_atom);
@@ -83,15 +83,15 @@ namespace corelib {
         private:
             atom_list params;
             atom code;
-            std::shared_ptr<environment> e;
+            std::weak_ptr<environment> e;
 
         public:
-            this_macro(atom_list params, atom code, std::shared_ptr<environment> e) : params(params), code(code), e(e) { }
+            this_macro(atom_list params, atom code, std::weak_ptr<environment> e) : params(params), code(code), e(e) { }
             ~this_macro() { }
 
             atom call(std::shared_ptr<environment> env, atom_list args) override {
                 (void) env; // The caller's environment is unnecessary.
-                std::shared_ptr<environment> descEnv = std::make_shared<environment>(e, shared_from_this());
+                std::shared_ptr<environment> descEnv = std::make_shared<environment>(e.lock(), shared_from_this());
                 // Process optional arguments.
                 atom_list l = params.reverse(); atom_list l_view = l; long n = 0;
                 while(!l.is_empty() && l.car()->get_identifier().value.starts_with(L"?"))
@@ -147,25 +147,26 @@ namespace corelib {
 }
 
 [[gnu::flatten]] atom atop::call(std::shared_ptr<environment> env, atom_list args) {
-    (void) env; // The caller's environment is unnecessary.
     detail::argno_more<1>(location, "atop", args);
 
     class this_atop : public callable {
         private:
             atom_list args;
+            std::weak_ptr<environment> env;
 
         public:
-            this_atop(atom_list args)
-                : args(args) { }
+            this_atop(atom_list args, std::weak_ptr<environment> env)
+                : args(args), env(env) { }
             ~this_atop() { }
 
             atom call(std::shared_ptr<environment> innerEnv, atom_list innerArgs) override {
                 atom_list components = this->args;
-                return make_atom(thunk([innerEnv, innerArgs, components]() mutable -> thunk_type {
-                    auto x = evaluate(components.car(), innerEnv)->get_callable()->call(innerEnv, innerArgs);
+                std::weak_ptr<environment> env = this->env;
+                return make_atom(thunk([env, innerEnv, innerArgs, components]() mutable -> thunk_type {
+                    auto x = evaluate(components.car(), env.lock())->get_callable()->call(innerEnv, innerArgs);
                     components = components.cdr();
                     while(!components.is_empty()) {
-                        x = evaluate(components.car(), innerEnv)->get_callable()->call(innerEnv, atom_list::from(x));
+                        x = evaluate(components.car(), env.lock())->get_callable()->call(innerEnv, atom_list::from(x));
                         components = components.cdr();
                     }
                     return x->thunk_forward();
@@ -173,7 +174,7 @@ namespace corelib {
             }
     };
 
-    return make_atom(std::make_shared<this_atop>(args));
+    return make_atom(std::make_shared<this_atop>(args, env));
 }
 
 [[gnu::flatten]] atom fork::call(std::shared_ptr<environment> env, atom_list args) {
@@ -182,24 +183,24 @@ namespace corelib {
     class this_fork : public callable {
         private:
             atom_list args;
-            std::shared_ptr<environment> parent_env;
+            std::weak_ptr<environment> parent_env;
 
         public:
-            this_fork(atom_list args, std::shared_ptr<environment> parent_env)
+            this_fork(atom_list args, std::weak_ptr<environment> parent_env)
                 : args(args), parent_env(parent_env) { }
             ~this_fork() { }
 
             atom call(std::shared_ptr<environment> innerEnv, atom_list innerArgs) override {
                 atom_list components = this->args;
-                std::shared_ptr<environment> parent_env = this->parent_env;
+                std::weak_ptr<environment> parent_env = this->parent_env;
                 return make_atom(thunk([innerEnv, innerArgs, parent_env, components]() mutable -> thunk_type {
                     // #(f g h) <=> (f (g ...) (h ...))
                     // #(f g) <=> (f (g ...))
                     atom first = components.car();
                     atom_list args { };
                     for(atom_list rest = components.cdr(); !rest.is_empty(); rest = rest.cdr())
-                        args = args.unsafe_append(evaluate(rest.car(), parent_env)->get_callable()->call(innerEnv, innerArgs));
-                    return evaluate(first, parent_env)->get_callable()->call(innerEnv, args)->thunk_forward();
+                        args = args.unsafe_append(evaluate(rest.car(), parent_env.lock())->get_callable()->call(innerEnv, innerArgs));
+                    return evaluate(first, parent_env.lock())->get_callable()->call(innerEnv, args)->thunk_forward();
                 }));
             }
     };
@@ -220,20 +221,22 @@ namespace corelib {
             private:
                 atom_list args;
                 std::shared_ptr<callable> f;
+                std::weak_ptr<environment> parent_env;
 
             public:
-                this_bind(atom_list args, std::shared_ptr<callable> f)
-                    : args(args), f(f) { }
+                this_bind(atom_list args, std::shared_ptr<callable> f, std::weak_ptr<environment> parent_env)
+                    : args(args), f(f), parent_env(parent_env) { }
                 ~this_bind() { }
 
                 atom call(std::shared_ptr<environment> innerEnv, atom_list innerArgs) override {
                     atom_list components = this->args;
                     std::shared_ptr<callable> f = this->f;
-                    return make_atom(thunk([innerEnv, innerArgs, components, f]() mutable -> thunk_type {
+                    std::weak_ptr<environment> parent_env = this->parent_env;
+                    return make_atom(thunk([innerEnv, innerArgs, components, parent_env, f]() mutable -> thunk_type {
                         unsigned consumed = 0;
                         atom_list newArgs { };
                         for(atom_list rest = components; !rest.is_empty(); rest = rest.cdr()) {
-                            atom a = evaluate(rest.car(), innerEnv);
+                            atom a = evaluate(rest.car(), parent_env.lock());
                             if(a->get_type() == atom_type::T_ID && a->get_identifier() == identifier(L"_")) {
                                 consumed++;
                                 newArgs = newArgs.unsafe_append(innerArgs.car());
@@ -248,7 +251,7 @@ namespace corelib {
                 }
         };
 
-        return std::make_shared<this_bind>(args, f->get_callable());
+        return std::make_shared<this_bind>(args, f->get_callable(), env);
     }));
 }
 
