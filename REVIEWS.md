@@ -27,3 +27,14 @@
 
 > meow/10 ~tsuki software foundation
 
+---
+
+> kamilalisp but c++ and gayer
+
+---
+
+> cute just like its owner
+
+---
+
+> finally lesbianlisp ~crested
