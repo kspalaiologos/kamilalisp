@@ -9,6 +9,12 @@ class node : std::enable_shared_from_this<node<T>> {
     public:
         node(std::shared_ptr<node> next, T value)
             : next(next), value(value) { }
+        virtual ~node() noexcept {
+            while (next && next.use_count() < 2)
+                next = std::move(next->next);
+        }
+
+
         std::shared_ptr<node> next;
         T value;
 
