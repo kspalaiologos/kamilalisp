@@ -441,6 +441,23 @@ namespace corelib {
     }));
 }
 
+[[gnu::flatten]] atom count::call(std::shared_ptr<environment> env, atom_list args) {
+    detail::argno_exact<2>(location, "count", args);
+    return make_atom(thunk([args, env]() mutable -> thunk_type {
+        auto [fn, l] = detail::get_args<2>(args, env);
+        if(l->get_type() != atom_type::T_LIST)
+            detail::unsupported_args(location, "count", args);
+        if(fn->get_type() != atom_type::T_CALLABLE)
+            detail::unsupported_args(location, "count", args);
+        auto f = fn->get_callable();
+        bmp::mpz_int m = 0;
+        for(auto & a : l->get_list())
+            if(f->call(env, atom_list::from(a))->coerce_bool())
+                m++;
+        return m;
+    }));
+}
+
 [[gnu::flatten]] atom import::call(std::shared_ptr<environment> env, atom_list args) {
     detail::argno_exact<1>(location, "import", args);
     auto [a] = detail::get_args<1>(args);

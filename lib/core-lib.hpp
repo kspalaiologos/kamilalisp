@@ -58,6 +58,7 @@ define_callable(import);
 define_callable(map);
 define_callable(filter);
 define_callable(bind);
+define_callable(count);
 
 }
 

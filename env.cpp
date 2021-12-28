@@ -77,6 +77,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"map", make_atom(std::make_shared<corelib::map>()));
     env->set(L"filter", make_atom(std::make_shared<corelib::filter>()));
     env->set(L"bind", make_atom(std::make_shared<corelib::bind>()));
+    env->set(L"count", make_atom(std::make_shared<corelib::count>()));
     env->set(L"println", make_atom(std::make_shared<iolib::println>()));
     return env;
 }
