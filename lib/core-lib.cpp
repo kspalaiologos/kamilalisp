@@ -11,63 +11,72 @@ namespace corelib {
 
 [[gnu::flatten]] atom lambda::call(std::shared_ptr<environment> env, atom_list args) {
     detail::argno_exact<2>(location, "lambda", args);
-    auto [a, code] = detail::get_args<2>(args);
+    auto [a, code_arg] = detail::get_args<2>(args);
     if(a->get_type() != atom_type::T_LIST)
         detail::unsupported_args(location, "lambda", args);
     atom_list params = a->get_list();
     for(auto & x : params)
         if(x->get_type() != atom_type::T_ID)
             detail::unsupported_args(location, "lambda parameter list", args);
-    class this_lambda : public callable {
-        private:
-            atom_list params;
-            atom code;
-            std::weak_ptr<environment> e;
+    auto code = code_arg;
+    return make_atom(thunk([params, code, env]() mutable -> thunk_type {
+        atom_list l = params.reverse(); atom_list l_view = l; std::size_t n = 0;
+        while(!l.is_empty() && l.car()->get_identifier().value.starts_with(L"?"))
+            l = l.cdr(), n++;
+        // Check if there are any misplaced optional arguments.
+        std::size_t m = 0;
+        for(auto & x : l_view)
+            if(x->get_identifier().value.starts_with(L"?"))
+                m++;
+        if(m != n)
+            kl_error("misplaced optional lambda argument in parameter list");
 
-        public:
-            this_lambda(atom_list params, atom code, std::weak_ptr<environment> e) : params(params), code(code), e(e) { }
-            ~this_lambda() { }
+        class this_lambda : public callable {
+            private:
+                atom_list params;
+                atom code;
+                std::weak_ptr<environment> e;
+                std::size_t n;
+                atom_list l_view;
 
-            atom call(std::shared_ptr<environment> env, atom_list args) override {
-                (void) env; // The caller's environment is unnecessary.
-                std::shared_ptr<environment> descEnv = std::make_shared<environment>(e.lock(), shared_from_this());
-                // Process optional arguments.
-                atom_list l = params.reverse(); atom_list l_view = l; long n = 0;
-                while(!l.is_empty() && l.car()->get_identifier().value.starts_with(L"?"))
-                    l = l.cdr(), n++;
-                // Check if there are any misplaced optional arguments.
-                long m = 0;
-                for(auto & x : l_view)
-                    if(x->get_identifier().value.starts_with(L"?"))
-                        m++;
-                if(m != n)
-                    kl_error("misplaced optional lambda argument in parameter list");
-                // Process normal arguments.
-                if(args.size() > params.size() || args.size() < params.size() - n)
-                    kl_error("Invalid invocation to a lambda expression. Unexpected amount of arguments.");
-                atom_list params_view = params, args_view = args;
-                for(std::size_t i = 0; i < args.size() - n; i++) {
-                    descEnv->set(params_view.car()->get_identifier().value, args_view.car());
-                    params_view = params_view.cdr();
-                    args_view = args_view.cdr();
-                }
-                // Process optional arguments.
-                // We have to iterate from the back.
-                atom_list arg = args.reverse();
-                for(long i = 0; i < n; i++) {
-                    std::wstring name = l_view.car()->get_identifier().value.substr(1);
-                    if(i + params.size() - n < args.size()) {
-                        descEnv->set(name, evaluate(arg.car(), e.lock()));
-                        arg = arg.cdr();
-                    } else {
-                        descEnv->set(name, null_atom);
+            public:
+                this_lambda(atom_list params, atom code, std::weak_ptr<environment> e, std::size_t n, atom_list l_view)
+                    : params(params), code(code), e(e), n(n), l_view(l_view) { }
+                ~this_lambda() { }
+
+                atom call(std::shared_ptr<environment> env, atom_list args) override {
+                    (void) env; // The caller's environment is unnecessary.
+                    std::shared_ptr<environment> descEnv = std::make_shared<environment>(e.lock(), shared_from_this());
+                    // Process normal arguments.
+                    if(args.size() > params.size() || args.size() < params.size() - n)
+                        kl_error("Invalid invocation to a lambda expression. Unexpected amount of arguments.");
+                    if(args.size() > n) {
+                        atom_list params_view = params, args_view = args;
+                        for(std::size_t i = 0; i < args.size() - n; i++) {
+                            descEnv->set(params_view.car()->get_identifier().value, evaluate(args_view.car(), e.lock()));
+                            params_view = params_view.cdr();
+                            args_view = args_view.cdr();
+                        }
                     }
+                    // Process optional arguments.
+                    // We have to iterate from the back.
+                    atom_list arg = args.reverse();
+                    for(std::size_t i = 0; i < n; i++) {
+                        std::wstring name = l_view.car()->get_identifier().value.substr(1);
+                        l_view = l_view.cdr();
+                        if(i + params.size() - n < args.size()) {
+                            descEnv->set(name, evaluate(arg.car(), e.lock()));
+                            arg = arg.cdr();
+                        } else {
+                            descEnv->set(name, null_atom);
+                        }
+                    }
+                    return evaluate(code, descEnv);
                 }
-                return evaluate(code, descEnv);
-            }
-    };
+        };
 
-    return make_atom(std::make_shared<this_lambda>(params, code, env));
+        return std::make_shared<this_lambda>(params, code, env, n, l_view);
+    }));
 }
 
 [[gnu::flatten]] atom macro::call(std::shared_ptr<environment> env, atom_list args) {
@@ -79,56 +88,64 @@ namespace corelib {
     for(auto & x : params)
         if(x->get_type() != atom_type::T_ID)
             detail::unsupported_args(location, "macro parameter list", args);
-    class this_macro : public callable {
-        private:
-            atom_list params;
-            atom code;
-            std::weak_ptr<environment> e;
+    return make_atom(thunk([params, code, env]() mutable -> thunk_type {
+        // Process optional arguments.
+        atom_list l = params.reverse(); atom_list l_view = l; std::size_t n = 0;
+        while(!l.is_empty() && l.car()->get_identifier().value.starts_with(L"?"))
+            l = l.cdr(), n++;
+        // Check if there are any misplaced optional arguments.
+        std::size_t m = 0;
+        for(auto & x : l_view)
+            if(x->get_identifier().value.starts_with(L"?"))
+                m++;
+        if(m != n)
+            kl_error("misplaced optional macro argument in parameter list");
 
-        public:
-            this_macro(atom_list params, atom code, std::weak_ptr<environment> e) : params(params), code(code), e(e) { }
-            ~this_macro() { }
+        class this_macro : public callable {
+            private:
+                atom_list params;
+                atom code;
+                std::weak_ptr<environment> e;
+                std::size_t n;
+                atom_list l_view;
 
-            atom call(std::shared_ptr<environment> env, atom_list args) override {
-                (void) env; // The caller's environment is unnecessary.
-                std::shared_ptr<environment> descEnv = std::make_shared<environment>(e.lock(), shared_from_this());
-                // Process optional arguments.
-                atom_list l = params.reverse(); atom_list l_view = l; long n = 0;
-                while(!l.is_empty() && l.car()->get_identifier().value.starts_with(L"?"))
-                    l = l.cdr(), n++;
-                // Check if there are any misplaced optional arguments.
-                long m = 0;
-                for(auto & x : l_view)
-                    if(x->get_identifier().value.starts_with(L"?"))
-                        m++;
-                if(m != n)
-                    kl_error("misplaced optional macro argument in parameter list");
-                // Process normal arguments.
-                if(args.size() > params.size() || args.size() < params.size() - n)
-                    kl_error("Invalid invocation to a lambda expression. Unexpected amount of arguments.");
-                atom_list params_view = params, args_view = args;
-                for(std::size_t i = 0; i < args.size() - n; i++) {
-                    descEnv->set(params_view.car()->get_identifier().value, args_view.car());
-                    params_view = params_view.cdr();
-                    args_view = args_view.cdr();
-                }
-                // Process optional arguments.
-                // We have to iterate from the back.
-                atom_list arg = args.reverse();
-                for(long i = 0; i < n; i++) {
-                    std::wstring name = l_view.car()->get_identifier().value.substr(1);
-                    if(i + params.size() - n < args.size()) {
-                        descEnv->set(name, arg.car());
-                        arg = arg.cdr();
-                    } else {
-                        descEnv->set(name, null_atom);
+            public:
+                this_macro(atom_list params, atom code, std::weak_ptr<environment> e, std::size_t n, atom_list l_view)
+                    : params(params), code(code), e(e), n(n), l_view(l_view) { }
+                ~this_macro() { }
+
+                atom call(std::shared_ptr<environment> env, atom_list args) override {
+                    (void) env; // The caller's environment is unnecessary.
+                    std::shared_ptr<environment> descEnv = std::make_shared<environment>(e.lock(), shared_from_this());
+                    // Process normal arguments.
+                    if(args.size() > params.size() || args.size() < params.size() - n)
+                        kl_error("Invalid invocation to a lambda expression. Unexpected amount of arguments.");
+                    atom_list params_view = params, args_view = args;
+                    if(args.size() > n) {
+                        for(std::size_t i = 0; i < args.size() - n; i++) {
+                            descEnv->set(params_view.car()->get_identifier().value, args_view.car());
+                            params_view = params_view.cdr();
+                            args_view = args_view.cdr();
+                        }
                     }
+                    // Process optional arguments.
+                    // We have to iterate from the back.
+                    atom_list arg = args.reverse();
+                    for(std::size_t i = 0; i < n; i++) {
+                        std::wstring name = l_view.car()->get_identifier().value.substr(1);
+                        if(i + params.size() - n < args.size()) {
+                            descEnv->set(name, arg.car());
+                            arg = arg.cdr();
+                        } else {
+                            descEnv->set(name, null_atom);
+                        }
+                    }
+                    return evaluate(code, descEnv);
                 }
-                return evaluate(code, descEnv);
-            }
-    };
+        };
 
-    return make_atom(std::make_shared<this_macro>(params, code, env));
+        return std::make_shared<this_macro>(params, code, env, n, l_view);
+    }));
 }
 
 [[gnu::flatten]] atom define::call(std::shared_ptr<environment> env, atom_list args) {
