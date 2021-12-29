@@ -19,7 +19,9 @@ namespace mathlib {
 [[gnu::flatten]] atom add::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_either<1, 2>(location, "+", args);
     if(args.size() == 2) {
-        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+        std::wstring repr = this->repr();
+        return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+            stacktrace_guard{ repr };
             auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
                 return thunk_type(a->get_integer() + b->get_integer());
@@ -50,7 +52,9 @@ namespace mathlib {
             }
         }));
     } else if(args.size() == 1) {
-        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+        std::wstring repr = this->repr();
+        return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+            stacktrace_guard{ repr };
             auto [a] = detail::get_args<0, 1>(args, env, eval_args);
             if(a->get_type() == atom_type::T_CMPLX)
                 return thunk_type(conj(a->get_complex()));
@@ -67,7 +71,9 @@ define_repr(add, return L"built-in function `+'")
 [[gnu::flatten]] atom subtract::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_either<1, 2>(location, "-", args);
     if(args.size() == 2) {
-        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+        std::wstring repr = this->repr();
+        return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+            stacktrace_guard{ repr };
             auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
                 return thunk_type(a->get_integer() - b->get_integer());
@@ -92,7 +98,9 @@ define_repr(add, return L"built-in function `+'")
             }
         }));
     } else if(args.size() == 1) {
-        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+        std::wstring repr = this->repr();
+        return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+            stacktrace_guard{ repr };
             auto [a] = detail::get_args<0, 1>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT) {
                 return thunk_type(-(a->get_integer()));
@@ -114,7 +122,9 @@ define_repr(subtract, return L"built-in function `-'")
 [[gnu::flatten]] atom multiply::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_either<1, 2>(location, "*", args);
     if(args.size() == 2) {
-        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+        std::wstring repr = this->repr();
+        return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+            stacktrace_guard{ repr };
             auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
                 return thunk_type(a->get_integer() * b->get_integer());
@@ -139,7 +149,9 @@ define_repr(subtract, return L"built-in function `-'")
             }
         }));
     } else if(args.size() == 1) {
-        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+        std::wstring repr = this->repr();
+        return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+            stacktrace_guard{ repr };
             auto [a] = detail::get_args<0, 1>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT) {
                 if(a->get_integer() < 0)
@@ -174,7 +186,9 @@ define_repr(multiply, return L"built-in function `*'")
 [[gnu::flatten]] atom divide::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_either<1, 2>(location, "/", args);
     if(args.size() == 2) {
-        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+        std::wstring repr = this->repr();
+        return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+            stacktrace_guard{ repr };
             auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
                 return thunk_type(a->get_integer() / b->get_integer());
@@ -199,7 +213,9 @@ define_repr(multiply, return L"built-in function `*'")
             }
         }));
     } else if(args.size() == 1) {
-        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+        std::wstring repr = this->repr();
+        return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+            stacktrace_guard{ repr };
             auto [a] = detail::get_args<0, 1>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT) {
                 return thunk_type(1 / bmp::mpf_float(a->get_integer()));
@@ -224,14 +240,18 @@ define_repr(divide, return L"built-in function `/'")
 [[gnu::flatten]] atom modulus::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_either<1, 2>(location, "%", args);
     if(args.size() == 2) {
-        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+        std::wstring repr = this->repr();
+        return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+            stacktrace_guard{ repr };
             auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
             if(a->get_type() != atom_type::T_INT || b->get_type() != atom_type::T_INT)
                 detail::unsupported_args(location, "%", args);
             return thunk_type(a->get_integer() % b->get_integer());
         }));
     } else if(args.size() == 1) {
-        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+        std::wstring repr = this->repr();
+        return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+            stacktrace_guard{ repr };
             auto [a] = detail::get_args<0, 1>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT) {
                 return thunk_type(abs_f(a->get_integer()));
@@ -252,7 +272,9 @@ define_repr(modulus, return L"built-in function `%'")
 
 [[gnu::flatten]] atom sqrt::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<1>(location, "sqrt", args);
-    return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard{ repr };
         auto [a] = detail::get_args<0, 1>(args, env, eval_args);
         if(a->get_type() == atom_type::T_INT) {
             return thunk_type(bmp::sqrt(a->get_integer()));
@@ -276,7 +298,9 @@ define_repr(sqrt, return L"built-in function `sqrt'")
 
 [[gnu::flatten]] atom nthroot::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<2>(location, "nth-root", args);
-    return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard{ repr };
         auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
         if(b->get_type() != atom_type::T_INT && b->get_type() != atom_type::T_REAL)
             detail::unsupported_args(location, "nth-root", args);
@@ -302,7 +326,9 @@ define_repr(nthroot, return L"built-in function `nth-root'")
 
 [[gnu::flatten]] atom power::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<2>(location, "**", args);
-    return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard{ repr };
         auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
         if(b->get_type() == atom_type::T_INT) {
             if(a->get_type() == atom_type::T_INT) {
@@ -335,7 +361,9 @@ define_repr(power, return L"built-in function `**'")
 [[gnu::flatten]] atom iota::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_either<1, 2, 3>(location, "iota", args);
     if(args.size() == 3) {
-        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+        std::wstring repr = this->repr();
+        return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+            stacktrace_guard{ repr };
             auto [a, b, c] = detail::get_args<0, 3>(args, env, eval_args);
             if(a->get_type() != atom_type::T_INT || b->get_type() != atom_type::T_INT || (c->get_type() != atom_type::T_REAL && c->get_type() != atom_type::T_INT))
                 detail::unsupported_args(location, "iota", args);
@@ -380,7 +408,9 @@ define_repr(power, return L"built-in function `**'")
             }
         }));
     } else if(args.size() == 2) {
-        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+        std::wstring repr = this->repr();
+        return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+            stacktrace_guard{ repr };
             // Note: Dyadic iota (range) is inclusive on both ends.
             auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
             if(a->get_type() != atom_type::T_INT || b->get_type() != atom_type::T_INT)
@@ -404,7 +434,9 @@ define_repr(power, return L"built-in function `**'")
             __builtin_unreachable();
         }));
     } else if(args.size() == 1) {
-        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+        std::wstring repr = this->repr();
+        return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+            stacktrace_guard{ repr };
             auto [a] = detail::get_args<0, 1>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT) {
                 if(a->get_integer() >= 0) {
@@ -470,7 +502,9 @@ define_repr(iota, return L"built-in function `iota'")
 
 [[gnu::flatten]] atom equals::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<2>(location, "=", args);
-    return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard{ repr };
         auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
         return a->operator==(b) ? atom_true->thunk_forward() : atom_false->thunk_forward();
     }));
@@ -480,7 +514,9 @@ define_repr(equals, return L"built-in function `='")
 
 [[gnu::flatten]] atom not_equals::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<2>(location, "/=", args);
-    return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard{ repr };
         auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
         return a->operator==(b) ? atom_false->thunk_forward() : atom_true->thunk_forward();
     }));

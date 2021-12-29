@@ -28,15 +28,11 @@ static inline atom evaluate(atom expr, std::shared_ptr<environment> env) {
         std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> cvt;
         kl_error("Attempted to evaluate a non-callable, got " + head->type_name() + " - `" + cvt.to_bytes(std::to_wstring(head).c_str()) + "`");
     }
-    stacktrace.push_back(head->get_callable()->repr());
     return head->get_callable()->call(env, l.cdr(), true);
-    stacktrace.pop_back();
 }
 
 static inline atom apply(std::shared_ptr<callable> callable, std::shared_ptr<environment> env, atom_list args, bool eval_args = false) {
-    stacktrace.push_back(callable->repr());
     atom r = callable->call(env, args, eval_args);
-    stacktrace.pop_back();
     return r;
 }
 

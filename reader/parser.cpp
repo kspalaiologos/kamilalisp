@@ -55,6 +55,7 @@ atom parse_tack(token & t) {
             }
 
             atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args) override {
+                stacktrace_guard{ repr() };
                 (void) env;
                 return eval_args ? evaluate(args.at(tack_no), env) : args.at(tack_no);
             }
