@@ -1,7 +1,7 @@
 
 CXX?=clang++
 HFLAGS=-std=c++2a -Wall -Wextra -IRE-flex/include -Ireplxx
-LIBS=-lmpc -lmpfr -lgmp -ldl -lreadline RE-flex/lib/libreflex.a
+LIBS=-lmpc -lmpfr -lgmp -lreadline RE-flex/lib/libreflex.a
 
 STRIPPER.debug := :
 STRIPPER.release := strip
