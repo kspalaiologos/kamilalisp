@@ -163,6 +163,7 @@ namespace std {
         public: \
             ~name() { } \
             atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args = false) override; \
+            std::wstring repr() override; \
     };
 
 #endif

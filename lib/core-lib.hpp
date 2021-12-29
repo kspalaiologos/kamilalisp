@@ -18,6 +18,7 @@ class defun : public callable {
         defun(std::shared_ptr<lambda> gen) : gen(gen) { }
         ~defun() { }
         atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args = false) override;
+        std::wstring repr() override;
     private:
         std::shared_ptr<lambda> gen;
 };
@@ -27,6 +28,7 @@ class defm : public callable {
         defm(std::shared_ptr<macro> gen) : gen(gen) { }
         ~defm() { }
         atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args = false) override;
+        std::wstring repr() override;
     private:
         std::shared_ptr<macro> gen;
 };
@@ -36,6 +38,7 @@ class monad : public callable {
         monad(std::shared_ptr<lambda> gen) : gen(gen) { }
         ~monad() { }
         atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args = false) override;
+        std::wstring repr() override;
     private:
         std::shared_ptr<lambda> gen;
 };
@@ -45,6 +48,7 @@ class dyad : public callable {
         dyad(std::shared_ptr<lambda> gen) : gen(gen) { }
         ~dyad() { }
         atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args = false) override;
+        std::wstring repr() override;
     private:
         std::shared_ptr<lambda> gen;
 };
@@ -60,6 +64,7 @@ define_callable(filter);
 define_callable(bind);
 define_callable(count);
 define_callable(type);
+define_callable(cond);
 
 }
 

@@ -50,6 +50,10 @@ atom parse_tack(token & t) {
             tack(int tack_no) : tack_no(tack_no) { }
             ~tack() { }
 
+            std::wstring repr() override {
+                return L"tack object (#" + std::to_wstring(tack_no) + L")";
+            }
+
             atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args) override {
                 (void) env;
                 return eval_args ? evaluate(args.at(tack_no), env) : args.at(tack_no);

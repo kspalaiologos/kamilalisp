@@ -18,4 +18,6 @@ namespace iolib {
     return message;
 }
 
+define_repr(println, return L"built-in function `println'")
+
 }

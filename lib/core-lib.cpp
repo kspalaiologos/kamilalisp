@@ -80,6 +80,8 @@ namespace corelib {
     }));
 }
 
+define_repr(lambda, return L"built-in function `lambda'")
+
 [[gnu::flatten]] atom macro::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<2>(location, "macro", args);
     auto [a, code_arg] = detail::get_args<0, 2>(args);
@@ -150,6 +152,8 @@ namespace corelib {
     }));
 }
 
+define_repr(macro, return L"built-in function `macro'")
+
 [[gnu::flatten]] atom define::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<2>(location, "def", args);
     return make_atom(thunk([args, env]() mutable -> thunk_type {
@@ -164,6 +168,8 @@ namespace corelib {
         return b->thunk_forward();
     }));
 }
+
+define_repr(define, return L"built-in function `def'")
 
 [[gnu::flatten]] atom atop::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_more<1>(location, "atop", args);
@@ -183,10 +189,10 @@ namespace corelib {
                 atom call(std::shared_ptr<environment> innerEnv, atom_list innerArgs, bool eval_args) override {
                     atom_list components = this->args;
                     return make_atom(thunk([innerEnv, innerArgs, components, eval_args]() mutable -> thunk_type {
-                        auto x = components.car()->get_callable()->call(innerEnv, detail::get_args(innerArgs, innerEnv, eval_args));
+                        auto x = apply(components.car()->get_callable(), innerEnv, detail::get_args(innerArgs, innerEnv, eval_args));
                         components = components.cdr();
                         while(!components.is_empty()) {
-                            x = components.car()->get_callable()->call(innerEnv, atom_list::from(x));
+                            x = apply(components.car()->get_callable(), innerEnv, atom_list::from(x));
                             components = components.cdr();
                         }
                         return x->thunk_forward();
@@ -197,6 +203,8 @@ namespace corelib {
         return std::make_shared<this_atop>(e_args);
     }));
 }
+
+define_repr(atop, return L"@-combinator: built-in function `atop'")
 
 [[gnu::flatten]] atom fork::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_more<1>(location, "fork", args);
@@ -222,8 +230,8 @@ namespace corelib {
                         atom_list e_args = detail::get_args(innerArgs, innerEnv, eval_args);
                         atom_list args { };
                         for(atom_list rest = components.cdr(); !rest.is_empty(); rest = rest.cdr())
-                            args = args.unsafe_append(rest.car()->get_callable()->call(innerEnv, e_args));
-                        return first->get_callable()->call(innerEnv, args)->thunk_forward();
+                            args = args.unsafe_append(apply(rest.car()->get_callable(), innerEnv, e_args));
+                        return apply(first->get_callable(), innerEnv, args)->thunk_forward();
                     }));
                 }
         };
@@ -231,6 +239,8 @@ namespace corelib {
         return std::make_shared<this_fork>(e_args);
     }));
 }
+
+define_repr(fork, return L"#-combinator: built-in function `fork'")
 
 [[gnu::flatten]] atom bind::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_more<1>(location, "bind", args);
@@ -290,7 +300,7 @@ namespace corelib {
                             }
                         }
                         newArgs = newArgs.unsafe_append(innerArgs);
-                        return f->call(innerEnv, newArgs)->thunk_forward();
+                        return apply(f, innerEnv, newArgs)->thunk_forward();
                     }));
                 }
         };
@@ -299,12 +309,16 @@ namespace corelib {
     }));
 }
 
+define_repr(bind, return L"$-combinator: built-in function `bind'")
+
 [[gnu::flatten]] atom tie::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
         atom_list r = detail::get_args(args, env, eval_args);
         return r;
     }));
 }
+
+define_repr(tie, return L"built-in function `tie'")
 
 [[gnu::flatten]] atom defun::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     auto generator = this->gen;
@@ -315,27 +329,33 @@ namespace corelib {
             detail::unsupported_args(location, "defun", args);
         if(env->ancestor != nullptr)
             kl_error("Binding a global name in a local environment is not supported");
-        auto fn = generator->call(env, atom_list::from(code).cons(params));
+        auto fn = apply(generator, env, atom_list::from(code).cons(params));
         env->set(name->get_identifier(), fn);
         return fn->thunk_forward();
     }));
 }
 
+define_repr(defun, return L"built-in function `defun'")
+
 [[gnu::flatten]] atom monad::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     auto generator = this->gen;
     detail::argno_exact<1>(location, "monad", args);
     auto [code] = detail::get_args<0, 1>(args);
-    auto fn = generator->call(env, atom_list::from(code).cons(make_atom(atom_list::from(make_atom(identifier(L"x"))))));
+    auto fn = apply(generator, env, atom_list::from(code).cons(make_atom(atom_list::from(make_atom(identifier(L"x"))))));
     return fn;
 }
+
+define_repr(monad, return L"built-in function `monad'")
 
 [[gnu::flatten]] atom dyad::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     auto generator = this->gen;
     detail::argno_exact<1>(location, "dyad", args);
     auto [code] = detail::get_args<0, 1>(args);
-    auto fn = generator->call(env, atom_list::from(code).cons(make_atom(atom_list::from(make_atom(identifier(L"y"))).cons(make_atom(identifier(L"x"))))));
+    auto fn = apply(generator, env, atom_list::from(code).cons(make_atom(atom_list::from(make_atom(identifier(L"y"))).cons(make_atom(identifier(L"x"))))));
     return fn;
 }
+
+define_repr(dyad, return L"built-in function `dyad'")
 
 [[gnu::flatten]] atom defm::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     auto generator = this->gen;
@@ -346,17 +366,21 @@ namespace corelib {
             detail::unsupported_args(location, "defm", args);
         if(env->ancestor != nullptr)
             kl_error("Binding a global name in a local environment is not supported");
-        auto fn = generator->call(env, atom_list::from(code).cons(params));
+        auto fn = apply(generator, env, atom_list::from(code).cons(params));
         env->set(name->get_identifier(), fn);
         return fn->thunk_forward();
     }));
 }
+
+define_repr(defm, return L"built-in function `defm'")
 
 [[gnu::flatten]] atom quote::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     (void) env; // The caller's environment is unnecessary.
     detail::argno_exact<1>(location, "quote", args);
     return args.car();
 }
+
+define_repr(quote, return L"'-combinator: built-in function `quote'")
 
 [[gnu::flatten]] atom bruijn::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<1>(location, "bruijn", args);
@@ -374,6 +398,8 @@ namespace corelib {
     return make_atom(env->owner);
 }
 
+define_repr(bruijn, return L"built-in function `bruijn'")
+
 [[gnu::flatten]] atom kl_if::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<3>(location, "if", args);
     return make_atom(thunk([args, env]() mutable -> thunk_type {
@@ -385,6 +411,30 @@ namespace corelib {
             return evaluate(f, env)->thunk_forward();
     }));
 }
+
+define_repr(kl_if, return L"built-in function `if'")
+
+[[gnu::flatten]] atom cond::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_more<1>(location, "cond", args);
+    return make_atom(thunk([args, env]() mutable -> thunk_type {
+        for(auto & a : args) {
+            if(a->get_type() != atom_type::T_LIST)
+                a = evaluate(a, env);
+            if(a->get_type() != atom_type::T_LIST)
+                detail::unsupported_args(location, "cond", args);
+            atom_list l = a->get_list();
+            if(l.size() != 1 && l.size() != 2)
+                detail::unsupported_args(location, "cond binding list", args);
+            if(l.size() == 1)
+                return evaluate(l.car(), env)->thunk_forward();
+            if(evaluate(l.car(), env)->coerce_bool())
+                return evaluate(l.cdr().car(), env)->thunk_forward();
+        }
+        kl_error("unexhaustive cond.");
+    }));
+}
+
+define_repr(cond, return L"built-in function `cond'")
 
 [[gnu::flatten]] atom map::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_more<1>(location, "map", args);
@@ -398,10 +448,10 @@ namespace corelib {
             if(arg->get_type() == atom_type::T_LIST) {
                 atom_list r { };
                 for(auto & a : arg->get_list())
-                    r = r.unsafe_append(fn->call(env, atom_list::from(a)));
+                    r = r.unsafe_append(apply(fn, env, atom_list::from(a)));
                 return r;
             } else {
-                return fn->call(env, atom_list::from(arg))->thunk_forward();
+                return apply(fn, env, atom_list::from(arg))->thunk_forward();
             }
         } else {
             unsigned min_width = 0;
@@ -423,12 +473,14 @@ namespace corelib {
                     row = row.unsafe_append(a->get_list().car());
                     a->get_list() = a->get_list().cdr();
                 }
-                transposed = transposed.unsafe_append(fn->call(env, row));
+                transposed = transposed.unsafe_append(apply(fn, env, row));
             }
             return transposed;
         }
     }));
 }
+
+define_repr(map, return L":-combinator: built-in function `map'")
 
 [[gnu::flatten]] atom filter::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<2>(location, "filter", args);
@@ -441,12 +493,14 @@ namespace corelib {
         auto f = fn->get_callable();
         atom_list r { };
         for(auto & a : l->get_list()) {
-            if(f->call(env, atom_list::from(a))->coerce_bool())
+            if(apply(f, env, atom_list::from(a))->coerce_bool())
                 r = r.unsafe_append(a);
         }
         return r;
     }));
 }
+
+define_repr(filter, return L"built-in function `filter'")
 
 [[gnu::flatten]] atom count::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<2>(location, "count", args);
@@ -459,11 +513,13 @@ namespace corelib {
         auto f = fn->get_callable();
         bmp::mpz_int m = 0;
         for(auto & a : l->get_list())
-            if(f->call(env, atom_list::from(a))->coerce_bool())
+            if(apply(f, env, atom_list::from(a))->coerce_bool())
                 m++;
         return m;
     }));
 }
+
+define_repr(count, return L"built-in function `count'")
 
 [[gnu::flatten]] atom type::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<1>(location, "type", args);
@@ -473,6 +529,8 @@ namespace corelib {
         return std::wstring(tn.begin(), tn.end());
     }));
 }
+
+define_repr(type, return L"built-in function `type'")
 
 [[gnu::flatten]] atom import::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<1>(location, "import", args);
@@ -489,5 +547,7 @@ namespace corelib {
         evaluate(at, env).get()->force();
     return null_atom;
 }
+
+define_repr(import, return L"built-in function `import'")
 
 }

@@ -11,6 +11,8 @@
 #include <boost/math/special_functions.hpp>
 #include <boost/algorithm/string/join.hpp>
 
+#define define_repr(f, a...) [[gnu::flatten]] std::wstring f::repr() { a; }
+
 namespace detail {
     template <std::size_t... sizes>
     inline void argno_either(const std::string & loc, const std::string & cause, atom_list & l) {

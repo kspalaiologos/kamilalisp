@@ -80,13 +80,8 @@ void highlighter(std::string const & input, replxx::Replxx::colors_t & c) {
         }
     } catch(std::exception const& e) {
         std::wcerr << "Exception thrown." << e.what() << std::endl;
-        std::ostringstream buf;
-        const boost::stacktrace::stacktrace* st = boost::get_error_info<traced>(e);
-        if (st)
-            buf << *st;
-        else
-            buf << boost::stacktrace::stacktrace();
-        std::wcerr << buf.str().c_str() << std::endl;
+        print_stack_trace();
+        stacktrace.clear();
     }
 }
 
@@ -148,13 +143,10 @@ int main(int argc, char * argv[]) {
                     atom result = evaluate(at, env);
                     std::wcout << std::to_wstring(result) << std::endl;
                 }
-            } catch(std::runtime_error const & e) {
+            } catch(std::exception const & e) {
                 std::wcerr << e.what() << std::endl;
-                std::ostringstream buf;
-                const boost::stacktrace::stacktrace* st = boost::get_error_info<traced>(e);
-                if (st)
-                    buf << *st;
-                std::wcerr << buf.str().c_str() << std::endl;
+                print_stack_trace();
+                stacktrace.clear();
             }
         }
     } else {
@@ -163,8 +155,14 @@ int main(int argc, char * argv[]) {
             kl_error("Couldn't open file " + std::string(argv[1]));
         std::wstring data{std::istreambuf_iterator<wchar_t>(ifs),
                           std::istreambuf_iterator<wchar_t>()};
-        atom_list a = parse(data);
-        for(atom & at : a)
-            evaluate(at, env).get()->force();
+        try {
+            atom_list a = parse(data);
+            for(atom & at : a)
+                evaluate(at, env).get()->force();
+        } catch(std::exception const & e) {
+            std::wcerr << e.what() << std::endl;
+            print_stack_trace();
+            stacktrace.clear();
+        }
     }
 }
