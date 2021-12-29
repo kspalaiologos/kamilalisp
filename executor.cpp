@@ -22,5 +22,5 @@ atom evaluate(atom expr, std::shared_ptr<environment> env) {
         std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> cvt;
         kl_error("Attempted to evaluate a non-callable, got " + head->type_name() + " - `" + cvt.to_bytes(std::to_wstring(head).c_str()) + "`");
     }
-    return head->get_callable()->call(env, l.cdr());
+    return head->get_callable()->call(env, l.cdr(), true);
 }

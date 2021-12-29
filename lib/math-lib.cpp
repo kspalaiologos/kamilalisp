@@ -16,11 +16,11 @@ static A abs_f(A && v) {
 
 namespace mathlib {
 
-[[gnu::flatten]] atom add::call(std::shared_ptr<environment> env, atom_list args) {
+[[gnu::flatten]] atom add::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_either<1, 2>(location, "+", args);
     if(args.size() == 2) {
-        return make_atom(thunk([args, env]() mutable -> thunk_type {
-            auto [a, b] = detail::get_args<2>(args, env);
+        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+            auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
                 return thunk_type(a->get_integer() + b->get_integer());
             } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_INT) {
@@ -50,8 +50,8 @@ namespace mathlib {
             }
         }));
     } else if(args.size() == 1) {
-        return make_atom(thunk([args, env]() mutable -> thunk_type {
-            auto [a] = detail::get_args<1>(args, env);
+        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+            auto [a] = detail::get_args<0, 1>(args, env, eval_args);
             if(a->get_type() == atom_type::T_CMPLX)
                 return thunk_type(conj(a->get_complex()));
             else
@@ -62,11 +62,11 @@ namespace mathlib {
     __builtin_unreachable();
 }
 
-[[gnu::flatten]] atom subtract::call(std::shared_ptr<environment> env, atom_list args) {
+[[gnu::flatten]] atom subtract::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_either<1, 2>(location, "-", args);
     if(args.size() == 2) {
-        return make_atom(thunk([args, env]() mutable -> thunk_type {
-            auto [a, b] = detail::get_args<2>(args, env);
+        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+            auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
                 return thunk_type(a->get_integer() - b->get_integer());
             } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_INT) {
@@ -90,8 +90,8 @@ namespace mathlib {
             }
         }));
     } else if(args.size() == 1) {
-        return make_atom(thunk([args, env]() mutable -> thunk_type {
-            auto [a] = detail::get_args<1>(args, env);
+        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+            auto [a] = detail::get_args<0, 1>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT) {
                 return thunk_type(-(a->get_integer()));
             } else if(a->get_type() == atom_type::T_REAL) {
@@ -107,11 +107,11 @@ namespace mathlib {
     __builtin_unreachable();
 }
 
-[[gnu::flatten]] atom multiply::call(std::shared_ptr<environment> env, atom_list args) {
+[[gnu::flatten]] atom multiply::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_either<1, 2>(location, "*", args);
     if(args.size() == 2) {
-        return make_atom(thunk([args, env]() mutable -> thunk_type {
-            auto [a, b] = detail::get_args<2>(args, env);
+        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+            auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
                 return thunk_type(a->get_integer() * b->get_integer());
             } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_INT) {
@@ -135,8 +135,8 @@ namespace mathlib {
             }
         }));
     } else if(args.size() == 1) {
-        return make_atom(thunk([args, env]() mutable -> thunk_type {
-            auto [a] = detail::get_args<1>(args, env);
+        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+            auto [a] = detail::get_args<0, 1>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT) {
                 if(a->get_integer() < 0)
                     return thunk_type(bmp::mpz_int(-1));
@@ -165,11 +165,11 @@ namespace mathlib {
     __builtin_unreachable();
 }
 
-[[gnu::flatten]] atom divide::call(std::shared_ptr<environment> env, atom_list args) {
+[[gnu::flatten]] atom divide::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_either<1, 2>(location, "/", args);
     if(args.size() == 2) {
-        return make_atom(thunk([args, env]() mutable -> thunk_type {
-            auto [a, b] = detail::get_args<2>(args, env);
+        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+            auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
                 return thunk_type(a->get_integer() / b->get_integer());
             } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_INT) {
@@ -193,8 +193,8 @@ namespace mathlib {
             }
         }));
     } else if(args.size() == 1) {
-        return make_atom(thunk([args, env]() mutable -> thunk_type {
-            auto [a] = detail::get_args<1>(args, env);
+        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+            auto [a] = detail::get_args<0, 1>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT) {
                 return thunk_type(1 / bmp::mpf_float(a->get_integer()));
             } else if(a->get_type() == atom_type::T_REAL) {
@@ -213,18 +213,18 @@ namespace mathlib {
     __builtin_unreachable();
 }
 
-[[gnu::flatten]] atom modulus::call(std::shared_ptr<environment> env, atom_list args) {
+[[gnu::flatten]] atom modulus::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_either<1, 2>(location, "%", args);
     if(args.size() == 2) {
-        return make_atom(thunk([args, env]() mutable -> thunk_type {
-            auto [a, b] = detail::get_args<2>(args, env);
+        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+            auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
             if(a->get_type() != atom_type::T_INT || b->get_type() != atom_type::T_INT)
                 detail::unsupported_args(location, "%", args);
             return thunk_type(a->get_integer() % b->get_integer());
         }));
     } else if(args.size() == 1) {
-        return make_atom(thunk([args, env]() mutable -> thunk_type {
-            auto [a] = detail::get_args<1>(args, env);
+        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+            auto [a] = detail::get_args<0, 1>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT) {
                 return thunk_type(abs_f(a->get_integer()));
             } else if(a->get_type() == atom_type::T_REAL) {
@@ -240,10 +240,10 @@ namespace mathlib {
     __builtin_unreachable();
 }
 
-[[gnu::flatten]] atom sqrt::call(std::shared_ptr<environment> env, atom_list args) {
+[[gnu::flatten]] atom sqrt::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<1>(location, "sqrt", args);
-    return make_atom(thunk([args, env]() mutable -> thunk_type {
-        auto [a] = detail::get_args<1>(args, env);
+    return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
         if(a->get_type() == atom_type::T_INT) {
             return thunk_type(bmp::sqrt(a->get_integer()));
         } else if(a->get_type() == atom_type::T_REAL) {
@@ -262,10 +262,10 @@ namespace mathlib {
     }));
 }
 
-[[gnu::flatten]] atom nthroot::call(std::shared_ptr<environment> env, atom_list args) {
+[[gnu::flatten]] atom nthroot::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<2>(location, "nth-root", args);
-    return make_atom(thunk([args, env]() mutable -> thunk_type {
-        auto [a, b] = detail::get_args<2>(args, env);
+    return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+        auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
         if(b->get_type() != atom_type::T_INT && b->get_type() != atom_type::T_REAL)
             detail::unsupported_args(location, "nth-root", args);
         bmp::mpf_float exponent;
@@ -286,10 +286,10 @@ namespace mathlib {
     }));
 }
 
-[[gnu::flatten]] atom power::call(std::shared_ptr<environment> env, atom_list args) {
+[[gnu::flatten]] atom power::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<2>(location, "**", args);
-    return make_atom(thunk([args, env]() mutable -> thunk_type {
-        auto [a, b] = detail::get_args<2>(args, env);
+    return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+        auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
         if(b->get_type() == atom_type::T_INT) {
             if(a->get_type() == atom_type::T_INT) {
                 return thunk_type(bmp::pow(a->get_integer(), b->get_integer().convert_to<long>()).convert_to<bmp::mpz_int>());
@@ -316,11 +316,11 @@ namespace mathlib {
     }));
 }
 
-[[gnu::flatten]] atom iota::call(std::shared_ptr<environment> env, atom_list args) {
+[[gnu::flatten]] atom iota::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_either<1, 2, 3>(location, "iota", args);
     if(args.size() == 3) {
-        return make_atom(thunk([args, env]() mutable -> thunk_type {
-            auto [a, b, c] = detail::get_args<3>(args, env);
+        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+            auto [a, b, c] = detail::get_args<0, 3>(args, env, eval_args);
             if(a->get_type() != atom_type::T_INT || b->get_type() != atom_type::T_INT || (c->get_type() != atom_type::T_REAL && c->get_type() != atom_type::T_INT))
                 detail::unsupported_args(location, "iota", args);
             if(c->get_type() == atom_type::T_INT) {
@@ -364,9 +364,9 @@ namespace mathlib {
             }
         }));
     } else if(args.size() == 2) {
-        return make_atom(thunk([args, env]() mutable -> thunk_type {
+        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
             // Note: Dyadic iota (range) is inclusive on both ends.
-            auto [a, b] = detail::get_args<2>(args, env);
+            auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
             if(a->get_type() != atom_type::T_INT || b->get_type() != atom_type::T_INT)
                 detail::unsupported_args(location, "iota", args);
             long start = a->get_integer().convert_to<long>(), end = b->get_integer().convert_to<long>();
@@ -388,8 +388,8 @@ namespace mathlib {
             __builtin_unreachable();
         }));
     } else if(args.size() == 1) {
-        return make_atom(thunk([args, env]() mutable -> thunk_type {
-            auto [a] = detail::get_args<1>(args, env);
+        return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+            auto [a] = detail::get_args<0, 1>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT) {
                 if(a->get_integer() >= 0) {
                     atom_list l { };
@@ -450,18 +450,18 @@ namespace mathlib {
     __builtin_unreachable();
 }
 
-[[gnu::flatten]] atom equals::call(std::shared_ptr<environment> env, atom_list args) {
+[[gnu::flatten]] atom equals::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<2>(location, "=", args);
-    return make_atom(thunk([args, env]() mutable -> thunk_type {
-        auto [a, b] = detail::get_args<2>(args, env);
+    return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+        auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
         return a->operator==(b) ? atom_true->thunk_forward() : atom_false->thunk_forward();
     }));
 }
 
-[[gnu::flatten]] atom not_equals::call(std::shared_ptr<environment> env, atom_list args) {
+[[gnu::flatten]] atom not_equals::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<2>(location, "/=", args);
-    return make_atom(thunk([args, env]() mutable -> thunk_type {
-        auto [a, b] = detail::get_args<2>(args, env);
+    return make_atom(thunk([args, env, eval_args]() mutable -> thunk_type {
+        auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
         return a->operator==(b) ? atom_false->thunk_forward() : atom_true->thunk_forward();
     }));
 }

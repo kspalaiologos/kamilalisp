@@ -39,7 +39,7 @@ using atom_list = list<atom>;
 
 class callable : public std::enable_shared_from_this<callable> {
     public:
-        virtual atom call(std::shared_ptr<environment> env, atom_list args) = 0;
+        virtual atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args = false) = 0;
         virtual std::wstring repr() {
             return L"callable/syn";
         }
@@ -162,7 +162,7 @@ namespace std {
     class name : public callable { \
         public: \
             ~name() { } \
-            atom call(std::shared_ptr<environment> env, atom_list args) override; \
+            atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args = false) override; \
     };
 
 #endif

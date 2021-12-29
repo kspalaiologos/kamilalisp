@@ -3,6 +3,7 @@
 #include <string_view>
 #include "../atom.hpp"
 #include "../error.hpp"
+#include "../executor.hpp"
 #include "parser.hpp"
 
 struct token_queue {
@@ -49,9 +50,9 @@ atom parse_tack(token & t) {
             tack(int tack_no) : tack_no(tack_no) { }
             ~tack() { }
 
-            atom call(std::shared_ptr<environment> env, atom_list args) override {
+            atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args) override {
                 (void) env;
-                return args.at(tack_no);
+                return eval_args ? evaluate(args.at(tack_no), env) : args.at(tack_no);
             }
     };
 
@@ -252,7 +253,7 @@ atom parse_form(token_queue & q) {
     }
     if(rems.size() != 1) {
         atom_list l {};
-        for (auto it = rems.rbegin(); it != rems.rend(); ++it)
+        for (auto it = rems.begin(); it != rems.end(); ++it)
             l = l.cons(*it);
         return make_atom(l.cons(make_atom(identifier(L"atop"))));
     } else

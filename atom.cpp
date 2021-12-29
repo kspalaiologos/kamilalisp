@@ -66,6 +66,7 @@ atom_::atom_(std::shared_ptr<callable> m) {
 }
 
 boost::multiprecision::mpz_int atom_::get_integer() {
+    force();
     if(std::holds_alternative<boost::multiprecision::mpz_int>(value)) {
         return std::get<boost::multiprecision::mpz_int>(value);
     } else {
@@ -74,6 +75,7 @@ boost::multiprecision::mpz_int atom_::get_integer() {
 }
 
 boost::multiprecision::mpf_float atom_::get_real() {
+    force();
     if(std::holds_alternative<boost::multiprecision::mpf_float>(value)) {
         return std::get<boost::multiprecision::mpf_float>(value);
     } else {
@@ -82,6 +84,7 @@ boost::multiprecision::mpf_float atom_::get_real() {
 }
 
 boost::multiprecision::mpc_complex atom_::get_complex() {
+    force();
     if(std::holds_alternative<boost::multiprecision::mpc_complex>(value)) {
         return std::get<boost::multiprecision::mpc_complex>(value);
     } else {
@@ -90,6 +93,7 @@ boost::multiprecision::mpc_complex atom_::get_complex() {
 }
 
 std::wstring atom_::get_string() {
+    force();
     if(std::holds_alternative<std::wstring>(value)) {
         return std::get<std::wstring>(value);
     } else {
@@ -98,6 +102,7 @@ std::wstring atom_::get_string() {
 }
 
 atom_list atom_::get_list() {
+    force();
     if(std::holds_alternative<atom_list>(value)) {
         return std::get<atom_list>(value);
     } else {
@@ -106,6 +111,7 @@ atom_list atom_::get_list() {
 }
 
 identifier atom_::get_identifier() {
+    force();
     if(std::holds_alternative<identifier>(value)) {
         return std::get<identifier>(value);
     } else {
@@ -114,6 +120,7 @@ identifier atom_::get_identifier() {
 }
 
 std::shared_ptr<callable> atom_::get_callable() {
+    force();
     if(std::holds_alternative<std::shared_ptr<callable>>(value)) {
         return std::get<std::shared_ptr<callable>>(value);
     } else {

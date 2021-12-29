@@ -1,6 +1,6 @@
 
 CXX?=clang++
-HFLAGS=-std=c++2a -Wall -Wextra -IRE-flex/include -Ireplxx -DBOOST_STACKTRACE_USE_ADDR2LINE
+HFLAGS=-std=c++2a -Wall -Wextra -IRE-flex/include -Ireplxx -g
 LIBS=-lmpc -lmpfr -lgmp -ldl -lreadline RE-flex/lib/libreflex.a
 
 ifeq ($(CXX),g++)
@@ -14,7 +14,7 @@ ifeq ($(CXX),clang++)
 CXXFLAGS.debug := -O0 -fsanitize=address -fsanitize=leak -fsanitize=undefined \
 		 		  -fcf-protection=full -fstack-protector-strong -fstack-check -g3
 CXXFLAGS.release := -DNDEBUG -O3 -march=native -funroll-loops -flto -fslp-vectorize \
-	-ffinite-loops -ffinite-math-only -fno-math-errno -fno-stack-protector -gline-directives-only \
+	-ffinite-loops -ffinite-math-only -fno-math-errno -fno-stack-protector \
 	-funroll-loops -funsafe-math-optimizations -fvectorize -fwhole-program-vtables -fvirtual-function-elimination
 CXXFLAGS.profile := $(CXXFLAGS.release) -g3
 CXXFLAGS := $(or ${CXXFLAGS.${target}},-Wall -Wextra -O2)

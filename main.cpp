@@ -56,18 +56,21 @@ void highlighter(std::string const & input, replxx::Replxx::colors_t & c) {
                         c.at(i + lexeme.loc) = replxx::Replxx::Color::BROWN;
                     break;
                 }
+                case token_type::TOKEN_LBRA:
+                case token_type::TOKEN_RBRA:
+                case token_type::TOKEN_LPAR:
+                case token_type::TOKEN_RPAR: {
+                    c.at(lexeme.loc) = replxx::Replxx::Color::BLUE;
+                    break;
+                }
                 case token_type::TOKEN_ATOP:
                 case token_type::TOKEN_BIND:
                 case token_type::TOKEN_FORK:
-                case token_type::TOKEN_LBRA:
-                case token_type::TOKEN_RBRA:
                 case token_type::TOKEN_QUOT:
-                case token_type::TOKEN_LPAR:
-                case token_type::TOKEN_RPAR:
                 case token_type::TOKEN_SLASH:
                 case token_type::TOKEN_OVER:
                 case token_type::TOKEN_MAP: {
-                    c.at(lexeme.loc) = replxx::Replxx::Color::BLUE;
+                    c.at(lexeme.loc) = replxx::Replxx::Color::RED;
                     break;
                 }
                 case token_type::TOKEN_EMPTY:

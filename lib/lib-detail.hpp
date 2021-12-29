@@ -58,20 +58,36 @@ namespace detail {
               + std::to_string(l.size()));
     }
 
-    template <std::size_t N>
-    inline std::array<atom, N> get_args(atom_list data, std::shared_ptr<environment> env) {
-        std::array<atom, N> r;
-        for(std::size_t i = 0; i < N; i++)
-            { r[i] = evaluate(data.car(), env); data = data.cdr(); }
+    template <std::size_t N, std::size_t M>
+    inline std::array<atom, M - N> get_args(atom_list data, std::shared_ptr<environment> env, bool eval_args) {
+        std::array<atom, M - N> r;
+        if(eval_args) {
+            for(std::size_t i = N; i < M; i++)
+                { r[i] = evaluate(data.car(), env); data = data.cdr(); }
+        } else {
+            for(std::size_t i = N; i < M; i++)
+                { r[i] = data.car(); data = data.cdr(); }
+        }
         return r;
     }
 
-    template <std::size_t N>
-    inline std::array<atom, N> get_args(atom_list data) {
-        std::array<atom, N> r;
-        for(std::size_t i = 0; i < N; i++)
+    template <std::size_t N, std::size_t M>
+    inline std::array<atom, M - N> get_args(atom_list data) {
+        std::array<atom, M - N> r;
+        for(std::size_t i = N; i < M; i++)
             { r[i] = data.car(); data = data.cdr(); }
         return r;
+    }
+
+    inline atom_list get_args(atom_list data, std::shared_ptr<environment> env, bool eval_args) {
+        if(eval_args) {
+            atom_list r { };
+            for(; !data.is_empty(); data = data.cdr())
+                r = r.unsafe_append(evaluate(data.car(), env));
+            return r;
+        } else {
+            return data;
+        }
     }
 
     [[noreturn]] inline void unsupported_args(const std::string & loc, const std::string & cause, atom_list l) {
