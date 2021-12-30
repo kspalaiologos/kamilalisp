@@ -94,6 +94,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"parse-num", make_atom(std::make_shared<corelib::parsenum>()));
     env->set(L"cond", make_atom(std::make_shared<corelib::cond>()));
     env->set(L"println", make_atom(std::make_shared<iolib::println>()));
+
     env->set(L"rng-deal", make_atom(std::make_shared<
         rndlib::rng_deal<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::default_random_engine>
     >()));
@@ -102,6 +103,46 @@ std::shared_ptr<environment> environment::create_default_env() {
     >()));
     env->set(L"rng-real", make_atom(std::make_shared<
         rndlib::rng_real<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::default_random_engine>
+    >()));
+
+    env->set(L"rng-mt19937-deal", make_atom(std::make_shared<
+        rndlib::rng_deal<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::mt19937>
+    >()));
+    env->set(L"rng-mt19937-roll", make_atom(std::make_shared<
+        rndlib::rng_roll<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::mt19937>
+    >()));
+    env->set(L"rng-mt19937-real", make_atom(std::make_shared<
+        rndlib::rng_real<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::mt19937>
+    >()));
+
+    env->set(L"rng-lcg-deal", make_atom(std::make_shared<
+        rndlib::rng_deal<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::minstd_rand>
+    >()));
+    env->set(L"rng-lcg-roll", make_atom(std::make_shared<
+        rndlib::rng_roll<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::minstd_rand>
+    >()));
+    env->set(L"rng-lcg-real", make_atom(std::make_shared<
+        rndlib::rng_real<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::minstd_rand>
+    >()));
+
+    env->set(L"rng-lcg-deal", make_atom(std::make_shared<
+        rndlib::rng_deal<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::minstd_rand>
+    >()));
+    env->set(L"rng-lcg-roll", make_atom(std::make_shared<
+        rndlib::rng_roll<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::minstd_rand>
+    >()));
+    env->set(L"rng-lcg-real", make_atom(std::make_shared<
+        rndlib::rng_real<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::minstd_rand>
+    >()));
+
+    env->set(L"rng-ranlux-deal", make_atom(std::make_shared<
+        rndlib::rng_deal<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::ranlux48>
+    >()));
+    env->set(L"rng-ranlux-roll", make_atom(std::make_shared<
+        rndlib::rng_roll<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::ranlux48>
+    >()));
+    env->set(L"rng-ranlux-real", make_atom(std::make_shared<
+        rndlib::rng_real<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::ranlux48>
     >()));
 
     return env;
