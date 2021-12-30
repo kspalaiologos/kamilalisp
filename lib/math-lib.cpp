@@ -545,18 +545,25 @@ define_repr(not_equals, return L"built-in function `/='")
                 // find the successor of str.
                 // If the rightmost character is a-zA-Z0-9, it is incremented within its case or digits.
                 // If it generates a carry, the process is repeated with the one to its immediate left. 
-                int carry = 0;
-                for(auto it = str.rbegin(); it != str.rend(); ++it) {
+                auto it = str.rbegin();
+                int prep_mode = 0;
+                for(; it != str.rend(); ++it) {
                     if(std::iswalpha(*it)) {
+                        if(std::iswlower(*it))
+                            prep_mode = 1;
+                        else
+                            prep_mode = 2;
+                        
                         if(*it == L'z') {
                             *it = L'a';
                         } else if(*it == L'Z') {
                             *it = L'A';
-                        } else if(carry) {
+                        } else {
                             ++*it;
                             break;
                         }
                     } else if(std::iswdigit(*it)) {
+                        prep_mode = 0;
                         if(*it == L'9') {
                             *it = L'0';
                         } else {
@@ -565,7 +572,7 @@ define_repr(not_equals, return L"built-in function `/='")
                         }
                     }
                 }
-                return str;
+                return it == str.rend() ? (prep_mode == 0 ? L"0" : prep_mode == 1 ? L"a" : L"A") + str : str;
             } else {
                 detail::unsupported_args(location, "<", args);
             }
