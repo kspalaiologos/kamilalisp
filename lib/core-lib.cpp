@@ -632,6 +632,25 @@ define_repr(flatmap, return L"built-in function `flat-map'")
 
 define_repr(flatten, return L"built-in function `flatten'")
 
+[[gnu::flatten]] atom discard::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    return make_atom(thunk([]() mutable -> thunk_type {
+        return null_atom->thunk_forward();
+    }));
+}
+
+define_repr(discard, return L"built-in function `discard'")
+
+[[gnu::flatten]] atom seq::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "seq", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        return a->thunk_forward();
+    }));
+}
+
+define_repr(seq, return L"built-in function `seq'")
+
 [[gnu::flatten]] atom filter::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<2>(location, "filter", args);
     std::wstring repr = this->repr();

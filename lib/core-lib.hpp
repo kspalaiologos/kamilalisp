@@ -70,6 +70,8 @@ define_callable(let);
 define_callable(kl_parse);
 define_callable(flatmap);
 define_callable(flatten);
+define_callable(seq);
+define_callable(discard);
 
 }
 

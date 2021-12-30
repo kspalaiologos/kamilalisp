@@ -84,6 +84,8 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"parse", make_atom(std::make_shared<corelib::kl_parse>()));
     env->set(L"flat-map", make_atom(std::make_shared<corelib::flatmap>()));
     env->set(L"flatten", make_atom(std::make_shared<corelib::flatten>()));
+    env->set(L"seq", make_atom(std::make_shared<corelib::seq>()));
+    env->set(L"discard", make_atom(std::make_shared<corelib::discard>()));
     env->set(L"cond", make_atom(std::make_shared<corelib::cond>()));
     env->set(L"println", make_atom(std::make_shared<iolib::println>()));
     return env;
