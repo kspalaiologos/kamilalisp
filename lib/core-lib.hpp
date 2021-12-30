@@ -69,6 +69,7 @@ define_callable(eval);
 define_callable(let);
 define_callable(kl_parse);
 define_callable(flatmap);
+define_callable(flatten);
 
 }
 
