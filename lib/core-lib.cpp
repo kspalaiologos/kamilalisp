@@ -668,6 +668,35 @@ define_repr(seq, return L"built-in function `seq'")
 
 define_repr(lift, return L"built-in function `lift'")
 
+[[gnu::flatten]] atom iterate::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<3>(location, "iterate", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        auto [f, cond, var] = detail::get_args<0, 3>(args, env, eval_args);
+        if(f->get_type() != atom_type::T_CALLABLE)
+            detail::unsupported_args(location, "iterate", args);
+        auto fn = f->get_callable();
+        if(cond->get_type() != atom_type::T_CALLABLE && cond->get_type() != atom_type::T_INT)
+            detail::unsupported_args(location, "iterate", args);
+        if(cond->get_type() == atom_type::T_CALLABLE) {
+            auto cf = cond->get_callable();
+            auto prev = var;
+            while(apply(cf, env, atom_list::from(var))->coerce_bool())
+                var = apply(fn, env, atom_list::from(prev = var));
+            return var->thunk_forward();
+        } else {
+            auto n = cond->get_integer();
+            if(n < 0)
+                detail::unsupported_args(location, "numeric argument to iterate", args);
+            for(bmp::mpz_int i = 0; i < n; i++)
+                var = apply(fn, env, atom_list::from(var));
+            return var->thunk_forward();
+        }
+    }));
+}
+
+define_repr(iterate, return L"built-in function `iterate'")
+
 [[gnu::flatten]] atom filter::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<2>(location, "filter", args);
     std::wstring repr = this->repr();

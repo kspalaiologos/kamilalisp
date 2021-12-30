@@ -87,6 +87,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"seq", make_atom(std::make_shared<corelib::seq>()));
     env->set(L"discard", make_atom(std::make_shared<corelib::discard>()));
     env->set(L"lift", make_atom(std::make_shared<corelib::lift>()));
+    env->set(L"iterate", make_atom(std::make_shared<corelib::iterate>()));
     env->set(L"cond", make_atom(std::make_shared<corelib::cond>()));
     env->set(L"println", make_atom(std::make_shared<iolib::println>()));
     return env;
