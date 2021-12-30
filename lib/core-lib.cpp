@@ -640,10 +640,28 @@ define_repr(type, return L"built-in function `type'")
 
 define_repr(eval, return L"built-in function `eval'")
 
+[[gnu::flatten]] atom kl_parse::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "parse", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        if(a->get_type() != atom_type::T_STR)
+            detail::unsupported_args(location, "parse", args);
+        atom_list l = parse(a->get_string());
+        if(l.size() == 1)
+            return l.car()->thunk_forward();
+        else
+            return l;
+    }));
+}
+
+define_repr(kl_parse, return L"built-in function `parse'")
+
 [[gnu::flatten]] atom let::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<2>(location, "let", args);
     std::wstring repr = this->repr();
-    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+    return make_atom(thunk([repr, args, env]() mutable -> thunk_type {
         stacktrace_guard{ repr };
         auto [r, f] = detail::get_args<0, 2>(args);
         if(r->get_type() != atom_type::T_LIST)

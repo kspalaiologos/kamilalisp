@@ -67,6 +67,7 @@ define_callable(type);
 define_callable(cond);
 define_callable(eval);
 define_callable(let);
+define_callable(kl_parse);
 
 }
 

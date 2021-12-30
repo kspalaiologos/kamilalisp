@@ -43,6 +43,11 @@ atom_list parse(Source & in) {
     return parse_all(lex_all(in));
 }
 
+template <typename Source>
+atom_list parse(Source && in) {
+    return parse_all(lex_all(in));
+}
+
 atom_list parse_all(const std::vector<token> &);
 
 #endif
