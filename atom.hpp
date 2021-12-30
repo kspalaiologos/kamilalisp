@@ -5,6 +5,7 @@
 #include <variant>
 #include <string>
 #include <memory>
+#include <ordering>
 #include <functional>
 #include <boost/multiprecision/gmp.hpp>
 #include <boost/multiprecision/mpc.hpp>
