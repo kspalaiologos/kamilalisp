@@ -535,6 +535,75 @@ define_repr(not_equals, return L"built-in function `/='")
         } else {
             auto [a] = detail::get_args<0, 1>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT) {
+                return a->get_integer() - 1;
+            } else if(a->get_type() == atom_type::T_REAL) {
+                return a->get_real() - 1;
+            } else if(a->get_type() == atom_type::T_CMPLX) {
+                return a->get_complex() - 1;
+            } else if(a->get_type() == atom_type::T_STR) {
+                std::wstring str = std::wstring(a->get_string());
+                // find the predecessor of str.
+                const std::wstring letters = L"abcdefghijklmnopqrstuvwxyz";
+                const std::wstring numbers = L"0123456789";
+                std::wstring result = L"";
+                bool carry = false;
+                int i = str.size();
+                while(i--) {
+                    wchar_t c = str[i];
+                    int letterPos = letters.find(std::towlower(c));
+                    if(letterPos > 0) {
+                        wchar_t pred = letters[letterPos - 1];
+                        bool isUpper = std::iswupper(c);
+                        result = (isUpper ? std::wstring(1, std::towupper(pred)) : std::wstring(1, pred)) + result;
+                        carry = false;
+                        break;
+                    }
+                    if(letterPos == 0) {
+                        wchar_t pred = letters[letters.size() - 1];
+                        bool isUpper = std::iswupper(c);
+                        result = (isUpper ? std::wstring(1, std::towupper(pred)) : std::wstring(1, pred)) + result;
+                        carry = true;
+                        continue;
+                    }
+                    int numberPos = numbers.find(c);
+                    if(numberPos > 0) {
+                        wchar_t pred = numbers[numberPos - 1];
+                        result = pred + result;
+                        carry = false;
+                        break;
+                    }
+                    if(numberPos == 0) {
+                        wchar_t pred = numbers[numbers.size() - 1];
+                        result = pred + result;
+                        carry = true;
+                        continue;
+                    }
+                    result = c + result;
+                }
+                result = i == -1 ? result : str.substr(0, i) + result;
+                if(carry && letters.find(std::towlower(result[0])) != std::wstring::npos)
+                    return result.substr(1);
+                return result;
+            } else {
+                detail::unsupported_args(location, "<", args);
+            }
+        }
+    }));
+}
+
+define_repr(less_than, return L"built-in function `<'")
+
+[[gnu::flatten]] atom greater_than::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_either<1, 2>(location, ">", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        if(args.size() == 2) {
+            auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
+            return (a->operator<=>(b) == std::weak_ordering::greater) ? atom_true->thunk_forward() : atom_false->thunk_forward();
+        } else {
+            auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+            if(a->get_type() == atom_type::T_INT) {
                 return a->get_integer() + 1;
             } else if(a->get_type() == atom_type::T_REAL) {
                 return a->get_real() + 1;
@@ -574,12 +643,38 @@ define_repr(not_equals, return L"built-in function `/='")
                 }
                 return it == str.rend() ? (prep_mode == 0 ? L"0" : prep_mode == 1 ? L"a" : L"A") + str : str;
             } else {
-                detail::unsupported_args(location, "<", args);
+                detail::unsupported_args(location, ">", args);
             }
         }
     }));
 }
 
-define_repr(less_than, return L"built-in function `<'")
+define_repr(greater_than, return L"built-in function `>'")
+
+[[gnu::flatten]] atom less_equal::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<2>(location, "<=", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
+        return (a->operator<=>(b) == std::weak_ordering::less || a->operator==(b))
+            ? atom_true->thunk_forward() : atom_false->thunk_forward();
+    }));
+}
+
+define_repr(less_equal, return L"built-in function `<='")
+
+[[gnu::flatten]] atom greater_equal::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<2>(location, ">=", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
+        return (a->operator<=>(b) == std::weak_ordering::greater || a->operator==(b))
+            ? atom_true->thunk_forward() : atom_false->thunk_forward();
+    }));
+}
+
+define_repr(greater_equal, return L"built-in function `>='")
 
 }

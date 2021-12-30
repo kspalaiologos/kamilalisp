@@ -22,6 +22,9 @@ define_callable(equals);
 define_callable(not_equals);
 
 define_callable(less_than);
+define_callable(greater_than);
+define_callable(less_equal);
+define_callable(greater_equal);
 
 }
 

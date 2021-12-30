@@ -61,6 +61,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"=", make_atom(std::make_shared<mathlib::equals>()));
     env->set(L"/=", make_atom(std::make_shared<mathlib::not_equals>()));
     env->set(L"<", make_atom(std::make_shared<mathlib::less_than>()));
+    env->set(L">", make_atom(std::make_shared<mathlib::greater_than>()));
     env->set(L"def", make_atom(std::make_shared<corelib::define>()));
     env->set(L"iota", make_atom(std::make_shared<mathlib::iota>()));
     env->set(L"atop", make_atom(std::make_shared<corelib::atop>()));
