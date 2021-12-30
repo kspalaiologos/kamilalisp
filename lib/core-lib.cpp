@@ -572,6 +572,40 @@ define_repr(cond, return L"built-in function `cond'")
 
 define_repr(map, return L":-combinator: built-in function `map'")
 
+[[gnu::flatten]] atom flatmap::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<2>(location, "flat-map", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard{ repr };
+        auto c = eval_args ? evaluate(args.car(), env) : args.car(); args = args.cdr();
+        if(c->get_type() != atom_type::T_CALLABLE)
+            detail::unsupported_args(location, "flat-map", args);
+        auto fn = c->get_callable();
+        auto arg = eval_args ? evaluate(args.car(), env) : args.car();
+        if(arg->get_type() == atom_type::T_LIST) {
+            atom_list r { };
+            for(auto & a : arg->get_list()) {
+                atom q = apply(fn, env, atom_list::from(a));
+                if(q->get_type() == atom_type::T_LIST) {
+                    // Automatically move a list if it's not used anywhere else...
+                    // "Premature optimization."
+                    if(q.use_count() == 1)
+                        r = r.unsafe_append(q->get_list());
+                    else
+                        r = r.unsafe_append(q->get_list().clone());
+                } else {
+                    r = r.unsafe_append(q);
+                }
+            }
+            return r;
+        } else {
+            return apply(fn, env, atom_list::from(arg))->thunk_forward();
+        }
+    }));
+}
+
+define_repr(flatmap, return L"built-in function `flat-map'")
+
 [[gnu::flatten]] atom filter::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<2>(location, "filter", args);
     std::wstring repr = this->repr();
@@ -695,7 +729,7 @@ define_repr(let, return L"built-in function `let'")
     if(!ifs.good())
         kl_error("Couldn't import " + std::string(filename.begin(), filename.end()));
     std::wstring data{std::istreambuf_iterator<wchar_t>(ifs), std::istreambuf_iterator<wchar_t>()};
-    atom_list res = parse(data);
+    atom_list res = parse(std::move(data));
     for(atom & at : res)
         evaluate(at, env).get()->force();
     return null_atom;

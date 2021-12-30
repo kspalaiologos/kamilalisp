@@ -52,7 +52,7 @@ void highlighter(std::string const & input, replxx::Replxx::colors_t & c) {
                 }
                 case token_type::TOKEN_TACK: {
                     std::string s = std::get<std::string>(*lexeme.content);
-                    for(std::size_t i = 0; i < s.size() + 1; i++)
+                    for(std::size_t i = 0; i < s.size(); i++)
                         c.at(i + lexeme.loc) = replxx::Replxx::Color::BROWN;
                     break;
                 }
@@ -91,7 +91,7 @@ auto res(replxx::Replxx & instance) {
         static std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> cvt;
         const char * text = instance.get_state().text();
         std::wstring data = cvt.from_bytes(text);
-        try { parse(data); } catch(std::domain_error const&) {
+        try { parse(std::move(data)); } catch(std::domain_error const&) {
             instance.invoke(replxx::Replxx::ACTION::NEW_LINE, '\n');
             return replxx::Replxx::ACTION_RESULT::CONTINUE;
         } catch(...) { }
@@ -138,7 +138,7 @@ int main(int argc, char * argv[]) {
             repl.history_add(std::string(in));
             try {
                 std::wstring data = cvt.from_bytes(in);
-                atom_list a = parse(data);
+                atom_list a = parse(std::move(data));
                 for(atom & at : a) {
                     atom result = evaluate(at, env);
                     std::wcout << std::to_wstring(result) << std::endl;
@@ -156,7 +156,7 @@ int main(int argc, char * argv[]) {
         std::wstring data{std::istreambuf_iterator<wchar_t>(ifs),
                           std::istreambuf_iterator<wchar_t>()};
         try {
-            atom_list a = parse(data);
+            atom_list a = parse(std::move(data));
             for(atom & at : a)
                 evaluate(at, env).get()->force();
         } catch(std::exception const & e) {

@@ -5,7 +5,7 @@
 #include <memory>
 
 template <typename T>
-class node : std::enable_shared_from_this<node<T>> {
+class node : public std::enable_shared_from_this<node<T>> {
     public:
         node(std::shared_ptr<node> next, T value)
             : next(next), value(value) { }
@@ -22,7 +22,7 @@ class node : std::enable_shared_from_this<node<T>> {
             if(next != nullptr)
                 return std::make_shared<node>(next->clone(), value);
             else
-                return nullptr;
+                return std::make_shared<node>(nullptr, value);
         }
 
         std::shared_ptr<node> last() {
@@ -126,12 +126,11 @@ class list {
         }
 
         list unsafe_append(list<T> value) {
-            if(!is_empty())
-                return list(node_data, last->next = value.node_data);
-            else {
-                std::shared_ptr<node<T>> p = value.node_data;
-                return list(p, p);
-            }
+            if(!is_empty()) {
+                last->next = value.node_data;
+                return list(node_data, value.last);
+            } else
+                return list(value.node_data, value.last);
         }
 
         bool is_empty() {
@@ -139,7 +138,8 @@ class list {
         }
 
         list clone() {
-            return list(node_data->clone());
+            std::shared_ptr<node<T>> p = node_data->clone();
+            return list(p);
         }
 
         T at(std::size_t n) {
