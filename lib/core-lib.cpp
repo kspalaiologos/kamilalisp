@@ -697,6 +697,37 @@ define_repr(lift, return L"built-in function `lift'")
 
 define_repr(iterate, return L"built-in function `iterate'")
 
+[[gnu::flatten]] atom scanterate::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<3>(location, "scanterate", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        auto [f, cond, var] = detail::get_args<0, 3>(args, env, eval_args);
+        if(f->get_type() != atom_type::T_CALLABLE)
+            detail::unsupported_args(location, "scanterate", args);
+        auto fn = f->get_callable();
+        if(cond->get_type() != atom_type::T_CALLABLE && cond->get_type() != atom_type::T_INT)
+            detail::unsupported_args(location, "scanterate", args);
+        if(cond->get_type() == atom_type::T_CALLABLE) {
+            auto cf = cond->get_callable();
+            auto prev = var;
+            atom_list r { };
+            while(apply(cf, env, atom_list::from(var))->coerce_bool())
+                r = r.unsafe_append(var = apply(fn, env, atom_list::from(prev = var)));
+            return r;
+        } else {
+            auto n = cond->get_integer();
+            if(n < 0)
+                detail::unsupported_args(location, "numeric argument to scanterate", args);
+            atom_list r { };
+            for(bmp::mpz_int i = 0; i < n; i++)
+                r = r.unsafe_append(var = apply(fn, env, atom_list::from(var)));
+            return r;
+        }
+    }));
+}
+
+define_repr(scanterate, return L"built-in function `scanterate'")
+
 [[gnu::flatten]] atom filter::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<2>(location, "filter", args);
     std::wstring repr = this->repr();
@@ -752,6 +783,53 @@ define_repr(count, return L"built-in function `count'")
 }
 
 define_repr(type, return L"built-in function `type'")
+
+[[gnu::flatten]] atom tostring::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "to-string", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        return a->stringify();
+    }));
+}
+
+define_repr(tostring, return L"built-in function `to-string'")
+
+[[gnu::flatten]] atom parsenum::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "parse-num", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        if(a->get_type() != atom_type::T_STR)
+            detail::unsupported_args(location, "parse-num", args);
+        std::wstring content = a->get_string();
+        std::vector<token> data = lex_greedy(content);
+        if(data.size() != 1)
+            detail::unsupported_args(location, "parse-num input", args);
+        switch(data[0].type) {
+            case token_type::TOKEN_COMPLEX: {
+                std::string num = std::get<std::string>(*data[0].content);
+                std::size_t n = num.find('J');
+                std::string re = num.substr(0, n);
+                std::string im = num.substr(n + 1);
+                boost::multiprecision::mpc_complex res{boost::multiprecision::mpf_float{im}, boost::multiprecision::mpf_float{re}};
+                return res;
+            }
+            case token_type::TOKEN_INT:
+            case token_type::TOKEN_BIN:
+            case token_type::TOKEN_HEX:
+                return bmp::mpz_int(std::get<std::string>(*data[0].content));
+            case token_type::TOKEN_FPU:
+                return bmp::mpf_float(std::get<std::string>(*data[0].content));
+            default:
+                detail::unsupported_args(location, "parse-num input", args);
+        }
+    }));
+}
+
+define_repr(parsenum, return L"built-in function `parsenum'")
 
 [[gnu::flatten]] atom eval::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<1>(location, "eval", args);

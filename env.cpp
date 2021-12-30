@@ -88,6 +88,9 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"discard", make_atom(std::make_shared<corelib::discard>()));
     env->set(L"lift", make_atom(std::make_shared<corelib::lift>()));
     env->set(L"iterate", make_atom(std::make_shared<corelib::iterate>()));
+    env->set(L"scanterate", make_atom(std::make_shared<corelib::scanterate>()));
+    env->set(L"to-string", make_atom(std::make_shared<corelib::tostring>()));
+    env->set(L"parse-num", make_atom(std::make_shared<corelib::parsenum>()));
     env->set(L"cond", make_atom(std::make_shared<corelib::cond>()));
     env->set(L"println", make_atom(std::make_shared<iolib::println>()));
     return env;

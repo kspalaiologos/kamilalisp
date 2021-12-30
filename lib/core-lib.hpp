@@ -74,6 +74,9 @@ define_callable(seq);
 define_callable(discard);
 define_callable(lift);
 define_callable(iterate);
+define_callable(scanterate);
+define_callable(tostring);
+define_callable(parsenum);
 
 }
 
