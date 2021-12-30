@@ -43,6 +43,7 @@ std::shared_ptr<environment> environment::get_topmost_ancestor() {
 #include "lib/core-lib.hpp"
 #include "lib/math-lib.hpp"
 #include "lib/io-lib.hpp"
+#include "lib/random-lib.hpp"
 
 std::shared_ptr<environment> environment::create_default_env() {
     auto lambda = std::make_shared<corelib::lambda>();
@@ -93,5 +94,15 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"parse-num", make_atom(std::make_shared<corelib::parsenum>()));
     env->set(L"cond", make_atom(std::make_shared<corelib::cond>()));
     env->set(L"println", make_atom(std::make_shared<iolib::println>()));
+    env->set(L"rng-deal", make_atom(std::make_shared<
+        rndlib::rng_deal<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::default_random_engine>
+    >()));
+    env->set(L"rng-roll", make_atom(std::make_shared<
+        rndlib::rng_roll<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::default_random_engine>
+    >()));
+    env->set(L"rng-real", make_atom(std::make_shared<
+        rndlib::rng_real<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::default_random_engine>
+    >()));
+
     return env;
 }

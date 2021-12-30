@@ -21,7 +21,7 @@ namespace corelib {
     auto code = code_arg;
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, params, code, env]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         atom_list l = params.reverse(); atom_list l_view = l; std::size_t n = 0;
         while(!l.is_empty() && l.car()->get_identifier().value.starts_with(L"?"))
             l = l.cdr(), n++;
@@ -110,7 +110,7 @@ define_repr(lambda, return L"built-in function `lambda'")
             detail::unsupported_args(location, "macro parameter list", args);
     auto code = code_arg;
     return make_atom(thunk([repr, params, code, env]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         // Process optional arguments.
         atom_list l = params.reverse(); atom_list l_view = l; std::size_t n = 0;
         while(!l.is_empty() && l.car()->get_identifier().value.starts_with(L"?"))
@@ -190,7 +190,7 @@ define_repr(macro, return L"built-in function `macro'")
     detail::argno_exact<2>(location, "def", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         auto [a, b] = detail::get_args<0, 2>(args);
         b = evaluate(b, env);
         if(a->get_type() != atom_type::T_ID)
@@ -210,7 +210,7 @@ define_repr(define, return L"built-in function `def'")
 
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         atom_list e_args = detail::get_args(args, env, eval_args);
         std::wstring repr = L"";
         for(auto & x : args)
@@ -235,7 +235,7 @@ define_repr(define, return L"built-in function `def'")
                     atom_list components = this->args;
                     std::wstring repr = this->repr();
                     return make_atom(thunk([repr, innerEnv, innerArgs, components, eval_args]() mutable -> thunk_type {
-                        stacktrace_guard{ repr };
+                        stacktrace_guard g{ repr };
                         auto x = apply(components.car()->get_callable(), innerEnv, detail::get_args(innerArgs, innerEnv, eval_args));
                         components = components.cdr();
                         while(!components.is_empty()) {
@@ -258,7 +258,7 @@ define_repr(atop, return L"@-combinator: built-in function `atop'")
 
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         atom_list e_args = detail::get_args(args, env, eval_args);
         std::wstring repr = L"";
         for(auto & x : args)
@@ -283,7 +283,7 @@ define_repr(atop, return L"@-combinator: built-in function `atop'")
                     atom_list components = this->args;
                     std::wstring repr = this->repr();
                     return make_atom(thunk([repr, innerEnv, innerArgs, components, eval_args]() mutable -> thunk_type {
-                        stacktrace_guard{ repr };
+                        stacktrace_guard g{ repr };
                         // #(f g h) <=> (f (g ...) (h ...))
                         // #(f g) <=> (f (g ...))
                         atom first = components.car();
@@ -306,7 +306,7 @@ define_repr(fork, return L"#-combinator: built-in function `fork'")
     detail::argno_more<1>(location, "bind", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         std::wstring repr = L"";
         for(auto & x : args)
             repr += std::to_wstring(x) + L" ";
@@ -386,7 +386,7 @@ define_repr(bind, return L"$-combinator: built-in function `bind'")
 [[gnu::flatten]] atom tie::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         atom_list r = detail::get_args(args, env, eval_args);
         return r;
     }));
@@ -399,7 +399,7 @@ define_repr(tie, return L"built-in function `tie'")
     detail::argno_exact<3>(location, "defun", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, generator, args, env]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         auto [name, params, code] = detail::get_args<0, 3>(args);
         if(name->get_type() != atom_type::T_ID)
             detail::unsupported_args(location, "defun", args);
@@ -440,7 +440,7 @@ define_repr(dyad, return L"built-in function `dyad'")
     detail::argno_exact<3>(location, "defm", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, generator, args, env]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         auto [name, params, code] = detail::get_args<0, 3>(args);
         if(name->get_type() != atom_type::T_ID)
             detail::unsupported_args(location, "defm", args);
@@ -488,7 +488,7 @@ define_repr(bruijn, return L"built-in function `bruijn'")
     detail::argno_exact<3>(location, "if", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         auto [c, t, f] = detail::get_args<0, 3>(args);
         c = evaluate(c, env);
         if(c->coerce_bool())
@@ -504,7 +504,7 @@ define_repr(kl_if, return L"built-in function `if'")
     detail::argno_more<1>(location, "cond", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         for(auto & a : args) {
             if(a->get_type() != atom_type::T_LIST)
                 a = evaluate(a, env);
@@ -528,7 +528,7 @@ define_repr(cond, return L"built-in function `cond'")
     detail::argno_more<1>(location, "map", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         auto c = eval_args ? evaluate(args.car(), env) : args.car(); args = args.cdr();
         if(c->get_type() != atom_type::T_CALLABLE)
             detail::unsupported_args(location, "map", args);
@@ -576,7 +576,7 @@ define_repr(map, return L":-combinator: built-in function `map'")
     detail::argno_exact<2>(location, "flat-map", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         auto c = eval_args ? evaluate(args.car(), env) : args.car(); args = args.cdr();
         if(c->get_type() != atom_type::T_CALLABLE)
             detail::unsupported_args(location, "flat-map", args);
@@ -610,7 +610,7 @@ define_repr(flatmap, return L"built-in function `flat-map'")
     detail::argno_exact<1>(location, "flat-map", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         auto [l] = detail::get_args<0, 1>(args, env, eval_args);
         if(l->get_type() != atom_type::T_LIST)
             detail::unsupported_args(location, "flat-map", args);
@@ -732,7 +732,7 @@ define_repr(scanterate, return L"built-in function `scanterate'")
     detail::argno_exact<2>(location, "filter", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         auto [fn, l] = detail::get_args<0, 2>(args, env, eval_args);
         if(l->get_type() != atom_type::T_LIST)
             detail::unsupported_args(location, "filter", args);
@@ -754,7 +754,7 @@ define_repr(filter, return L"built-in function `filter'")
     detail::argno_exact<2>(location, "count", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         auto [fn, l] = detail::get_args<0, 2>(args, env, eval_args);
         if(l->get_type() != atom_type::T_LIST)
             detail::unsupported_args(location, "count", args);
@@ -775,7 +775,7 @@ define_repr(count, return L"built-in function `count'")
     detail::argno_exact<1>(location, "type", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         auto [a] = detail::get_args<0, 1>(args, env, eval_args);
         std::string tn = a->type_name();
         return std::wstring(tn.begin(), tn.end());
@@ -788,7 +788,7 @@ define_repr(type, return L"built-in function `type'")
     detail::argno_exact<1>(location, "to-string", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         auto [a] = detail::get_args<0, 1>(args, env, eval_args);
         return a->stringify();
     }));
@@ -800,7 +800,7 @@ define_repr(tostring, return L"built-in function `to-string'")
     detail::argno_exact<1>(location, "parse-num", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         auto [a] = detail::get_args<0, 1>(args, env, eval_args);
         if(a->get_type() != atom_type::T_STR)
             detail::unsupported_args(location, "parse-num", args);
@@ -835,7 +835,7 @@ define_repr(parsenum, return L"built-in function `parsenum'")
     detail::argno_exact<1>(location, "eval", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         auto [a] = detail::get_args<0, 1>(args, env, eval_args);
         return evaluate(a, env)->thunk_forward();
     }));
@@ -847,7 +847,7 @@ define_repr(eval, return L"built-in function `eval'")
     detail::argno_exact<1>(location, "parse", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         auto [a] = detail::get_args<0, 1>(args, env, eval_args);
         if(a->get_type() != atom_type::T_STR)
             detail::unsupported_args(location, "parse", args);
@@ -865,7 +865,7 @@ define_repr(kl_parse, return L"built-in function `parse'")
     detail::argno_exact<2>(location, "let", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env]() mutable -> thunk_type {
-        stacktrace_guard{ repr };
+        stacktrace_guard g{ repr };
         auto [r, f] = detail::get_args<0, 2>(args);
         if(r->get_type() != atom_type::T_LIST)
             detail::unsupported_args(location, "let", args);
