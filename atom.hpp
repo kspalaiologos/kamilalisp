@@ -2,6 +2,7 @@
 #ifndef _ATOM_HPP
 #define _ATOM_HPP
 
+#include <numeric>
 #include <variant>
 #include <string>
 #include <memory>
@@ -155,6 +156,61 @@ static atom atom_false = std::make_shared<atom_>(boost::multiprecision::mpz_int(
 namespace std {
     std::wstring to_wstring(atom);
 }
+
+struct atom_hash {
+    std::size_t operator()(atom & s) {
+        s->force();
+        switch(s->get_type()) {
+            case atom_type::T_INT:
+                return std::hash<boost::multiprecision::mpz_int>()(s->get_integer());
+            case atom_type::T_REAL:
+                return std::hash<boost::multiprecision::mpf_float>()(s->get_real());
+            case atom_type::T_CMPLX:
+                return std::hash<boost::multiprecision::mpfr_float>()(s->get_complex().real()) + std::hash<boost::multiprecision::mpfr_float>()(s->get_complex().imag());
+            case atom_type::T_STR:
+                return std::hash<std::wstring>()(s->get_string());
+            case atom_type::T_LIST: {
+                atom_list l = s->get_list();
+                return std::accumulate(l.begin(), l.end(), std::size_t(0),
+                        [](std::size_t acc, atom a) {
+                    return acc ^ std::hash<atom>()(a);
+                });
+            }
+            case atom_type::T_CALLABLE:
+                return (size_t) s->get_callable().get();
+            case atom_type::T_ID:
+                return std::hash<std::wstring>()(s->get_identifier());
+        }
+    }
+};
+
+struct const_atom_hash {
+    std::size_t operator()(const atom & s) {
+        switch(s->get_type()) {
+            case atom_type::T_INT:
+                return std::hash<boost::multiprecision::mpz_int>()(s->get_integer());
+            case atom_type::T_REAL:
+                return std::hash<boost::multiprecision::mpf_float>()(s->get_real());
+            case atom_type::T_CMPLX:
+                return std::hash<boost::multiprecision::mpfr_float>()(s->get_complex().real()) + std::hash<boost::multiprecision::mpfr_float>()(s->get_complex().imag());
+            case atom_type::T_STR:
+                return std::hash<std::wstring>()(s->get_string());
+            case atom_type::T_LIST: {
+                atom_list l = s->get_list();
+                return std::accumulate(l.begin(), l.end(), std::size_t(0),
+                        [](std::size_t acc, atom a) {
+                    return acc ^ std::hash<atom>()(a);
+                });
+            }
+            case atom_type::T_CALLABLE:
+                return (size_t) s->get_callable().get();
+            case atom_type::T_ID:
+                return std::hash<std::wstring>()(s->get_identifier());
+            default:
+                kl_error("tried const_hash-ing an unevaluated thunk.");
+        }
+    }
+};
 
 #define make_atom std::make_shared<atom_>
 

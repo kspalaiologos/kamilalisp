@@ -91,13 +91,13 @@ class list {
             return instance;
         }
 
-        iterator begin() {
+        iterator begin() const {
             if(is_empty())
                 return iterator(true);
             return iterator(node_data);
         }
 
-        iterator end() {
+        iterator end() const {
             return iterator(true);
         }
 
@@ -133,7 +133,7 @@ class list {
                 return list(value.node_data, value.last);
         }
 
-        bool is_empty() {
+        bool is_empty()  const{
             return node_data == nullptr;
         }
 
@@ -142,7 +142,7 @@ class list {
             return list(p);
         }
 
-        T at(std::size_t n) {
+        T at(std::size_t n) const {
             auto it = node_data;
             for(std::size_t i = 0; i < n; i++)
                 it = it->next;
