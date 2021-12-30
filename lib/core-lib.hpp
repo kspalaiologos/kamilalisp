@@ -72,6 +72,7 @@ define_callable(flatmap);
 define_callable(flatten);
 define_callable(seq);
 define_callable(discard);
+define_callable(lift);
 
 }
 

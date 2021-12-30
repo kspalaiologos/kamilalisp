@@ -651,6 +651,23 @@ define_repr(discard, return L"built-in function `discard'")
 
 define_repr(seq, return L"built-in function `seq'")
 
+[[gnu::flatten]] atom lift::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "lift", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        auto [f, l] = detail::get_args<0, 2>(args, env, eval_args);
+        if(f->get_type() != atom_type::T_CALLABLE)
+            detail::unsupported_args(location, "lift", args);
+        auto fn = f->get_callable();
+        if(l->get_type() != atom_type::T_LIST)
+            detail::unsupported_args(location, "lift", args);
+        atom_list list = l->get_list();
+        return apply(fn, env, list)->thunk_forward();
+    }));
+}
+
+define_repr(lift, return L"built-in function `lift'")
+
 [[gnu::flatten]] atom filter::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<2>(location, "filter", args);
     std::wstring repr = this->repr();
