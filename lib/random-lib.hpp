@@ -46,7 +46,7 @@ template <typename Distribution, typename BitDistribution, typename Generator>
 class rng_deal : public callable {
     public:
         ~rng_deal() { }
-        atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args = false) override {
+        [[gnu::flatten]] atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args = false) override {
             detail::argno_either<0, 1>(location, "rng-roll", args);
             std::wstring repr = this->repr();
             return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
@@ -80,7 +80,7 @@ template <typename Distribution, typename BitDistribution, typename Generator>
 class rng_roll : public callable {
     public:
         ~rng_roll() { }
-        atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args = false) override {
+        [[gnu::flatten]] atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args = false) override {
             detail::argno_exact<2>(location, "rng-roll", args);
             std::wstring repr = this->repr();
             return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
@@ -104,7 +104,7 @@ template <typename Distribution, typename BitDistribution, typename Generator>
 class rng_real : public callable {
     public:
         ~rng_real() { }
-        atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args = false) override {
+        [[gnu::flatten]] atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args = false) override {
             detail::argno_either<0, 1>(location, "rng-real", args);
             std::wstring repr = this->repr();
             return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
