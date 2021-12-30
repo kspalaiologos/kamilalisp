@@ -626,6 +626,18 @@ define_repr(count, return L"built-in function `count'")
 
 define_repr(type, return L"built-in function `type'")
 
+[[gnu::flatten]] atom eval::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "eval", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        return evaluate(a, env)->thunk_forward();
+    }));
+}
+
+define_repr(eval, return L"built-in function `eval'")
+
 [[gnu::flatten]] atom import::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     stacktrace_guard{ repr() };
     detail::argno_exact<1>(location, "import", args);

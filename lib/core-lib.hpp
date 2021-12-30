@@ -65,6 +65,7 @@ define_callable(bind);
 define_callable(count);
 define_callable(type);
 define_callable(cond);
+define_callable(eval);
 
 }
 
