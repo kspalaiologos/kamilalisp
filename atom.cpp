@@ -65,7 +65,7 @@ atom_::atom_(std::shared_ptr<callable> m) {
     value = m;
 }
 
-boost::multiprecision::mpz_int atom_::get_integer() {
+boost::multiprecision::mpz_int atom_::get_integer() const {
     force();
     if(std::holds_alternative<boost::multiprecision::mpz_int>(value)) {
         return std::get<boost::multiprecision::mpz_int>(value);
@@ -74,7 +74,7 @@ boost::multiprecision::mpz_int atom_::get_integer() {
     }
 }
 
-boost::multiprecision::mpf_float atom_::get_real() {
+boost::multiprecision::mpf_float atom_::get_real() const {
     force();
     if(std::holds_alternative<boost::multiprecision::mpf_float>(value)) {
         return std::get<boost::multiprecision::mpf_float>(value);
@@ -83,7 +83,7 @@ boost::multiprecision::mpf_float atom_::get_real() {
     }
 }
 
-boost::multiprecision::mpc_complex atom_::get_complex() {
+boost::multiprecision::mpc_complex atom_::get_complex() const {
     force();
     if(std::holds_alternative<boost::multiprecision::mpc_complex>(value)) {
         return std::get<boost::multiprecision::mpc_complex>(value);
@@ -92,7 +92,7 @@ boost::multiprecision::mpc_complex atom_::get_complex() {
     }
 }
 
-std::wstring atom_::get_string() {
+std::wstring atom_::get_string() const {
     force();
     if(std::holds_alternative<std::wstring>(value)) {
         return std::get<std::wstring>(value);
@@ -101,7 +101,7 @@ std::wstring atom_::get_string() {
     }
 }
 
-atom_list atom_::get_list() {
+atom_list atom_::get_list() const {
     force();
     if(std::holds_alternative<atom_list>(value)) {
         return std::get<atom_list>(value);
@@ -110,7 +110,7 @@ atom_list atom_::get_list() {
     }
 }
 
-identifier atom_::get_identifier() {
+identifier atom_::get_identifier() const {
     force();
     if(std::holds_alternative<identifier>(value)) {
         return std::get<identifier>(value);
@@ -119,7 +119,7 @@ identifier atom_::get_identifier() {
     }
 }
 
-std::shared_ptr<callable> atom_::get_callable() {
+std::shared_ptr<callable> atom_::get_callable() const {
     force();
     if(std::holds_alternative<std::shared_ptr<callable>>(value)) {
         return std::get<std::shared_ptr<callable>>(value);
@@ -128,7 +128,7 @@ std::shared_ptr<callable> atom_::get_callable() {
     }
 }
 
-void atom_::force() {
+void atom_::force() const {
     /* Note: The conversion between a normal data variant and a thunk result isn't
                 possible implicitly, since a thunk can never return a thunk by design.
                 A variant casting proxy that casts a subset of a variant to it's
@@ -137,7 +137,7 @@ void atom_::force() {
         value = variant_cast(std::get<thunk>(value)());
 }
 
-bool atom_::coerce_bool() {
+bool atom_::coerce_bool() const {
     force();
     return
         (std::holds_alternative<boost::multiprecision::mpz_int>(value) && std::get<boost::multiprecision::mpz_int>(value) != 0)
@@ -146,7 +146,7 @@ bool atom_::coerce_bool() {
     ||  (std::holds_alternative<atom_list>(value) && !std::get<atom_list>(value).is_empty());
 }
 
-bool atom_::is_numeric() {
+bool atom_::is_numeric() const {
     force();
     return
         std::holds_alternative<boost::multiprecision::mpz_int>(value)
@@ -164,7 +164,7 @@ std::wstring to_wstring(std::string && s) {
     return std::wstring(s.begin(), s.end());
 }
 
-std::wstring atom_::stringify() {
+std::wstring atom_::stringify() const {
     force();
     switch(get_type()) {
         case atom_type::T_INT:
@@ -195,7 +195,7 @@ std::wstring atom_::stringify() {
     }
 }
 
-bool atom_::operator==(atom & other) {
+bool atom_::operator==(const atom & other) const {
     force(); other->force();
 
     if(value.index() != other->value.index())
@@ -220,11 +220,11 @@ bool atom_::operator==(atom & other) {
     return false;
 }
 
-bool atom_::operator!=(atom & other) {
+bool atom_::operator!=(const atom & other) const {
     return !(*this == other);
 }
 
-std::weak_ordering atom_::operator<=>(atom & other) {
+std::weak_ordering atom_::operator<=>(const atom & other) const {
     force(); other->force();
     if(value.index() != other->value.index())
         return value.index() <=> other->value.index();
@@ -278,7 +278,7 @@ std::weak_ordering atom_::operator<=>(atom & other) {
     return std::strong_ordering::equivalent;
 }
 
-atom_type atom_::get_type() {
+atom_type atom_::get_type() const {
     force();
     switch(value.index()) {
         case 1: return atom_type::T_INT;
@@ -292,7 +292,7 @@ atom_type atom_::get_type() {
     kl_error("Unknown data type.");
 }
 
-std::string atom_::type_name() {
+std::string atom_::type_name() const {
     force(); switch(get_type()) {
         case atom_type::T_CALLABLE: return "callable";
         case atom_type::T_CMPLX: return "complex";
@@ -308,7 +308,7 @@ std::string atom_::type_name() {
 
 callable::~callable() { }
 
-thunk_type atom_::thunk_forward() {
+thunk_type atom_::thunk_forward() const {
     force();
     switch(get_type()) {
         case atom_type::T_INT: return get_integer();

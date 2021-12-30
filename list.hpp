@@ -42,7 +42,7 @@ class list {
             : node_data(node_data), last(last) { }
         std::shared_ptr<node<T>> node_data;
         std::shared_ptr<node<T>> last;
-        std::size_t size_cache = 0;
+        mutable std::size_t size_cache = 0;
 
     public:
         class iterator {
@@ -80,11 +80,11 @@ class list {
 
         list() : node_data(nullptr), last(nullptr) { }
 
-        T & car() {
+        T & car() const {
             return node_data->value;
         }
 
-        list reverse() {
+        list reverse() const {
             list<T> instance { };
             for(auto it = this->begin(); it != this->end(); ++it)
                 instance = instance.cons(*it);
@@ -101,11 +101,11 @@ class list {
             return iterator(true);
         }
 
-        list cdr() {
+        list cdr() const {
             return list(node_data->next, last);
         }
 
-        list cons(T value) {
+        list cons(T value) const {
             if(!is_empty())
                 return list(std::make_shared<node<T>>(node_data, value), last);
             else {
@@ -133,11 +133,11 @@ class list {
                 return list(value.node_data, value.last);
         }
 
-        bool is_empty()  const{
+        bool is_empty() const {
             return node_data == nullptr;
         }
 
-        list clone() {
+        list clone() const {
             std::shared_ptr<node<T>> p = node_data->clone();
             return list(p);
         }
@@ -154,7 +154,7 @@ class list {
                 last = last->next = std::make_shared<node<T>>(nullptr, value);
         }
 
-        std::size_t size() {
+        std::size_t size() const {
             if(size_cache == 0) {
                 unsigned size = 0;
                 auto it = node_data;
@@ -173,7 +173,7 @@ class list {
         template<typename N>
         struct is_ptr<std::shared_ptr<N>> : std::true_type {};
 
-        bool operator==(list<T> &other) {
+        bool operator==(const list<T> & other) const {
             if constexpr(is_ptr<T>::value) {
                 auto it = node_data;
                 auto other_it = other.node_data;

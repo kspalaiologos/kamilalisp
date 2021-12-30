@@ -21,6 +21,8 @@ define_callable(iota);
 define_callable(equals);
 define_callable(not_equals);
 
+define_callable(less_than);
+
 }
 
 #endif

@@ -93,6 +93,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"to-string", make_atom(std::make_shared<corelib::tostring>()));
     env->set(L"parse-num", make_atom(std::make_shared<corelib::parsenum>()));
     env->set(L"cond", make_atom(std::make_shared<corelib::cond>()));
+    env->set(L"memo", make_atom(std::make_shared<corelib::memo>()));
     env->set(L"println", make_atom(std::make_shared<iolib::println>()));
 
     env->set(L"rng-deal", make_atom(std::make_shared<

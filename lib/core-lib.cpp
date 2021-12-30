@@ -2,6 +2,7 @@
 #include "core-lib.hpp"
 #include "lib-detail.hpp"
 #include <fstream>
+#include <unordered_map>
 #include "../reader/parser.hpp"
 #include "../atom.hpp"
 
@@ -842,6 +843,48 @@ define_repr(parsenum, return L"built-in function `parsenum'")
 }
 
 define_repr(eval, return L"built-in function `eval'")
+
+[[gnu::flatten]] atom memo::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "memo", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        if(a->get_type() != atom_type::T_CALLABLE)
+            detail::unsupported_args(location, "memo", args);
+        class this_memo : public callable {
+            struct list_hasher {
+                std::size_t operator()(const atom_list & l) const {
+                    std::size_t h = 0;
+                    for(const auto & a : l)
+                        h = h * 31 + std::hash<atom>()(a);
+                    return h;
+                }
+            };
+
+            std::shared_ptr<callable> c;
+            std::unordered_map<atom_list, atom, list_hasher> cache;
+
+            public:
+                this_memo(std::shared_ptr<callable> c) : c(c) { }
+                ~this_memo() {  }
+
+                atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args) override {
+                    args = detail::get_args(args, env, eval_args);
+                    if(cache.find(args) == cache.end())
+                        return cache[args] = c->call(env, args, eval_args);
+                    return cache[args];
+                }
+
+                std::wstring repr() override {
+                    return c->repr();
+                }
+        };
+        return std::make_shared<this_memo>(a->get_callable());
+    }));
+}
+
+define_repr(memo, return L"built-in function `memo'")
 
 [[gnu::flatten]] atom kl_parse::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<1>(location, "parse", args);

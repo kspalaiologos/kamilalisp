@@ -524,4 +524,55 @@ define_repr(equals, return L"built-in function `='")
 
 define_repr(not_equals, return L"built-in function `/='")
 
+[[gnu::flatten]] atom less_than::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_either<1, 2>(location, "<", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        if(args.size() == 2) {
+            auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
+            return (a->operator<=>(b) == std::weak_ordering::less) ? atom_true->thunk_forward() : atom_false->thunk_forward();
+        } else {
+            auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+            if(a->get_type() == atom_type::T_INT) {
+                return a->get_integer() + 1;
+            } else if(a->get_type() == atom_type::T_REAL) {
+                return a->get_real() + 1;
+            } else if(a->get_type() == atom_type::T_CMPLX) {
+                return a->get_complex() + 1;
+            } else if(a->get_type() == atom_type::T_STR) {
+                std::wstring str = std::wstring(a->get_string());
+                // find the successor of str.
+                // If the rightmost character is a-zA-Z0-9, it is incremented within its case or digits.
+                // If it generates a carry, the process is repeated with the one to its immediate left. 
+                int carry = 0;
+                for(auto it = str.rbegin(); it != str.rend(); ++it) {
+                    if(std::iswalpha(*it)) {
+                        if(*it == L'z') {
+                            *it = L'a';
+                        } else if(*it == L'Z') {
+                            *it = L'A';
+                        } else if(carry) {
+                            ++*it;
+                            break;
+                        }
+                    } else if(std::iswdigit(*it)) {
+                        if(*it == L'9') {
+                            *it = L'0';
+                        } else {
+                            ++*it;
+                            break;
+                        }
+                    }
+                }
+                return str;
+            } else {
+                detail::unsupported_args(location, "<", args);
+            }
+        }
+    }));
+}
+
+define_repr(less_than, return L"built-in function `<'")
+
 }
