@@ -473,6 +473,8 @@ define_repr(quote, return L"'-combinator: built-in function `quote'")
     for(unsigned i = 0; i < depth; i++) {
         if(env->ancestor == nullptr)
             kl_error("de Bruijn index out of bounds");
+        if(env->owner == nullptr)
+            i--;
         env = env->ancestor;
     }
     if(env->owner == nullptr)
@@ -637,6 +639,32 @@ define_repr(type, return L"built-in function `type'")
 }
 
 define_repr(eval, return L"built-in function `eval'")
+
+[[gnu::flatten]] atom let::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<2>(location, "let", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard{ repr };
+        auto [r, f] = detail::get_args<0, 2>(args);
+        if(r->get_type() != atom_type::T_LIST)
+            detail::unsupported_args(location, "let", args);
+        atom_list l = r->get_list();
+        std::shared_ptr<environment> descEnv = std::make_shared<environment>(env, nullptr);
+        while(!l.is_empty()) {
+            atom a = l.car();
+            if(a->get_type() != atom_type::T_LIST)
+                detail::unsupported_args(location, "let inner list", args);
+            auto [name, value] = detail::get_args<0, 2>(a->get_list());
+            if(name->get_type() != atom_type::T_ID)
+                detail::unsupported_args(location, "let name", args);
+            descEnv->set(name->get_identifier(), evaluate(value, env));
+            l = l.cdr();
+        }
+        return evaluate(f, descEnv)->thunk_forward();
+    }));
+}
+
+define_repr(let, return L"built-in function `let'")
 
 [[gnu::flatten]] atom import::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     stacktrace_guard{ repr() };

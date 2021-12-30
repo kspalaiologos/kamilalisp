@@ -80,6 +80,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"count", make_atom(std::make_shared<corelib::count>()));
     env->set(L"type", make_atom(std::make_shared<corelib::type>()));
     env->set(L"eval", make_atom(std::make_shared<corelib::eval>()));
+    env->set(L"let", make_atom(std::make_shared<corelib::let>()));
     env->set(L"cond", make_atom(std::make_shared<corelib::cond>()));
     env->set(L"println", make_atom(std::make_shared<iolib::println>()));
     return env;
