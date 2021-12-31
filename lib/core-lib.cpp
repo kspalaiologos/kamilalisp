@@ -1003,4 +1003,22 @@ define_repr(import, return L"built-in function `import'")
 
 define_repr(size, return L"built-in function `size'")
 
+[[gnu::flatten]] atom empty::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "empty?", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        if(a->get_type() == atom_type::T_STR) {
+            return bmp::mpz_int(a->get_string().empty());
+        } else if(a->get_type() == atom_type::T_LIST) {
+            return bmp::mpz_int(a->get_list().is_empty());
+        } else {
+            detail::unsupported_args(location, "empty?", args);
+        }
+    }));
+}
+
+define_repr(empty, return L"built-in function `empty?'")
+
 }
