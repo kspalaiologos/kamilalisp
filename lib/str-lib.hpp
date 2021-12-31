@@ -9,6 +9,7 @@
 namespace strlib {
 
 define_callable(str_trim);
+define_callable(str_count);
 
 }
 
