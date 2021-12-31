@@ -6,6 +6,8 @@
 
 # KamilaLisp
 
+[![wakatime](https://wakatime.com/badge/user/c3a8c589-783c-4ab2-be05-93fa48bc9a94/project/1c00d725-551f-46d2-a691-1408603a8707.svg)](https://wakatime.com/badge/user/c3a8c589-783c-4ab2-be05-93fa48bc9a94/project/1c00d725-551f-46d2-a691-1408603a8707)
+
 A lazily evaluated, functional, flexible and concise Lisp modelled after Haskell and APL, among others.
 
 ```lisp
