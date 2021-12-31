@@ -46,7 +46,7 @@ class callable : public std::enable_shared_from_this<callable> {
             return L"callable/syn";
         }
 
-        virtual std::tuple<atom_list, atom_list> requote() {
+        virtual std::tuple<atom, atom> requote() {
             kl_error("Can't requote.");
         }
 

@@ -49,6 +49,10 @@ namespace corelib {
                     : params(params), code(code), e(e), n(n), l_view(l_view) { }
                 ~this_lambda() { }
 
+                std::tuple<atom, atom> requote() override {
+                    return std::make_tuple(make_atom(params), code);
+                }
+
                 std::wstring repr() override {
                     if(cached_repr.has_value())
                         return *cached_repr;
@@ -139,6 +143,10 @@ define_repr(lambda, return L"built-in function `lambda'")
                 this_macro(atom_list params, atom code, std::weak_ptr<environment> e, std::size_t n, atom_list l_view)
                     : params(params), code(code), e(e), n(n), l_view(l_view) { }
                 ~this_macro() { }
+
+                std::tuple<atom, atom> requote() override {
+                    return std::make_tuple(make_atom(params), code);
+                }
 
                 std::wstring repr() override {
                     if(cached_repr.has_value())
@@ -1028,7 +1036,8 @@ define_repr(empty, return L"built-in function `empty?'")
         stacktrace_guard g{ repr };
         auto [a] = detail::get_args<0, 1>(args, env, eval_args);
         if(a->get_type() == atom_type::T_CALLABLE) {
-            return bmp::mpz_int(a->get_callable()->requote());
+            auto t = a->get_callable()->requote();
+            return atom_list::from(std::get<1>(t)).cons(std::get<0>(t));
         } else {
             detail::unsupported_args(location, "requote", args);
         }
