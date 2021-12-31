@@ -78,6 +78,7 @@ define_callable(scanterate);
 define_callable(memo);
 define_callable(tostring);
 define_callable(parsenum);
+define_callable(list_env);
 
 }
 

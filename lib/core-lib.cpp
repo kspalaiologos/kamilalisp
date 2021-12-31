@@ -11,6 +11,7 @@ namespace bmp = boost::multiprecision;
 namespace corelib {
 
 [[gnu::flatten]] atom lambda::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    (void) eval_args; // Unused: invoking a macro.
     detail::argno_exact<2>(location, "lambda", args);
     auto [a, code_arg] = detail::get_args<0, 2>(args);
     if(a->get_type() != atom_type::T_LIST)
@@ -100,6 +101,7 @@ namespace corelib {
 define_repr(lambda, return L"built-in function `lambda'")
 
 [[gnu::flatten]] atom macro::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    (void) eval_args; // Unused: invoking a macro.
     std::wstring repr = this->repr();
     detail::argno_exact<2>(location, "macro", args);
     auto [a, code_arg] = detail::get_args<0, 2>(args);
@@ -153,6 +155,7 @@ define_repr(lambda, return L"built-in function `lambda'")
                 atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args) override {
                     stacktrace_guard{ repr() };
                     (void) env; // The caller's environment is unnecessary.
+                    (void) eval_args; // Unused: invoking a macro.
                     std::shared_ptr<environment> descEnv = std::make_shared<environment>(e.lock(), shared_from_this());
                     // Process normal arguments.
                     if(args.size() > params.size() || args.size() < params.size() - n)
@@ -188,6 +191,7 @@ define_repr(lambda, return L"built-in function `lambda'")
 define_repr(macro, return L"built-in function `macro'")
 
 [[gnu::flatten]] atom define::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    (void) eval_args;
     detail::argno_exact<2>(location, "def", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env]() mutable -> thunk_type {
@@ -396,6 +400,7 @@ define_repr(bind, return L"$-combinator: built-in function `bind'")
 define_repr(tie, return L"built-in function `tie'")
 
 [[gnu::flatten]] atom defun::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    (void) eval_args;
     auto generator = this->gen;
     detail::argno_exact<3>(location, "defun", args);
     std::wstring repr = this->repr();
@@ -415,6 +420,7 @@ define_repr(tie, return L"built-in function `tie'")
 define_repr(defun, return L"built-in function `defun'")
 
 [[gnu::flatten]] atom monad::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    (void) eval_args;
     stacktrace_guard{ repr() };
     auto generator = this->gen;
     detail::argno_exact<1>(location, "monad", args);
@@ -426,6 +432,7 @@ define_repr(defun, return L"built-in function `defun'")
 define_repr(monad, return L"built-in function `monad'")
 
 [[gnu::flatten]] atom dyad::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    (void) eval_args;
     stacktrace_guard{ repr() };
     auto generator = this->gen;
     detail::argno_exact<1>(location, "dyad", args);
@@ -437,6 +444,7 @@ define_repr(monad, return L"built-in function `monad'")
 define_repr(dyad, return L"built-in function `dyad'")
 
 [[gnu::flatten]] atom defm::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    (void) eval_args;
     auto generator = this->gen;
     detail::argno_exact<3>(location, "defm", args);
     std::wstring repr = this->repr();
@@ -458,6 +466,7 @@ define_repr(defm, return L"built-in function `defm'")
 [[gnu::flatten]] atom quote::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     stacktrace_guard{ repr() };
     (void) env; // The caller's environment is unnecessary.
+    (void) eval_args;
     detail::argno_exact<1>(location, "quote", args);
     return args.car();
 }
@@ -486,6 +495,7 @@ define_repr(quote, return L"'-combinator: built-in function `quote'")
 define_repr(bruijn, return L"built-in function `bruijn'")
 
 [[gnu::flatten]] atom kl_if::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    (void) eval_args;
     detail::argno_exact<3>(location, "if", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env]() mutable -> thunk_type {
@@ -502,6 +512,7 @@ define_repr(bruijn, return L"built-in function `bruijn'")
 define_repr(kl_if, return L"built-in function `if'")
 
 [[gnu::flatten]] atom cond::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    (void) eval_args;
     detail::argno_more<1>(location, "cond", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env]() mutable -> thunk_type {
@@ -634,6 +645,7 @@ define_repr(flatmap, return L"built-in function `flat-map'")
 define_repr(flatten, return L"built-in function `flatten'")
 
 [[gnu::flatten]] atom discard::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    (void) eval_args; (void) env; (void) args;
     return make_atom(thunk([]() mutable -> thunk_type {
         return null_atom->thunk_forward();
     }));
@@ -904,7 +916,30 @@ define_repr(memo, return L"built-in function `memo'")
 
 define_repr(kl_parse, return L"built-in function `parse'")
 
+[[gnu::flatten]] atom list_env::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    (void) eval_args;
+    detail::argno_exact<0>(location, "list-env", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, env]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        atom_list r { };
+        while(env != nullptr) {
+            atom_list q { };
+            env->for_each([&q](const std::wstring & k, const atom & v) mutable {
+                (void) v; // The value is unused.
+                q = q.unsafe_append(make_atom(k));
+            });
+            r = r.unsafe_append(make_atom(q));
+            env = env->ancestor;
+        }
+        return r;
+    }));
+}
+
+define_repr(list_env, return L"built-in function `list-env'")
+
 [[gnu::flatten]] atom let::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    (void) eval_args;
     detail::argno_exact<2>(location, "let", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env]() mutable -> thunk_type {
@@ -931,6 +966,7 @@ define_repr(kl_parse, return L"built-in function `parse'")
 define_repr(let, return L"built-in function `let'")
 
 [[gnu::flatten]] atom import::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    (void) eval_args;
     stacktrace_guard{ repr() };
     detail::argno_exact<1>(location, "import", args);
     auto [a] = detail::get_args<0, 1>(args);
