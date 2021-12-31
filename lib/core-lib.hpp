@@ -81,6 +81,7 @@ define_callable(tostring);
 define_callable(parsenum);
 define_callable(list_env);
 define_callable(empty);
+define_callable(requote);
 
 }
 

@@ -1021,4 +1021,20 @@ define_repr(size, return L"built-in function `size'")
 
 define_repr(empty, return L"built-in function `empty?'")
 
+[[gnu::flatten]] atom requote::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "requote", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        if(a->get_type() == atom_type::T_CALLABLE) {
+            return bmp::mpz_int(a->get_callable()->requote());
+        } else {
+            detail::unsupported_args(location, "requote", args);
+        }
+    }));
+}
+
+define_repr(requote, return L"built-in function `requote'")
+
 }

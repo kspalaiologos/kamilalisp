@@ -143,6 +143,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"str-trim", make_atom(std::make_shared<strlib::str_trim>()));
     env->set(L"str-count", make_atom(std::make_shared<strlib::str_count>()));
     env->set(L"size", make_atom(std::make_shared<corelib::size>()));
+    env->set(L"requote", make_atom(std::make_shared<corelib::requote>()));
     env->set(L"empty?", make_atom(std::make_shared<corelib::empty>()));
 
     return env;
