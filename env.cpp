@@ -147,5 +147,12 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"empty?", make_atom(std::make_shared<corelib::empty>()));
     env->set(L"let-seq", make_atom(std::make_shared<corelib::let_seq>(lambda, macro)));
 
+    env->set(L"or", make_atom(std::make_shared<mathlib::kl_or>()));
+    env->set(L"xor", make_atom(std::make_shared<mathlib::kl_xor>()));
+    env->set(L"and", make_atom(std::make_shared<mathlib::kl_and>()));
+
+    env->set(L"floor", make_atom(std::make_shared<mathlib::kl_floor>()));
+    env->set(L"ceil", make_atom(std::make_shared<mathlib::kl_ceil>()));
+
     return env;
 }

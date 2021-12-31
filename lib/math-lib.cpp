@@ -677,4 +677,44 @@ define_repr(less_equal, return L"built-in function `<='")
 
 define_repr(greater_equal, return L"built-in function `>='")
 
+[[gnu::flatten]] atom kl_ceil::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "ceil", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        if(a->get_type() == atom_type::T_INT) {
+            return a->get_integer();
+        } else if(a->get_type() == atom_type::T_REAL) {
+            return bmp::ceil(a->get_real());
+        } else if(a->get_type() == atom_type::T_CMPLX) {
+            return bmp::mpc_complex {bmp::ceil(a->get_complex().real()), bmp::ceil(a->get_complex().imag())};
+        } else {
+            detail::unsupported_args(location, "ceil", args);
+        }
+    }));
+}
+
+define_repr(kl_ceil, return L"built-in function `ceil'");
+
+[[gnu::flatten]] atom kl_floor::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "floor", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        if(a->get_type() == atom_type::T_INT) {
+            return a->get_integer();
+        } else if(a->get_type() == atom_type::T_REAL) {
+            return bmp::floor(a->get_real());
+        } else if(a->get_type() == atom_type::T_CMPLX) {
+            return bmp::mpc_complex {bmp::floor(a->get_complex().real()), bmp::floor(a->get_complex().imag())};
+        } else {
+            detail::unsupported_args(location, "floor", args);
+        }
+    }));
+}
+
+define_repr(kl_floor, return L"built-in function `floor'");
+
 }

@@ -26,6 +26,13 @@ define_callable(greater_than);
 define_callable(less_equal);
 define_callable(greater_equal);
 
+define_callable(kl_or);
+define_callable(kl_and);
+define_callable(kl_xor);
+
+define_callable(kl_floor);
+define_callable(kl_ceil);
+
 }
 
 #endif
