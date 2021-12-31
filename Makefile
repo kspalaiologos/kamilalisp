@@ -37,11 +37,11 @@ srcs=\
 objs=$(patsubst %.cpp, %.o, $(patsubst %.cxx, %.o, $(srcs)))
 deps=$(objs:.o=.d)
 
--include $(deps)
-
 .PHONY: all clean get-deps
 
 all: kamilalisp
+
+-include $(deps)
 
 %.o: %.cpp
 	$(CXX) -MMD -MF $(patsubst %.o,%.d,$@) $(HFLAGS) $(CXXFLAGS) -c -o $@ $<
