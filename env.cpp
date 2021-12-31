@@ -145,6 +145,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"size", make_atom(std::make_shared<corelib::size>()));
     env->set(L"requote", make_atom(std::make_shared<corelib::requote>()));
     env->set(L"empty?", make_atom(std::make_shared<corelib::empty>()));
+    env->set(L"let-seq", make_atom(std::make_shared<corelib::let_seq>(lambda, macro)));
 
     return env;
 }

@@ -17,7 +17,7 @@ void highlighter(std::string const & input, replxx::Replxx::colors_t & c) {
     static std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> cvt;
     const static std::shared_ptr<environment> env = environment::create_default_env();
     std::wstring data = cvt.from_bytes(input.c_str());
-    std::vector<token> lexemes = lex_greedy(data);
+    std::vector<token> lexemes = lex_hl(data);
     try {
         for (auto & lexeme : lexemes) {
             switch (lexeme.type) {
@@ -72,6 +72,11 @@ void highlighter(std::string const & input, replxx::Replxx::colors_t & c) {
                 case token_type::TOKEN_MAP: {
                     c.at(lexeme.loc) = replxx::Replxx::Color::RED;
                     break;
+                }
+                case token_type::TOKEN_TRASH: {
+                    unsigned size = std::get<unsigned>(*lexeme.content);
+                    for(std::size_t i = 0; i < size; i++)
+                        c.at(i + lexeme.loc) = replxx::Replxx::Color::LIGHTGRAY;
                 }
                 case token_type::TOKEN_EMPTY:
                     // Ignore.

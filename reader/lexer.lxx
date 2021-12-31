@@ -51,7 +51,7 @@ cmplx_pt       {float}|{integer}
 {notid_start}{notid}*           { pos += wsize(); return token(pos - wsize(), lineno(), columno(), wstr(), token_type::TOKEN_ID); }
 
 // Ignore whitespace and comments.
-";".*$        { pos += wsize(); }
+";".*$        { pos += wsize(); return token(pos - wsize(), lineno(), columno(), wsize(), token_type::TOKEN_TRASH); }
 [\t\r\n\f\ ]+ { pos += wsize(); }
 
 .                               { kl_recoverable_error(std::string("Stray token - '") + str() + std::string("', ASCII ") + std::to_string((int) str()[0])); }

@@ -83,6 +83,17 @@ define_callable(list_env);
 define_callable(empty);
 define_callable(requote);
 
+class let_seq : public callable {
+    public:
+        let_seq(std::shared_ptr<lambda> gen_lambda, std::shared_ptr<macro> gen_mu) : gen_lambda(gen_lambda), gen_mu(gen_mu) { }
+        ~let_seq() { }
+        atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args = false) override;
+        std::wstring repr() override;
+    private:
+        std::shared_ptr<lambda> gen_lambda;
+        std::shared_ptr<macro> gen_mu;
+};
+
 }
 
 #endif

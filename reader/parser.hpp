@@ -16,6 +16,8 @@ std::vector<token> lex_all(Source & in) {
         token t = l.lex();
         if (t.type == token_type::TOKEN_EMPTY)
             break;
+        else if (t.type == token_type::TOKEN_TRASH)
+                continue;
         tokens.push_back(t);
     }
     return tokens;
@@ -23,6 +25,25 @@ std::vector<token> lex_all(Source & in) {
 
 template <typename Source>
 std::vector<token> lex_greedy(Source & in) {
+    std::vector<token> tokens;
+    std::ostream bitBucket(0);
+    Lexer l = Lexer(in, bitBucket);
+    // Ignore errors, lex as much as possible.
+    try {
+        while (true) {
+            token t = l.lex();
+            if (t.type == token_type::TOKEN_EMPTY)
+                break;
+            else if (t.type == token_type::TOKEN_TRASH)
+                continue;
+            tokens.push_back(t);
+        }
+    } catch(...) { }
+    return tokens;
+}
+
+template <typename Source>
+std::vector<token> lex_hl(Source & in) {
     std::vector<token> tokens;
     std::ostream bitBucket(0);
     Lexer l = Lexer(in, bitBucket);

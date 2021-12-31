@@ -1046,4 +1046,50 @@ define_repr(empty, return L"built-in function `empty?'")
 
 define_repr(requote, return L"built-in function `requote'")
 
+[[gnu::flatten]] atom let_seq::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    (void) eval_args;
+    std::wstring repr = this->repr();
+    std::shared_ptr<lambda> gen_lambda = this->gen_lambda;
+    std::shared_ptr<macro> gen_mu = this->gen_mu;
+    return make_atom(thunk([repr, args, env, gen_lambda, gen_mu]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        std::shared_ptr<environment> descEnv = std::make_shared<environment>(env, nullptr);
+        
+        for(atom & a : args) {
+            if(a->get_type() == atom_type::T_LIST) {
+                atom_list l = a->get_list();
+                if(!l.is_empty() && l.car()->get_type() == atom_type::T_ID) {
+                    std::wstring name = l.car()->get_identifier();
+                    if(name == L"def") {
+                        if(l.size() != 3 || l.cdr().car()->get_type() != atom_type::T_ID)
+                            detail::unsupported_args(location, "let-seq def", args);
+                        name = l.cdr().car()->get_identifier();
+                        atom value = evaluate(l.cdr().cdr().car(), descEnv);
+                        descEnv->set(name, value);
+                        continue;
+                    } else if(name == L"defun") {
+                        if(l.size() != 4 || l.cdr().car()->get_type() != atom_type::T_ID || l.cdr().cdr().car()->get_type() != atom_type::T_LIST)
+                            detail::unsupported_args(location, "let-seq defun", args);
+                        name = l.cdr().car()->get_identifier();
+                        descEnv->set(name, gen_lambda->call(descEnv, l.cdr().cdr()));
+                        continue;
+                    } else if(name == L"defm") {
+                        if(l.size() != 4)
+                            detail::unsupported_args(location, "let-seq defm", args);
+                        name = l.cdr().car()->get_identifier();
+                        descEnv->set(name, gen_mu->call(descEnv, l.cdr().cdr()));
+                        continue;
+                    }
+                }
+            }
+            
+            return evaluate(a, descEnv)->thunk_forward();
+        }
+
+        return null_atom->thunk_forward();
+    }));
+}
+
+define_repr(let_seq, return L"built-in function `let-seq'")
+
 }

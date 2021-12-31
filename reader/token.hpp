@@ -12,12 +12,13 @@ enum class token_type {
     TOKEN_LBRA, TOKEN_RBRA, TOKEN_OVER, TOKEN_SLASH,
     TOKEN_ATOP, TOKEN_MAP, TOKEN_TACK, TOKEN_FORK,
     TOKEN_BIND, TOKEN_LPAR, TOKEN_RPAR, TOKEN_QUOT,
+    TOKEN_TRASH, // comments
     TOKEN_EMPTY
 };
 
 class token {
     public:
-        std::optional<std::variant<std::wstring, std::string>> content;
+        std::optional<std::variant<std::wstring, std::string, unsigned>> content;
         token_type type;
         unsigned line, col, loc;
 
@@ -25,6 +26,9 @@ class token {
             : content(content), type(type), line(line), col(col), loc(loc) { }
         
         token(unsigned loc, unsigned line, unsigned col, std::string content, token_type type)
+            : content(content), type(type), line(line), col(col), loc(loc) { }
+        
+        token(unsigned loc, unsigned line, unsigned col, unsigned content, token_type type)
             : content(content), type(type), line(line), col(col), loc(loc) { }
         
         token(unsigned loc, unsigned line, unsigned col, token_type type)
