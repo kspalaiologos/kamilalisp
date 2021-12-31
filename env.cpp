@@ -128,16 +128,6 @@ std::shared_ptr<environment> environment::create_default_env() {
         rndlib::rng_real<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::minstd_rand>
     >()));
 
-    env->set(L"rng-lcg-deal", make_atom(std::make_shared<
-        rndlib::rng_deal<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::minstd_rand>
-    >()));
-    env->set(L"rng-lcg-roll", make_atom(std::make_shared<
-        rndlib::rng_roll<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::minstd_rand>
-    >()));
-    env->set(L"rng-lcg-real", make_atom(std::make_shared<
-        rndlib::rng_real<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::minstd_rand>
-    >()));
-
     env->set(L"rng-ranlux-deal", make_atom(std::make_shared<
         rndlib::rng_deal<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::ranlux48>
     >()));
