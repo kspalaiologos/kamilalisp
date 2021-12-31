@@ -141,6 +141,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     >()));
 
     env->set(L"str-trim", make_atom(std::make_shared<strlib::str_trim>()));
+    env->set(L"size", make_atom(std::make_shared<corelib::size>()));
 
     return env;
 }
