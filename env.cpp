@@ -43,6 +43,7 @@ std::shared_ptr<environment> environment::get_topmost_ancestor() {
 #include "lib/core-lib.hpp"
 #include "lib/math-lib.hpp"
 #include "lib/io-lib.hpp"
+#include "lib/str-lib.hpp"
 #include "lib/random-lib.hpp"
 
 std::shared_ptr<environment> environment::create_default_env() {
@@ -138,6 +139,8 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"rng-ranlux-real", make_atom(std::make_shared<
         rndlib::rng_real<std::uniform_int_distribution<unsigned long>, std::uniform_int_distribution<>, std::ranlux48>
     >()));
+
+    env->set(L"str-trim", make_atom(std::make_shared<strlib::str_trim>()));
 
     return env;
 }
