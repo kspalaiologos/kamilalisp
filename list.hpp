@@ -113,6 +113,18 @@ class list {
                 return list(ptr, ptr);
             }
         }
+        
+        // unsafe push_back.
+        void push_back(T value) {
+            if(is_empty()) {
+                node_data = std::make_shared<node<T>>(nullptr, value);
+                last = node_data;
+            } else {
+                last->next = std::make_shared<node<T>>(nullptr, value);
+                last = last->next;
+            }
+            size_cache++;
+        }
 
         // unsafe append: everything that references the node data
         // will see the operation being reflected. use with caution.

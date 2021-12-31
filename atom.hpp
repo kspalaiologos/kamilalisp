@@ -153,6 +153,12 @@ static atom null_atom = std::make_shared<atom_>(atom_list());
 static atom atom_true = std::make_shared<atom_>(boost::multiprecision::mpz_int(1));
 static atom atom_false = std::make_shared<atom_>(boost::multiprecision::mpz_int(0));
 
+struct atom_equality_trait {
+    bool operator()(const atom & a, const atom & b) const {
+        return a->operator==(b);
+    }
+};
+
 namespace std {
     std::wstring to_wstring(atom);
 

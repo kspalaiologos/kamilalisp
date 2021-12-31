@@ -12,6 +12,7 @@ define_callable(add);
 define_callable(subtract);
 define_callable(multiply);
 define_callable(divide);
+define_callable(divide_int);
 define_callable(modulus);
 define_callable(sqrt);
 define_callable(power);

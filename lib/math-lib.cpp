@@ -2,7 +2,9 @@
 #include "math-lib.hpp"
 #include "lib-detail.hpp"
 
+#include <unordered_set>
 #include <numeric>
+#include <boost/range/join.hpp>
 
 namespace bmp = boost::multiprecision;
 
@@ -191,7 +193,7 @@ define_repr(multiply, return L"built-in function `*'")
             stacktrace_guard g{ repr };
             auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
             if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
-                return thunk_type(a->get_integer() / b->get_integer());
+                return thunk_type(a->get_integer().convert_to<bmp::mpf_float>() / b->get_integer().convert_to<bmp::mpf_float>());
             } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_INT) {
                 return thunk_type(a->get_real() / b->get_integer());
             } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_REAL) {
@@ -236,6 +238,60 @@ define_repr(multiply, return L"built-in function `*'")
 }
 
 define_repr(divide, return L"built-in function `/'")
+
+[[gnu::flatten]] atom divide_int::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_either<1, 2>(location, "//", args);
+    if(args.size() == 2) {
+        std::wstring repr = this->repr();
+        return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+            stacktrace_guard g{ repr };
+            auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
+            if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
+                return thunk_type(a->get_integer() / b->get_integer());
+            } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_INT) {
+                return thunk_type(a->get_real() / b->get_integer());
+            } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_REAL) {
+                return thunk_type(a->get_integer() / b->get_real());
+            } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_REAL) {
+                return thunk_type(a->get_real() / b->get_real());
+            } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_CMPLX) {
+                return thunk_type(a->get_complex() / b->get_complex());
+            } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_INT) {
+                return thunk_type(a->get_complex() / b->get_integer());
+            } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_REAL) {
+                return thunk_type(a->get_complex() / b->get_real());
+            } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_CMPLX) {
+                return thunk_type(bmp::mpc_complex(a->get_integer()) / b->get_complex());
+            } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_CMPLX) {
+                return thunk_type(bmp::mpc_complex(a->get_real()) / b->get_complex());
+            } else {
+                detail::unsupported_args(location, "//", args);
+            }
+        }));
+    } else if(args.size() == 1) {
+        std::wstring repr = this->repr();
+        return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+            stacktrace_guard g{ repr };
+            auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+            if(a->get_type() == atom_type::T_INT) {
+                return thunk_type(1 / bmp::mpf_float(a->get_integer()));
+            } else if(a->get_type() == atom_type::T_REAL) {
+                return thunk_type(1 / bmp::mpf_float(a->get_real()));
+            } else if(a->get_type() == atom_type::T_CMPLX) {
+                // 1/z = conjugate(z) / norm^2(z)
+                return thunk_type(conj(a->get_complex()) /
+                    abs_f(bmp::pow(a->get_complex().real(), 2)
+                        + bmp::pow(a->get_complex().imag(), 2)));
+            } else {
+                detail::unsupported_args(location, "//", args);
+            }
+        }));
+    }
+
+    __builtin_unreachable();
+}
+
+define_repr(divide_int, return L"built-in function `//'")
 
 [[gnu::flatten]] atom modulus::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_either<1, 2>(location, "%", args);
@@ -678,19 +734,72 @@ define_repr(less_equal, return L"built-in function `<='")
 define_repr(greater_equal, return L"built-in function `>='")
 
 [[gnu::flatten]] atom kl_ceil::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
-    detail::argno_exact<1>(location, "ceil", args);
+    detail::argno_either<1, 2>(location, "ceil", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
         stacktrace_guard g{ repr };
-        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
-        if(a->get_type() == atom_type::T_INT) {
-            return a->get_integer();
-        } else if(a->get_type() == atom_type::T_REAL) {
-            return bmp::ceil(a->get_real());
-        } else if(a->get_type() == atom_type::T_CMPLX) {
-            return bmp::mpc_complex {bmp::ceil(a->get_complex().real()), bmp::ceil(a->get_complex().imag())};
+        if(args.size() == 1) {
+            auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+            if(a->get_type() == atom_type::T_INT) {
+                return a->get_integer();
+            } else if(a->get_type() == atom_type::T_REAL) {
+                return bmp::ceil(a->get_real());
+            } else if(a->get_type() == atom_type::T_CMPLX) {
+                return bmp::mpc_complex {bmp::ceil(a->get_complex().real()), bmp::ceil(a->get_complex().imag())};
+            } else {
+                detail::unsupported_args(location, "ceil", args);
+            }
         } else {
-            detail::unsupported_args(location, "ceil", args);
+            auto [a, b_atom] = detail::get_args<0, 2>(args, env, eval_args);
+            if(b_atom->get_type() != atom_type::T_INT)
+                detail::unsupported_args(location, "ceil", args);
+            bmp::mpz_int b = b_atom->get_integer();
+            // a = 23.1415
+            // if b = 0: ceil(a) = 23
+            // if b = 1: ceil(a) = 23.1
+            // if b = 2: ceil(a) = 23.14
+            // if b = -1: ceil(a) = 20
+            // if b = -2: cail(a) = 100
+            if(b == 0) {
+                // plain old boring ceil
+                if(a->get_type() == atom_type::T_INT) {
+                    return a->get_integer();
+                } else if(a->get_type() == atom_type::T_REAL) {
+                    return bmp::ceil(a->get_real());
+                } else if(a->get_type() == atom_type::T_CMPLX) {
+                    return bmp::mpc_complex {bmp::ceil(a->get_complex().real()), bmp::ceil(a->get_complex().imag())};
+                } else {
+                    detail::unsupported_args(location, "ceil", args);
+                }
+            } else if(b > 0) {
+                // ceil(a * 10^b) / 10^b
+                bmp::mpz_int p = bmp::pow(bmp::mpz_int(10), b.convert_to<unsigned>());
+                if(a->get_type() == atom_type::T_INT) {
+                    bmp::mpf_float n = bmp::mpf_float(a->get_integer()) * p;
+                    return bmp::mpf_float(bmp::ceil(n) / p);
+                } else if(a->get_type() == atom_type::T_REAL) {
+                    return bmp::ceil(a->get_real() * p) / p;
+                } else if(a->get_type() == atom_type::T_CMPLX) {
+                    return bmp::mpc_complex {bmp::ceil(a->get_complex().real() * p) / p, bmp::ceil(a->get_complex().imag() * p) / p};
+                } else {
+                    detail::unsupported_args(location, "ceil", args);
+                }
+            } else if(b < 0) {
+                // ceil(a / 10^b) * 10^b
+                bmp::mpz_int p = bmp::pow(bmp::mpz_int(10), b.convert_to<unsigned>());
+                if(a->get_type() == atom_type::T_INT) {
+                    bmp::mpf_float n = bmp::mpf_float(a->get_integer()) / p;
+                    return bmp::mpf_float(bmp::ceil(n) * p);
+                } else if(a->get_type() == atom_type::T_REAL) {
+                    return bmp::ceil(a->get_real() / p) * p;
+                } else if(a->get_type() == atom_type::T_CMPLX) {
+                    return bmp::mpc_complex {bmp::ceil(a->get_complex().real() / p) * p, bmp::ceil(a->get_complex().imag() / p) * p};
+                } else {
+                    detail::unsupported_args(location, "ceil", args);
+                }
+            }
+
+            __builtin_unreachable();
         }
     }));
 }
@@ -698,23 +807,174 @@ define_repr(greater_equal, return L"built-in function `>='")
 define_repr(kl_ceil, return L"built-in function `ceil'");
 
 [[gnu::flatten]] atom kl_floor::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
-    detail::argno_exact<1>(location, "floor", args);
+    detail::argno_either<1, 2>(location, "floor", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
         stacktrace_guard g{ repr };
-        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
-        if(a->get_type() == atom_type::T_INT) {
-            return a->get_integer();
-        } else if(a->get_type() == atom_type::T_REAL) {
-            return bmp::floor(a->get_real());
-        } else if(a->get_type() == atom_type::T_CMPLX) {
-            return bmp::mpc_complex {bmp::floor(a->get_complex().real()), bmp::floor(a->get_complex().imag())};
+        if(args.size() == 1) {
+            auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+            if(a->get_type() == atom_type::T_INT) {
+                return a->get_integer();
+            } else if(a->get_type() == atom_type::T_REAL) {
+                return bmp::floor(a->get_real());
+            } else if(a->get_type() == atom_type::T_CMPLX) {
+                return bmp::mpc_complex {bmp::floor(a->get_complex().real()), bmp::floor(a->get_complex().imag())};
+            } else {
+                detail::unsupported_args(location, "floor", args);
+            }
         } else {
-            detail::unsupported_args(location, "floor", args);
+            auto [a, b_atom] = detail::get_args<0, 2>(args, env, eval_args);
+            if(b_atom->get_type() != atom_type::T_INT)
+                detail::unsupported_args(location, "floor", args);
+            bmp::mpz_int b = b_atom->get_integer();
+            if(b == 0) {
+                // plain old boring floor
+                if(a->get_type() == atom_type::T_INT) {
+                    return a->get_integer();
+                } else if(a->get_type() == atom_type::T_REAL) {
+                    return bmp::floor(a->get_real());
+                } else if(a->get_type() == atom_type::T_CMPLX) {
+                    return bmp::mpc_complex {bmp::floor(a->get_complex().real()), bmp::floor(a->get_complex().imag())};
+                } else {
+                    detail::unsupported_args(location, "floor", args);
+                }
+            } else if(b > 0) {
+                // floor(a * 10^b) / 10^b
+                bmp::mpz_int p = bmp::pow(bmp::mpz_int(10), b.convert_to<unsigned>());
+                if(a->get_type() == atom_type::T_INT) {
+                    bmp::mpf_float n = bmp::mpf_float(a->get_integer()) * p;
+                    return bmp::mpf_float(bmp::floor(n) / p);
+                } else if(a->get_type() == atom_type::T_REAL) {
+                    return bmp::floor(a->get_real() * p) / p;
+                } else if(a->get_type() == atom_type::T_CMPLX) {
+                    return bmp::mpc_complex {bmp::floor(a->get_complex().real() * p) / p, bmp::floor(a->get_complex().imag() * p) / p};
+                } else {
+                    detail::unsupported_args(location, "floor", args);
+                }
+            } else if(b < 0) {
+                // floor(a / 10^b) * 10^b
+                bmp::mpz_int p = bmp::pow(bmp::mpz_int(10), b.convert_to<unsigned>());
+                if(a->get_type() == atom_type::T_INT) {
+                    bmp::mpf_float n = bmp::mpf_float(a->get_integer()) / p;
+                    return bmp::mpf_float(bmp::floor(n) * p);
+                } else if(a->get_type() == atom_type::T_REAL) {
+                    return bmp::floor(a->get_real() / p) * p;
+                } else if(a->get_type() == atom_type::T_CMPLX) {
+                    return bmp::mpc_complex {bmp::floor(a->get_complex().real() / p) * p, bmp::floor(a->get_complex().imag() / p) * p};
+                } else {
+                    detail::unsupported_args(location, "floor", args);
+                }
+            }
+
+            __builtin_unreachable();
         }
     }));
 }
 
 define_repr(kl_floor, return L"built-in function `floor'");
+
+[[gnu::flatten]] atom kl_or::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<2>(location, "or", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
+        if(a->get_type() == atom_type::T_LIST && a->get_type() == atom_type::T_LIST) {
+            // XXX: Do it more efficiently, without a copy?
+            atom_list result { };
+            std::unordered_set<atom, std::hash<atom>, atom_equality_trait> seen { a->get_list().begin(), a->get_list().end() };
+            seen.insert(b->get_list().begin(), b->get_list().end());
+            for(auto& i : seen)
+                result.push_back(i);
+            return result;
+        } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
+            return a->get_integer() | b->get_integer();
+        } else {
+            detail::unsupported_args(location, "or", args);
+        }
+    }));
+}
+
+define_repr(kl_or, return L"built-in function `or'");
+
+[[gnu::flatten]] atom kl_xor::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<2>(location, "xor", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
+        if(a->get_type() == atom_type::T_LIST && a->get_type() == atom_type::T_LIST) {
+            // XXX: Do it more efficiently, without a copy?
+            atom_list result { };
+            {
+                using atom_set = std::unordered_set<atom, std::hash<atom>, atom_equality_trait>;
+                atom_set intersection { };
+                atom_set s1 { a->get_list().begin(), a->get_list().end() };
+                // Find the intersection and union.
+                {
+                    atom_set s2 { b->get_list().begin(), b->get_list().end() };
+                    for(auto e : s1)
+                        if(s2.find(e) != s2.end())
+                            intersection.insert(e);
+                    s1.insert(s2.begin(), s2.end());
+                }
+                // intersection => intersection of two sets
+                // s1 => union of two sets.
+                // Take the difference:
+                for(auto e : intersection)
+                    s1.erase(e);
+                // Turn into a linked list:
+                atom_list result { };
+                for(auto & i : s1)
+                    result.push_back(i);
+                return result;
+            }
+            return result;
+        } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
+            return a->get_integer() ^ b->get_integer();
+        } else {
+            detail::unsupported_args(location, "xor", args);
+        }
+    }));
+}
+
+define_repr(kl_xor, return L"built-in function `xor'");
+
+[[gnu::flatten]] atom kl_and::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<2>(location, "and", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
+        if(a->get_type() == atom_type::T_LIST && a->get_type() == atom_type::T_LIST) {
+            // XXX: Do it more efficiently, without a copy?
+            atom_list result { };
+            {
+                using atom_set = std::unordered_set<atom, std::hash<atom>, atom_equality_trait>;
+                atom_set intersection { };
+                // Find the intersection.
+                {
+                    atom_set s1 { a->get_list().begin(), a->get_list().end() };
+                    atom_set s2 { b->get_list().begin(), b->get_list().end() };
+                    for(auto e : s1)
+                        if(s2.find(e) != s2.end())
+                            intersection.insert(e);
+                }
+                // Turn into a linked list:
+                atom_list result { };
+                for(auto & i : intersection)
+                    result.push_back(i);
+                return result;
+            }
+            return result;
+        } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
+            return a->get_integer() & b->get_integer();
+        } else {
+            detail::unsupported_args(location, "and", args);
+        }
+    }));
+}
+
+define_repr(kl_and, return L"built-in function `and'");
 
 }

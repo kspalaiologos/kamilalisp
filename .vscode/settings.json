@@ -74,6 +74,7 @@
         "cfenv": "cpp",
         "*.ipp": "cpp",
         "charconv": "cpp",
-        "source_location": "cpp"
+        "source_location": "cpp",
+        "unordered_set": "cpp"
     }
 }
