@@ -1020,6 +1020,22 @@ mpz_rat ratio(bmp::mpf_float & f, unsigned precision) {
     return old;
 }
 
+static inline bmp::mpc_complex gaussian_rem(const bmp::mpc_complex & a, const bmp::mpc_complex & b) {
+    bmp::mpc_complex prod = a * bmp::conj(b);
+    bmp::mpfr_float p = prod.real() / (b.real() * b.real() + b.imag() * b.imag());
+    bmp::mpfr_float q = prod.imag() / (b.real() * b.real() + b.imag() * b.imag());
+    bmp::mpc_complex gamma = bmp::mpc_complex(bmp::trunc(p), bmp::trunc(q));
+    bmp::mpc_complex rho = a - gamma * b;
+    return rho;
+}
+
+static inline bmp::mpc_complex gcd_complex(const bmp::mpc_complex & alpha, const bmp::mpc_complex & beta) {
+    static bmp::mpc_complex ZERO = bmp::mpc_complex(0, 0);
+    if(gaussian_rem(alpha, beta) == ZERO)
+        return beta;
+    return gcd_complex(beta, gaussian_rem(alpha, beta));
+}
+
 [[gnu::flatten]] atom kl_gcd::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<2>(location, "gcd", args);
     std::wstring repr = this->repr();
@@ -1064,6 +1080,18 @@ mpz_rat ratio(bmp::mpf_float & f, unsigned precision) {
             bmp::mpz_int bot = bmp::lcm(B, D);
             // return the fraction
             return bmp::mpf_float(top) / bot;
+        } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_INT) {
+            bmp::mpc_complex n1 = a->get_complex();
+            bmp::mpc_complex n2 = b->get_integer();
+            return gcd_complex(n1, n2);
+        } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_CMPLX) {
+            bmp::mpc_complex n1 = a->get_complex();
+            bmp::mpc_complex n2 = b->get_complex();
+            return gcd_complex(n1, n2);
+        } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
+            bmp::mpc_complex n1 = a->get_integer();
+            bmp::mpc_complex n2 = b->get_complex();
+            return gcd_complex(n1, n2);
         } else {
             detail::unsupported_args(location, "gcd", args);
         }
@@ -1116,6 +1144,18 @@ define_repr(kl_gcd, return L"built-in function `gcd'");
             bmp::mpz_int bot = bmp::gcd(B, D);
             // return the fraction
             return bmp::mpf_float(top) / bot;
+        } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_INT) {
+            bmp::mpc_complex n1 = a->get_complex();
+            bmp::mpc_complex n2 = b->get_integer();
+            return (n1 * n2) / gcd_complex(n1, n2);
+        } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_CMPLX) {
+            bmp::mpc_complex n1 = a->get_complex();
+            bmp::mpc_complex n2 = b->get_complex();
+            return (n1 * n2) / gcd_complex(n1, n2);
+        } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
+            bmp::mpc_complex n1 = a->get_integer();
+            bmp::mpc_complex n2 = b->get_complex();
+            return (n1 * n2) / gcd_complex(n1, n2);
         } else {
             detail::unsupported_args(location, "lcm", args);
         }
@@ -1123,5 +1163,44 @@ define_repr(kl_gcd, return L"built-in function `gcd'");
 }
 
 define_repr(kl_lcm, return L"built-in function `lcm'");
+
+static std::unordered_map<int, mpz_rat> bernoulli_cache;
+static std::mutex bernoulli_lock;
+
+atom_list rat_to_list(const mpz_rat & r) {
+    atom_list result;
+    auto [num, den] = r;
+    result.push_back(make_atom(num));
+    result.push_back(make_atom(den));
+    return result;
+}
+
+[[gnu::flatten]] atom kl_bernoulli::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "bernoulli", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        if(a->get_type() != atom_type::T_INT)
+            detail::unsupported_args(location, "bernoulli", args);
+        int n = a->get_integer().convert_to<int>();
+
+        std::lock_guard<std::mutex> guard(bernoulli_lock);
+        if(bernoulli_cache.find(n) != bernoulli_cache.end())
+            return rat_to_list(bernoulli_cache[n]);
+        auto out = std::vector<bmp::mpq_rational>();
+        for (size_t m = 0; m <= n; m++) {
+            out.emplace_back(1, (m + 1));
+            for (size_t j = m; j >= 1; j--) {
+                out[j - 1] = bmp::mpq_rational(j) * (out[j - 1] - out[j]);
+            }
+        }
+        mpz_rat result = std::make_tuple(bmp::numerator(out[0]), bmp::denominator(out[0]));
+        bernoulli_cache.emplace(n, result);
+        return rat_to_list(result);
+    }));
+}
+
+define_repr(kl_bernoulli, return L"built-in function `bernoulli'");
 
 }

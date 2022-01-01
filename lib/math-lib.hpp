@@ -37,6 +37,8 @@ define_callable(kl_ceil);
 define_callable(kl_gcd);
 define_callable(kl_lcm);
 
+define_callable(kl_bernoulli);
+
 }
 
 #endif
