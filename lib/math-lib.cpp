@@ -977,4 +977,103 @@ define_repr(kl_xor, return L"built-in function `xor'");
 
 define_repr(kl_and, return L"built-in function `and'");
 
+using mpz_rat = std::tuple<bmp::mpz_int, bmp::mpz_int>;
+
+mpz_rat to_rat(const std::vector<bmp::mpz_int> & series) {
+    mpz_rat rat = std::make_tuple(bmp::mpz_int(1), bmp::mpz_int(0));
+    for(auto x = series.rbegin(); x != series.rend(); x++) {
+        std::swap(std::get<0>(rat), std::get<1>(rat));
+        std::get<0>(rat) += *x * std::get<1>(rat);
+    }
+    return rat;
+}
+
+bmp::mpf_float float_from_rat(const mpz_rat & r) {
+    return bmp::mpf_float(std::get<0>(r)) / bmp::mpf_float(std::get<1>(r));
+}
+
+mpz_rat ratio(bmp::mpf_float & f, unsigned precision) {
+    std::vector<bmp::mpz_int> series;
+    bmp::mpf_float orig = f;
+    const bmp::mpf_float ONE = bmp::mpf_float(1);
+    const bmp::mpf_float ZERO = bmp::mpf_float(0);
+    mpz_rat old = std::make_tuple(bmp::mpz_int(1), bmp::mpz_int(1));
+
+    // NOTE: Approximating rationals, especially for small values, needs to be done with reduced precision.
+
+    // 1: Find the continued fraction up to a given precision.
+    for(unsigned i = 0; i < precision; i++) {
+        bmp::mpz_int x = f.convert_to<bmp::mpz_int>();
+        series.push_back(x);
+        mpz_rat R = to_rat(series);
+        if(bmp::abs(float_from_rat(old) - orig) > bmp::abs(float_from_rat(R) - orig))
+            old = R;
+        bmp::mpf_float f_next = f - x;
+        if(f_next == ZERO)
+            break;
+        f = ONE / f_next;
+    }
+
+    if(std::get<1>(old) == ZERO)
+        kl_error("can't approximate as a rational: " + f.str());
+
+    return old;
+}
+
+[[gnu::flatten]] atom kl_gcd::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<2>(location, "gcd", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
+        if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
+            return bmp::gcd(a->get_integer(), b->get_integer());
+        } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_REAL) {
+            unsigned precision = env->get(L"fr")->get_integer().convert_to<unsigned>();
+            bmp::mpf_float n1 = a->get_real();
+            bmp::mpf_float n2 = b->get_real();
+            // gcd(a/b, c/d) = gcd(a, c) / lcm(b, d)
+            auto [A, B] = ratio(n1, precision);
+            auto [C, D] = ratio(n2, precision);
+            // compute the resulting fraction's numerator and denumerator
+            bmp::mpz_int top = bmp::gcd(A, C);
+            bmp::mpz_int bot = bmp::lcm(B, D);
+            // return the fraction
+            return bmp::mpf_float(top) / bot;
+        } else {
+            detail::unsupported_args(location, "gcd", args);
+        }
+    }));
+}
+
+define_repr(kl_gcd, return L"built-in function `gcd'");
+
+[[gnu::flatten]] atom kl_lcm::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<2>(location, "lcm", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
+        if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
+            return bmp::lcm(a->get_integer(), b->get_integer());
+        } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_REAL) {
+            unsigned precision = env->get(L"fr")->get_integer().convert_to<unsigned>();
+            bmp::mpf_float n1 = a->get_real();
+            bmp::mpf_float n2 = b->get_real();
+            // gcd(a/b, c/d) = gcd(a, c) / lcm(b, d)
+            auto [A, B] = ratio(n1, precision);
+            auto [C, D] = ratio(n2, precision);
+            // compute the resulting fraction's numerator and denumerator
+            bmp::mpz_int top = bmp::lcm(A, C);
+            bmp::mpz_int bot = bmp::gcd(B, D);
+            // return the fraction
+            return bmp::mpf_float(top) / bot;
+        } else {
+            detail::unsupported_args(location, "lcm", args);
+        }
+    }));
+}
+
+define_repr(kl_lcm, return L"built-in function `lcm'");
+
 }

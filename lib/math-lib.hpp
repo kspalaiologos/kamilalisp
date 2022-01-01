@@ -34,6 +34,9 @@ define_callable(kl_xor);
 define_callable(kl_floor);
 define_callable(kl_ceil);
 
+define_callable(kl_gcd);
+define_callable(kl_lcm);
+
 }
 
 #endif

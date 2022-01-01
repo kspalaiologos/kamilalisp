@@ -155,5 +155,8 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"floor", make_atom(std::make_shared<mathlib::kl_floor>()));
     env->set(L"ceil", make_atom(std::make_shared<mathlib::kl_ceil>()));
 
+    env->set(L"lcm", make_atom(std::make_shared<mathlib::kl_lcm>()));
+    env->set(L"gcd", make_atom(std::make_shared<mathlib::kl_gcd>()));
+
     return env;
 }
