@@ -72,6 +72,8 @@ define_callable(kl_arccoth);
 define_callable(kl_arcsech);
 define_callable(kl_arccsch);
 
+define_callable(prime);
+
 }
 
 #endif

@@ -190,6 +190,7 @@ std::shared_ptr<environment> environment::create_default_env() {
 
     env->set(L"pi", make_atom(std::make_shared<mathlib::kl_pi>()));
     env->set(L"e", make_atom(std::make_shared<mathlib::kl_e>()));
+    env->set(L"prime?", make_atom(std::make_shared<mathlib::prime>()));
 
     return env;
 }
