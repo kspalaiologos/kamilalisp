@@ -175,6 +175,19 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"arcsec", make_atom(std::make_shared<mathlib::kl_arcsec>()));
     env->set(L"arccsc", make_atom(std::make_shared<mathlib::kl_arccsc>()));
 
+    env->set(L"sinh", make_atom(std::make_shared<mathlib::kl_sinh>()));
+    env->set(L"cosh", make_atom(std::make_shared<mathlib::kl_cosh>()));
+    env->set(L"tanh", make_atom(std::make_shared<mathlib::kl_tanh>()));
+    env->set(L"ctgh", make_atom(std::make_shared<mathlib::kl_coth>()));
+    env->set(L"sech", make_atom(std::make_shared<mathlib::kl_sech>()));
+    env->set(L"csch", make_atom(std::make_shared<mathlib::kl_csch>()));
+    env->set(L"arcsinh", make_atom(std::make_shared<mathlib::kl_arcsinh>()));
+    env->set(L"arccosh", make_atom(std::make_shared<mathlib::kl_arccosh>()));
+    env->set(L"arctanh", make_atom(std::make_shared<mathlib::kl_arctanh>()));
+    env->set(L"arccoth", make_atom(std::make_shared<mathlib::kl_arccoth>()));
+    env->set(L"arcsech", make_atom(std::make_shared<mathlib::kl_arcsech>()));
+    env->set(L"arccsch", make_atom(std::make_shared<mathlib::kl_arccsch>()));
+
     env->set(L"pi", make_atom(std::make_shared<mathlib::kl_pi>()));
     env->set(L"e", make_atom(std::make_shared<mathlib::kl_e>()));
 
