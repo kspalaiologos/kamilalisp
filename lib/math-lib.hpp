@@ -38,6 +38,7 @@ define_callable(kl_gcd);
 define_callable(kl_lcm);
 
 define_callable(kl_bernoulli);
+define_callable(kl_digamma);
 
 }
 

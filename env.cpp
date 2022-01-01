@@ -159,6 +159,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"gcd", make_atom(std::make_shared<mathlib::kl_gcd>()));
 
     env->set(L"bernoulli", make_atom(std::make_shared<mathlib::kl_bernoulli>()));
+    env->set(L"digamma", make_atom(std::make_shared<mathlib::kl_digamma>()));
 
     return env;
 }

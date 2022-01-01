@@ -1189,7 +1189,7 @@ atom_list rat_to_list(const mpz_rat & r) {
         if(bernoulli_cache.find(n) != bernoulli_cache.end())
             return rat_to_list(bernoulli_cache[n]);
         auto out = std::vector<bmp::mpq_rational>();
-        for (size_t m = 0; m <= n; m++) {
+        for (int m = 0; m <= n; m++) {
             out.emplace_back(1, (m + 1));
             for (size_t j = m; j >= 1; j--) {
                 out[j - 1] = bmp::mpq_rational(j) * (out[j - 1] - out[j]);
@@ -1202,5 +1202,28 @@ atom_list rat_to_list(const mpz_rat & r) {
 }
 
 define_repr(kl_bernoulli, return L"built-in function `bernoulli'");
+
+[[gnu::flatten]] atom kl_digamma::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "digamma", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        bmp::mpc_complex c;
+        if(a->get_type() == atom_type::T_INT) {
+            c = a->get_integer();
+        } else if(a->get_type() == atom_type::T_REAL) {
+            c = a->get_real();
+        } else if(a->get_type() == atom_type::T_CMPLX) {
+            c = a->get_complex();
+        } else {
+            detail::unsupported_args(location, "digamma", args);
+        }
+        // Use the boring phi(z) = ln(z) - 1/2z approximation.
+        return bmp::log(c) - 1.0 / (2 * c);
+    }));
+}
+
+define_repr(kl_digamma, return L"built-in function `digamma'");
 
 }
