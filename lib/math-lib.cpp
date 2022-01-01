@@ -1040,6 +1040,30 @@ mpz_rat ratio(bmp::mpf_float & f, unsigned precision) {
             bmp::mpz_int bot = bmp::lcm(B, D);
             // return the fraction
             return bmp::mpf_float(top) / bot;
+        } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_REAL) {
+            unsigned precision = env->get(L"fr")->get_integer().convert_to<unsigned>();
+            bmp::mpf_float n1 = a->get_integer();
+            bmp::mpf_float n2 = b->get_real();
+            // gcd(a/b, c/d) = gcd(a, c) / lcm(b, d)
+            auto [A, B] = ratio(n1, precision);
+            auto [C, D] = ratio(n2, precision);
+            // compute the resulting fraction's numerator and denumerator
+            bmp::mpz_int top = bmp::gcd(A, C);
+            bmp::mpz_int bot = bmp::lcm(B, D);
+            // return the fraction
+            return bmp::mpf_float(top) / bot;
+        } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_INT) {
+            unsigned precision = env->get(L"fr")->get_integer().convert_to<unsigned>();
+            bmp::mpf_float n1 = a->get_real();
+            bmp::mpf_float n2 = b->get_integer();
+            // gcd(a/b, c/d) = gcd(a, c) / lcm(b, d)
+            auto [A, B] = ratio(n1, precision);
+            auto [C, D] = ratio(n2, precision);
+            // compute the resulting fraction's numerator and denumerator
+            bmp::mpz_int top = bmp::gcd(A, C);
+            bmp::mpz_int bot = bmp::lcm(B, D);
+            // return the fraction
+            return bmp::mpf_float(top) / bot;
         } else {
             detail::unsupported_args(location, "gcd", args);
         }
@@ -1060,6 +1084,30 @@ define_repr(kl_gcd, return L"built-in function `gcd'");
             unsigned precision = env->get(L"fr")->get_integer().convert_to<unsigned>();
             bmp::mpf_float n1 = a->get_real();
             bmp::mpf_float n2 = b->get_real();
+            // gcd(a/b, c/d) = gcd(a, c) / lcm(b, d)
+            auto [A, B] = ratio(n1, precision);
+            auto [C, D] = ratio(n2, precision);
+            // compute the resulting fraction's numerator and denumerator
+            bmp::mpz_int top = bmp::lcm(A, C);
+            bmp::mpz_int bot = bmp::gcd(B, D);
+            // return the fraction
+            return bmp::mpf_float(top) / bot;
+        } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_REAL) {
+            unsigned precision = env->get(L"fr")->get_integer().convert_to<unsigned>();
+            bmp::mpf_float n1 = a->get_integer();
+            bmp::mpf_float n2 = b->get_real();
+            // gcd(a/b, c/d) = gcd(a, c) / lcm(b, d)
+            auto [A, B] = ratio(n1, precision);
+            auto [C, D] = ratio(n2, precision);
+            // compute the resulting fraction's numerator and denumerator
+            bmp::mpz_int top = bmp::lcm(A, C);
+            bmp::mpz_int bot = bmp::gcd(B, D);
+            // return the fraction
+            return bmp::mpf_float(top) / bot;
+        } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_INT) {
+            unsigned precision = env->get(L"fr")->get_integer().convert_to<unsigned>();
+            bmp::mpf_float n1 = a->get_real();
+            bmp::mpf_float n2 = b->get_integer();
             // gcd(a/b, c/d) = gcd(a, c) / lcm(b, d)
             auto [A, B] = ratio(n1, precision);
             auto [C, D] = ratio(n2, precision);
