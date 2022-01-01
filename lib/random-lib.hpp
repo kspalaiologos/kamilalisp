@@ -47,7 +47,7 @@ class rng_deal : public callable {
     public:
         ~rng_deal() { }
         [[gnu::flatten]] atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args = false) override {
-            detail::argno_either<0, 1>(location, "rng-roll", args);
+            detail::argno_either<0, 1>(src_location, "rng-roll", args);
             std::wstring repr = this->repr();
             return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
                 stacktrace_guard g{ repr };
@@ -65,7 +65,7 @@ class rng_deal : public callable {
                         atom_list l { };
                         for(auto & e : a->get_list()) {
                             if(e->get_type() != atom_type::T_INT)
-                                detail::unsupported_args(location, "rng-roll argument list", args);
+                                detail::unsupported_args(src_location, "rng-roll argument list", args);
                             l = l.unsafe_append(make_atom(rnd_detail::gensize<Distribution, BitDistribution, Generator>(e1, a->get_integer())));
                         }
                         return l;
@@ -81,7 +81,7 @@ class rng_roll : public callable {
     public:
         ~rng_roll() { }
         [[gnu::flatten]] atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args = false) override {
-            detail::argno_exact<2>(location, "rng-roll", args);
+            detail::argno_exact<2>(src_location, "rng-roll", args);
             std::wstring repr = this->repr();
             return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
                 stacktrace_guard g{ repr };
@@ -90,7 +90,7 @@ class rng_roll : public callable {
                 Generator e1(r());
                 auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
                 if(a->get_type() != atom_type::T_INT || b->get_type() != atom_type::T_INT)
-                    detail::unsupported_args(location, "rng-roll argument", args);
+                    detail::unsupported_args(src_location, "rng-roll argument", args);
                 atom_list res { };
                 for(bmp::mpz_int n = 0; n < b->get_integer(); n++)
                     res = res.unsafe_append(make_atom(rnd_detail::gensize<Distribution, BitDistribution, Generator>(e1, a->get_integer())));
@@ -105,7 +105,7 @@ class rng_real : public callable {
     public:
         ~rng_real() { }
         [[gnu::flatten]] atom call(std::shared_ptr<environment> env, atom_list args, bool eval_args = false) override {
-            detail::argno_either<0, 1>(location, "rng-real", args);
+            detail::argno_either<0, 1>(src_location, "rng-real", args);
             std::wstring repr = this->repr();
             return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
                 stacktrace_guard g{ repr };
@@ -125,7 +125,7 @@ class rng_real : public callable {
                 } else {
                     auto [a] = detail::get_args<0, 1>(args, env, eval_args);
                     if(a->get_type() != atom_type::T_INT)
-                        detail::unsupported_args(location, "rng-real argument", args);
+                        detail::unsupported_args(src_location, "rng-real argument", args);
                     atom_list res { };
                     for(bmp::mpz_int n = 0; n < a->get_integer(); n++) {
                         bmp::mpz_int a = rnd_detail::gensize<Distribution, BitDistribution, Generator>(e1, gen_max);
