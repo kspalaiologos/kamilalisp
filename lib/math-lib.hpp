@@ -46,6 +46,9 @@ define_callable(kl_cos);
 define_callable(kl_tan);
 define_callable(kl_cot);
 
+define_callable(kl_pi);
+define_callable(kl_e);
+
 }
 
 #endif

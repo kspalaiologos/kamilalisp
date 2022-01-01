@@ -1307,4 +1307,54 @@ trigonometric_stub(tan);
 
 define_repr(kl_cot, return L"built-in function `cot'");
 
+[[gnu::flatten]] atom kl_pi::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "pi", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        bmp::mpc_complex c;
+        if(a->get_type() == atom_type::T_INT) {
+            c = a->get_integer();
+        } else if(a->get_type() == atom_type::T_REAL) {
+            c = a->get_real();
+        } else if(a->get_type() == atom_type::T_CMPLX) {
+            c = a->get_complex();
+        } else {
+            detail::unsupported_args(location, "pi", args);
+        }
+        bmp::mpc_complex z = c * boost::math::constants::pi<bmp::mpf_float>();
+        if(!z.imag().is_zero())
+            return z;
+        return bmp::mpf_float(z.real());
+    }));
+}
+
+define_repr(kl_pi, return L"built-in function `pi'");
+
+[[gnu::flatten]] atom kl_e::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "e", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        bmp::mpc_complex c;
+        if(a->get_type() == atom_type::T_INT) {
+            c = a->get_integer();
+        } else if(a->get_type() == atom_type::T_REAL) {
+            c = a->get_real();
+        } else if(a->get_type() == atom_type::T_CMPLX) {
+            c = a->get_complex();
+        } else {
+            detail::unsupported_args(location, "pe", args);
+        }
+        bmp::mpc_complex z = c * boost::math::constants::e<bmp::mpf_float>();
+        if(!z.imag().is_zero())
+            return z;
+        return bmp::mpf_float(z.real());
+    }));
+}
+
+define_repr(kl_e, return L"built-in function `e'");
+
 }

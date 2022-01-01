@@ -167,5 +167,8 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"tan", make_atom(std::make_shared<mathlib::kl_tan>()));
     env->set(L"ctg", make_atom(std::make_shared<mathlib::kl_cot>()));
 
+    env->set(L"pi", make_atom(std::make_shared<mathlib::kl_pi>()));
+    env->set(L"e", make_atom(std::make_shared<mathlib::kl_e>()));
+
     return env;
 }
