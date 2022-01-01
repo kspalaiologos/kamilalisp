@@ -41,6 +41,11 @@ define_callable(kl_bernoulli);
 define_callable(kl_digamma);
 define_callable(kl_lambert0);
 
+define_callable(kl_sin);
+define_callable(kl_cos);
+define_callable(kl_tan);
+define_callable(kl_cot);
+
 }
 
 #endif

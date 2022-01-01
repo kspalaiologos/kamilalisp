@@ -162,5 +162,10 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"digamma", make_atom(std::make_shared<mathlib::kl_digamma>()));
     env->set(L"lambert-w0", make_atom(std::make_shared<mathlib::kl_lambert0>()));
 
+    env->set(L"sin", make_atom(std::make_shared<mathlib::kl_sin>()));
+    env->set(L"cos", make_atom(std::make_shared<mathlib::kl_cos>()));
+    env->set(L"tan", make_atom(std::make_shared<mathlib::kl_tan>()));
+    env->set(L"ctg", make_atom(std::make_shared<mathlib::kl_cot>()));
+
     return env;
 }

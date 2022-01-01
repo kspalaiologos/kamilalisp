@@ -1221,7 +1221,7 @@ define_repr(kl_bernoulli, return L"built-in function `bernoulli'");
         }
         // Use the boring phi(z) = ln(z) - 1/2z approximation.
         bmp::mpc_complex z = bmp::log(c) - 1.0 / (2 * c);
-        if(z.imag().is_zero())
+        if(!z.imag().is_zero())
             return z;
         return bmp::mpf_float(z.real());
     }));
@@ -1248,5 +1248,63 @@ define_repr(kl_digamma, return L"built-in function `digamma'");
 }
 
 define_repr(kl_lambert0, return L"built-in function `lambert-w0'");
+
+// If you hate the C++ preprocessor, turn back.
+
+#define LSTR(x) L ## x
+#define trigonometric_stub(f) \
+    [[gnu::flatten]] atom kl_ ## f::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) { \
+        detail::argno_exact<1>(location, (#f), args); \
+        std::wstring repr = this->repr(); \
+        return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type { \
+            stacktrace_guard g{ repr }; \
+            auto [a] = detail::get_args<0, 1>(args, env, eval_args); \
+            bmp::mpc_complex c; \
+            if(a->get_type() == atom_type::T_INT) { \
+                c = a->get_integer(); \
+            } else if(a->get_type() == atom_type::T_REAL) { \
+                c = a->get_real(); \
+            } else if(a->get_type() == atom_type::T_CMPLX) { \
+                c = a->get_complex(); \
+            } else { \
+                detail::unsupported_args(location, #f, args); \
+            } \
+            bmp::mpc_complex z = bmp::f(c); \
+            if(!z.imag().is_zero()) \
+                return z; \
+            return bmp::mpf_float(z.real()); \
+        })); \
+    } \
+    \
+    define_repr(kl_ ## f, return L"built-in function `" LSTR(#f) L"'");
+
+trigonometric_stub(sin);
+trigonometric_stub(cos);
+trigonometric_stub(tan);
+
+[[gnu::flatten]] atom kl_cot::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "cot", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        bmp::mpc_complex c;
+        if(a->get_type() == atom_type::T_INT) {
+            c = a->get_integer();
+        } else if(a->get_type() == atom_type::T_REAL) {
+            c = a->get_real();
+        } else if(a->get_type() == atom_type::T_CMPLX) {
+            c = a->get_complex();
+        } else {
+            detail::unsupported_args(location, "cot", args);
+        }
+        bmp::mpc_complex z = bmp::mpc_complex(1) / bmp::tan(c);
+        if(!z.imag().is_zero())
+            return z;
+        return bmp::mpf_float(z.real());
+    }));
+}
+
+define_repr(kl_cot, return L"built-in function `cot'");
 
 }
