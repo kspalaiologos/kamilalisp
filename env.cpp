@@ -44,6 +44,7 @@ std::shared_ptr<environment> environment::get_topmost_ancestor() {
 #include "lib/math-lib.hpp"
 #include "lib/io-lib.hpp"
 #include "lib/str-lib.hpp"
+#include "lib/trig-lib.hpp"
 #include "lib/random-lib.hpp"
 
 std::shared_ptr<environment> environment::create_default_env() {
@@ -162,34 +163,35 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"digamma", make_atom(std::make_shared<mathlib::kl_digamma>()));
     env->set(L"lambert-w0", make_atom(std::make_shared<mathlib::kl_lambert0>()));
 
-    env->set(L"sin", make_atom(std::make_shared<mathlib::kl_sin>()));
-    env->set(L"cos", make_atom(std::make_shared<mathlib::kl_cos>()));
-    env->set(L"tan", make_atom(std::make_shared<mathlib::kl_tan>()));
-    env->set(L"ctg", make_atom(std::make_shared<mathlib::kl_cot>()));
-    env->set(L"sec", make_atom(std::make_shared<mathlib::kl_sec>()));
-    env->set(L"csc", make_atom(std::make_shared<mathlib::kl_csc>()));
-    env->set(L"arcsin", make_atom(std::make_shared<mathlib::kl_arcsin>()));
-    env->set(L"arccos", make_atom(std::make_shared<mathlib::kl_arccos>()));
-    env->set(L"arctan", make_atom(std::make_shared<mathlib::kl_arctan>()));
-    env->set(L"arccot", make_atom(std::make_shared<mathlib::kl_arccot>()));
-    env->set(L"arcsec", make_atom(std::make_shared<mathlib::kl_arcsec>()));
-    env->set(L"arccsc", make_atom(std::make_shared<mathlib::kl_arccsc>()));
+    env->set(L"sin", make_atom(std::make_shared<triglib::kl_sin>()));
+    env->set(L"cos", make_atom(std::make_shared<triglib::kl_cos>()));
+    env->set(L"tan", make_atom(std::make_shared<triglib::kl_tan>()));
+    env->set(L"ctg", make_atom(std::make_shared<triglib::kl_cot>()));
+    env->set(L"sec", make_atom(std::make_shared<triglib::kl_sec>()));
+    env->set(L"csc", make_atom(std::make_shared<triglib::kl_csc>()));
+    env->set(L"arcsin", make_atom(std::make_shared<triglib::kl_arcsin>()));
+    env->set(L"arccos", make_atom(std::make_shared<triglib::kl_arccos>()));
+    env->set(L"arctan", make_atom(std::make_shared<triglib::kl_arctan>()));
+    env->set(L"arccot", make_atom(std::make_shared<triglib::kl_arccot>()));
+    env->set(L"arcsec", make_atom(std::make_shared<triglib::kl_arcsec>()));
+    env->set(L"arccsc", make_atom(std::make_shared<triglib::kl_arccsc>()));
 
-    env->set(L"sinh", make_atom(std::make_shared<mathlib::kl_sinh>()));
-    env->set(L"cosh", make_atom(std::make_shared<mathlib::kl_cosh>()));
-    env->set(L"tanh", make_atom(std::make_shared<mathlib::kl_tanh>()));
-    env->set(L"ctgh", make_atom(std::make_shared<mathlib::kl_coth>()));
-    env->set(L"sech", make_atom(std::make_shared<mathlib::kl_sech>()));
-    env->set(L"csch", make_atom(std::make_shared<mathlib::kl_csch>()));
-    env->set(L"arcsinh", make_atom(std::make_shared<mathlib::kl_arcsinh>()));
-    env->set(L"arccosh", make_atom(std::make_shared<mathlib::kl_arccosh>()));
-    env->set(L"arctanh", make_atom(std::make_shared<mathlib::kl_arctanh>()));
-    env->set(L"arccoth", make_atom(std::make_shared<mathlib::kl_arccoth>()));
-    env->set(L"arcsech", make_atom(std::make_shared<mathlib::kl_arcsech>()));
-    env->set(L"arccsch", make_atom(std::make_shared<mathlib::kl_arccsch>()));
+    env->set(L"sinh", make_atom(std::make_shared<triglib::kl_sinh>()));
+    env->set(L"cosh", make_atom(std::make_shared<triglib::kl_cosh>()));
+    env->set(L"tanh", make_atom(std::make_shared<triglib::kl_tanh>()));
+    env->set(L"ctgh", make_atom(std::make_shared<triglib::kl_coth>()));
+    env->set(L"sech", make_atom(std::make_shared<triglib::kl_sech>()));
+    env->set(L"csch", make_atom(std::make_shared<triglib::kl_csch>()));
+    env->set(L"arcsinh", make_atom(std::make_shared<triglib::kl_arcsinh>()));
+    env->set(L"arccosh", make_atom(std::make_shared<triglib::kl_arccosh>()));
+    env->set(L"arctanh", make_atom(std::make_shared<triglib::kl_arctanh>()));
+    env->set(L"arccoth", make_atom(std::make_shared<triglib::kl_arccoth>()));
+    env->set(L"arcsech", make_atom(std::make_shared<triglib::kl_arcsech>()));
+    env->set(L"arccsch", make_atom(std::make_shared<triglib::kl_arccsch>()));
 
-    env->set(L"pi", make_atom(std::make_shared<mathlib::kl_pi>()));
-    env->set(L"e", make_atom(std::make_shared<mathlib::kl_e>()));
+    env->set(L"pi", make_atom(std::make_shared<triglib::kl_pi>()));
+    env->set(L"e", make_atom(std::make_shared<triglib::kl_e>()));
+
     env->set(L"prime?", make_atom(std::make_shared<mathlib::prime>()));
 
     return env;
