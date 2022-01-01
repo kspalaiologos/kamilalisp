@@ -1307,8 +1307,8 @@ trigonometric_stub(tan);
 
 define_repr(kl_cot, return L"built-in function `cot'");
 
-[[gnu::flatten]] atom kl_pi::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
-    detail::argno_exact<1>(location, "pi", args);
+[[gnu::flatten]] atom kl_sec::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "sec", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
         stacktrace_guard g{ repr };
@@ -1321,19 +1321,132 @@ define_repr(kl_cot, return L"built-in function `cot'");
         } else if(a->get_type() == atom_type::T_CMPLX) {
             c = a->get_complex();
         } else {
-            detail::unsupported_args(location, "pi", args);
+            detail::unsupported_args(location, "sec", args);
         }
-        bmp::mpc_complex z = c * boost::math::constants::pi<bmp::mpf_float>();
+        bmp::mpc_complex z = bmp::mpc_complex(1) / bmp::cos(c);
         if(!z.imag().is_zero())
             return z;
         return bmp::mpf_float(z.real());
+    }));
+}
+
+define_repr(kl_sec, return L"built-in function `sec'");
+
+[[gnu::flatten]] atom kl_csc::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "csc", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        bmp::mpc_complex c;
+        if(a->get_type() == atom_type::T_INT) {
+            c = a->get_integer();
+        } else if(a->get_type() == atom_type::T_REAL) {
+            c = a->get_real();
+        } else if(a->get_type() == atom_type::T_CMPLX) {
+            c = a->get_complex();
+        } else {
+            detail::unsupported_args(location, "csc", args);
+        }
+        bmp::mpc_complex z = bmp::mpc_complex(1) / bmp::sin(c);
+        if(!z.imag().is_zero())
+            return z;
+        return bmp::mpf_float(z.real());
+    }));
+}
+
+define_repr(kl_csc, return L"built-in function `csc'");
+
+[[gnu::flatten]] atom kl_pi::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_either<0, 1>(location, "pi", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        if(args.size() == 1) {
+            auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+            bmp::mpc_complex c;
+            if(a->get_type() == atom_type::T_INT) {
+                c = a->get_integer();
+            } else if(a->get_type() == atom_type::T_REAL) {
+                c = a->get_real();
+            } else if(a->get_type() == atom_type::T_CMPLX) {
+                c = a->get_complex();
+            } else {
+                detail::unsupported_args(location, "pi", args);
+            }
+            bmp::mpc_complex z = c * boost::math::constants::pi<bmp::mpf_float>();
+            if(!z.imag().is_zero())
+                return z;
+            return bmp::mpf_float(z.real());
+        } else {
+            return boost::math::constants::pi<bmp::mpf_float>();
+        }
     }));
 }
 
 define_repr(kl_pi, return L"built-in function `pi'");
 
 [[gnu::flatten]] atom kl_e::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
-    detail::argno_exact<1>(location, "e", args);
+    detail::argno_either<0, 1>(location, "e", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        if(args.size() == 1) {
+            auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+            bmp::mpc_complex c;
+            if(a->get_type() == atom_type::T_INT) {
+                c = a->get_integer();
+            } else if(a->get_type() == atom_type::T_REAL) {
+                c = a->get_real();
+            } else if(a->get_type() == atom_type::T_CMPLX) {
+                c = a->get_complex();
+            } else {
+                detail::unsupported_args(location, "pe", args);
+            }
+            bmp::mpc_complex z = c * boost::math::constants::e<bmp::mpf_float>();
+            if(!z.imag().is_zero())
+                return z;
+            return bmp::mpf_float(z.real());
+        } else {
+            return boost::math::constants::e<bmp::mpf_float>();
+        }
+    }));
+}
+
+define_repr(kl_e, return L"built-in function `e'");
+
+#define arcus_stub(f) \
+    [[gnu::flatten]] atom kl_arc ## f::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) { \
+        detail::argno_exact<1>(location, "arc" #f, args); \
+        std::wstring repr = this->repr(); \
+        return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type { \
+            stacktrace_guard g{ repr }; \
+            auto [a] = detail::get_args<0, 1>(args, env, eval_args); \
+            bmp::mpc_complex c; \
+            if(a->get_type() == atom_type::T_INT) { \
+                c = a->get_integer(); \
+            } else if(a->get_type() == atom_type::T_REAL) { \
+                c = a->get_real(); \
+            } else if(a->get_type() == atom_type::T_CMPLX) { \
+                c = a->get_complex(); \
+            } else { \
+                detail::unsupported_args(location, "arc" #f, args); \
+            } \
+            bmp::mpc_complex z = bmp::a ## f(c); \
+            if(!z.imag().is_zero()) \
+                return z; \
+            return bmp::mpf_float(z.real()); \
+        })); \
+    } \
+    \
+    define_repr(kl_arc ## f, return L"built-in function `arc" LSTR(#f) L"'");
+
+arcus_stub(sin);
+arcus_stub(cos);
+arcus_stub(tan);
+
+[[gnu::flatten]] atom kl_arccot::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "arccot", args);
     std::wstring repr = this->repr();
     return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
         stacktrace_guard g{ repr };
@@ -1346,15 +1459,18 @@ define_repr(kl_pi, return L"built-in function `pi'");
         } else if(a->get_type() == atom_type::T_CMPLX) {
             c = a->get_complex();
         } else {
-            detail::unsupported_args(location, "pe", args);
+            detail::unsupported_args(location, "arccot", args);
         }
-        bmp::mpc_complex z = c * boost::math::constants::e<bmp::mpf_float>();
+        
+        // arccot(x) = arccos(x / sqrt(1 + x^2))
+        bmp::mpc_complex z = bmp::acos(c / bmp::sqrt(1 + c * c));
+
         if(!z.imag().is_zero())
             return z;
         return bmp::mpf_float(z.real());
     }));
 }
 
-define_repr(kl_e, return L"built-in function `e'");
+define_repr(kl_arccot, return L"built-in function `arccot'");
 
 }

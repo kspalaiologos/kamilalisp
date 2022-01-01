@@ -45,9 +45,16 @@ define_callable(kl_sin);
 define_callable(kl_cos);
 define_callable(kl_tan);
 define_callable(kl_cot);
+define_callable(kl_sec);
+define_callable(kl_csc);
 
 define_callable(kl_pi);
 define_callable(kl_e);
+
+define_callable(kl_arcsin);
+define_callable(kl_arccos);
+define_callable(kl_arctan);
+define_callable(kl_arccot);
 
 }
 

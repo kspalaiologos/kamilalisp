@@ -166,6 +166,12 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"cos", make_atom(std::make_shared<mathlib::kl_cos>()));
     env->set(L"tan", make_atom(std::make_shared<mathlib::kl_tan>()));
     env->set(L"ctg", make_atom(std::make_shared<mathlib::kl_cot>()));
+    env->set(L"sec", make_atom(std::make_shared<mathlib::kl_sec>()));
+    env->set(L"csc", make_atom(std::make_shared<mathlib::kl_csc>()));
+    env->set(L"arcsin", make_atom(std::make_shared<mathlib::kl_arcsin>()));
+    env->set(L"arccos", make_atom(std::make_shared<mathlib::kl_arccos>()));
+    env->set(L"arctan", make_atom(std::make_shared<mathlib::kl_arctan>()));
+    env->set(L"arccot", make_atom(std::make_shared<mathlib::kl_arccot>()));
 
     env->set(L"pi", make_atom(std::make_shared<mathlib::kl_pi>()));
     env->set(L"e", make_atom(std::make_shared<mathlib::kl_e>()));
