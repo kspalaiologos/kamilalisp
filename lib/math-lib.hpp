@@ -55,6 +55,8 @@ define_callable(kl_arcsin);
 define_callable(kl_arccos);
 define_callable(kl_arctan);
 define_callable(kl_arccot);
+define_callable(kl_arcsec);
+define_callable(kl_arccsc);
 
 }
 

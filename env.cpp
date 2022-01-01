@@ -172,6 +172,8 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"arccos", make_atom(std::make_shared<mathlib::kl_arccos>()));
     env->set(L"arctan", make_atom(std::make_shared<mathlib::kl_arctan>()));
     env->set(L"arccot", make_atom(std::make_shared<mathlib::kl_arccot>()));
+    env->set(L"arcsec", make_atom(std::make_shared<mathlib::kl_arcsec>()));
+    env->set(L"arccsc", make_atom(std::make_shared<mathlib::kl_arccsc>()));
 
     env->set(L"pi", make_atom(std::make_shared<mathlib::kl_pi>()));
     env->set(L"e", make_atom(std::make_shared<mathlib::kl_e>()));

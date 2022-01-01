@@ -1473,4 +1473,60 @@ arcus_stub(tan);
 
 define_repr(kl_arccot, return L"built-in function `arccot'");
 
+[[gnu::flatten]] atom kl_arcsec::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "arcsec", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        bmp::mpc_complex c;
+        if(a->get_type() == atom_type::T_INT) {
+            c = a->get_integer();
+        } else if(a->get_type() == atom_type::T_REAL) {
+            c = a->get_real();
+        } else if(a->get_type() == atom_type::T_CMPLX) {
+            c = a->get_complex();
+        } else {
+            detail::unsupported_args(location, "arcsec", args);
+        }
+        
+        // arcsec(x) = arccos(1/x)
+        bmp::mpc_complex z = bmp::acos(1 / c);
+
+        if(!z.imag().is_zero())
+            return z;
+        return bmp::mpf_float(z.real());
+    }));
+}
+
+define_repr(kl_arcsec, return L"built-in function `arcsec'");
+
+[[gnu::flatten]] atom kl_arccsc::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "arccsc", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        bmp::mpc_complex c;
+        if(a->get_type() == atom_type::T_INT) {
+            c = a->get_integer();
+        } else if(a->get_type() == atom_type::T_REAL) {
+            c = a->get_real();
+        } else if(a->get_type() == atom_type::T_CMPLX) {
+            c = a->get_complex();
+        } else {
+            detail::unsupported_args(location, "arccsc", args);
+        }
+        
+        // arccsc(x) = arcsin(1/x)
+        bmp::mpc_complex z = bmp::asin(1 / c);
+
+        if(!z.imag().is_zero())
+            return z;
+        return bmp::mpf_float(z.real());
+    }));
+}
+
+define_repr(kl_arccsc, return L"built-in function `arccsc'");
+
 }
