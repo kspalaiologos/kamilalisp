@@ -1220,10 +1220,33 @@ define_repr(kl_bernoulli, return L"built-in function `bernoulli'");
             detail::unsupported_args(location, "digamma", args);
         }
         // Use the boring phi(z) = ln(z) - 1/2z approximation.
-        return bmp::log(c) - 1.0 / (2 * c);
+        bmp::mpc_complex z = bmp::log(c) - 1.0 / (2 * c);
+        if(z.imag().is_zero())
+            return z;
+        return bmp::mpf_float(z.real());
     }));
 }
 
 define_repr(kl_digamma, return L"built-in function `digamma'");
+
+[[gnu::flatten]] atom kl_lambert0::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(location, "lambert-w0", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        bmp::mpf_float c;
+        if(a->get_type() == atom_type::T_INT) {
+            c = a->get_integer();
+        } else if(a->get_type() == atom_type::T_REAL) {
+            c = a->get_real();
+        } else {
+            detail::unsupported_args(location, "lambert-w0", args);
+        }
+        return boost::math::lambert_w0(c);
+    }));
+}
+
+define_repr(kl_lambert0, return L"built-in function `lambert-w0'");
 
 }
