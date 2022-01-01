@@ -1710,8 +1710,9 @@ define_repr(kl_arccsch, return L"built-in function `arccsch'");
             return atom_false->thunk_forward();
         if(n == 2)
             return atom_true->thunk_forward();
-        if((n & 2) == 0)
+        if((n & 1) == 0)
             return atom_false->thunk_forward();
+        std::wcout << L"testing the primality using miller rabin..." << std::endl;
         return bmp::miller_rabin_test(n, 10 * env->get(L"fr")->get_integer().convert_to<unsigned>())
             ? atom_true->thunk_forward() : atom_false->thunk_forward();
     }));
