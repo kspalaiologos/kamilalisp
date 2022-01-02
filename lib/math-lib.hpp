@@ -42,6 +42,12 @@ define_callable(kl_digamma);
 define_callable(kl_lambert0);
 define_callable(jacobi);
 
+define_callable(even_f);
+define_callable(odd_f);
+
+define_callable(even);
+define_callable(odd);
+
 }
 
 #endif

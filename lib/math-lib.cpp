@@ -1282,4 +1282,72 @@ bmp::mpz_int jacobi_impl(bmp::mpz_int n, bmp::mpz_int k) {
 
 define_repr(jacobi, return L"built-in function `jacobi-sym'");
 
+[[gnu::flatten]] atom even_f::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(src_location, "even-f", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [n] = detail::get_args<0, 1>(args, env, eval_args);
+        if(n->get_type() == atom_type::T_INT) {
+            return n->get_integer() * 2;
+        } else if(n->get_type() == atom_type::T_REAL) {
+            return n->get_real() * 2;
+        } else {
+            detail::unsupported_args(src_location, "even-f", args);
+        }
+    }));
+}
+
+define_repr(even_f, return L"built-in function `even-f'");
+
+[[gnu::flatten]] atom odd_f::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(src_location, "odd-f", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [n] = detail::get_args<0, 1>(args, env, eval_args);
+        if(n->get_type() == atom_type::T_INT) {
+            return n->get_integer() * 2 + 1;
+        } else if(n->get_type() == atom_type::T_REAL) {
+            return n->get_real() * 2 + 1;
+        } else {
+            detail::unsupported_args(src_location, "odd-f", args);
+        }
+    }));
+}
+
+define_repr(odd_f, return L"built-in function `odd-f'");
+
+[[gnu::flatten]] atom odd::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(src_location, "odd?", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [n] = detail::get_args<0, 1>(args, env, eval_args);
+        if(n->get_type() == atom_type::T_INT) {
+            return (n->get_integer() & 1) == 1 ? atom_true->thunk_forward() : atom_false->thunk_forward();
+        } else {
+            detail::unsupported_args(src_location, "odd?", args);
+        }
+    }));
+}
+
+define_repr(odd, return L"built-in function `odd?'");
+
+[[gnu::flatten]] atom even::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(src_location, "even?", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [n] = detail::get_args<0, 1>(args, env, eval_args);
+        if(n->get_type() == atom_type::T_INT) {
+            return (n->get_integer() & 1) == 0 ? atom_true->thunk_forward() : atom_false->thunk_forward();
+        } else {
+            detail::unsupported_args(src_location, "even?", args);
+        }
+    }));
+}
+
+define_repr(even, return L"built-in function `even?'");
+
 }

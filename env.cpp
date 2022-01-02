@@ -209,5 +209,11 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"log10", make_atom(std::make_shared<logarithmlib::log10>()));
     env->set(L"log", make_atom(std::make_shared<logarithmlib::log>()));
 
+    env->set(L"odd-f", make_atom(std::make_shared<mathlib::odd_f>()));
+    env->set(L"even-f", make_atom(std::make_shared<mathlib::even_f>()));
+
+    env->set(L"odd?", make_atom(std::make_shared<mathlib::odd>()));
+    env->set(L"even?", make_atom(std::make_shared<mathlib::even>()));
+
     return env;
 }
