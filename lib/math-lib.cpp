@@ -6,6 +6,7 @@
 #include <numeric>
 #include <boost/range/join.hpp>
 #include <boost/multiprecision/miller_rabin.hpp>
+#include <boost/range/algorithm.hpp>
 
 namespace bmp = boost::multiprecision;
 
@@ -1553,5 +1554,35 @@ define_repr(min, return L"built-in function `min'");
 }
 
 define_repr(max, return L"built-in function `max'");
+
+[[gnu::flatten]] atom pmat::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(src_location, "pmat", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [n] = detail::get_args<0, 1>(args, env, eval_args);
+        if(n->get_type() != atom_type::T_INT || n->get_integer() < 0)
+            detail::unsupported_args(src_location, "pmat", args);
+        unsigned x = n->get_integer().convert_to<unsigned>();
+        if(x == 0) return atom_list { };
+        if(x == 1) {
+            atom one = make_atom(bmp::mpz_int(1));
+            atom x = make_atom(atom_list::from(one));
+            return atom_list::from(x);
+        }
+        atom_list r { };
+        std::vector<unsigned> indices((std::size_t) x);
+        std::iota(indices.begin(), indices.end(), 0);
+        do {
+            atom_list l { };
+            for(auto & i : indices)
+                l.push_back(make_atom(bmp::mpz_int(i)));
+            r.push_back(make_atom(l));
+        } while(boost::range::next_permutation(indices));
+        return r;
+    }));
+}
+
+define_repr(pmat, return L"built-in function `pmat'");
 
 }

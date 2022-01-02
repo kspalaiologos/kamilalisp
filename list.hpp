@@ -123,6 +123,7 @@ class list {
                 last->next = std::make_shared<node<T>>(nullptr, value);
                 last = last->next;
             }
+            if(!size_cache) size();
             size_cache++;
         }
 

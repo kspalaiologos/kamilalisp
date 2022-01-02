@@ -221,5 +221,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"max", make_atom(std::make_shared<mathlib::max>()));
     env->set(L"min", make_atom(std::make_shared<mathlib::min>()));
 
+    env->set(L"pmat", make_atom(std::make_shared<mathlib::pmat>()));
+
     return env;
 }
