@@ -229,5 +229,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"pochhammer+", make_atom(std::make_shared<mathlib::pochhammer_plus>()));
     env->set(L"pochhammer-", make_atom(std::make_shared<mathlib::pochhammer_minus>()));
 
+    env->set(L"hamming-weight", make_atom(std::make_shared<mathlib::hamming_weight>()));
+
     return env;
 }

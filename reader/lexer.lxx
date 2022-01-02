@@ -43,7 +43,7 @@ cmplx_pt       {float}|{integer}
 
 \"(\\.|\r?\n|[^\\\n"])*\"       { pos += wsize(); std::wstring x = wstr(); x.pop_back(); x.erase(x.begin()); return token(pos - wsize(), lineno(), columno(), x, token_type::TOKEN_STR); }
 {integer}                       { pos += wsize(); return token(pos - wsize(), lineno(), columno(), str(), token_type::TOKEN_INT); }
-"0"[hH]{hexd}+                  { pos += wsize(); return token(pos - wsize(), lineno(), columno(), str(), token_type::TOKEN_HEX); }
+"0"[xX]{hexd}+                  { pos += wsize(); return token(pos - wsize(), lineno(), columno(), str(), token_type::TOKEN_HEX); }
 "0"[bB][10]+                    { pos += wsize(); return token(pos - wsize(), lineno(), columno(), str(), token_type::TOKEN_BIN); }
 {float}                         { pos += wsize(); return token(pos - wsize(), lineno(), columno(), str(), token_type::TOKEN_FPU); }
 {cmplx_pt}"J"{cmplx_pt}         { pos += wsize(); return token(pos - wsize(), lineno(), columno(), str(), token_type::TOKEN_COMPLEX); }

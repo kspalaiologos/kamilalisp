@@ -1686,4 +1686,21 @@ define_repr(pochhammer_plus, return L"built-in function `pochhammer+'");
 
 define_repr(pochhammer_minus, return L"built-in function `pochhammer-'");
 
+[[gnu::flatten]] atom hamming_weight::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(src_location, "hamming-weight", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [n] = detail::get_args<0, 1>(args, env, eval_args);
+        if(n->get_type() != atom_type::T_INT || n->get_integer() < 0)
+            detail::unsupported_args(src_location, "hamming-weight", args);
+        bmp::mpz_int total = 0;
+        for(bmp::mpz_int x = n->get_integer(); x > 0; x = x >> 64)
+            total += std::popcount((x & 0xFFFFFFFFFFFFFFFF).convert_to<std::uint64_t>());
+        return total;
+    }));
+}
+
+define_repr(hamming_weight, return L"built-in function `hamming-weight'");
+
 }

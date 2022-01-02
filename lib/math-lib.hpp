@@ -62,6 +62,8 @@ define_callable(binomial);
 define_callable(pochhammer_plus);
 define_callable(pochhammer_minus);
 
+define_callable(hamming_weight);
+
 }
 
 #endif
