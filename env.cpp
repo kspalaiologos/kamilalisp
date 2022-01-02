@@ -48,6 +48,7 @@ std::shared_ptr<environment> environment::get_topmost_ancestor() {
 #include "lib/trig-lib.hpp"
 #include "lib/random-lib.hpp"
 #include "lib/logarithm-lib.hpp"
+#include "lib/combinatorics-lib.hpp"
 
 std::shared_ptr<environment> environment::create_default_env() {
     auto lambda = std::make_shared<corelib::lambda>();
@@ -68,8 +69,8 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"<", make_atom(std::make_shared<mathlib::less_than>()));
     env->set(L">", make_atom(std::make_shared<mathlib::greater_than>()));
     env->set(L"exp", make_atom(std::make_shared<mathlib::exp>()));
-    env->set(L"!", make_atom(std::make_shared<mathlib::factorial>()));
-    env->set(L"gamma", make_atom(std::make_shared<mathlib::gamma>()));
+    env->set(L"!", make_atom(std::make_shared<combinatoricslib::factorial>()));
+    env->set(L"gamma", make_atom(std::make_shared<combinatoricslib::gamma>()));
     env->set(L"def", make_atom(std::make_shared<corelib::define>()));
     env->set(L"iota", make_atom(std::make_shared<mathlib::iota>()));
     env->set(L"atop", make_atom(std::make_shared<corelib::atop>()));
@@ -221,13 +222,13 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"max", make_atom(std::make_shared<mathlib::max>()));
     env->set(L"min", make_atom(std::make_shared<mathlib::min>()));
 
-    env->set(L"pmat", make_atom(std::make_shared<mathlib::pmat>()));
-    env->set(L"cmat", make_atom(std::make_shared<mathlib::cmat>()));
+    env->set(L"pmat", make_atom(std::make_shared<combinatoricslib::pmat>()));
+    env->set(L"cmat", make_atom(std::make_shared<combinatoricslib::cmat>()));
 
-    env->set(L"binomial", make_atom(std::make_shared<mathlib::binomial>()));
+    env->set(L"binomial", make_atom(std::make_shared<combinatoricslib::binomial>()));
 
-    env->set(L"pochhammer+", make_atom(std::make_shared<mathlib::pochhammer_plus>()));
-    env->set(L"pochhammer-", make_atom(std::make_shared<mathlib::pochhammer_minus>()));
+    env->set(L"pochhammer+", make_atom(std::make_shared<combinatoricslib::pochhammer_plus>()));
+    env->set(L"pochhammer-", make_atom(std::make_shared<combinatoricslib::pochhammer_minus>()));
 
     env->set(L"hamming-weight", make_atom(std::make_shared<mathlib::hamming_weight>()));
 

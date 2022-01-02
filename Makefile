@@ -33,7 +33,8 @@ srcs=\
 	replxx/conversion.cxx replxx/ConvertUTF.cpp replxx/escape.cxx replxx/history.cxx \
 	replxx/prompt.cxx replxx/replxx.cxx replxx/replxx_impl.cxx replxx/terminal.cxx \
 	replxx/util.cxx replxx/wcwidth.cpp replxx/windows.cxx lib/math-lib.cpp lib/core-lib.cpp \
-	lib/io-lib.cpp lib/str-lib.cpp lib/trig-lib.cpp lib/prime-lib.cpp lib/logarithm-lib.cpp
+	lib/io-lib.cpp lib/str-lib.cpp lib/trig-lib.cpp lib/prime-lib.cpp lib/logarithm-lib.cpp \
+	lib/combinatorics-lib.cpp
 objs=$(patsubst %.cpp, %.o, $(patsubst %.cxx, %.o, $(srcs)))
 deps=$(objs:.o=.d)
 
