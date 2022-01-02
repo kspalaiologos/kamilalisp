@@ -11,6 +11,7 @@ namespace primelib {
 define_callable(prime);
 define_callable(p_factors);
 define_callable(p_ufactors);
+define_callable(divisors);
 
 }
 

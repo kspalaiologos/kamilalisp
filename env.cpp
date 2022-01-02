@@ -196,6 +196,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"prime?", make_atom(std::make_shared<primelib::prime>()));
     env->set(L"p-factors", make_atom(std::make_shared<primelib::p_factors>()));
     env->set(L"p-ufactors", make_atom(std::make_shared<primelib::p_ufactors>()));
+    env->set(L"divisors", make_atom(std::make_shared<primelib::divisors>()));
 
     return env;
 }

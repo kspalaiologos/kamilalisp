@@ -127,4 +127,61 @@ define_repr(p_factors, return L"built-in function `p-factors'");
 
 define_repr(p_ufactors, return L"built-in function `p-ufactors'");
 
+/*
+    for(int i = 0; i <= map.get(map.keySet().toArray()[curIndex]); i++) {
+        genDivisors(curIndex + 1, curDivisor, map, factors);
+        curDivisor = curDivisor.multiply(((Atom) map.keySet().toArray()[curIndex]).getNumber().get().toBigInteger());
+    }
+*/
+
+void gen_divisors(int curIndex, const bmp::mpz_int & curDivisor, std::map<bmp::mpz_int, unsigned> & map, atom_list & factors) {
+    bmp::mpz_int c = curDivisor;
+    if(curIndex == map.size()) {
+        factors.push_back(make_atom(c));
+        return;
+    }
+    for(unsigned i = 0; i <= map.at(([map, curIndex]() {
+        auto it = map.begin();
+        std::advance(it, curIndex);
+        return it->first;
+    })()); i++) {
+        gen_divisors(curIndex + 1, c, map, factors);
+        c *= ([map, curIndex]() {
+            auto it = map.begin();
+            std::advance(it, curIndex);
+            return it->first;
+        })();
+    }
+}
+
+[[gnu::flatten]] atom divisors::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(src_location, "divisors", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        if(a->get_type() != atom_type::T_INT)
+            detail::unsupported_args(src_location, "divisors", args);
+        bmp::mpz_int n = a->get_integer();
+        if(n <= 0)
+            kl_error("divisors: argument must be positive");
+        PollardRho r;
+        r.factor(n, 10 * env->get(L"fr")->get_integer().convert_to<unsigned>());
+        std::map<bmp::mpz_int, unsigned> table;
+        for(auto & i : r.factors)
+            table[i]++;
+        atom_list res { };
+        gen_divisors(0, bmp::mpz_int(1), table, res);
+        bool found = false;
+        for(auto & i : res)
+            if(i->get_integer() == n)
+                { found = true; break; }
+        if(!found)
+            res.push_back(make_atom(n));
+        return res;
+    }));
+}
+
+define_repr(divisors, return L"built-in function `divisors'");
+
 }
