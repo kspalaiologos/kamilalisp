@@ -227,6 +227,64 @@ define_repr(kl_csch, return L"built-in function `csch'");
 
 define_repr(kl_pi, return L"built-in function `pi'");
 
+[[gnu::flatten]] atom euler_gamma::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_either<0, 1>(src_location, "euler-gamma", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        if(args.size() == 1) {
+            auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+            bmp::mpc_complex c;
+            if(a->get_type() == atom_type::T_INT) {
+                c = a->get_integer();
+            } else if(a->get_type() == atom_type::T_REAL) {
+                c = a->get_real();
+            } else if(a->get_type() == atom_type::T_CMPLX) {
+                c = a->get_complex();
+            } else {
+                detail::unsupported_args(src_location, "euler-gamma", args);
+            }
+            bmp::mpc_complex z = c * boost::math::constants::euler<bmp::mpf_float>();
+            if(!z.imag().is_zero())
+                return z;
+            return bmp::mpf_float(z.real());
+        } else {
+            return boost::math::constants::euler<bmp::mpf_float>();
+        }
+    }));
+}
+
+define_repr(euler_gamma, return L"built-in function `euler-gamma'");
+
+[[gnu::flatten]] atom catalan::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_either<0, 1>(src_location, "catalan", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        if(args.size() == 1) {
+            auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+            bmp::mpc_complex c;
+            if(a->get_type() == atom_type::T_INT) {
+                c = a->get_integer();
+            } else if(a->get_type() == atom_type::T_REAL) {
+                c = a->get_real();
+            } else if(a->get_type() == atom_type::T_CMPLX) {
+                c = a->get_complex();
+            } else {
+                detail::unsupported_args(src_location, "catalan", args);
+            }
+            bmp::mpc_complex z = c * boost::math::constants::catalan<bmp::mpf_float>();
+            if(!z.imag().is_zero())
+                return z;
+            return bmp::mpf_float(z.real());
+        } else {
+            return boost::math::constants::catalan<bmp::mpf_float>();
+        }
+    }));
+}
+
+define_repr(catalan, return L"built-in function `catalan'");
+
 [[gnu::flatten]] atom kl_e::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_either<0, 1>(src_location, "e", args);
     std::wstring repr = this->repr();

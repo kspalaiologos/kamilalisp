@@ -10,6 +10,8 @@ namespace triglib {
 
 define_callable(kl_pi);
 define_callable(kl_e);
+define_callable(euler_gamma);
+define_callable(catalan);
 
 define_callable(kl_sin);
 define_callable(kl_cos);

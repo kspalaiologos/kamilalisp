@@ -192,6 +192,8 @@ std::shared_ptr<environment> environment::create_default_env() {
 
     env->set(L"pi", make_atom(std::make_shared<triglib::kl_pi>()));
     env->set(L"e", make_atom(std::make_shared<triglib::kl_e>()));
+    env->set(L"catalan", make_atom(std::make_shared<triglib::catalan>()));
+    env->set(L"euler-gamma", make_atom(std::make_shared<triglib::euler_gamma>()));
 
     env->set(L"prime?", make_atom(std::make_shared<primelib::prime>()));
     env->set(L"p-factors", make_atom(std::make_shared<primelib::p_factors>()));

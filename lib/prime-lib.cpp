@@ -127,17 +127,10 @@ define_repr(p_factors, return L"built-in function `p-factors'");
 
 define_repr(p_ufactors, return L"built-in function `p-ufactors'");
 
-/*
-    for(int i = 0; i <= map.get(map.keySet().toArray()[curIndex]); i++) {
-        genDivisors(curIndex + 1, curDivisor, map, factors);
-        curDivisor = curDivisor.multiply(((Atom) map.keySet().toArray()[curIndex]).getNumber().get().toBigInteger());
-    }
-*/
-
-void gen_divisors(int curIndex, const bmp::mpz_int & curDivisor, std::map<bmp::mpz_int, unsigned> & map, atom_list & factors) {
+void gen_divisors(std::size_t curIndex, const bmp::mpz_int & curDivisor, std::map<bmp::mpz_int, unsigned> & map, atom_list & factors) {
     bmp::mpz_int c = curDivisor;
     if(curIndex == map.size()) {
-        factors.push_back(make_atom(c));
+        factors.push_back(make_atom(std::move(c)));
         return;
     }
     for(unsigned i = 0; i <= map.at(([map, curIndex]() {
