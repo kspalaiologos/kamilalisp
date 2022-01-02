@@ -1251,18 +1251,19 @@ define_repr(kl_digamma, return L"built-in function `digamma'");
 define_repr(kl_lambert0, return L"built-in function `lambert-w0'");
 
 bmp::mpz_int jacobi_impl(bmp::mpz_int n, bmp::mpz_int k) {
-    assert(k > 0 && k % 2 == 1);
+    if(k <= 0 || (k & 1) == 0)
+        kl_error("jacobi-sym: k <= 0 or k is even. can't compute.");
     n %= k;
-    int t = 1;
+    bmp::mpz_int t = 1;
     while (n != 0) {
-        while (n % 2 == 0) {
-            n /= 2;
-            bmp::mpz_int r = k % 8;
+        while ((n & 1) == 0) {
+            n >>= 1;
+            bmp::mpz_int r = k & 7;
             if (r == 3 || r == 5)
                 t = -t;
         }
         std::swap(n, k);
-        if (n % 4 == 3 && k % 4 == 3)
+        if ((n & 3) == 3 && (k & 3) == 3)
             t = -t;
         n %= k;
     }
