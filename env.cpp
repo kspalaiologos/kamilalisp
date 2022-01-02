@@ -222,6 +222,12 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"min", make_atom(std::make_shared<mathlib::min>()));
 
     env->set(L"pmat", make_atom(std::make_shared<mathlib::pmat>()));
+    env->set(L"cmat", make_atom(std::make_shared<mathlib::cmat>()));
+
+    env->set(L"binomial", make_atom(std::make_shared<mathlib::binomial>()));
+
+    env->set(L"pochhammer+", make_atom(std::make_shared<mathlib::pochhammer_plus>()));
+    env->set(L"pochhammer-", make_atom(std::make_shared<mathlib::pochhammer_minus>()));
 
     return env;
 }

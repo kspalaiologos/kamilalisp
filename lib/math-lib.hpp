@@ -56,6 +56,11 @@ define_callable(factorial);
 define_callable(gamma);
 
 define_callable(pmat);
+define_callable(cmat);
+define_callable(binomial);
+
+define_callable(pochhammer_plus);
+define_callable(pochhammer_minus);
 
 }
 
