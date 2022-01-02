@@ -163,6 +163,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"bernoulli", make_atom(std::make_shared<mathlib::kl_bernoulli>()));
     env->set(L"digamma", make_atom(std::make_shared<mathlib::kl_digamma>()));
     env->set(L"lambert-w0", make_atom(std::make_shared<mathlib::kl_lambert0>()));
+    env->set(L"jacobi-sym", make_atom(std::make_shared<mathlib::jacobi>()));
 
     env->set(L"sin", make_atom(std::make_shared<triglib::kl_sin>()));
     env->set(L"cos", make_atom(std::make_shared<triglib::kl_cos>()));

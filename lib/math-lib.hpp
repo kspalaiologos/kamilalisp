@@ -40,9 +40,7 @@ define_callable(kl_lcm);
 define_callable(kl_bernoulli);
 define_callable(kl_digamma);
 define_callable(kl_lambert0);
-
-define_callable(kl_pi);
-define_callable(kl_e);
+define_callable(jacobi);
 
 }
 

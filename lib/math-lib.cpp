@@ -1250,4 +1250,35 @@ define_repr(kl_digamma, return L"built-in function `digamma'");
 
 define_repr(kl_lambert0, return L"built-in function `lambert-w0'");
 
+bmp::mpz_int jacobi_impl(bmp::mpz_int n, bmp::mpz_int k) {
+    assert(k > 0 && k % 2 == 1);
+    n %= k;
+    int t = 1;
+    while (n != 0) {
+        while (n % 2 == 0) {
+            n /= 2;
+            bmp::mpz_int r = k % 8;
+            if (r == 3 || r == 5)
+                t = -t;
+        }
+        std::swap(n, k);
+        if (n % 4 == 3 && k % 4 == 3)
+            t = -t;
+        n %= k;
+    }
+    return k == 1 ? t : 0;
+}
+
+[[gnu::flatten]] atom jacobi::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<2>(src_location, "jacobi-sym", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [n, k] = detail::get_args<0, 2>(args, env, eval_args);
+        return jacobi_impl(n->get_integer(), k->get_integer());
+    }));
+}
+
+define_repr(jacobi, return L"built-in function `jacobi-sym'");
+
 }
