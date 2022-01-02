@@ -1295,7 +1295,7 @@ std::vector<T> spouge_coeffs(const T & nc) {
 }
 
 template <typename T, typename C>
-T gamma(const std::vector<C> & coeffs, T x) {
+T gamma_impl(const std::vector<C> & coeffs, T x) {
     const std::size_t nc = coeffs.size();
     T acc = coeffs[0];
     for(size_t k=1; k < nc; k++) {
@@ -1333,14 +1333,14 @@ static std::mutex spouge_lock;
             if(spouge_coefficient_cache.find(precision) == spouge_coefficient_cache.end())
                 spouge_coefficient_cache[precision]
                     = spouge_coeffs<bmp::mpf_float>(precision);
-            return gamma(spouge_coefficient_cache[precision], a->get_real() + 1);
+            return gamma_impl(spouge_coefficient_cache[precision], a->get_real() + 1);
         } else if(a->get_type() == atom_type::T_CMPLX) {
             unsigned precision = env->get(L"fr")->get_integer().convert_to<unsigned>();
             std::lock_guard<std::mutex> lock(spouge_lock);
             if(spouge_coefficient_cache.find(precision) == spouge_coefficient_cache.end())
                 spouge_coefficient_cache[precision]
                     = spouge_coeffs<bmp::mpf_float>(precision);
-            return gamma(spouge_coefficient_cache[precision], a->get_complex() + 1);
+            return gamma_impl(spouge_coefficient_cache[precision], a->get_complex() + 1);
         } else {
             detail::unsupported_args(src_location, "!", args);
         }
@@ -1374,14 +1374,14 @@ define_repr(factorial, return L"built-in function `!'");
             if(spouge_coefficient_cache.find(precision) == spouge_coefficient_cache.end())
                 spouge_coefficient_cache[precision]
                     = spouge_coeffs<bmp::mpf_float>(precision);
-            return gamma(spouge_coefficient_cache[precision], a->get_real());
+            return gamma_impl(spouge_coefficient_cache[precision], a->get_real());
         } else if(a->get_type() == atom_type::T_CMPLX) {
             unsigned precision = env->get(L"fr")->get_integer().convert_to<unsigned>();
             std::lock_guard<std::mutex> lock(spouge_lock);
             if(spouge_coefficient_cache.find(precision) == spouge_coefficient_cache.end())
                 spouge_coefficient_cache[precision]
                     = spouge_coeffs<bmp::mpf_float>(precision);
-            return gamma(spouge_coefficient_cache[precision], a->get_complex());
+            return gamma_impl(spouge_coefficient_cache[precision], a->get_complex());
         } else {
             detail::unsupported_args(src_location, "gamma", args);
         }
