@@ -48,6 +48,9 @@ define_callable(odd_f);
 define_callable(even);
 define_callable(odd);
 
+define_callable(min);
+define_callable(max);
+
 }
 
 #endif

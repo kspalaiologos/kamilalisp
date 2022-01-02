@@ -215,5 +215,8 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"odd?", make_atom(std::make_shared<mathlib::odd>()));
     env->set(L"even?", make_atom(std::make_shared<mathlib::even>()));
 
+    env->set(L"max", make_atom(std::make_shared<mathlib::max>()));
+    env->set(L"min", make_atom(std::make_shared<mathlib::min>()));
+
     return env;
 }

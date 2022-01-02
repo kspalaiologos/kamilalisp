@@ -1350,4 +1350,68 @@ define_repr(odd, return L"built-in function `odd?'");
 
 define_repr(even, return L"built-in function `even?'");
 
+[[gnu::flatten]] atom min::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<2>(src_location, "min", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
+        if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
+            return a->get_integer() < b->get_integer() ? a->thunk_forward() : b->thunk_forward();
+        } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_REAL) {
+            return a->get_real() < b->get_real() ? a->thunk_forward() : b->thunk_forward();
+        } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_CMPLX) {
+            return bmp::norm(a->get_complex()) < bmp::norm(b->get_complex()) ? a->thunk_forward() : b->thunk_forward();
+        } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_REAL) {
+            return a->get_integer() < b->get_real() ? a->thunk_forward() : b->thunk_forward();
+        } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_CMPLX) {
+            return a->get_integer() < b->get_complex().real() ? a->thunk_forward() : b->thunk_forward();
+        } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_INT) {
+            return a->get_real() < b->get_integer() ? a->thunk_forward() : b->thunk_forward();
+        } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_CMPLX) {
+            return a->get_real() < b->get_complex().real() ? a->thunk_forward() : b->thunk_forward();
+        } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_INT) {
+            return bmp::norm(a->get_complex()) < b->get_integer() ? a->thunk_forward() : b->thunk_forward();
+        } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_REAL) {
+            return bmp::norm(a->get_complex()) < b->get_real() ? a->thunk_forward() : b->thunk_forward();
+        } else {
+            detail::unsupported_args(src_location, "min", args);
+        }
+    }));
+}
+
+define_repr(min, return L"built-in function `min'");
+
+[[gnu::flatten]] atom max::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<2>(src_location, "max", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a, b] = detail::get_args<0, 2>(args, env, eval_args);
+        if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
+            return a->get_integer() > b->get_integer() ? a->thunk_forward() : b->thunk_forward();
+        } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_REAL) {
+            return a->get_real() > b->get_real() ? a->thunk_forward() : b->thunk_forward();
+        } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_CMPLX) {
+            return bmp::norm(a->get_complex()) > bmp::norm(b->get_complex()) ? a->thunk_forward() : b->thunk_forward();
+        } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_REAL) {
+            return a->get_integer() > b->get_real() ? a->thunk_forward() : b->thunk_forward();
+        } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_CMPLX) {
+            return a->get_integer() > b->get_complex().real() ? a->thunk_forward() : b->thunk_forward();
+        } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_INT) {
+            return a->get_real() > b->get_integer() ? a->thunk_forward() : b->thunk_forward();
+        } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_CMPLX) {
+            return a->get_real() > b->get_complex().real() ? a->thunk_forward() : b->thunk_forward();
+        } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_INT) {
+            return bmp::norm(a->get_complex()) > b->get_integer() ? a->thunk_forward() : b->thunk_forward();
+        } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_REAL) {
+            return bmp::norm(a->get_complex()) > b->get_real() ? a->thunk_forward() : b->thunk_forward();
+        } else {
+            detail::unsupported_args(src_location, "max", args);
+        }
+    }));
+}
+
+define_repr(max, return L"built-in function `max'");
+
 }
