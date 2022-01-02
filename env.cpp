@@ -200,6 +200,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"p-factors", make_atom(std::make_shared<primelib::p_factors>()));
     env->set(L"p-ufactors", make_atom(std::make_shared<primelib::p_ufactors>()));
     env->set(L"divisors", make_atom(std::make_shared<primelib::divisors>()));
+    env->set(L"mobius-mu", make_atom(std::make_shared<primelib::mobius_mu>()));
 
     return env;
 }

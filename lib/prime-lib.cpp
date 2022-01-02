@@ -100,6 +100,38 @@ define_repr(prime, return L"built-in function `prime'");
 
 define_repr(p_factors, return L"built-in function `p-factors'");
 
+[[gnu::flatten]] atom mobius_mu::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(src_location, "mobius-mu", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        if(a->get_type() != atom_type::T_INT)
+            detail::unsupported_args(src_location, "mobius-mu", args);
+        bmp::mpz_int n = a->get_integer();
+        // preliminary checks for small squares.
+        if(n == 1)
+            return bmp::mpz_int(1);
+        else if(n < 1)
+            return bmp::mpz_int(0);
+        else if(n >= 49 && (n % 4 != 0 || n % 9 != 0 || n % 25 != 0 || n % 49 != 0))
+            return bmp::mpz_int(0);
+        PollardRho r;
+        r.factor(n, 10 * env->get(L"fr")->get_integer().convert_to<unsigned>());
+        // check if the factors are unique
+        std::unordered_map<bmp::mpz_int, unsigned> table;
+        for(auto & i : r.factors)
+            table[i]++;
+        for(auto & i : table)
+            if(i.second > 1)
+                return bmp::mpz_int(0);
+        // check if the amount of factors is even
+        return r.factors.size() % 2 == 0 ? bmp::mpz_int(1) : bmp::mpz_int(-1);
+    }));
+}
+
+define_repr(mobius_mu, return L"built-in function `mobius-mu'");
+
 [[gnu::flatten]] atom p_ufactors::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     detail::argno_exact<1>(src_location, "p-ufactors", args);
     std::wstring repr = this->repr();
