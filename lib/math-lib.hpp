@@ -53,6 +53,7 @@ define_callable(max);
 
 define_callable(exp);
 define_callable(factorial);
+define_callable(gamma);
 
 }
 
