@@ -205,6 +205,7 @@ std::shared_ptr<environment> environment::create_default_env() {
 
     env->set(L"ln", make_atom(std::make_shared<logarithmlib::ln>()));
     env->set(L"log2", make_atom(std::make_shared<logarithmlib::log2>()));
+    env->set(L"log1p", make_atom(std::make_shared<logarithmlib::log1p>()));
     env->set(L"log10", make_atom(std::make_shared<logarithmlib::log10>()));
 
     return env;

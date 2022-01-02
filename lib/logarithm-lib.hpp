@@ -11,7 +11,7 @@ namespace logarithmlib {
 define_callable(log10);
 define_callable(ln);
 define_callable(log2);
-define_callable(log2p);
+define_callable(log1p);
 
 }
 
