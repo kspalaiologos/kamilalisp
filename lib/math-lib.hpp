@@ -44,8 +44,6 @@ define_callable(kl_lambert0);
 define_callable(kl_pi);
 define_callable(kl_e);
 
-define_callable(prime);
-
 }
 
 #endif

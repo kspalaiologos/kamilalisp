@@ -1250,26 +1250,4 @@ define_repr(kl_digamma, return L"built-in function `digamma'");
 
 define_repr(kl_lambert0, return L"built-in function `lambert-w0'");
 
-[[gnu::flatten]] atom prime::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
-    detail::argno_exact<1>(src_location, "prime", args);
-    std::wstring repr = this->repr();
-    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
-        stacktrace_guard g{ repr };
-        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
-        if(a->get_type() != atom_type::T_INT)
-            detail::unsupported_args(src_location, "prime", args);
-        bmp::mpz_int n = a->get_integer();
-        if(n < 2)
-            return atom_false->thunk_forward();
-        if(n == 2)
-            return atom_true->thunk_forward();
-        if((n & 1) == 0)
-            return atom_false->thunk_forward();
-        return bmp::miller_rabin_test(n, 10 * env->get(L"fr")->get_integer().convert_to<unsigned>())
-            ? atom_true->thunk_forward() : atom_false->thunk_forward();
-    }));
-}
-
-define_repr(prime, return L"built-in function `prime'");
-
 }

@@ -43,6 +43,7 @@ std::shared_ptr<environment> environment::get_topmost_ancestor() {
 #include "lib/core-lib.hpp"
 #include "lib/math-lib.hpp"
 #include "lib/io-lib.hpp"
+#include "lib/prime-lib.hpp"
 #include "lib/str-lib.hpp"
 #include "lib/trig-lib.hpp"
 #include "lib/random-lib.hpp"
@@ -192,7 +193,9 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"pi", make_atom(std::make_shared<triglib::kl_pi>()));
     env->set(L"e", make_atom(std::make_shared<triglib::kl_e>()));
 
-    env->set(L"prime?", make_atom(std::make_shared<mathlib::prime>()));
+    env->set(L"prime?", make_atom(std::make_shared<primelib::prime>()));
+    env->set(L"p-factors", make_atom(std::make_shared<primelib::p_factors>()));
+    env->set(L"p-ufactors", make_atom(std::make_shared<primelib::p_ufactors>()));
 
     return env;
 }
