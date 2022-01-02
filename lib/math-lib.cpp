@@ -1250,6 +1250,146 @@ define_repr(kl_digamma, return L"built-in function `digamma'");
 
 define_repr(kl_lambert0, return L"built-in function `lambert-w0'");
 
+[[gnu::flatten]] atom exp::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(src_location, "exp", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        if(a->get_type() == atom_type::T_INT) {
+            return bmp::exp(bmp::mpf_float(a->get_integer()));
+        } else if(a->get_type() == atom_type::T_REAL) {
+            return bmp::exp(a->get_real());
+        } else if(a->get_type() == atom_type::T_CMPLX) {
+            return bmp::exp(a->get_complex());
+        } else {
+            detail::unsupported_args(src_location, "exp", args);
+        }
+    }));
+}
+
+define_repr(exp, return L"built-in function `exp'");
+
+template <std::size_t N>
+static constexpr std::array<bmp::mpz_int, N> get_factorial_cache() {
+    std::array<bmp::mpz_int, N> r;
+    r[0] = bmp::mpz_int(1);
+    for (std::size_t i = 1; i < N; i++)
+        r[i] = r[i - 1] * bmp::mpz_int(i + 1);
+    return r;
+}
+
+static std::array<bmp::mpz_int, 100> factorial_cache = get_factorial_cache<100>();
+
+// Spouge's approximation.
+template <typename T>
+std::vector<T> spouge_coeffs(const T & nc) {
+    std::vector<T> c((unsigned) nc);
+    T k1_factrl = 1;
+    c[0] = bmp::sqrt(2 * boost::math::constants::pi<T>());
+    for(std::size_t k = 1; k < nc; k++) {
+        c[k] = bmp::exp(nc - k) * bmp::pow(nc - k, k - 0.5) / k1_factrl;
+        k1_factrl *= -bmp::mpf_float(k);
+    }
+    return c;
+}
+
+template <typename T, typename C>
+T gamma(const std::vector<C> & coeffs, T x) {
+    const std::size_t nc = coeffs.size();
+    T acc = coeffs[0];
+    for(size_t k=1; k < nc; k++) {
+        acc += coeffs[k] / (x + k);
+    }
+    acc *= bmp::exp(-(x + nc)) * bmp::pow(x + nc, x + 0.5);
+    return acc / x;
+}
+
+static std::unordered_map<unsigned, std::vector<bmp::mpf_float>> spouge_coefficient_cache;
+static std::mutex spouge_lock;
+
+[[gnu::flatten]] atom factorial::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(src_location, "!", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        if(a->get_type() == atom_type::T_INT) {
+            if(a->get_integer() == 0)
+                return bmp::mpz_int(1);
+            if(a->get_integer() < 0)
+                kl_error("!n undefined for n<0");
+            if(a->get_integer() <= 100)
+                return factorial_cache[a->get_integer().convert_to<unsigned>() - 1];
+            else {
+                bmp::mpz_int factorial_100 = factorial_cache.back();
+                for(bmp::mpz_int arg = 101; arg < a->get_integer(); arg++)
+                    factorial_100 *= arg;
+                return factorial_100;
+            }
+        } else if(a->get_type() == atom_type::T_REAL) {
+            unsigned precision = env->get(L"fr")->get_integer().convert_to<unsigned>();
+            std::lock_guard<std::mutex> lock(spouge_lock);
+            if(spouge_coefficient_cache.find(precision) == spouge_coefficient_cache.end())
+                spouge_coefficient_cache[precision]
+                    = spouge_coeffs<bmp::mpf_float>(precision);
+            return gamma(spouge_coefficient_cache[precision], a->get_real() + 1);
+        } else if(a->get_type() == atom_type::T_CMPLX) {
+            unsigned precision = env->get(L"fr")->get_integer().convert_to<unsigned>();
+            std::lock_guard<std::mutex> lock(spouge_lock);
+            if(spouge_coefficient_cache.find(precision) == spouge_coefficient_cache.end())
+                spouge_coefficient_cache[precision]
+                    = spouge_coeffs<bmp::mpf_float>(precision);
+            return gamma(spouge_coefficient_cache[precision], a->get_complex() + 1);
+        } else {
+            detail::unsupported_args(src_location, "!", args);
+        }
+    }));
+}
+
+define_repr(factorial, return L"built-in function `!'");
+
+[[gnu::flatten]] atom gamma::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(src_location, "gamma", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [a] = detail::get_args<0, 1>(args, env, eval_args);
+        if(a->get_type() == atom_type::T_INT) {
+            if(a->get_integer() == 0)
+                return bmp::mpz_int(1);
+            if(a->get_integer() < 0)
+                kl_error("!n undefined for n<0");
+            if(a->get_integer() <= 100)
+                return factorial_cache[a->get_integer().convert_to<unsigned>()];
+            else {
+                bmp::mpz_int factorial_100 = factorial_cache.back();
+                for(bmp::mpz_int arg = 101; arg < a->get_integer() + 1; arg++)
+                    factorial_100 *= arg;
+                return factorial_100;
+            }
+        } else if(a->get_type() == atom_type::T_REAL) {
+            unsigned precision = env->get(L"fr")->get_integer().convert_to<unsigned>();
+            std::lock_guard<std::mutex> lock(spouge_lock);
+            if(spouge_coefficient_cache.find(precision) == spouge_coefficient_cache.end())
+                spouge_coefficient_cache[precision]
+                    = spouge_coeffs<bmp::mpf_float>(precision);
+            return gamma(spouge_coefficient_cache[precision], a->get_real());
+        } else if(a->get_type() == atom_type::T_CMPLX) {
+            unsigned precision = env->get(L"fr")->get_integer().convert_to<unsigned>();
+            std::lock_guard<std::mutex> lock(spouge_lock);
+            if(spouge_coefficient_cache.find(precision) == spouge_coefficient_cache.end())
+                spouge_coefficient_cache[precision]
+                    = spouge_coeffs<bmp::mpf_float>(precision);
+            return gamma(spouge_coefficient_cache[precision], a->get_complex());
+        } else {
+            detail::unsupported_args(src_location, "gamma", args);
+        }
+    }));
+}
+
+define_repr(gamma, return L"built-in function `gamma'");
+
 bmp::mpz_int jacobi_impl(bmp::mpz_int n, bmp::mpz_int k) {
     if(k <= 0 || (k & 1) == 0)
         kl_error("jacobi-sym: k <= 0 or k is even. can't compute.");

@@ -51,6 +51,9 @@ define_callable(odd);
 define_callable(min);
 define_callable(max);
 
+define_callable(exp);
+define_callable(factorial);
+
 }
 
 #endif

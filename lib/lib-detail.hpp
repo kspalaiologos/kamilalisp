@@ -102,6 +102,8 @@ namespace detail {
     inline void fix_precision(std::shared_ptr<environment> env) {
         unsigned precision = env->get(L"fr")->get_integer().convert_to<unsigned>();
         boost::multiprecision::mpf_float::default_precision(precision);
+        boost::multiprecision::mpfr_float::default_precision(precision);
+        boost::multiprecision::mpc_complex::default_precision(precision);
     }
 }
 

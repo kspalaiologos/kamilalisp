@@ -115,7 +115,9 @@ int main(int argc, char * argv[]) {
 
     std::shared_ptr<environment> env = environment::create_default_env();
 
-    boost::multiprecision::mpf_float::default_precision(25);
+    boost::multiprecision::mpf_float::default_precision(20);
+    boost::multiprecision::mpfr_float::default_precision(20);
+    boost::multiprecision::mpc_complex::default_precision(20);
 
     if(argc == 1) {
         replxx::Replxx repl;
