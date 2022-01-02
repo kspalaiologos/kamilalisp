@@ -10,6 +10,7 @@ namespace logarithmlib {
 
 define_callable(log10);
 define_callable(ln);
+define_callable(log);
 define_callable(log2);
 define_callable(log1p);
 

@@ -87,25 +87,51 @@ define_repr(ln, return L"built-in function `ln'");
     return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
         stacktrace_guard g{ repr };
         auto [a] = detail::get_args<0, 1>(args, env, eval_args);
-        bmp::mpc_complex c;
+        bmp::mpf_float c;
         if(a->get_type() == atom_type::T_INT) {
             c = a->get_integer();
         } else if(a->get_type() == atom_type::T_REAL) {
             c = a->get_real();
-        } else if(a->get_type() == atom_type::T_CMPLX) {
-            c = a->get_complex();
         } else {
             detail::unsupported_args(src_location, "log1p", args);
         }
         
-        bmp::mpc_complex z = bmp::log1p(c);
-
-        if(!z.imag().is_zero())
-            return z;
-        return bmp::mpf_float(z.real());
+        return bmp::log1p(c);
     }));
 }
 
 define_repr(log1p, return L"built-in function `log1p'");
+
+[[gnu::flatten]] atom log::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<2>(src_location, "log", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [b, a] = detail::get_args<0, 2>(args, env, eval_args);
+        if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_INT) {
+            return bmp::log(a->get_integer().convert_to<bmp::mpf_float>()) / bmp::log(b->get_integer().convert_to<bmp::mpf_float>());
+        } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_REAL) {
+            return bmp::log(a->get_real()) / bmp::log(b->get_real());
+        } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_CMPLX) {
+            return bmp::log(a->get_complex()) / bmp::log(b->get_complex());
+        } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_REAL) {
+            return bmp::log(a->get_integer().convert_to<bmp::mpf_float>()) / bmp::log(b->get_real());
+        } else if(a->get_type() == atom_type::T_INT && b->get_type() == atom_type::T_CMPLX) {
+            return bmp::log(a->get_integer().convert_to<bmp::mpf_float>()) / bmp::log(b->get_complex());
+        } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_INT) {
+            return bmp::log(a->get_real()) / bmp::log(b->get_integer().convert_to<bmp::mpf_float>());
+        } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_INT) {
+            return bmp::log(a->get_complex()) / bmp::log(b->get_integer().convert_to<bmp::mpf_float>());
+        } else if(a->get_type() == atom_type::T_CMPLX && b->get_type() == atom_type::T_REAL) {
+            return bmp::log(a->get_complex()) / bmp::log(b->get_real());
+        } else if(a->get_type() == atom_type::T_REAL && b->get_type() == atom_type::T_CMPLX) {
+            return bmp::log(a->get_real()) / bmp::log(b->get_complex());
+        } else {
+            detail::unsupported_args(src_location, "log", args);
+        }
+    }));
+}
+
+define_repr(log, return L"built-in function `log'");
 
 }
