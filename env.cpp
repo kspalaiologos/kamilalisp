@@ -47,6 +47,7 @@ std::shared_ptr<environment> environment::get_topmost_ancestor() {
 #include "lib/str-lib.hpp"
 #include "lib/trig-lib.hpp"
 #include "lib/random-lib.hpp"
+#include "lib/logarithm-lib.hpp"
 
 std::shared_ptr<environment> environment::create_default_env() {
     auto lambda = std::make_shared<corelib::lambda>();
@@ -201,6 +202,10 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"p-ufactors", make_atom(std::make_shared<primelib::p_ufactors>()));
     env->set(L"divisors", make_atom(std::make_shared<primelib::divisors>()));
     env->set(L"mobius-mu", make_atom(std::make_shared<primelib::mobius_mu>()));
+
+    env->set(L"ln", make_atom(std::make_shared<logarithmlib::ln>()));
+    env->set(L"log2", make_atom(std::make_shared<logarithmlib::log2>()));
+    env->set(L"log10", make_atom(std::make_shared<logarithmlib::log10>()));
 
     return env;
 }
