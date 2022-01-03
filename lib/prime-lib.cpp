@@ -268,11 +268,11 @@ define_repr(divisors, return L"built-in function `divisors'");
             // start with uint64_t's, after the range is exceeded, switch to bmp::mpz_int.
             if(n < UINT64_MAX) {
                 uint64_t max = n.convert_to<uint64_t>();
-                for(uint64_t cur = p4792.back().convert_to<uint64_t>(); cur <= max; cur++)
+                for(uint64_t cur = p4792.back().convert_to<uint64_t>() + 1; cur <= max; cur++)
                     if(bmp::miller_rabin_test(cur, trials)) 
                         res.push_back(make_atom(bmp::mpz_int(cur)));
             } else {
-                for(bmp::mpz_int cur = p4792.back(); cur <= n; cur++)
+                for(bmp::mpz_int cur = p4792.back() + 1; cur <= n; cur++)
                     if(bmp::miller_rabin_test(cur, trials)) 
                         res.push_back(make_atom(cur));
             }
@@ -305,7 +305,7 @@ define_repr(p_until, return L"built-in function `p-until'");
             for(auto i : p4792)
                 res.push_back(make_atom(i));
             n -= 4792;
-            for(bmp::mpz_int cur = p4792.back(); n > 0; cur++)
+            for(bmp::mpz_int cur = p4792.back() + 1; n > 0; cur++)
                 if(bmp::miller_rabin_test(cur, trials)) 
                     { res.push_back(make_atom(cur)); n--; }
             return res;
@@ -314,5 +314,33 @@ define_repr(p_until, return L"built-in function `p-until'");
 }
 
 define_repr(p_no, return L"built-in function `p-no'");
+
+[[gnu::flatten]] atom p_count::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(src_location, "p-count", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [x] = detail::get_args<0, 1>(args, env, eval_args);
+        if(x->get_type() != atom_type::T_INT || x->get_integer() < 0)
+            detail::unsupported_args(src_location, "p-count", args);
+        // note: a more optimal algorithm utilising the phi function
+        // and memoisation could be applied here, but it's not considered
+        // due to it's memory requirements.
+        bmp::mpz_int n = x->get_integer();
+        if(n <= 4792) {
+            auto it = std::lower_bound(p4792.begin(), p4792.end(), n);
+            return bmp::mpz_int((std::size_t) std::distance(p4792.begin(), it));
+        } else {
+            bmp::mpz_int c = 4792;
+            unsigned trials = env->get(L"fr")->get_integer().convert_to<unsigned>();
+            for(bmp::mpz_int cur = p4792.back() + 1; cur <= n; cur++)
+                if(bmp::miller_rabin_test(cur, trials)) 
+                    c++;
+            return c;
+        }
+    }));
+}
+
+define_repr(p_count, return L"built-in function `p-count'");
 
 }

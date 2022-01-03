@@ -234,6 +234,7 @@ std::shared_ptr<environment> environment::create_default_env() {
 
     env->set(L"p-until", make_atom(std::make_shared<primelib::p_until>()));
     env->set(L"p-no", make_atom(std::make_shared<primelib::p_no>()));
+    env->set(L"p-count", make_atom(std::make_shared<primelib::p_count>()));
 
     env->set(L"re", make_atom(std::make_shared<mathlib::re>()));
     env->set(L"im", make_atom(std::make_shared<mathlib::im>()));
