@@ -1460,7 +1460,7 @@ define_repr(hamming_weight, return L"built-in function `hamming-weight'");
         auto [n] = detail::get_args<0, 1>(args, env, eval_args);
         if(!n->is_numeric())
             detail::unsupported_args(src_location, "re", args);
-        return n->get_type() == atom_type::T_CMPLX ? n->get_complex().real() : n->thunk_forward();
+        return n->get_type() == atom_type::T_CMPLX ? bmp::mpf_float(n->get_complex().real()) : n->thunk_forward();
     }));
 }
 
@@ -1474,7 +1474,7 @@ define_repr(re, return L"built-in function `re'");
         auto [n] = detail::get_args<0, 1>(args, env, eval_args);
         if(!n->is_numeric())
             detail::unsupported_args(src_location, "im", args);
-        return n->get_type() == atom_type::T_CMPLX ? n->get_complex().imag() : 0;
+        return n->get_type() == atom_type::T_CMPLX ? bmp::mpf_float(n->get_complex().imag()) : 0;
     }));
 }
 
