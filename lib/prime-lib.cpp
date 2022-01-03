@@ -54,6 +54,32 @@ class PollardRho {
 
 };
 
+template <std::size_t N>
+constexpr std::array<bmp::mpz_int, N> get_prime_cache() {
+    std::array<bmp::mpz_int, N> r;
+    std::size_t cur = 1;
+    r[0] = bmp::mpz_int(2);
+    for(std::size_t n = 3; n < N * N; n++) {
+        bool prime = true;
+        for (std::size_t i = 2; i <= n / 2; ++i) {
+            if (n % i == 0) {
+                prime = false;
+                break;
+            }
+        }
+        if(prime)
+            r[cur++] = bmp::mpz_int(n);
+        if(cur == N)
+            break;
+    }
+    if(cur != N)
+        static_assert("get_prime_cache: cache size is too small");
+    return r;
+}
+
+// Roger Hui et al
+const static std::array<bmp::mpz_int, 4792> p4792 = get_prime_cache<4792>();
+
 namespace primelib {
 
 [[gnu::flatten]] atom prime::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
@@ -71,6 +97,12 @@ namespace primelib {
             return atom_true->thunk_forward();
         if((n & 1) == 0)
             return atom_false->thunk_forward();
+        if(n < p4792.back()) {
+            if(std::binary_search(p4792.begin(), p4792.end(), n))
+                return atom_true->thunk_forward();
+            else
+                return atom_false->thunk_forward();
+        }
         return bmp::miller_rabin_test(n, 10 * env->get(L"fr")->get_integer().convert_to<unsigned>())
             ? atom_true->thunk_forward() : atom_false->thunk_forward();
     }));
@@ -208,5 +240,39 @@ void gen_divisors(std::size_t curIndex, const bmp::mpz_int & curDivisor, std::ma
 }
 
 define_repr(divisors, return L"built-in function `divisors'");
+
+[[gnu::flatten]] atom p_until::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(src_location, "p-until", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [x] = detail::get_args<0, 1>(args, env, eval_args);
+        if(x->get_type() != atom_type::T_INT || x->get_integer() < 0)
+            detail::unsupported_args(src_location, "p-until", args);
+        // p4792
+        bmp::mpz_int n = x->get_integer();
+        if(n <= p4792.back()) {
+            auto it = std::lower_bound(p4792.begin(), p4792.end(), n);
+            // create a list from p4792.begin() and it.
+            atom_list res { };
+            for(auto i = p4792.begin(); i != it; i++)
+                res.push_back(make_atom(bmp::mpz_int(*i)));
+            return res;
+        } else {
+            unsigned trials = 10 * env->get(L"fr")->get_integer().convert_to<unsigned>();
+            // create a list from p4792
+            atom_list res { };
+            for(auto i : p4792)
+                res.push_back(make_atom(i));
+            // compute primes...
+            for(bmp::mpz_int cur = p4792.back(); cur <= n; cur++)
+                if(bmp::miller_rabin_test(cur, trials)) 
+                    res.push_back(make_atom(cur));
+            return res;
+        }
+    }));
+}
+
+define_repr(p_until, return L"built-in function `p-until'");
 
 }

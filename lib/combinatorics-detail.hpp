@@ -23,7 +23,7 @@ static constexpr std::array<bmp::mpz_int, N> get_factorial_cache() {
     return r;
 }
 
-static std::array<bmp::mpz_int, 100> factorial_cache = get_factorial_cache<100>();
+const static std::array<bmp::mpz_int, 100> factorial_cache = get_factorial_cache<100>();
 
 // Spouge's approximation.
 template <typename T>
