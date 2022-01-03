@@ -265,9 +265,17 @@ define_repr(divisors, return L"built-in function `divisors'");
             for(auto i : p4792)
                 res.push_back(make_atom(i));
             // compute primes...
-            for(bmp::mpz_int cur = p4792.back(); cur <= n; cur++)
-                if(bmp::miller_rabin_test(cur, trials)) 
-                    res.push_back(make_atom(cur));
+            // start with uint64_t's, after the range is exceeded, switch to bmp::mpz_int.
+            if(n < UINT64_MAX) {
+                uint64_t max = n.convert_to<uint64_t>();
+                for(uint64_t cur = p4792.back().convert_to<uint64_t>(); cur <= max; cur++)
+                    if(bmp::miller_rabin_test(cur, trials)) 
+                        res.push_back(make_atom(bmp::mpz_int(cur)));
+            } else {
+                for(bmp::mpz_int cur = p4792.back(); cur <= n; cur++)
+                    if(bmp::miller_rabin_test(cur, trials)) 
+                        res.push_back(make_atom(cur));
+            }
             return res;
         }
     }));
