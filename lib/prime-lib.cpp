@@ -327,16 +327,25 @@ define_repr(p_no, return L"built-in function `p-no'");
         // and memoisation could be applied here, but it's not considered
         // due to it's memory requirements.
         bmp::mpz_int n = x->get_integer();
-        if(n <= 4792) {
+        if(n <= p4792.back()) {
             auto it = std::lower_bound(p4792.begin(), p4792.end(), n);
             return bmp::mpz_int((std::size_t) std::distance(p4792.begin(), it));
         } else {
-            bmp::mpz_int c = 4792;
             unsigned trials = env->get(L"fr")->get_integer().convert_to<unsigned>();
-            for(bmp::mpz_int cur = p4792.back() + 1; cur <= n; cur++)
-                if(bmp::miller_rabin_test(cur, trials)) 
-                    c++;
-            return c;
+            if(n < UINT64_MAX) {
+                uint64_t max = n.convert_to<uint64_t>();
+                std::size_t res = 4792;
+                for(uint64_t cur = p4792.back().convert_to<uint64_t>() + 1; cur <= max; cur++)
+                    if(bmp::miller_rabin_test(cur, trials))
+                        res++;
+                return bmp::mpz_int(res);
+            } else {
+                bmp::mpz_int res = 4792;
+                for(bmp::mpz_int cur = p4792.back() + 1; cur <= n; cur++)
+                    if(bmp::miller_rabin_test(cur, trials))
+                        res = res + 1;
+                return res;
+            }
         }
     }));
 }
