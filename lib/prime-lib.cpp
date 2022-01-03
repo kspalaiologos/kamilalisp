@@ -103,7 +103,7 @@ namespace primelib {
             else
                 return atom_false->thunk_forward();
         }
-        return bmp::miller_rabin_test(n, 10 * env->get(L"fr")->get_integer().convert_to<unsigned>())
+        return bmp::miller_rabin_test(n, env->get(L"fr")->get_integer().convert_to<unsigned>())
             ? atom_true->thunk_forward() : atom_false->thunk_forward();
     }));
 }
@@ -122,7 +122,7 @@ define_repr(prime, return L"built-in function `prime'");
         if(n <= 0)
             kl_error("p-factors: argument must be positive");
         PollardRho r;
-        r.factor(n, 10 * env->get(L"fr")->get_integer().convert_to<unsigned>());
+        r.factor(n, env->get(L"fr")->get_integer().convert_to<unsigned>());
         atom_list res { };
         for(auto & i : r.factors)
             res.push_back(make_atom(i));
@@ -149,7 +149,7 @@ define_repr(p_factors, return L"built-in function `p-factors'");
         else if(n >= 49 && (n % 4 != 0 || n % 9 != 0 || n % 25 != 0 || n % 49 != 0))
             return bmp::mpz_int(0);
         PollardRho r;
-        r.factor(n, 10 * env->get(L"fr")->get_integer().convert_to<unsigned>());
+        r.factor(n, env->get(L"fr")->get_integer().convert_to<unsigned>());
         // check if the factors are unique
         std::unordered_map<bmp::mpz_int, unsigned> table;
         for(auto & i : r.factors)
@@ -176,7 +176,7 @@ define_repr(mobius_mu, return L"built-in function `mobius-mu'");
         if(n <= 0)
             kl_error("p-factors: argument must be positive");
         PollardRho r;
-        r.factor(n, 10 * env->get(L"fr")->get_integer().convert_to<unsigned>());
+        r.factor(n, env->get(L"fr")->get_integer().convert_to<unsigned>());
         std::unordered_map<bmp::mpz_int, unsigned> table;
         for(auto & i : r.factors)
             table[i]++;
@@ -223,7 +223,7 @@ void gen_divisors(std::size_t curIndex, const bmp::mpz_int & curDivisor, std::ma
         if(n <= 0)
             kl_error("divisors: argument must be positive");
         PollardRho r;
-        r.factor(n, 10 * env->get(L"fr")->get_integer().convert_to<unsigned>());
+        r.factor(n, env->get(L"fr")->get_integer().convert_to<unsigned>());
         std::map<bmp::mpz_int, unsigned> table;
         for(auto & i : r.factors)
             table[i]++;
@@ -259,7 +259,7 @@ define_repr(divisors, return L"built-in function `divisors'");
                 res.push_back(make_atom(bmp::mpz_int(*i)));
             return res;
         } else {
-            unsigned trials = 10 * env->get(L"fr")->get_integer().convert_to<unsigned>();
+            unsigned trials = env->get(L"fr")->get_integer().convert_to<unsigned>();
             // create a list from p4792
             atom_list res { };
             for(auto i : p4792)
