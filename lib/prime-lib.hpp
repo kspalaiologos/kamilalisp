@@ -14,6 +14,7 @@ define_callable(p_ufactors);
 define_callable(divisors);
 define_callable(mobius_mu);
 define_callable(p_until);
+define_callable(p_no);
 
 }
 

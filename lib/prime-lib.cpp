@@ -283,4 +283,36 @@ define_repr(divisors, return L"built-in function `divisors'");
 
 define_repr(p_until, return L"built-in function `p-until'");
 
+[[gnu::flatten]] atom p_no::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(src_location, "p-no", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [x] = detail::get_args<0, 1>(args, env, eval_args);
+        if(x->get_type() != atom_type::T_INT || x->get_integer() < 0)
+            detail::unsupported_args(src_location, "p-no", args);
+        // p4792
+        bmp::mpz_int n = x->get_integer();
+        if(n <= 4792) {
+            atom_list res { };
+            std::size_t cap = n.convert_to<std::size_t>();
+            for(std::size_t i = 0; i < cap; i++)
+                res.push_back(make_atom(bmp::mpz_int(p4792[i])));
+            return res;
+        } else {
+            unsigned trials = env->get(L"fr")->get_integer().convert_to<unsigned>();
+            atom_list res { };
+            for(auto i : p4792)
+                res.push_back(make_atom(i));
+            n -= 4792;
+            for(bmp::mpz_int cur = p4792.back(); n > 0; cur++)
+                if(bmp::miller_rabin_test(cur, trials)) 
+                    { res.push_back(make_atom(cur)); n--; }
+            return res;
+        }
+    }));
+}
+
+define_repr(p_no, return L"built-in function `p-no'");
+
 }

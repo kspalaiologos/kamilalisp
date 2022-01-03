@@ -124,7 +124,7 @@ class list {
                 last = last->next;
             }
             if(!size_cache) size();
-            size_cache++;
+            else size_cache++;
         }
 
         // unsafe append: everything that references the node data

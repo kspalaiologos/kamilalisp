@@ -233,6 +233,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"hamming-weight", make_atom(std::make_shared<mathlib::hamming_weight>()));
 
     env->set(L"p-until", make_atom(std::make_shared<primelib::p_until>()));
+    env->set(L"p-no", make_atom(std::make_shared<primelib::p_no>()));
 
     return env;
 }
