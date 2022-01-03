@@ -64,6 +64,9 @@ define_callable(pochhammer_minus);
 
 define_callable(hamming_weight);
 
+define_callable(re);
+define_callable(im);
+
 }
 
 #endif

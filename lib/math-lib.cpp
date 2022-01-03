@@ -1452,4 +1452,32 @@ define_repr(max, return L"built-in function `max'");
 
 define_repr(hamming_weight, return L"built-in function `hamming-weight'");
 
+[[gnu::flatten]] atom re::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(src_location, "re", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [n] = detail::get_args<0, 1>(args, env, eval_args);
+        if(!n->is_numeric())
+            detail::unsupported_args(src_location, "re", args);
+        return n->get_type() == atom_type::T_CMPLX ? n->get_complex().real() : n->thunk_forward();
+    }));
+}
+
+define_repr(re, return L"built-in function `re'");
+
+[[gnu::flatten]] atom im::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(src_location, "im", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [n] = detail::get_args<0, 1>(args, env, eval_args);
+        if(!n->is_numeric())
+            detail::unsupported_args(src_location, "im", args);
+        return n->get_type() == atom_type::T_CMPLX ? n->get_complex().imag() : 0;
+    }));
+}
+
+define_repr(im, return L"built-in function `im'");
+
 }
