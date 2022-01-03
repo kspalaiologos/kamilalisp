@@ -67,6 +67,10 @@ define_callable(hamming_weight);
 define_callable(re);
 define_callable(im);
 
+define_callable(phasor);
+define_callable(as_complex);
+define_callable(as_real);
+
 }
 
 #endif

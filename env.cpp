@@ -238,5 +238,9 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"re", make_atom(std::make_shared<mathlib::re>()));
     env->set(L"im", make_atom(std::make_shared<mathlib::im>()));
 
+    env->set(L"phasor", make_atom(std::make_shared<mathlib::phasor>()));
+    env->set(L"as-complex", make_atom(std::make_shared<mathlib::as_complex>()));
+    env->set(L"as-real", make_atom(std::make_shared<mathlib::as_real>()));
+
     return env;
 }

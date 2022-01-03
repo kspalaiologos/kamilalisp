@@ -1480,4 +1480,56 @@ define_repr(re, return L"built-in function `re'");
 
 define_repr(im, return L"built-in function `im'");
 
+[[gnu::flatten]] atom phasor::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(src_location, "phasor", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [n] = detail::get_args<0, 1>(args, env, eval_args);
+        if(!n->is_numeric())
+            detail::unsupported_args(src_location, "phasor", args);
+        if(n->get_type() == atom_type::T_INT || n->get_type() == atom_type::T_REAL)
+            return bmp::mpf_float(0);
+        return bmp::atan2(n->get_complex().imag(), n->get_complex().real());
+    }));
+}
+
+define_repr(phasor, return L"built-in function `phasor'");
+
+[[gnu::flatten]] atom as_complex::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(src_location, "as-complex", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [n] = detail::get_args<0, 1>(args, env, eval_args);
+        if(!n->is_numeric())
+            detail::unsupported_args(src_location, "as-complex", args);
+        if(n->get_type() == atom_type::T_INT)
+            return bmp::mpc_complex(n->get_integer(), 0);
+        if(n->get_type() == atom_type::T_REAL)
+            return bmp::mpc_complex(n->get_real(), 0);
+        return n->thunk_forward();
+    }));
+}
+
+define_repr(as_complex, return L"built-in function `as-complex'");
+
+[[gnu::flatten]] atom as_real::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    detail::argno_exact<1>(src_location, "as-real", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env, eval_args]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        auto [n] = detail::get_args<0, 1>(args, env, eval_args);
+        if(!n->is_numeric())
+            detail::unsupported_args(src_location, "as-real", args);
+        if(n->get_type() == atom_type::T_INT)
+            return bmp::mpf_float(n->get_integer());
+        if(n->get_type() == atom_type::T_CMPLX)
+            return bmp::mpf_float(n->get_complex().real());
+        return n->thunk_forward();
+    }));
+}
+
+define_repr(as_real, return L"built-in function `as-real'");
+
 }
