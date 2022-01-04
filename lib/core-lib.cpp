@@ -69,7 +69,7 @@ namespace corelib {
                     stacktrace_guard{ repr() };
                     (void) env; // The caller's environment is unnecessary.
                     std::shared_ptr<environment> descEnv = std::make_shared<environment>(e.lock(), shared_from_this());
-                    args = detail::get_args(args, e.lock(), eval_args);
+                    args = detail::get_args(args, env, eval_args);
                     // Process normal arguments.
                     if(args.size() > params.size() || args.size() < params.size() - n)
                         kl_error("Invalid invocation to a lambda expression. Unexpected amount of arguments.");
@@ -167,7 +167,7 @@ define_repr(lambda, return L"built-in function `lambda'")
                     std::shared_ptr<environment> descEnv = std::make_shared<environment>(e.lock(), shared_from_this());
                     // Process normal arguments.
                     if(args.size() > params.size() || args.size() < params.size() - n)
-                        kl_error("Invalid invocation to a lambda expression. Unexpected amount of arguments.");
+                        kl_error("Invalid invocation to a macro. Unexpected amount of arguments.");
                     atom_list params_view = params, args_view = args;
                     if(args.size() > n) {
                         for(std::size_t i = 0; i < args.size() - n; i++) {

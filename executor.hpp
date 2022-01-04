@@ -29,6 +29,11 @@ static inline atom evaluate(atom expr, std::shared_ptr<environment> env) {
         std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> cvt;
         kl_error("Attempted to evaluate a non-callable, got " + head->type_name() + " - `" + cvt.to_bytes(std::to_wstring(head).c_str()) + "`");
     }
+    // Code repetition is necessary.
+    if(l.car()->get_type() == atom_type::T_ID) {
+        stacktrace_guard g{ std::wstring(L"function") + l.car()->get_identifier().operator std::wstring() };
+        return head->get_callable()->call(env, l.cdr(), true);
+    }
     return head->get_callable()->call(env, l.cdr(), true);
 }
 
