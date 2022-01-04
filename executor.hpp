@@ -4,6 +4,7 @@
 
 #include "env.hpp"
 #include "atom.hpp"
+#include "reader/parser.hpp"
 #include "error.hpp"
 #include "stacktrace.hpp"
 
@@ -33,6 +34,12 @@ static inline atom evaluate(atom expr, std::shared_ptr<environment> env) {
 
 static inline atom apply(std::shared_ptr<callable> callable, std::shared_ptr<environment> env, atom_list args, bool eval_args = false) {
     atom r = callable->call(env, args, eval_args);
+    return r;
+}
+
+static inline atom evaluate_code(const std::wstring & code, std::shared_ptr<environment> env) {
+    atom_list a = parse(code);
+    atom r = evaluate(a.car(), env);
     return r;
 }
 

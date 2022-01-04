@@ -43,7 +43,7 @@ std::vector<token> lex_greedy(Source & in) {
 }
 
 template <typename Source>
-std::vector<token> lex_hl(Source & in) {
+std::vector<token> lex_hl(const Source & in) {
     std::vector<token> tokens;
     std::ostream bitBucket(0);
     Lexer l = Lexer(in, bitBucket);
@@ -60,7 +60,7 @@ std::vector<token> lex_hl(Source & in) {
 }
 
 template <typename Source>
-atom_list parse(Source & in) {
+atom_list parse(const Source & in) {
     return parse_all(lex_all(in));
 }
 
