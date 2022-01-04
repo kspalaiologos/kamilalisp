@@ -49,6 +49,7 @@ std::shared_ptr<environment> environment::get_topmost_ancestor() {
 #include "lib/random-lib.hpp"
 #include "lib/logarithm-lib.hpp"
 #include "lib/combinatorics-lib.hpp"
+#include "lib/fold-lib.hpp"
 
 std::shared_ptr<environment> environment::create_default_env() {
     auto lambda = std::make_shared<corelib::lambda>();
@@ -242,6 +243,16 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"phasor", make_atom(std::make_shared<mathlib::phasor>()));
     env->set(L"as-complex", make_atom(std::make_shared<mathlib::as_complex>()));
     env->set(L"as-real", make_atom(std::make_shared<mathlib::as_real>()));
+
+    env->set(L"foldl", make_atom(std::make_shared<foldlib::foldl>()));
+    env->set(L"foldr", make_atom(std::make_shared<foldlib::foldr>()));
+    env->set(L"foldl1", make_atom(std::make_shared<foldlib::foldl1>()));
+    env->set(L"foldr1", make_atom(std::make_shared<foldlib::foldr1>()));
+
+    env->set(L"scanl", make_atom(std::make_shared<foldlib::scanl>()));
+    env->set(L"scanr", make_atom(std::make_shared<foldlib::scanr>()));
+    env->set(L"scanl1", make_atom(std::make_shared<foldlib::scanl1>()));
+    env->set(L"scanr1", make_atom(std::make_shared<foldlib::scanr1>()));
 
     return env;
 }
