@@ -50,6 +50,7 @@ std::shared_ptr<environment> environment::get_topmost_ancestor() {
 #include "lib/logarithm-lib.hpp"
 #include "lib/combinatorics-lib.hpp"
 #include "lib/fold-lib.hpp"
+#include "lib/list-lib.hpp"
 
 std::shared_ptr<environment> environment::create_default_env() {
     auto lambda = std::make_shared<corelib::lambda>();
@@ -253,6 +254,9 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"scanr", make_atom(std::make_shared<foldlib::scanr>()));
     env->set(L"scanl1", make_atom(std::make_shared<foldlib::scanl1>()));
     env->set(L"scanr1", make_atom(std::make_shared<foldlib::scanr1>()));
+
+    env->set(L"cdr", make_atom(std::make_shared<listlib::cdr>()));
+    env->set(L"car", make_atom(std::make_shared<listlib::car>()));
 
     evaluate_code(L"(def sum $(foldl1 +))", env)->force();
     evaluate_code(L"(def avg #(/ sum size))", env)->force();
