@@ -254,5 +254,8 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"scanl1", make_atom(std::make_shared<foldlib::scanl1>()));
     env->set(L"scanr1", make_atom(std::make_shared<foldlib::scanr1>()));
 
+    evaluate_code(L"(def sum $(foldl1 +))", env)->force();
+    evaluate_code(L"(def avg #(/ sum size))", env)->force();
+
     return env;
 }

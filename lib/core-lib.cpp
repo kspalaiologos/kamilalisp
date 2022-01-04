@@ -361,31 +361,18 @@ define_repr(fork, return L"#-combinator: built-in function `fork'")
                     return make_atom(thunk([innerEnv, innerArgs, components, parent_env, f, eval_args]() mutable -> thunk_type {
                         unsigned consumed = 0;
                         atom_list newArgs { };
-                        if(eval_args) {
-                            for(atom_list rest = components; !rest.is_empty(); rest = rest.cdr()) {
-                                atom a = rest.car();
-                                if(a->get_type() == atom_type::T_ID && a->get_identifier() == identifier(L"_")) {
-                                    consumed++;
-                                    newArgs = newArgs.unsafe_append(evaluate(innerArgs.car(), innerEnv));
-                                    innerArgs = innerArgs.cdr();
-                                } else {
-                                    newArgs = newArgs.unsafe_append(a);
-                                }
-                            }
-                        } else {
-                            for(atom_list rest = components; !rest.is_empty(); rest = rest.cdr()) {
-                                atom a = rest.car();
-                                if(a->get_type() == atom_type::T_ID && a->get_identifier() == identifier(L"_")) {
-                                    consumed++;
-                                    newArgs = newArgs.unsafe_append(innerArgs.car());
-                                    innerArgs = innerArgs.cdr();
-                                } else {
-                                    newArgs = newArgs.unsafe_append(a);
-                                }
+                        for(atom_list rest = components; !rest.is_empty(); rest = rest.cdr()) {
+                            atom a = rest.car();
+                            if(a->get_type() == atom_type::T_ID && a->get_identifier() == identifier(L"_")) {
+                                consumed++;
+                                newArgs = newArgs.unsafe_append(innerArgs.car());
+                                innerArgs = innerArgs.cdr();
+                            } else {
+                                newArgs = newArgs.unsafe_append(a);
                             }
                         }
                         newArgs = newArgs.unsafe_append(innerArgs);
-                        return apply(f, innerEnv, newArgs)->thunk_forward();
+                        return apply(f, innerEnv, newArgs, eval_args)->thunk_forward();
                     }));
                 }
         };
