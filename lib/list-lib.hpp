@@ -10,6 +10,7 @@ namespace listlib {
 
 define_callable(car);
 define_callable(cdr);
+define_callable(middle);
 
 }
 

@@ -257,6 +257,7 @@ std::shared_ptr<environment> environment::create_default_env() {
 
     env->set(L"cdr", make_atom(std::make_shared<listlib::cdr>()));
     env->set(L"car", make_atom(std::make_shared<listlib::car>()));
+    env->set(L"middle", make_atom(std::make_shared<listlib::middle>()));
 
     evaluate_code(L"(def sum $(foldl1 +))", env)->force();
     evaluate_code(L"(def avg #(/ sum size))", env)->force();
