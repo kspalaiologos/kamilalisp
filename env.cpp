@@ -156,6 +156,7 @@ std::shared_ptr<environment> environment::create_default_env() {
     env->set(L"requote", make_atom(std::make_shared<corelib::requote>()));
     env->set(L"empty?", make_atom(std::make_shared<corelib::empty>()));
     env->set(L"let-seq", make_atom(std::make_shared<corelib::let_seq>(lambda, macro)));
+    env->set(L"cmp-ex", make_atom(std::make_shared<corelib::cmpex>()));
 
     env->set(L"or", make_atom(std::make_shared<mathlib::kl_or>()));
     env->set(L"xor", make_atom(std::make_shared<mathlib::kl_xor>()));
@@ -261,6 +262,7 @@ std::shared_ptr<environment> environment::create_default_env() {
 
     evaluate_code(L"(def sum $(foldl1 +))", env)->force();
     evaluate_code(L"(def avg #(/ sum size))", env)->force();
+    evaluate_code(L"(def median avg@$(middle 1))", env)->force();
 
     return env;
 }

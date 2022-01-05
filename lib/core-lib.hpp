@@ -94,6 +94,8 @@ class let_seq : public callable {
         std::shared_ptr<macro> gen_mu;
 };
 
+define_callable(cmpex);
+
 }
 
 #endif

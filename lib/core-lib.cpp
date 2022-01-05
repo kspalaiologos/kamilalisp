@@ -5,6 +5,9 @@
 #include <unordered_map>
 #include "../reader/parser.hpp"
 #include "../atom.hpp"
+#include <chrono>
+#include <iostream>
+#include <iomanip>
 
 namespace bmp = boost::multiprecision;
 
@@ -356,9 +359,10 @@ define_repr(fork, return L"#-combinator: built-in function `fork'")
 
                 atom call(std::shared_ptr<environment> innerEnv, atom_list innerArgs, bool eval_args) override {
                     atom_list components = this->args;
+                    (void) innerEnv;
                     std::shared_ptr<callable> f = this->f;
                     std::weak_ptr<environment> parent_env = this->parent_env;
-                    return make_atom(thunk([innerEnv, innerArgs, components, parent_env, f, eval_args]() mutable -> thunk_type {
+                    return make_atom(thunk([innerArgs, components, parent_env, f, eval_args]() mutable -> thunk_type {
                         unsigned consumed = 0;
                         atom_list newArgs { };
                         for(atom_list rest = components; !rest.is_empty(); rest = rest.cdr()) {
@@ -372,7 +376,7 @@ define_repr(fork, return L"#-combinator: built-in function `fork'")
                             }
                         }
                         newArgs = newArgs.unsafe_append(innerArgs);
-                        return apply(f, innerEnv, newArgs, eval_args)->thunk_forward();
+                        return apply(f, parent_env.lock(), newArgs, eval_args)->thunk_forward();
                     }));
                 }
         };
@@ -1032,6 +1036,93 @@ define_repr(empty, return L"built-in function `empty?'")
 }
 
 define_repr(requote, return L"built-in function `requote'")
+
+std::wstring convert_ns(uint64_t n) {
+    if(n < 10000) {
+        return std::to_wstring(n) + L"ns";
+    }
+    double ms = n / 1000000.0;
+    if(ms < 1000) {
+        return std::to_wstring(ms) + L"ms";
+    }
+    double s = ms / 1000.0;
+    return std::to_wstring(s) + L"s";
+}
+
+[[gnu::flatten]] atom cmpex::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
+    (void) eval_args;
+    detail::argno_more<0>(src_location, "cmp-ex", args);
+    std::wstring repr = this->repr();
+    return make_atom(thunk([repr, args, env]() mutable -> thunk_type {
+        stacktrace_guard g{ repr };
+        // ~~ THE ALGORITHM ~~
+        // 1. Measure how long does each expression take to execute by executing it 100 times
+        //    and taking the average of it.
+        // 2. Draw a bar chart of the results.
+        // 3. Measure percentage relative to the first expression
+        // 4. Every expression that returns results other than the first expression is marked with a star.
+        // ~~~~
+        // Example invocation:
+        // --> (cmp-ex (! 50) (foldl1 * \iota 50) (!5))
+        //   #0 -> 2.5e-7 |   0% ======================================>
+        //   #1 -> 1.2e-7 | -53% ===================>
+        // * #2 -> 1.2e-9 | -99% >
+        std::vector<uint64_t> avgs;
+        for(auto & e : args) {
+            std::vector<uint64_t> nanos(50, 0);
+            auto start = std::chrono::high_resolution_clock::now();
+            atom prev = evaluate(e, env); prev->force();
+            auto finish = std::chrono::high_resolution_clock::now();
+            nanos.push_back(std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start).count());
+            for(int i = 0; i < 49; i++) {
+                start = std::chrono::high_resolution_clock::now();
+                atom result = evaluate(e, env); result->force();
+                finish = std::chrono::high_resolution_clock::now();
+                nanos.push_back(std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start).count());
+            }
+            avgs.push_back(std::accumulate(nanos.begin(), nanos.end(), 0ull) / nanos.size());
+        }
+        // Drawing the bar chart and presenting the results.
+        // Take care of a single expression being present...
+        if(args.size() == 1) {
+            std::wcout << avgs[0] << std::endl;
+            return null_atom->thunk_forward();
+        }
+        std::vector<int32_t> relative_percentage;
+        std::vector<uint8_t> bar_sizes;
+        relative_percentage.push_back(0);
+        uint64_t base = avgs[0];
+        for(std::size_t i = 1; i < args.size(); i++) {
+            uint64_t cur = avgs[i];
+            if(cur > base)
+                relative_percentage.push_back(100 * (cur - base) / base);
+            else
+                relative_percentage.push_back(-(100 * (base - cur) / cur));
+        }
+        uint64_t max = *std::max_element(avgs.begin(), avgs.end());
+        uint64_t min = *std::min_element(avgs.begin(), avgs.end());
+        uint64_t one_point = 1;
+        if(max - min > 40)
+            one_point = std::ceil((max - min) / 40.0);
+        else if(max - min != 0)
+            one_point = std::ceil(40.0 / (max - min));
+        for(std::size_t i = 0; i < avgs.size(); i++) {
+            uint64_t p = avgs[i] - min;
+            bar_sizes.push_back(p / one_point);
+        }
+        for(std::size_t i = 0; i < relative_percentage.size(); i++) {
+            std::wcout << L"#" << i << L" -> " << std::setw(8) << convert_ns(avgs[i]) << L" | ";
+            std::wcout << std::setw(4) << relative_percentage[i] << L"% ";
+            for(int j = 0; j < bar_sizes[i] - 1; j++)
+                std::wcout << L"=";
+            std::wcout << L">\n";
+        }
+        std::wcout << std::flush;
+        return null_atom->thunk_forward();
+    }));
+}
+
+define_repr(cmpex, return L"built-in function `cmp-ex'")
 
 [[gnu::flatten]] atom let_seq::call(std::shared_ptr<environment> env, atom_list args, bool eval_args) {
     (void) eval_args;
