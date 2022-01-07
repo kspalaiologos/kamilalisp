@@ -1111,7 +1111,7 @@ std::wstring convert_ns(uint64_t n) {
             bar_sizes.push_back(p / one_point);
         }
         for(std::size_t i = 0; i < relative_percentage.size(); i++) {
-            std::wcout << L"#" << i << L" -> " << std::setw(8) << convert_ns(avgs[i]) << L" | ";
+            std::wcout << L"#" << i << L" -> " << std::setw(12) << convert_ns(avgs[i]) << L" | ";
             std::wcout << std::setw(4) << relative_percentage[i] << L"% ";
             for(int j = 0; j < bar_sizes[i] - 1; j++)
                 std::wcout << L"=";
