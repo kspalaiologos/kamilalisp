@@ -6,6 +6,8 @@
 
 # KamilaLisp
 
+[![wakatime](https://wakatime.com/badge/user/c3a8c589-783c-4ab2-be05-93fa48bc9a94/project/1c00d725-551f-46d2-a691-1408603a8707.svg)](https://wakatime.com/badge/user/c3a8c589-783c-4ab2-be05-93fa48bc9a94/project/1c00d725-551f-46d2-a691-1408603a8707)
+
 A lazily evaluated, functional, flexible and concise Lisp modelled after Haskell and APL, among others.
 
 ```lisp
@@ -47,17 +49,20 @@ Useful links:
 
 ```
 git clone https://github.com/kspalaiologos/kamilalisp
+cd kamilalisp && make CXX=clang++ target=release -j4 all
 ```
 
-Load the `kamilalisp.iml` project into IntelliJ IDEA. Building the project should also rebuild the artifacts, meaning that the jar file will be placed in `out/artifacts/kamilalisp_jar/`.
+Alternatively, use `CXX=g++`, `target=debug` or omit the target field altogether. Adjust the amount of `make` workers to the amount of logical cores you system has, for optimal build times.
 
 ## Dependencies
 
-KamilaLisp runs on the Java virtual machine and doesn't have native dependencies. It depends on the following major Java libraries:
+KamilaLisp is written in C++ and it depends on the following libraries:
 
-* Google Guava
-* ANTLR4 runtime
-* JLine
+* libreadline
+* boost
+* mpfr
+* gmp
+* re/flex (fetched automatically by `make get-deps`)
 
 ## License
 
