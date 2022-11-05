@@ -36,7 +36,7 @@ public class Compose implements Lambda {
         // Evaluate all atoms, then run the last function on args, and pass the return type to the previous function, and so on.
         List<Atom> evaluatedAtoms = atoms.stream().map(x -> Evaluation.evaluate(env, x)).toList();
         Atom result = evaluatedAtoms.get(evaluatedAtoms.size() - 1).getCallable().apply(env, args);
-        for(int i = evaluatedAtoms.size() - 1; i > 0; i--)
+        for(int i = evaluatedAtoms.size() - 2; i >= 0; i--)
             result = evaluatedAtoms.get(i).getCallable().apply(env, List.of(result));
         return result;
     }

@@ -19,6 +19,11 @@ public class FunctionRegistry {
         env.set("car", new Atom(new Car()));
         env.set("cdr", new Atom(new Cdr()));
         env.set("reverse", new Atom(new Reverse()));
+        env.set("range", new Atom(new Range()));
+        env.set("foldl", new Atom(new Foldl()));
+        env.set("foldr", new Atom(new Foldr()));
+        env.set("foldl1", new Atom(new Foldl1()));
+        env.set("foldr1", new Atom(new Foldr1()));
         env.set("lift", new Atom(new Lift()));
         env.set("mod", new Atom(new Mod()));
         env.set("tie", new Atom(new Tie()));
