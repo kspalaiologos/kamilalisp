@@ -61,6 +61,8 @@ public class Cdr extends PrimitiveFunction implements Lambda {
 
         if(args.size() == 1) {
             args.get(0).assertTypes(Type.LIST);
+            if(args.get(0).getList().isEmpty())
+                return Atom.NULL;
             if(args.get(0).getList() instanceof CdrListFacade) {
                 return new Atom(((CdrListFacade) args.get(0).getList()).cdr());
             } else {
@@ -69,6 +71,8 @@ public class Cdr extends PrimitiveFunction implements Lambda {
         } else {
             args.forEach(a -> a.assertTypes(Type.LIST));
             return new Atom(args.stream().map(Atom::getList).map(l -> {
+                if(l.isEmpty())
+                    return Atom.NULL;
                 if(l instanceof CdrListFacade) {
                     return new Atom(((CdrListFacade) l).cdr());
                 } else {
