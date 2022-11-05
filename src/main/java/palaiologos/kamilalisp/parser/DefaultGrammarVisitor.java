@@ -136,10 +136,10 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
     @Override
     public Atom visitTack(GrammarParser.TackContext ctx) {
         int[] indices;
-        if(ctx.number().size() == 1) {
-            indices = new int[] {Integer.parseInt(ctx.number(0).getText())};
+        if(ctx.LONG().size() == 1) {
+            indices = new int[] {Integer.parseInt(ctx.LONG(0).getText())};
         } else {
-            indices = new int[] {Integer.parseInt(ctx.number(0).getText()), Integer.parseInt(ctx.number(1).getText())};
+            indices = new int[] {Integer.parseInt(ctx.LONG(0).getText()), Integer.parseInt(ctx.LONG(1).getText())};
         }
         return new CodeAtom(new Tack(indices, ctx.start.getLine() + lineNumberOffset, ctx.start.getCharPositionInLine())).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
     }

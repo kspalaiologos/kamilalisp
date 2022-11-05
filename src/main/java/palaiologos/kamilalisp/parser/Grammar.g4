@@ -46,8 +46,8 @@ over
     ;
 
 tack
-    : '#' number
-    | '#' number '.' number
+    : '#' LONG
+    | LONG '#' LONG
     ;
 
 bind
@@ -122,7 +122,7 @@ fragment
 NOTID: ~('@' | '^' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';') ;
 
 fragment
-NOTID_START: ~('#' | '^' | '$' | '\\' | '\'' | '@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | ':');
+NOTID_START: ~('#' | '^' | '$' | '\\' | '\'' | '@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | ':' | '0'..'9') ;
 
 NAME: NOTID_START NOTID* ;
 
