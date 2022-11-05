@@ -2,10 +2,7 @@ package palaiologos.kamilalisp.runtime;
 
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
-import palaiologos.kamilalisp.runtime.array.Car;
-import palaiologos.kamilalisp.runtime.array.Cdr;
-import palaiologos.kamilalisp.runtime.array.Range;
-import palaiologos.kamilalisp.runtime.array.Reverse;
+import palaiologos.kamilalisp.runtime.array.*;
 import palaiologos.kamilalisp.runtime.math.Minus;
 import palaiologos.kamilalisp.runtime.math.Plus;
 import palaiologos.kamilalisp.runtime.math.Slash;
@@ -26,5 +23,9 @@ public class FunctionRegistry {
         env.set("cdr", new Atom(new Cdr()));
         env.set("reverse", new Atom(new Reverse()));
         env.set("range", new Atom(new Range()));
+        env.set("foldl", new Atom(new Foldl()));
+        env.set("foldr", new Atom(new Foldr()));
+        env.set("foldl1", new Atom(new Foldl1()));
+        env.set("foldr1", new Atom(new Foldr1()));
     }
 }
