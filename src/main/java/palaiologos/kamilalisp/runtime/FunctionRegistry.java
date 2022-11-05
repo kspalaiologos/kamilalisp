@@ -2,10 +2,7 @@ package palaiologos.kamilalisp.runtime;
 
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
-import palaiologos.kamilalisp.runtime.array.Car;
-import palaiologos.kamilalisp.runtime.array.Cdr;
-import palaiologos.kamilalisp.runtime.array.Lift;
-import palaiologos.kamilalisp.runtime.array.Reverse;
+import palaiologos.kamilalisp.runtime.array.*;
 import palaiologos.kamilalisp.runtime.math.*;
 
 import java.math.BigDecimal;
@@ -24,5 +21,6 @@ public class FunctionRegistry {
         env.set("reverse", new Atom(new Reverse()));
         env.set("lift", new Atom(new Lift()));
         env.set("mod", new Atom(new Mod()));
+        env.set("tie", new Atom(new Tie()));
     }
 }
