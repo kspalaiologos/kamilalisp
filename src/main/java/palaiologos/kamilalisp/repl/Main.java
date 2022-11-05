@@ -72,7 +72,7 @@ public class Main {
                 try {
                     List<Atom> data;
                     try {
-                        data = Parser.parse(lineNumberOffset, "(" + code + "\n)");
+                        data = Parser.parse(lineNumberOffset, code.startsWith("?") ? code.substring(1) : "(" + code + "\n)");
                     } catch(ParseCancellationException e) {
                         System.out.println("Syntax error: " + e.getMessage());
                         continue;
@@ -81,7 +81,7 @@ public class Main {
                         System.out.println(Evaluation.safeEvaluate(env, atom, s -> {
                             System.err.println(s);
                             throw new InterruptionError();
-                        }));
+                        }).toDisplayString());
                 } catch(InterruptionError e) {
                     // Ignore, we just wanted to unwind the stack.
                 }

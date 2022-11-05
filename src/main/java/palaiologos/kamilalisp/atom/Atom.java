@@ -46,16 +46,8 @@ public class Atom {
     }
 
     public Atom(Callable data) {
-        if(data instanceof ReactiveFunction) {
-            this.type = Type.LIST;
-            Atom contents = new Atom();
-            contents.type = Type.CALLABLE;
-            contents.data = data;
-            this.data = List.of(contents);
-        } else {
-            this.data = data;
-            this.type = Type.CALLABLE;
-        }
+        this.data = data;
+        this.type = Type.CALLABLE;
     }
 
     public Atom(Identifier data) {
@@ -121,16 +113,62 @@ public class Atom {
 
     @Override
     public String toString() {
-        return switch (getType()) {
-            case STRING -> "\"" + getString() + "\"";
-            case REAL -> getReal().toString();
-            case LIST -> getList().isEmpty() ? "nil" :
-                (getList().get(0) instanceof ReactiveFunction ? getList().get(0).toString()
-                        : "(" + getList().stream().map(Atom::toString).collect(Collectors.joining(" ")) + ")");
-            case CALLABLE -> getCallable().stringify();
-            case IDENTIFIER -> Identifier.of(getIdentifier());
-            case COMPLEX -> getComplex().re.toString() + "J" + getComplex().im.toString();
-        };
+        switch (getType()) {
+            case STRING:
+                return "\"" + getString() + "\"";
+            case REAL:
+                return getReal().toString();
+            case LIST:
+                if(getList().isEmpty())
+                    return "nil";
+                return "(" + getList().stream().map(Atom::toString).collect(Collectors.joining(" ")) + ")";
+            case CALLABLE:
+                return getCallable().stringify();
+            case IDENTIFIER:
+                return Identifier.of(getIdentifier());
+            case COMPLEX:
+                return getComplex().re.toString() + "J" + getComplex().im.toString();
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    public String toDisplayString() {
+        switch (getType()) {
+            case STRING:
+                return getString();
+            case REAL:
+                return getReal().toString();
+            case LIST:
+                if(getList().isEmpty())
+                    return "nil";
+                if(getList().stream().allMatch(x -> x.getType().equals(Type.LIST))) {
+                    int len = getList().get(0).getList().size();
+                    if(getList().stream().allMatch(x -> x.getList().size() == len)) {
+                        // Square matrix.
+                        StringBuilder b = new StringBuilder();
+                        b.append("[[");
+                        b.append(getList().get(0).getList().stream().map(Atom::toString).collect(Collectors.joining(" ")));
+                        b.append("]");
+                        for(int i = 1; i < getList().size(); i++) {
+                            b.append("\n [");
+                            b.append(getList().get(i).getList().stream().map(Atom::toString).collect(Collectors.joining(" ")));
+                            b.append("]");
+                        }
+                        b.append("]");
+                        return b.toString();
+                    }
+                }
+                return "(" + getList().stream().map(Atom::toString).collect(Collectors.joining(" ")) + ")";
+            case CALLABLE:
+                return getCallable().stringify();
+            case IDENTIFIER:
+                return Identifier.of(getIdentifier());
+            case COMPLEX:
+                return getComplex().re.toString() + "J" + getComplex().im.toString();
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     public String shortString() {
@@ -138,8 +176,7 @@ public class Atom {
             case STRING -> "\"" + getString() + "\"";
             case REAL -> getReal().toString();
             case LIST -> getList().isEmpty() ? "nil" :
-                (getList().get(0) instanceof ReactiveFunction ? getList().get(0).toString()
-                        : "(" + getList().get(0).shortString() + " ...)");
+                "(" + getList().get(0).shortString() + (getList().size() > 2 ? " ...)" : ")");
             case CALLABLE -> "(sic) " + getCallable().frameString() + ".";
             case IDENTIFIER -> Identifier.of(getIdentifier());
             case COMPLEX -> getComplex().re.toString() + "J" + getComplex().im.toString();
