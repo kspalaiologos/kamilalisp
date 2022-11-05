@@ -48,3 +48,5 @@ src/main/java/palaiologos/kamilalisp/parser/GrammarListener.java
 src/main/java/palaiologos/kamilalisp/parser/GrammarParser.java
 
 src/main/java/palaiologos/kamilalisp/parser/GrammarVisitor.java
+
+.idea/
