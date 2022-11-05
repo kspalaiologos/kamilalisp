@@ -4,11 +4,9 @@ import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.runtime.array.Car;
 import palaiologos.kamilalisp.runtime.array.Cdr;
+import palaiologos.kamilalisp.runtime.array.Lift;
 import palaiologos.kamilalisp.runtime.array.Reverse;
-import palaiologos.kamilalisp.runtime.math.Minus;
-import palaiologos.kamilalisp.runtime.math.Plus;
-import palaiologos.kamilalisp.runtime.math.Slash;
-import palaiologos.kamilalisp.runtime.math.Star;
+import palaiologos.kamilalisp.runtime.math.*;
 
 import java.math.BigDecimal;
 
@@ -24,5 +22,7 @@ public class FunctionRegistry {
         env.set("car", new Atom(new Car()));
         env.set("cdr", new Atom(new Cdr()));
         env.set("reverse", new Atom(new Reverse()));
+        env.set("lift", new Atom(new Lift()));
+        env.set("mod", new Atom(new Mod()));
     }
 }
