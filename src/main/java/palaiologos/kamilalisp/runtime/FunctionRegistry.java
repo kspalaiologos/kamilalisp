@@ -27,5 +27,6 @@ public class FunctionRegistry {
         env.set("lift", new Atom(new Lift()));
         env.set("mod", new Atom(new Mod()));
         env.set("tie", new Atom(new Tie()));
+        env.set("exp", new Atom(new Exp()));
     }
 }
