@@ -14,7 +14,7 @@ Useful links:
 
 ## Setup
 
-You need GraalVM 22.2 installed to build KamilaLisp yourself. Alternatively, you could try one of the binaries in the releases tab (WIP).
+You need Java17 GraalVM 22.2 installed to build KamilaLisp yourself. Alternatively, you could try one of the binaries in the releases tab (WIP).
 
 ```
 git clone https://github.com/kspalaiologos/kamilalisp
