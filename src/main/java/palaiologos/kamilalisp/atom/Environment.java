@@ -2,6 +2,7 @@ package palaiologos.kamilalisp.atom;
 
 import palaiologos.kamilalisp.runtime.FunctionRegistry;
 
+import java.math.MathContext;
 import java.util.HashMap;
 
 public class Environment {
@@ -44,5 +45,10 @@ public class Environment {
 
     public boolean isToplevel() {
         return parent == null;
+    }
+
+    public MathContext getMathContext() {
+        int precision = get("fr").getReal().precision();
+        return new MathContext(precision);
     }
 }
