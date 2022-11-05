@@ -4,6 +4,7 @@ import palaiologos.kamilalisp.runtime.FunctionRegistry;
 
 import java.math.MathContext;
 import java.util.HashMap;
+import java.util.Set;
 
 public class Environment {
     private HashMap<String, Atom> data;
@@ -31,6 +32,10 @@ public class Environment {
         } else {
             return Atom.NULL;
         }
+    }
+
+    public Set<String> keys() {
+        return data.keySet();
     }
 
     public boolean has(String key) {

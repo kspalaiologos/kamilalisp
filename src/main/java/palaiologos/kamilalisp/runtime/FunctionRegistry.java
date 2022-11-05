@@ -4,6 +4,7 @@ import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.runtime.array.*;
 import palaiologos.kamilalisp.runtime.math.*;
+import palaiologos.kamilalisp.runtime.meta.EnvKeys;
 
 import java.math.BigDecimal;
 
@@ -28,5 +29,7 @@ public class FunctionRegistry {
         env.set("mod", new Atom(new Mod()));
         env.set("tie", new Atom(new Tie()));
         env.set("exp", new Atom(new Exp()));
+
+        env.set("env-keys", new Atom(new EnvKeys()));
     }
 }
