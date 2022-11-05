@@ -64,7 +64,7 @@ public class Atom {
 
     public String getString() {
         if(getType() != Type.STRING) {
-            throw new TypeError("Cannot get string from non-string atom");
+            throw new TypeError("Cannot get string from non-string atom " + getType());
         }
 
         return (String) data;
@@ -72,7 +72,7 @@ public class Atom {
 
     public BigDecimal getReal() {
         if(getType() != Type.REAL) {
-            throw new TypeError("Cannot get integer from non-integer atom");
+            throw new TypeError("Cannot get integer from non-integer atom " + getType());
         }
 
         return (BigDecimal) data;
@@ -80,7 +80,7 @@ public class Atom {
 
     public List<Atom> getList() {
         if(getType() != Type.LIST) {
-            throw new TypeError("Cannot get list from non-list atom");
+            throw new TypeError("Cannot get list from non-list atom " + getType());
         }
 
         return (List<Atom>) data;
@@ -96,7 +96,7 @@ public class Atom {
 
     public Identifier getIdentifier() {
         if(getType() != Type.IDENTIFIER) {
-            throw new TypeError("Cannot get identifier from non-identifier atom");
+            throw new TypeError("Cannot get identifier from non-identifier atom " + getType());
         }
 
         return (Identifier) data;
@@ -104,7 +104,7 @@ public class Atom {
 
     public BigComplex getComplex() {
         if(getType() != Type.COMPLEX) {
-            throw new TypeError("Cannot get complex from non-complex atom");
+            throw new TypeError("Cannot get complex from non-complex atom " + getType());
         }
 
         return (BigComplex) data;
@@ -179,6 +179,16 @@ public class Atom {
             }
         }
         return false;
+    }
+
+    public boolean coerceBool() {
+        return switch (getType()) {
+            case STRING -> !getString().isEmpty();
+            case REAL -> !getReal().equals(BigDecimal.ZERO);
+            case LIST -> !getList().isEmpty();
+            case CALLABLE, IDENTIFIER -> true;
+            case COMPLEX -> !getComplex().equals(BigComplex.ZERO);
+        };
     }
 
     public void assertTypes(Type... types) {

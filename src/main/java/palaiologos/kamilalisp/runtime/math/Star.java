@@ -36,27 +36,12 @@ public class Star extends PrimitiveFunction implements Lambda {
         }
     }
 
-    public static Atom multiply1(Atom a) {
-        a.assertTypes(Type.REAL, Type.COMPLEX, Type.LIST);
-        if(a.getType() == Type.COMPLEX) {
-            return new Atom(BigComplex.valueOf(a.getComplex().re.signum(), a.getComplex().im.signum()));
-        } else if(a.getType() == Type.REAL) {
-            return new Atom(BigDecimal.valueOf(a.getReal().signum()));
-        } else if(a.getType() == Type.LIST) {
-            return new Atom(a.getList().stream().map(Star::multiply1).collect(Collectors.toList()));
-        } else {
-            throw new TypeError("* not defined for: " + a.getType());
-        }
-    }
-
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.size() == 1) {
-            return multiply1(args.get(0));
-        } else if(args.size() == 2) {
+        if(args.size() == 2) {
             return multiply2(args.get(0), args.get(1));
-        } else if(args.size() == 0) {
-            throw new TypeError("Expected 1 or more arguments to `*'.");
+        } else if(args.size() <= 1) {
+            throw new TypeError("Expected 2 or more arguments to `*'.");
         } else {
             return args.stream().reduce(Star::multiply2).get();
         }

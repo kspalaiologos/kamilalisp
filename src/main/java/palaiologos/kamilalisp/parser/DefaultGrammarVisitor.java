@@ -80,7 +80,7 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
     public Fork forkFromForms(List<GrammarParser.List_formContext> ctx) {
         Atom reductor = visit(ctx.get(0));
         List<Atom> reductees = new ArrayList<>();
-        for(int i = 0; i < ctx.size(); i++) {
+        for(int i = 1; i < ctx.size(); i++) {
             if(ctx.get(i).getText().equals("\\")) {
                 // Fork partition. Everything that goes after is another fork.
                 reductees.add(

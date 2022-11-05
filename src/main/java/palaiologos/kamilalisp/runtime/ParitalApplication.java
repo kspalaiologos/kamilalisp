@@ -30,7 +30,7 @@ public class ParitalApplication implements SpecialForm {
         int consumedArgs = 0;
         for(int i = 0; i < data.size(); i++) {
             if (data.get(i).getType() == Type.IDENTIFIER && Identifier.of(data.get(i).getIdentifier()).equals("_"))
-                data.set(i, args.get(consumedArgs++));
+                data.set(i, new Atom(new Quote(args.get(consumedArgs++), l, c)));
             if(consumedArgs == args.size() && i != data.size() - 1) {
                 // Not all arguments bound. Automatically curry the function.
                 return new Atom(new ParitalApplication(new Atom(data), l, c));
@@ -38,7 +38,8 @@ public class ParitalApplication implements SpecialForm {
         }
         // 2: Append the remaining args.
         if(consumedArgs != args.size())
-            data.addAll(args.subList(consumedArgs, args.size()));
+            for(Atom a : args.subList(consumedArgs, args.size()))
+                data.add(new Atom(new Quote(a, l, c)));
         return Evaluation.evaluate(env, new Atom(data));
     }
 

@@ -29,6 +29,12 @@ public class FunctionRegistry {
         env.set("mod", new Atom(new Mod()));
         env.set("tie", new Atom(new Tie()));
         env.set("exp", new Atom(new Exp()));
+        env.set("max", new Atom(new Max()));
+        env.set("min", new Atom(new Min()));
+        env.set("signum", new Atom(new Signum()));
+        env.set("true", new Atom(BigDecimal.valueOf(1)));
+        env.set("false", new Atom(BigDecimal.valueOf(0)));
+        env.set("if", new Atom(new If()));
 
         env.set("env-keys", new Atom(new EnvKeys()));
     }
