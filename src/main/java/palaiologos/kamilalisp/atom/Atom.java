@@ -40,6 +40,11 @@ public class Atom {
         this.type = Type.LIST;
     }
 
+    public Atom(boolean data) {
+        this.data = data ? BigDecimal.valueOf(1) : BigDecimal.valueOf(0);
+        this.type = Type.REAL;
+    }
+
     public Atom(Callable data) {
         if(data instanceof ReactiveFunction) {
             this.type = Type.LIST;

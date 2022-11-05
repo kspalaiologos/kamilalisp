@@ -35,6 +35,8 @@ public class FunctionRegistry {
         env.set("true", new Atom(BigDecimal.valueOf(1)));
         env.set("false", new Atom(BigDecimal.valueOf(0)));
         env.set("if", new Atom(new If()));
+        env.set("=", new Atom(new Eq()));
+        env.set("/=", new Atom(new Neq()));
 
         env.set("env-keys", new Atom(new EnvKeys()));
     }
