@@ -46,8 +46,16 @@ public class Atom {
     }
 
     public Atom(Callable data) {
-        this.data = data;
-        this.type = Type.CALLABLE;
+        if(data instanceof ReactiveFunction) {
+            this.type = Type.LIST;
+            Atom contents = new Atom();
+            contents.type = Type.CALLABLE;
+            contents.data = data;
+            this.data = List.of(contents);
+        } else {
+            this.data = data;
+            this.type = Type.CALLABLE;
+        }
     }
 
     public Atom(Identifier data) {
@@ -121,6 +129,8 @@ public class Atom {
             case LIST:
                 if(getList().isEmpty())
                     return "nil";
+                if(getList().get(0) instanceof ReactiveFunction)
+                    return getList().get(0).toString();
                 return "(" + getList().stream().map(Atom::toString).collect(Collectors.joining(" ")) + ")";
             case CALLABLE:
                 return getCallable().stringify();
@@ -142,6 +152,8 @@ public class Atom {
             case LIST:
                 if(getList().isEmpty())
                     return "nil";
+                if(getList().get(0) instanceof ReactiveFunction)
+                    return getList().get(0).toString();
                 if(getList().stream().allMatch(x -> x.getType().equals(Type.LIST))) {
                     int len = getList().get(0).getList().size();
                     if(getList().stream().allMatch(x -> x.getList().size() == len)) {
@@ -175,8 +187,9 @@ public class Atom {
         return switch (getType()) {
             case STRING -> "\"" + getString() + "\"";
             case REAL -> getReal().toString();
-            case LIST -> getList().isEmpty() ? "nil" :
-                "(" + getList().get(0).shortString() + (getList().size() > 2 ? " ...)" : ")");
+            case LIST -> getList().isEmpty() ? "nil"
+                    : getList().get(0) instanceof ReactiveFunction ? getList().get(0).toString()
+                        : "(" + getList().get(0).shortString() + (getList().size() > 2 ? " ...)" : ")");
             case CALLABLE -> "(sic) " + getCallable().frameString() + ".";
             case IDENTIFIER -> Identifier.of(getIdentifier());
             case COMPLEX -> getComplex().re.toString() + "J" + getComplex().im.toString();
