@@ -43,7 +43,7 @@ public class Cdr extends PrimitiveFunction implements Lambda {
         }
 
         public List<Atom> cdr() {
-            if(size() == 1)
+            if(size() <= 1)
                 return List.of();
             if(cdrOffset <= 16) {
                 return new CdrListFacade(list, cdrOffset + 1);
