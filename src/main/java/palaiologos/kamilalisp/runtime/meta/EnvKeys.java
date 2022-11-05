@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 public class EnvKeys extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.isEmpty()) {
+        if(!args.isEmpty()) {
             throw new RuntimeException("Expected no arguments to `env-keys'.");
         }
 
