@@ -167,6 +167,12 @@ public class Atom {
                                 max[i] = Math.max(max[i], row.getList().get(i).toDisplayString().length());
                             }
                         }
+                        for(int i = 0; i < len; i++) {
+                            if(max[i] > 20) {
+                                // Back to normal display, that wouldn't work otherwise.
+                                return "(" + getList().stream().map(Atom::toString).collect(Collectors.joining(" ")) + ")";
+                            }
+                        }
                         StringBuilder b = new StringBuilder();
                         b.append("[[");
                         List<Atom> cur = getList().get(0).getList();
