@@ -15,6 +15,8 @@ public class Atom {
     private Type type;
 
     public static Atom NULL = new Atom();
+    public static Atom TRUE = new Atom(true);
+    public static Atom FALSE = new Atom(false);
 
     public Atom() {
         this.data = List.of();

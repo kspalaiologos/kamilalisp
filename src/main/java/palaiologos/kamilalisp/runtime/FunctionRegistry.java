@@ -46,6 +46,10 @@ public class FunctionRegistry {
         env.set("**", new Atom(new DoubleStar()));
         env.set("ln", new Atom(new Ln()));
         env.set("sqrt", new Atom(new Sqrt()));
+        env.set(">", new Atom(new Gt()));
+        env.set("<", new Atom(new Lt()));
+        env.set(">=", new Atom(new Ge()));
+        env.set("<=", new Atom(new Le()));
 
         env.set("env-keys", new Atom(new EnvKeys()));
     }
