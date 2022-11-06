@@ -24,7 +24,7 @@ public class E extends PrimitiveFunction implements Lambda {
         if(args.isEmpty())
             return new Atom(BigDecimalMath.e(env.getMathContext()));
         else if(args.size() == 1)
-            e(env, args.get(0));
+            return e(env, args.get(0));
         else
             return new Atom(args.stream().map(x -> e(env, x)).toList());
     }

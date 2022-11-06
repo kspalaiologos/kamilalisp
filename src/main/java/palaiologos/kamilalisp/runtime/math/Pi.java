@@ -24,7 +24,7 @@ public class Pi extends PrimitiveFunction implements Lambda {
         if(args.isEmpty())
             return new Atom(BigDecimalMath.e(env.getMathContext()));
         else if(args.size() == 1)
-            pi(env, args.get(0));
+            return pi(env, args.get(0));
         else
             return new Atom(args.stream().map(x -> pi(env, x)).toList());
     }
