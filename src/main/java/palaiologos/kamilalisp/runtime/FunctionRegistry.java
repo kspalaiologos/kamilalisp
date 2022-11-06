@@ -4,6 +4,7 @@ import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.runtime.array.*;
 import palaiologos.kamilalisp.runtime.math.*;
+import palaiologos.kamilalisp.runtime.math.hyperbolic.*;
 import palaiologos.kamilalisp.runtime.math.trig.*;
 import palaiologos.kamilalisp.runtime.meta.EnvKeys;
 import palaiologos.kamilalisp.runtime.string.Format;
@@ -19,7 +20,8 @@ public class FunctionRegistry {
             "min", "car", "sqrt", "env-keys", "foldl", "str-lines", "foldl1", "exp", "foldr1",
             "if", "signum", "max", "e", "false", "*", "outer-product", "+", "reverse", "-",
             "/=", "/", "cdr", "true", "lift", "pi", "<", "=", ">", ">=", "levenshtein", "sin",
-            "cos", "tan", "csc", "sec", "cot", "asin", "acos", "atan", "acot", "acsc", "asec"
+            "cos", "tan", "csc", "sec", "cot", "asin", "acos", "atan", "acot", "acsc", "asec",
+            "sinh", "cosh", "tanh"
     );
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(10)));
@@ -72,6 +74,9 @@ public class FunctionRegistry {
         env.set("acsc", new Atom(new Acsc()));
         env.set("asec", new Atom(new Asec()));
         env.set("acot", new Atom(new Acot()));
+        env.set("sinh", new Atom(new Sinh()));
+        env.set("cosh", new Atom(new Cosh()));
+        env.set("tanh", new Atom(new Tanh()));
         env.set("outer-product", new Atom(new OuterProduct()));
         env.set("env-keys", new Atom(new EnvKeys()));
         env.set("levenshtein", new Atom(new Levenshtein()));
