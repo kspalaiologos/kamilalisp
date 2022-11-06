@@ -7,6 +7,7 @@ import palaiologos.kamilalisp.error.TypeError;
 import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Atom {
@@ -280,5 +281,10 @@ public class Atom {
         } else {
             throw new TypeError("Expected one of " + List.of(types) + ", got " + getType());
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, data);
     }
 }
