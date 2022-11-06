@@ -37,6 +37,8 @@ public class FunctionRegistry {
         env.set("if", new Atom(new If()));
         env.set("=", new Atom(new Eq()));
         env.set("/=", new Atom(new Neq()));
+        env.set("pi", new Atom(new Pi()));
+        env.set("e", new Atom(new E()));
 
         env.set("env-keys", new Atom(new EnvKeys()));
     }
