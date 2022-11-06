@@ -16,7 +16,7 @@ public class Slash extends PrimitiveFunction implements Lambda {
     public static Atom quot2(Environment e, Atom a, Atom b) {
         a.assertTypes(Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
         b.assertTypes(Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
-        if(a.getType() == Type.COMPLEX || b.getType() == Type.COMPLEX) {
+        if(a.getType() == Type.COMPLEX && b.getType() == Type.COMPLEX) {
             return new Atom(a.getComplex().divide(b.getComplex(), e.getMathContext()));
         } else if(a.getType() == Type.REAL && b.getType() == Type.REAL) {
             return new Atom(a.getReal().divide(b.getReal(), e.getMathContext()));

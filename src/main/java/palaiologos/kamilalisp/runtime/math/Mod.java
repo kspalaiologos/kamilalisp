@@ -23,7 +23,7 @@ public class Mod extends PrimitiveFunction implements Lambda {
     public static Atom quot2(Environment e, Atom a, Atom b) {
         a.assertTypes(Type.REAL, Type.COMPLEX, Type.LIST);
         b.assertTypes(Type.REAL, Type.COMPLEX, Type.LIST);
-        if(a.getType() == Type.COMPLEX || b.getType() == Type.COMPLEX) {
+        if(a.getType() == Type.COMPLEX && b.getType() == Type.COMPLEX) {
             return new Atom(mod(e, a.getComplex(), b.getComplex()));
         } else if(a.getType() == Type.REAL && b.getType() == Type.REAL) {
             return new Atom(a.getReal().remainder(b.getReal(), e.getMathContext()));
