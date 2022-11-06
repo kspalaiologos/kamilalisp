@@ -53,7 +53,7 @@ public class Environment {
     }
 
     public MathContext getMathContext() {
-        int precision = get("fr").getReal().precision();
+        int precision = get("fr").getReal().intValue();
         return new MathContext(precision);
     }
 }
