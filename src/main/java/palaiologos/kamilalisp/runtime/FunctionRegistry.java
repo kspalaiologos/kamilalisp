@@ -17,7 +17,8 @@ public class FunctionRegistry {
             "foldr", "**", "<=", "ln", "mod", "def", "range", "str-format", "tie", "lambda",
             "min", "car", "sqrt", "env-keys", "foldl", "str-lines", "foldl1", "exp", "foldr1",
             "if", "signum", "max", "e", "false", "*", "outer-product", "+", "reverse", "-",
-            "/=", "/", "cdr", "true", "lift", "pi", "<", "=", ">", ">=", "levenshtein"
+            "/=", "/", "cdr", "true", "lift", "pi", "<", "=", ">", ">=", "levenshtein", "sin",
+            "cos", "tan", "csc", "sec", "cot"
     );
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(10)));
@@ -58,6 +59,12 @@ public class FunctionRegistry {
         env.set("<", new Atom(new Lt()));
         env.set(">=", new Atom(new Ge()));
         env.set("<=", new Atom(new Le()));
+        env.set("sin", new Atom(new Sin()));
+        env.set("cos", new Atom(new Cos()));
+        env.set("tan", new Atom(new Tan()));
+        env.set("csc", new Atom(new Csc()));
+        env.set("sec", new Atom(new Sec()));
+        env.set("cot", new Atom(new Cot()));
         env.set("outer-product", new Atom(new OuterProduct()));
         env.set("env-keys", new Atom(new EnvKeys()));
         env.set("levenshtein", new Atom(new Levenshtein()));
