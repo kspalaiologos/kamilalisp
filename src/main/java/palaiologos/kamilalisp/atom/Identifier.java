@@ -21,9 +21,4 @@ public class Identifier {
             return i;
         }
     }
-
-    @Override
-    public int hashCode() {
-        return Identifier.of(this).hashCode();
-    }
 }
