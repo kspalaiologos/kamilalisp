@@ -62,11 +62,11 @@ public class ParallelMap implements Lambda {
 
     @Override
     public String stringify() {
-        return ":" + form.toString();
+        return "$:" + form.toString();
     }
 
     @Override
     public String frameString() {
-        return ":/syn";
+        return "$:/syn";
     }
 }
