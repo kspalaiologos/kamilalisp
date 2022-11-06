@@ -2,6 +2,7 @@ package palaiologos.kamilalisp.runtime.math;
 
 import com.google.common.collect.Streams;
 import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.error.ArrayError;
 
 import java.util.List;
 
@@ -27,12 +28,11 @@ public class Max extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.isEmpty())
-            throw new RuntimeException("max called with no arguments.");
+        if(args.size() == 1 && args.get(0).getType() == Type.LIST)
+            return args.get(0).getList().stream().reduce((a, b) -> max2(env, a, b)).orElseThrow(() -> new ArrayError("can't fold a list with max."));
+        else if(args.size() <= 1)
+            throw new RuntimeException("max called with too few arguments.");
 
-        if(args.size() == 1)
-            return args.get(0);
-
-        return args.stream().reduce((a, b) -> max2(env, a, b)).get();
+        return args.stream().reduce((a, b) -> max2(env, a, b)).orElseThrow(() -> new ArrayError("can't fold a list with max."));
     }
 }
