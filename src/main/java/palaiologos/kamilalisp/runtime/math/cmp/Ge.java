@@ -1,12 +1,12 @@
-package palaiologos.kamilalisp.runtime.math;
+package palaiologos.kamilalisp.runtime.math.cmp;
 
 import com.google.common.collect.Streams;
 import palaiologos.kamilalisp.atom.*;
 
 import java.util.List;
 
-public class Gt extends PrimitiveFunction implements Lambda {
-    private static String name = ">";
+public class Ge extends PrimitiveFunction implements Lambda {
+    private static String name = ">=";
 
     @Override
     protected String name() {
@@ -17,9 +17,9 @@ public class Gt extends PrimitiveFunction implements Lambda {
         if(a.getType() == Type.LIST && b.getType() == Type.LIST) {
             return new Atom(Streams.zip(a.getList().stream(), b.getList().stream(), (x, y) -> cmp2(e, x, y)).toList());
         } else if(a.getType() == Type.REAL && b.getType() == Type.REAL) {
-            return new Atom(a.getReal().compareTo(b.getReal()) > 0);
+            return new Atom(a.getReal().compareTo(b.getReal()) >= 0);
         } else if(a.getType() == Type.STRING && b.getType() == Type.STRING) {
-            return new Atom(a.getString().compareTo(b.getString()) > 0);
+            return new Atom(a.getString().compareTo(b.getString()) >= 0);
         } else if(a.getType() == Type.LIST && b.getType() == Type.REAL) {
             return new Atom(a.getList().stream().allMatch(x -> cmp2(e, x, b).coerceBool()));
         } else if(a.getType() == Type.REAL && b.getType() == Type.LIST) {
