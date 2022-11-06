@@ -18,7 +18,12 @@ public class Sin extends PrimitiveFunction implements Lambda {
         if(a.getType() == Type.COMPLEX) {
             return new Atom(BigComplexMath.sin(a.getComplex(), env.getMathContext()));
         } else if(a.getType() == Type.REAL) {
-            return new Atom(BigDecimalMath.sin(a.getReal(), env.getMathContext()));
+            BigComplex arg = BigComplex.valueOf(a.getReal());
+            BigComplex result = BigComplexMath.sin(arg, env.getMathContext());
+            if(result.isReal())
+                return new Atom(result.re);
+            else
+                return new Atom(result);
         } else if(a.getType() == Type.LIST) {
             return new Atom(a.getList().stream().map(x -> trig1(env, a)).collect(Collectors.toList()));
         } else {
