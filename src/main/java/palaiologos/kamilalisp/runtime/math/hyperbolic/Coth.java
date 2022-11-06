@@ -9,13 +9,13 @@ import java.math.MathContext;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Tanh extends PrimitiveFunction implements Lambda {
-    private static final String name = "tanh";
+public class Coth extends PrimitiveFunction implements Lambda {
+    private static final String name = "coth";
 
     private static BigComplex imagTrig(BigComplex z, MathContext mc) {
-        // tanh(z) = (e^2x - 1) / (e^2x + 1)
+        // tanh(z) = (e^2x + 1) / (e^2x - 1)
         BigComplex e_2z = BigComplexMath.exp(z.multiply(BigComplex.valueOf(2)), mc);
-        return e_2z.subtract(BigComplex.ONE).divide(e_2z.add(BigComplex.ONE), mc);
+        return e_2z.add(BigComplex.ONE).divide(e_2z.subtract(BigComplex.ONE), mc);
     }
 
     public static Atom trig1(Environment env, Atom a) {
