@@ -127,6 +127,13 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
     }
 
     @Override
+    public Atom visitParallel_map(GrammarParser.Parallel_mapContext ctx) {
+        Atom form = visit(ctx.form_rem());
+
+        return new CodeAtom(new ParallelMap(form, ctx.start.getLine() + lineNumberOffset, ctx.start.getCharPositionInLine())).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+    }
+
+    @Override
     public Atom visitMap(GrammarParser.MapContext ctx) {
         Atom form = visit(ctx.form_rem());
 

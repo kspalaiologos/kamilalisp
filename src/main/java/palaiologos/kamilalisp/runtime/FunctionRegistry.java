@@ -6,6 +6,7 @@ import palaiologos.kamilalisp.runtime.array.*;
 import palaiologos.kamilalisp.runtime.math.*;
 import palaiologos.kamilalisp.runtime.meta.EnvKeys;
 import palaiologos.kamilalisp.runtime.string.Format;
+import palaiologos.kamilalisp.runtime.string.Lines;
 
 import java.math.BigDecimal;
 
@@ -41,6 +42,7 @@ public class FunctionRegistry {
         env.set("pi", new Atom(new Pi()));
         env.set("e", new Atom(new E()));
         env.set("str-format", new Atom(new Format()));
+        env.set("str-lines", new Atom(new Lines()));
 
         env.set("env-keys", new Atom(new EnvKeys()));
     }

@@ -15,6 +15,7 @@ form_rem: reader_macro
         | any_list
         | literal
         | map
+        | parallel_map
         ;
 
 list_form
@@ -39,6 +40,10 @@ quote
 
 map
     : ':' form_rem
+    ;
+
+parallel_map
+    : '$:' form_rem
     ;
 
 over
