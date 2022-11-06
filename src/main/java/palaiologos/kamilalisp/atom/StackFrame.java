@@ -50,11 +50,15 @@ public class StackFrame {
                 sb.append("    at ").append(e.frameString).append("  ").append(e.line).append(":").append(e.col).append("\n");
             }
         }
-        /*StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        t.printStackTrace(pw);
-        return sb.append(sw).toString();*/
-        return sb.toString();
+        if(System.getenv("DEBUG").equals("true")) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            t.printStackTrace(pw);
+            sb.append(sw.toString());
+            return sb.toString();
+        } else {
+            return sb.toString();
+        }
     }
 
     public static void wipe() {

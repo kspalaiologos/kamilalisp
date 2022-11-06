@@ -26,12 +26,16 @@ public class Slash extends PrimitiveFunction implements Lambda {
             return new Atom(a.getComplex().divide(b.getReal(), e.getMathContext()));
         } else if(a.getType() == Type.STRING && b.getType() == Type.STRING) {
             return new Atom(Arrays.stream(StringUtils.splitByWholeSeparator(a.getString(), b.getString())).map(Atom::new).collect(Collectors.toList()));
-        } else if(a.getType() == Type.LIST || b.getType() == Type.LIST) {
+        } else if(a.getType() == Type.LIST && b.getType() == Type.LIST) {
             List<Atom> A = a.getList();
             List<Atom> B = b.getList();
             if(A.size() != B.size())
                 throw new ArrayError("Mismatched input shapes: Dividing vectors of length " + A.size() + " and " + B.size() + ".");
             return new Atom(Streams.zip(A.stream(), B.stream(), (x, y) -> quot2(e, x, y)).collect(Collectors.toList()));
+        } else if(a.getType() == Type.LIST && b.isNumeric()) {
+            return new Atom(a.getList().stream().map(x -> quot2(e, x, b)).collect(Collectors.toList()));
+        } else if(a.isNumeric() && b.getType() == Type.LIST) {
+            return new Atom(b.getList().stream().map(x -> quot2(e, a, x)).collect(Collectors.toList()));
         } else {
             throw new TypeError("/ not defined for: " + a.getType() + " and " + b.getType());
         }

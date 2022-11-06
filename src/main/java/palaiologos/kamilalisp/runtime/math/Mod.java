@@ -31,12 +31,16 @@ public class Mod extends PrimitiveFunction implements Lambda {
             return new Atom(mod(e, BigComplex.valueOf(a.getReal()), b.getComplex()));
         } else if(a.getType() == Type.COMPLEX && b.getType() == Type.REAL) {
             return new Atom(mod(e, a.getComplex(), BigComplex.valueOf(b.getReal())));
-        } else if(a.getType() == Type.LIST || b.getType() == Type.LIST) {
+        } else if(a.getType() == Type.LIST && b.getType() == Type.LIST) {
             List<Atom> A = a.getList();
             List<Atom> B = b.getList();
             if(A.size() != B.size())
                 throw new ArrayError("Mismatched input shapes: Dividing vectors of length " + A.size() + " and " + B.size() + ".");
             return new Atom(Streams.zip(A.stream(), B.stream(), (x, y) -> quot2(e, x, y)).collect(Collectors.toList()));
+        } else if(a.getType() == Type.LIST && b.isNumeric()) {
+            return new Atom(a.getList().stream().map(x -> quot2(e, x, b)).collect(Collectors.toList()));
+        } else if(a.isNumeric() && b.getType() == Type.LIST) {
+            return new Atom(b.getList().stream().map(x -> quot2(e, a, x)).collect(Collectors.toList()));
         } else {
             throw new TypeError("mod not defined for: " + a.getType() + " and " + b.getType());
         }

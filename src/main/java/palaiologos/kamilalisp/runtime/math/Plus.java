@@ -27,12 +27,16 @@ public class Plus extends PrimitiveFunction implements Lambda {
             return new Atom(a.getString() + b);
         } else if((a.getType() == Type.REAL || a.getType() == Type.COMPLEX) && b.getType() == Type.STRING) {
             return new Atom(a + b.getString());
-        } else if(a.getType() == Type.LIST || b.getType() == Type.LIST) {
+        } else if(a.getType() == Type.LIST && b.getType() == Type.LIST) {
             List<Atom> A = a.getList();
             List<Atom> B = b.getList();
-            if(A.size() != B.size())
+            if (A.size() != B.size())
                 throw new ArrayError("Mismatched input shapes: Adding vectors of length " + A.size() + " and " + B.size() + ".");
             return new Atom(Streams.zip(A.stream(), B.stream(), Plus::add2).collect(Collectors.toList()));
+        } else if(a.getType() == Type.LIST && b.isNumeric()) {
+            return new Atom(a.getList().stream().map(x -> add2(x, b)).collect(Collectors.toList()));
+        } else if(a.isNumeric() && b.getType() == Type.LIST) {
+            return new Atom(b.getList().stream().map(x -> add2(a, x)).collect(Collectors.toList()));
         } else {
             throw new TypeError("+ not defined for: " + a.getType() + " and " + b.getType());
         }

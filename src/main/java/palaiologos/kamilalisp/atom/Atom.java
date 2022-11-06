@@ -1,6 +1,7 @@
 package palaiologos.kamilalisp.atom;
 
 import ch.obermuhlner.math.big.BigComplex;
+import com.google.common.base.Strings;
 import palaiologos.kamilalisp.error.TypeError;
 
 import javax.annotation.Nonnull;
@@ -156,15 +157,29 @@ public class Atom {
                     return getList().get(0).toString();
                 if(getList().stream().allMatch(x -> x.getType().equals(Type.LIST))) {
                     int len = getList().get(0).getList().size();
-                    if(getList().stream().allMatch(x -> x.getList().size() == len)) {
+                    if(getList().stream().allMatch(x -> x.getList().size() == len)
+                    && getList().stream().allMatch(x -> x.getList().stream().allMatch(Atom::isNumeric))) {
                         // Square matrix.
+                        // Find the longest representation in each column.
+                        int[] max = new int[len];
+                        for(int i = 0; i < len; i++) {
+                            for(Atom row : getList()) {
+                                max[i] = Math.max(max[i], row.getList().get(i).toDisplayString().length());
+                            }
+                        }
                         StringBuilder b = new StringBuilder();
                         b.append("[[");
-                        b.append(getList().get(0).getList().stream().map(Atom::toString).collect(Collectors.joining(" ")));
+                        List<Atom> cur = getList().get(0).getList();
+                        for(int i = 0; i < cur.size(); i++) {
+                            b.append(Strings.padStart(cur.get(i).toString(), max[i], ' ')).append(i == cur.size() - 1 ? "" : " ");
+                        }
                         b.append("]");
                         for(int i = 1; i < getList().size(); i++) {
+                            cur = getList().get(i).getList();
                             b.append("\n [");
-                            b.append(getList().get(i).getList().stream().map(Atom::toString).collect(Collectors.joining(" ")));
+                            for(int j = 0; j < cur.size(); j++) {
+                                b.append(Strings.padStart(cur.get(j).toString(), max[j], ' ')).append(j == cur.size() - 1 ? "" : " ");
+                            }
                             b.append("]");
                         }
                         b.append("]");

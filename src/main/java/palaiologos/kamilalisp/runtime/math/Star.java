@@ -25,12 +25,16 @@ public class Star extends PrimitiveFunction implements Lambda {
             return new Atom(a.getComplex().multiply(b.getReal()));
         } else if(a.getType() == Type.STRING && b.getType() == Type.REAL) {
             return new Atom(StringUtils.repeat(a.getString(), b.getReal().intValue()));
-        } else if(a.getType() == Type.LIST || b.getType() == Type.LIST) {
+        } else if(a.getType() == Type.LIST && b.getType() == Type.LIST) {
             List<Atom> A = a.getList();
             List<Atom> B = b.getList();
             if(A.size() != B.size())
                 throw new ArrayError("Mismatched input shapes: Multiplying vectors of length " + A.size() + " and " + B.size() + ".");
             return new Atom(Streams.zip(A.stream(), B.stream(), Star::multiply2).collect(Collectors.toList()));
+        } else if(a.getType() == Type.LIST && b.isNumeric()) {
+            return new Atom(a.getList().stream().map(x -> multiply2(x, b)).collect(Collectors.toList()));
+        } else if(a.isNumeric() && b.getType() == Type.LIST) {
+            return new Atom(b.getList().stream().map(x -> multiply2(a, x)).collect(Collectors.toList()));
         } else {
             throw new TypeError("* not defined for: " + a.getType() + " and " + b.getType());
         }
