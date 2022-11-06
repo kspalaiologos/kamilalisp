@@ -21,7 +21,7 @@ public class FunctionRegistry {
             "if", "signum", "max", "e", "false", "*", "outer-product", "+", "reverse", "-",
             "/=", "/", "cdr", "true", "lift", "pi", "<", "=", ">", ">=", "levenshtein", "sin",
             "cos", "tan", "csc", "sec", "cot", "asin", "acos", "atan", "acot", "acsc", "asec",
-            "sinh", "cosh", "tanh", "coth"
+            "sinh", "cosh", "tanh", "coth", "sech", "csch"
     );
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(10)));
@@ -78,6 +78,8 @@ public class FunctionRegistry {
         env.set("cosh", new Atom(new Cosh()));
         env.set("tanh", new Atom(new Tanh()));
         env.set("coth", new Atom(new Coth()));
+        env.set("sech", new Atom(new Sech()));
+        env.set("csch", new Atom(new Csch()));
         env.set("outer-product", new Atom(new OuterProduct()));
         env.set("env-keys", new Atom(new EnvKeys()));
         env.set("levenshtein", new Atom(new Levenshtein()));
