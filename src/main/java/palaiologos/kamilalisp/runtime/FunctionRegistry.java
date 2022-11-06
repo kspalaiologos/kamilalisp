@@ -9,8 +9,15 @@ import palaiologos.kamilalisp.runtime.string.Format;
 import palaiologos.kamilalisp.runtime.string.Lines;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 public class FunctionRegistry {
+    public static final Set<String> BUILTIN_BINDINGS = Set.of(
+            "foldr", "**", "<=", "ln", "mod", "def", "range", "str-format", "tie", "lambda",
+            "min", "car", "sqrt", "env-keys", "foldl", "str-lines", "foldl1", "exp", "foldr1",
+            "if", "signum", "max", "e", "false", "*", "outer-product", "+", "reverse", "-",
+            "/=", "/", "cdr", "true", "lift", "pi", "<", "=", ">", ">="
+    );
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(10)));
         env.set("lambda", new Atom(new Dfn()));
@@ -51,7 +58,6 @@ public class FunctionRegistry {
         env.set(">=", new Atom(new Ge()));
         env.set("<=", new Atom(new Le()));
         env.set("outer-product", new Atom(new OuterProduct()));
-
         env.set("env-keys", new Atom(new EnvKeys()));
     }
 }

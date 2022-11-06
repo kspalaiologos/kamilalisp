@@ -58,10 +58,11 @@ public class Main {
                 .appName("KamilaLisp")
                 .parser(parser)
                 .history(new DefaultHistory())
-                .highlighter(new LispHighlight())
+                .highlighter(new LispHighlight(env))
                 .variable(LineReader.SECONDARY_PROMPT_PATTERN, promptPattern)
                 .variable(LineReader.INDENTATION, 3)
                 .terminal(t)
+                .completer(new LispCompletion(env))
                 .build();
         int lineNumberOffset = 0;
         try {

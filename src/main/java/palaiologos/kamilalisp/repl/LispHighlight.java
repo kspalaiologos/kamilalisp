@@ -10,14 +10,17 @@ import org.jline.utils.AttributedStyle;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.parser.GrammarLexer;
 
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public class LispHighlight implements Highlighter {
-    private static Environment refGlobEnv = null;
+    private Environment refGlobEnv = null;
 
-    public static boolean isKeyword(String s) {
-        if(refGlobEnv == null)
-            refGlobEnv = Environment.defaultEnvironment();
+    public LispHighlight(Environment env) {
+        refGlobEnv = env;
+    }
+
+    public boolean isKeyword(String s) {
         return refGlobEnv.has(s);
     }
 
