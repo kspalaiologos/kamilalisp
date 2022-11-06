@@ -1,6 +1,5 @@
-package palaiologos.kamilalisp.runtime.math;
+package palaiologos.kamilalisp.runtime.math.trig;
 
-import ch.obermuhlner.math.big.BigComplex;
 import ch.obermuhlner.math.big.BigComplexMath;
 import ch.obermuhlner.math.big.BigDecimalMath;
 import palaiologos.kamilalisp.atom.*;
@@ -10,15 +9,15 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Sin extends PrimitiveFunction implements Lambda {
-    private static final String name = "sin";
+public class Cot extends PrimitiveFunction implements Lambda {
+    private static final String name = "cot";
 
     public static Atom trig1(Environment env, Atom a) {
         a.assertTypes(Type.REAL, Type.COMPLEX, Type.LIST);
         if(a.getType() == Type.COMPLEX) {
-            return new Atom(BigComplexMath.sin(a.getComplex(), env.getMathContext()));
+            return new Atom(BigComplexMath.tan(a.getComplex(), env.getMathContext()).reciprocal(env.getMathContext()));
         } else if(a.getType() == Type.REAL) {
-            return new Atom(BigDecimalMath.sin(a.getReal(), env.getMathContext()));
+            return new Atom(BigDecimal.ONE.divide(BigDecimalMath.tan(a.getReal(), env.getMathContext()), env.getMathContext()));
         } else if(a.getType() == Type.LIST) {
             return new Atom(a.getList().stream().map(x -> trig1(env, a)).collect(Collectors.toList()));
         } else {
