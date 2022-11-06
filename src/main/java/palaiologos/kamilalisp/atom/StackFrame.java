@@ -50,7 +50,9 @@ public class StackFrame {
                 sb.append("    at ").append(e.frameString).append("  ").append(e.line).append(":").append(e.col).append("\n");
             }
         }
-        if(System.getenv("DEBUG").equals("true")) {
+
+        String isDebug = System.getenv("DEBUG");
+        if(isDebug != null && isDebug.equals("true")) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             t.printStackTrace(pw);
