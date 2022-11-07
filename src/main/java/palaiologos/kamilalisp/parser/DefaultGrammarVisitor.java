@@ -175,26 +175,33 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
     @Override
     public Atom visitHex_(GrammarParser.Hex_Context ctx) {
         if(ctx.getText().startsWith("$"))
-            return new CodeAtom(new BigInteger(ctx.HEX().getText().substring(3), 16)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+            return new CodeAtom(new BigInteger(ctx.HEX().getText().substring(2), 16)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
         return new CodeAtom(new BigDecimal(new BigInteger(ctx.HEX().getText().substring(2), 16))).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
     }
 
     @Override
     public Atom visitBin_(GrammarParser.Bin_Context ctx) {
         if(ctx.getText().startsWith("$"))
-            return new CodeAtom(new BigInteger(ctx.BIN().getText().substring(3), 2)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+            return new CodeAtom(new BigInteger(ctx.BIN().getText().substring(2), 2)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
         return new CodeAtom(new BigDecimal(new BigInteger(ctx.BIN().getText().substring(2), 2))).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
     }
 
     @Override
     public Atom visitLong_(GrammarParser.Long_Context ctx) {
         if(ctx.getText().startsWith("$"))
-            return new CodeAtom(new BigInteger(ctx.LONG().getText().substring(1), 10)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+            return new CodeAtom(new BigInteger(ctx.LONG().getText(), 10)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
         return new CodeAtom(new BigDecimal(new BigInteger(ctx.LONG().getText(), 10))).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
     }
 
     @Override
     public Atom visitNumber(GrammarParser.NumberContext ctx) {
+        if(ctx.long_() != null)
+            return visit(ctx.long_());
+        if(ctx.hex_() != null)
+            return visit(ctx.hex_());
+        if(ctx.bin_() != null)
+            return visit(ctx.bin_());
+
         String numberString = ctx.getText();
         if(numberString.contains("J")) {
             // Complex numbers.
