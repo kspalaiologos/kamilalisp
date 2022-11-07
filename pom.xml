@@ -156,16 +156,7 @@
 
     <profiles>
         <profile>
-            <id>native</id>
-
-            <dependencies>
-                <dependency>
-                    <groupId>org.junit.platform</groupId>
-                    <artifactId>junit-platform-launcher</artifactId>
-                    <version>1.8.2</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
+            <id>native-static</id>
 
             <build>
                 <plugins>
@@ -188,6 +179,37 @@
                             <mainClass>palaiologos.kamilalisp.repl.Main</mainClass>
                             <buildArgs>
                                 <arg>--static --libc=musl --verbose -H:ReflectionConfigurationFiles=classes/META-INF/native-image/reflection-config.json</arg>
+                            </buildArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+             
+        <profile>
+            <id>native-dynamic</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <version>0.9.12</version>
+                        <extensions>true</extensions>
+                        <executions>
+                            <execution>
+                                <id>build-native</id>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <fallback>false</fallback>
+                            <mainClass>palaiologos.kamilalisp.repl.Main</mainClass>
+                            <buildArgs>
+                                <arg>--verbose -H:ReflectionConfigurationFiles=classes/META-INF/native-image/reflection-config.json</arg>
                             </buildArgs>
                         </configuration>
                     </plugin>
