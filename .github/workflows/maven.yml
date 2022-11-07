@@ -21,6 +21,7 @@ jobs:
         components: native-image,python,llvm
         cache: maven
         native-image-musl: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Build with Maven
       run: mvn package -P native --file pom.xml
     - name: Install UPX
@@ -49,6 +50,7 @@ jobs:
         components: native-image,python,llvm
         cache: maven
         native-image-musl: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Build with Maven
       run: mvn package -P native --file pom.xml
     - name: Install UPX
