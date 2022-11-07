@@ -14,15 +14,15 @@ import java.util.stream.Collectors;
 
 public class Slash extends PrimitiveFunction implements Lambda {
     public static Atom quot2(Environment e, Atom a, Atom b) {
-        a.assertTypes(Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
-        b.assertTypes(Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
+        a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
+        b.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
         if(a.getType() == Type.COMPLEX && b.getType() == Type.COMPLEX) {
             return new Atom(a.getComplex().divide(b.getComplex(), e.getMathContext()));
-        } else if(a.getType() == Type.REAL && b.getType() == Type.REAL) {
+        } else if((a.getType() == Type.REAL || a.getType() == Type.INTEGER) && (b.getType() == Type.REAL || b.getType() == Type.INTEGER)) {
             return new Atom(a.getReal().divide(b.getReal(), e.getMathContext()));
-        } else if(a.getType() == Type.REAL && b.getType() == Type.COMPLEX) {
+        } else if((a.getType() == Type.REAL || a.getType() == Type.INTEGER) && b.getType() == Type.COMPLEX) {
             return new Atom(BigComplex.valueOf(a.getReal()).divide(b.getComplex(), e.getMathContext()));
-        } else if(a.getType() == Type.COMPLEX && b.getType() == Type.REAL) {
+        } else if(a.getType() == Type.COMPLEX && (b.getType() == Type.REAL || b.getType() == Type.INTEGER)) {
             return new Atom(a.getComplex().divide(b.getReal(), e.getMathContext()));
         } else if(a.getType() == Type.STRING && b.getType() == Type.STRING) {
             return new Atom(Arrays.stream(StringUtils.splitByWholeSeparator(a.getString(), b.getString())).map(Atom::new).collect(Collectors.toList()));
@@ -45,7 +45,7 @@ public class Slash extends PrimitiveFunction implements Lambda {
         a.assertTypes(Type.REAL, Type.COMPLEX, Type.LIST);
         if(a.getType() == Type.COMPLEX) {
             return new Atom(a.getComplex().reciprocal(e.getMathContext()));
-        } else if(a.getType() == Type.REAL) {
+        } else if(a.getType() == Type.REAL || a.getType() == Type.INTEGER) {
             return new Atom(BigDecimal.ONE.divide(a.getReal(), e.getMathContext()));
         } else if(a.getType() == Type.LIST) {
             return new Atom(a.getList().stream().map(x -> quot1(e, x)).collect(Collectors.toList()));
