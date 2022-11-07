@@ -20,10 +20,10 @@ public class Acsch extends PrimitiveFunction implements Lambda {
     }
 
     public static Atom trig1(Environment env, Atom a) {
-        a.assertTypes(Type.REAL, Type.COMPLEX, Type.LIST);
+        a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
         if(a.getType() == Type.COMPLEX) {
             return new Atom(imagTrig(a.getComplex(), env.getMathContext()));
-        } else if(a.getType() == Type.REAL) {
+        } else if(a.getType() == Type.REAL || a.getType() == Type.INTEGER) {
             BigComplex arg = BigComplex.valueOf(a.getReal());
             BigComplex result = imagTrig(arg, env.getMathContext());
             if(result.isReal())

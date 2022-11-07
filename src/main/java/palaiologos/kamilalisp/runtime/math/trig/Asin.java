@@ -13,10 +13,10 @@ public class Asin extends PrimitiveFunction implements Lambda {
     private static final String name = "asin";
 
     public static Atom trig1(Environment env, Atom a) {
-        a.assertTypes(Type.REAL, Type.COMPLEX, Type.LIST);
+        a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
         if(a.getType() == Type.COMPLEX) {
             return new Atom(BigComplexMath.asin(a.getComplex(), env.getMathContext()));
-        } else if(a.getType() == Type.REAL) {
+        } else if(a.getType() == Type.REAL || a.getType() == Type.INTEGER) {
             BigComplex arg = BigComplex.valueOf(a.getReal());
             BigComplex result = BigComplexMath.asin(arg, env.getMathContext());
             if(result.isReal())

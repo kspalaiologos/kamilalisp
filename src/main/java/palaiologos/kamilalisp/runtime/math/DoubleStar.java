@@ -9,13 +9,14 @@ import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.ArrayError;
 import palaiologos.kamilalisp.error.TypeError;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class DoubleStar extends PrimitiveFunction implements Lambda {
     public static Atom power2(Environment e, Atom a, Atom b) {
-        a.assertTypes(Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
-        b.assertTypes(Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
+        a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
+        b.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
         if(a.getType() == Type.COMPLEX && b.getType() == Type.COMPLEX) {
             return new Atom(BigComplexMath.pow(a.getComplex(), b.getComplex(), e.getMathContext()));
         } else if(a.getType() == Type.REAL && b.getType() == Type.REAL) {
@@ -24,6 +25,16 @@ public class DoubleStar extends PrimitiveFunction implements Lambda {
             return new Atom(BigComplexMath.pow(BigComplex.valueOf(a.getReal()), b.getComplex(), e.getMathContext()));
         } else if(a.getType() == Type.COMPLEX && b.getType() == Type.REAL) {
             return new Atom(BigComplexMath.pow(a.getComplex(), b.getReal(), e.getMathContext()));
+        } else if(a.getType() == Type.INTEGER && b.getType() == Type.INTEGER) {
+            return new Atom(a.getInteger().pow(b.getInteger().intValue()));
+        } else if(a.getType() == Type.INTEGER && b.getType() == Type.REAL) {
+            return new Atom(BigDecimalMath.pow(new BigDecimal(a.getInteger()), b.getReal(), e.getMathContext()));
+        } else if(a.getType() == Type.REAL && b.getType() == Type.INTEGER) {
+            return new Atom(BigDecimalMath.pow(a.getReal(), new BigDecimal(b.getInteger()), e.getMathContext()));
+        } else if(a.getType() == Type.INTEGER && b.getType() == Type.COMPLEX) {
+            return new Atom(BigComplexMath.pow(BigComplex.valueOf(new BigDecimal(a.getInteger())), b.getComplex(), e.getMathContext()));
+        } else if(a.getType() == Type.COMPLEX && b.getType() == Type.INTEGER) {
+            return new Atom(BigComplexMath.pow(a.getComplex(), BigComplex.valueOf(new BigDecimal(b.getInteger())), e.getMathContext()));
         } else if(a.getType() == Type.LIST && b.getType() == Type.LIST) {
             List<Atom> A = a.getList();
             List<Atom> B = b.getList();

@@ -14,10 +14,10 @@ public class Cot extends PrimitiveFunction implements Lambda {
     private static final String name = "cot";
 
     public static Atom trig1(Environment env, Atom a) {
-        a.assertTypes(Type.REAL, Type.COMPLEX, Type.LIST);
+        a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
         if(a.getType() == Type.COMPLEX) {
             return new Atom(BigComplexMath.tan(a.getComplex(), env.getMathContext()).reciprocal(env.getMathContext()));
-        } else if(a.getType() == Type.REAL) {
+        } else if(a.getType() == Type.REAL || a.getType() == Type.INTEGER) {
             BigComplex arg = BigComplex.valueOf(BigDecimal.ONE.divide(a.getReal(), env.getMathContext()));
             BigComplex result = BigComplexMath.tan(arg, env.getMathContext());
             if(result.isReal())
