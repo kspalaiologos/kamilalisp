@@ -28,7 +28,7 @@ public class Range extends PrimitiveFunction implements Lambda {
                 throw new IndexOutOfBoundsException();
             }
 
-            return new Atom(new BigDecimal(sign ? begin.add(BigInteger.valueOf(index)) : begin.subtract(BigInteger.valueOf(index))));
+            return new Atom(sign ? begin.add(BigInteger.valueOf(index)) : begin.subtract(BigInteger.valueOf(index)));
         }
 
         @Override
@@ -40,8 +40,8 @@ public class Range extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         assertArity(args, 2);
-        BigInteger begin = args.get(0).getReal().toBigInteger();
-        BigInteger end = args.get(1).getReal().toBigInteger();
+        BigInteger begin = args.get(0).getInteger();
+        BigInteger end = args.get(1).getInteger();
         if(begin.compareTo(end) == 0)
             return new Atom(List.of());
         return new Atom(new RangeList(begin, end));

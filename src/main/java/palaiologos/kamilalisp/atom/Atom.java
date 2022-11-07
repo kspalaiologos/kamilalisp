@@ -51,7 +51,7 @@ public class Atom {
     }
 
     public Atom(boolean data) {
-        this.data = data ? BigDecimal.valueOf(1) : BigDecimal.valueOf(0);
+        this.data = data ? BigInteger.valueOf(1) : BigInteger.valueOf(0);
         this.type = Type.REAL;
     }
 
@@ -179,7 +179,7 @@ public class Atom {
             case IDENTIFIER:
                 return Identifier.of(getIdentifier());
             case INTEGER:
-                return getInteger().toString();
+                return "$" + getInteger().toString();
             case COMPLEX:
                 return getComplex().re.toString() + "J" + getComplex().im.toString();
             default:
@@ -194,7 +194,7 @@ public class Atom {
             case REAL:
                 return getReal().toString();
             case INTEGER:
-                return getInteger().toString();
+                return "$" + getInteger().toString();
             case LIST:
                 if(getList().isEmpty())
                     return "nil";
@@ -253,7 +253,7 @@ public class Atom {
         return switch (getType()) {
             case STRING -> "\"" + getString() + "\"";
             case REAL -> getReal().toString();
-            case INTEGER -> getInteger().toString();
+            case INTEGER -> "$" + getInteger().toString();
             case LIST -> getList().isEmpty() ? "nil"
                     : getList().get(0) instanceof ReactiveFunction ? getList().get(0).toString()
                         : "(" + getList().get(0).shortString() + (getList().size() > 2 ? " ...)" : ")");

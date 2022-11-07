@@ -4,6 +4,7 @@ import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.TypeError;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,9 +18,9 @@ public class Tally extends PrimitiveFunction implements Lambda {
 
     private static Atom tally(Atom a) {
         if(a.getType() == Type.LIST) {
-            return new Atom(BigDecimal.valueOf(a.getList().size()));
+            return new Atom(BigInteger.valueOf(a.getList().size()));
         } else {
-            return new Atom(BigDecimal.ZERO);
+            return new Atom(BigInteger.ZERO);
         }
     }
 
