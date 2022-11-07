@@ -266,6 +266,28 @@ public class Atom {
     @Override
     public boolean equals(Object obj) {
         if(obj instanceof Atom other) {
+            if(isNumeric() && other.isNumeric()) {
+                if(getType() == Type.REAL && other.getType() == Type.REAL)
+                    return getReal().equals(other.getReal());
+                else if(getType() == Type.INTEGER && other.getType() == Type.INTEGER)
+                    return getInteger().equals(other.getInteger());
+                else if(getType() == Type.COMPLEX && other.getType() == Type.COMPLEX)
+                    return getComplex().equals(other.getComplex());
+                else if(getType() == Type.REAL && other.getType() == Type.INTEGER)
+                    return getReal().equals(new BigDecimal(other.getInteger()));
+                else if(getType() == Type.INTEGER && other.getType() == Type.REAL)
+                    return new BigDecimal(getInteger()).equals(other.getReal());
+                else if(getType() == Type.REAL && other.getType() == Type.COMPLEX)
+                    return other.getComplex().equals(BigComplex.valueOf(getReal()));
+                else if(getType() == Type.COMPLEX && other.getType() == Type.REAL)
+                    return BigComplex.valueOf(other.getReal()).equals(getComplex());
+                else if(getType() == Type.INTEGER && other.getType() == Type.COMPLEX)
+                    return other.getComplex().equals(BigComplex.valueOf(new BigDecimal(getInteger())));
+                else if(getType() == Type.COMPLEX && other.getType() == Type.INTEGER)
+                    return BigComplex.valueOf(new BigDecimal(other.getInteger())).equals(getComplex());
+                else
+                    throw new IllegalStateException();
+            }
             if(getType() != other.getType()) {
                 return false;
             }

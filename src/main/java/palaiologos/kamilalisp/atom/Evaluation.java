@@ -10,7 +10,7 @@ public class Evaluation {
     @Nonnull
     public static Atom evaluate(Environment env, Atom atom) {
         switch(atom.getType()) {
-            case STRING: case REAL: case COMPLEX:
+            case STRING: case REAL: case COMPLEX: case INTEGER:
                 return atom;
             case CALLABLE:
                 return atom;
@@ -50,7 +50,7 @@ public class Evaluation {
     @Nonnull
     public static Atom safeEvaluate(Environment env, Atom atom, Function<String, Atom> exceptionHandler) {
         switch(atom.getType()) {
-            case STRING: case REAL: case COMPLEX:
+            case STRING: case REAL: case COMPLEX: case INTEGER:
                 return atom;
             case CALLABLE:
                 return atom;
