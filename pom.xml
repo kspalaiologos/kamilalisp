@@ -187,7 +187,7 @@
                             <fallback>false</fallback>
                             <mainClass>palaiologos.kamilalisp.repl.Main</mainClass>
                             <buildArgs>
-                                <arg>-H:+StaticExecutableWithDynamicLibC -H:ReflectionConfigurationFiles=classes/META-INF/native-image/reflection-config.json</arg>
+                                <arg>--static --libc=musl --verbose -H:ReflectionConfigurationFiles=classes/META-INF/native-image/reflection-config.json</arg>
                             </buildArgs>
                         </configuration>
                     </plugin>
