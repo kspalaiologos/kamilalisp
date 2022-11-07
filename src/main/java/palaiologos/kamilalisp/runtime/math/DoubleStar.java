@@ -39,7 +39,7 @@ public class DoubleStar extends PrimitiveFunction implements Lambda {
             List<Atom> A = a.getList();
             List<Atom> B = b.getList();
             if(A.size() != B.size())
-                throw new ArrayError("Mismatched input shapes: Multiplying vectors of length " + A.size() + " and " + B.size() + ".");
+                throw new ArrayError("Mismatched input shapes: Exponentiating vectors of length " + A.size() + " and " + B.size() + ".");
             return new Atom(Streams.zip(A.stream(), B.stream(), (x, y) -> power2(e, x, y)).collect(Collectors.toList()));
         } else if(a.getType() == Type.LIST && b.isNumeric()) {
             return new Atom(a.getList().stream().map(x -> power2(e, x, b)).collect(Collectors.toList()));
