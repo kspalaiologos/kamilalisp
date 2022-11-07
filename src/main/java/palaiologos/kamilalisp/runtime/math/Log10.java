@@ -20,7 +20,7 @@ public class Log10 extends PrimitiveFunction implements Lambda {
         switch(a.getType()) {
             case LIST:
                 return new Atom(a.getList().stream().map(x -> ln(e, x)).toList());
-            case REAL:
+            case REAL: case INTEGER:
                 return new Atom(BigDecimalMath.log10(a.getReal(), e.getMathContext()));
             case COMPLEX:
                 return new Atom(BigComplexMath.log(a.getComplex(), e.getMathContext()).divide(BigComplexMath.log(BigComplex.valueOf(10), e.getMathContext()), e.getMathContext()));

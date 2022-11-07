@@ -19,7 +19,7 @@ public class Ln extends PrimitiveFunction implements Lambda {
         switch(a.getType()) {
             case LIST:
                 return new Atom(a.getList().stream().map(x -> ln(e, x)).toList());
-            case REAL:
+            case REAL: case INTEGER:
                 return new Atom(BigDecimalMath.log(a.getReal(), e.getMathContext()));
             case COMPLEX:
                 return new Atom(BigComplexMath.log(a.getComplex(), e.getMathContext()));

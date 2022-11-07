@@ -4,6 +4,7 @@ import com.google.common.collect.Streams;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.ArrayError;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class Max extends PrimitiveFunction implements Lambda {
@@ -16,6 +17,12 @@ public class Max extends PrimitiveFunction implements Lambda {
         if(a.getType() == Type.LIST && b.getType() == Type.LIST) {
             return new Atom(Streams.zip(a.getList().stream(), b.getList().stream(), (x, y) -> max2(e, x, y)).toList());
         } else if(a.getType() == Type.REAL && b.getType() == Type.REAL) {
+            return new Atom(a.getReal().max(b.getReal()));
+        } else if(a.getType() == Type.INTEGER && b.getType() == Type.INTEGER) {
+            return new Atom(a.getInteger().max(b.getInteger()));
+        } else if(a.getType() == Type.INTEGER && b.getType() == Type.REAL) {
+            return new Atom(a.getReal().max(b.getReal()));
+        } else if(a.getType() == Type.REAL && b.getType() == Type.INTEGER) {
             return new Atom(a.getReal().max(b.getReal()));
         } else if(a.getType() == Type.LIST && b.getType() == Type.REAL) {
             return new Atom(a.getList().stream().map(x -> max2(e, x, b)).toList());
