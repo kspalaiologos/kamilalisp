@@ -18,11 +18,12 @@ jobs:
       with:
         version: latest
         java-version: 17
-        components: native-image,python,llvm
+        components: native-image,llvm
         cache: maven
         github-token: ${{ secrets.GITHUB_TOKEN }}
+        native-image-musl: true
     - name: Build with Maven
-      run: mvn package -P native-dynamic --file pom.xml
+      run: mvn package -P native-static --file pom.xml
     - name: Run UPX
       uses: crazy-max/ghaction-upx@v2
       with:
