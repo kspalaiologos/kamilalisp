@@ -28,7 +28,7 @@ public class FunctionRegistry {
             "acoth", "asech", "acsch", "log2", "log10", "gcd", "lcm", "gamma", "not", "bit-and",
             "bit-or", "bit-xor", "bit-nand", "bit-not", "bit-popcount", "fib", "ceil", "floor",
             "round", "and", "or", "abs", "to-string", "filter", "parallel-filter", "any", "all",
-            "none", "sort"
+            "none", "sort", "scanl", "scanl1"
     );
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(10)));
@@ -119,6 +119,8 @@ public class FunctionRegistry {
         env.set("all", new Atom(new All()));
         env.set("none", new Atom(new None()));
         env.set("sort", new Atom(new Sort()));
+        env.set("scanl", new Atom(new Scanl()));
+        env.set("scanl1", new Atom(new Scanl1()));
         env.set("outer-product", new Atom(new OuterProduct()));
         env.set("env-keys", new Atom(new EnvKeys()));
         env.set("levenshtein", new Atom(new Levenshtein()));
