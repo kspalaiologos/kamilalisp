@@ -16,6 +16,7 @@
     <orderEntry type="library" name="Maven: org.antlr:antlr4-runtime:4.11.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.12.0" level="project" />
     <orderEntry type="library" name="Maven: ch.obermuhlner:big-math:2.3.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-text:1.10.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:31.1-jre" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:failureaccess:1.0.1" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava" level="project" />
@@ -30,6 +31,5 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.apiguardian:apiguardian-api:1.1.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-engine:5.9.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.platform:junit-platform-engine:1.9.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.junit.platform:junit-platform-launcher:1.8.2" level="project" />
   </component>
 </module>
