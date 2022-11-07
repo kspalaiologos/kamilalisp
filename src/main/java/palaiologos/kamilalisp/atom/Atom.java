@@ -31,8 +31,13 @@ public class Atom {
     }
 
     public Atom(BigDecimal data) {
-        this.data = data;
-        this.type = Type.REAL;
+        if(data.scale() <= 0 || data.stripTrailingZeros().scale() <= 0) {
+            this.data = data.toBigInteger();
+            this.type = Type.INTEGER;
+        } else {
+            this.data = data;
+            this.type = Type.REAL;
+        }
     }
 
     public Atom(BigInteger data) {
@@ -41,8 +46,18 @@ public class Atom {
     }
 
     public Atom(BigComplex data) {
-        this.data = data;
-        this.type = Type.COMPLEX;
+        if(!data.isReal()) {
+            this.data = data;
+            this.type = Type.COMPLEX;
+        } else {
+            if(data.re.scale() <= 0 || data.re.stripTrailingZeros().scale() <= 0) {
+                this.data = data.re.toBigInteger();
+                this.type = Type.INTEGER;
+            } else {
+                this.data = data.re;
+                this.type = Type.REAL;
+            }
+        }
     }
 
     public Atom(List<Atom> data) {
@@ -52,7 +67,7 @@ public class Atom {
 
     public Atom(boolean data) {
         this.data = data ? BigInteger.valueOf(1) : BigInteger.valueOf(0);
-        this.type = Type.REAL;
+        this.type = Type.INTEGER;
     }
 
     public Atom(Callable data) {
