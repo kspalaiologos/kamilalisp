@@ -27,7 +27,7 @@ public class FunctionRegistry {
             "sinh", "cosh", "tanh", "coth", "sech", "csch", "tally", "asinh", "acosh", "atanh",
             "acoth", "asech", "acsch", "log2", "log10", "gcd", "lcm", "gamma", "not", "bit-and",
             "bit-or", "bit-xor", "bit-nand", "bit-not", "bit-popcount", "fib", "ceil", "floor",
-            "round", "and", "or", "abs", "to-string", "filter", "parallel-filter"
+            "round", "and", "or", "abs", "to-string", "filter", "parallel-filter", "any", "all"
     );
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(10)));
@@ -114,6 +114,8 @@ public class FunctionRegistry {
         env.set("to-string", new Atom(new ToString()));
         env.set("filter", new Atom(new Filter()));
         env.set("parallel-filter", new Atom(new ParallelFilter()));
+        env.set("any", new Atom(new Any()));
+        env.set("all", new Atom(new All()));
         env.set("outer-product", new Atom(new OuterProduct()));
         env.set("env-keys", new Atom(new EnvKeys()));
         env.set("levenshtein", new Atom(new Levenshtein()));
