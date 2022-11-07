@@ -28,6 +28,12 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
             throw new TypeError("Expected a list or an identifier as the first argument to `lambda'.");
         }
 
+        for(int i = 0; i < bindings.size(); i++)
+            if(Identifier.of(bindings.get(i)).startsWith("...") && i != bindings.size() - 1)
+                throw new TypeError("Cannot use a name ends with `...' as a binding.");
+
+        final boolean wantsVararg = bindings.size() > 0 && Identifier.of(bindings.get(bindings.size() - 1)).startsWith("...");
+
         Atom code = args.get(1);
 
         int line = 0, col = 0;
@@ -52,9 +58,16 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
             @Override
             public Atom apply(Environment throwaway, List<Atom> args) {
                 Environment descendantEnv = new Environment(env);
-                assertArity(args, bindings.size());
-                for(int i = 0; i < bindings.size(); i++) {
-                    descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
+                if(!wantsVararg) {
+                    assertArity(args, bindings.size());
+                    for (int i = 0; i < bindings.size(); i++)
+                        descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
+                } else {
+                    if(args.size() < bindings.size() - 1)
+                        throw new TypeError("Expected at least " + (bindings.size() - 1) + " arguments to `" + stringify() + "'.");
+                    for (int i = 0; i < bindings.size() - 1; i++)
+                        descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
+                    descendantEnv.set(Identifier.of(bindings.get(bindings.size() - 1)), new Atom(args.subList(bindings.size() - 1, args.size())));
                 }
                 return Evaluation.evaluate(descendantEnv, code);
             }
