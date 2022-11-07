@@ -3,6 +3,7 @@ package palaiologos.kamilalisp.atom;
 import ch.obermuhlner.math.big.BigComplex;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 public class CodeAtom extends Atom {
@@ -53,4 +54,6 @@ public class CodeAtom extends Atom {
     public CodeAtom(Identifier data) {
         super(data);
     }
+
+    public CodeAtom(BigInteger data) { super(data); }
 }

@@ -67,14 +67,15 @@ literal
     ;
 
 string_: STRING;
-hex_: HEX;
-bin_: BIN;
+hex_: '$'? HEX ;
+bin_: '$'? BIN ;
+long_: '$'? LONG ;
 number
     : COMPLEX
     | hex_
     | bin_
     | FLOAT
-    | LONG
+    | long_
     ;
 
 nil_: NIL;

@@ -174,12 +174,19 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
 
     @Override
     public Atom visitHex_(GrammarParser.Hex_Context ctx) {
-        return new CodeAtom(new BigDecimal(new BigInteger(ctx.getText().substring(2), 16))).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+        return new CodeAtom(new BigDecimal(new BigInteger(ctx.HEX().getText().substring(2), 16))).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
     }
 
     @Override
     public Atom visitBin_(GrammarParser.Bin_Context ctx) {
-        return new CodeAtom(new BigDecimal(new BigInteger(ctx.getText().substring(2), 2))).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+        return new CodeAtom(new BigDecimal(new BigInteger(ctx.BIN().getText().substring(2), 2))).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+    }
+
+    @Override
+    public Atom visitLong_(GrammarParser.Long_Context ctx) {
+        if(ctx.getText().startsWith("$"))
+            return new CodeAtom(new BigInteger(ctx.LONG().getText(), 10)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+        return new CodeAtom(new BigDecimal(new BigInteger(ctx.LONG().getText(), 10))).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
     }
 
     @Override

@@ -6,6 +6,7 @@ import palaiologos.kamilalisp.error.TypeError;
 
 import javax.annotation.Nonnull;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -32,6 +33,11 @@ public class Atom {
     public Atom(BigDecimal data) {
         this.data = data;
         this.type = Type.REAL;
+    }
+
+    public Atom(BigInteger data) {
+        this.data = data;
+        this.type = Type.INTEGER;
     }
 
     public Atom(BigComplex data) {
@@ -80,11 +86,19 @@ public class Atom {
     }
 
     public BigDecimal getReal() {
-        if(getType() != Type.REAL) {
+        if(!isNumeric()) {
             throw new TypeError("Cannot get integer from non-integer atom " + getType());
         }
 
-        return (BigDecimal) data;
+        if(getType() == Type.INTEGER) {
+            return new BigDecimal((BigInteger) data);
+        } else if(getType() == Type.REAL) {
+            return (BigDecimal) data;
+        } else if(getType() == Type.COMPLEX) {
+            return ((BigComplex) data).re;
+        } else {
+            throw new TypeError("Cannot get integer from non-integer atom " + getType());
+        }
     }
 
     public List<Atom> getList() {
@@ -93,6 +107,22 @@ public class Atom {
         }
 
         return (List<Atom>) data;
+    }
+
+    public BigInteger getInteger() {
+        if(!isNumeric()) {
+            throw new TypeError("Cannot get integer from non-integer atom " + getType());
+        }
+
+        if(getType() == Type.REAL) {
+            return ((BigDecimal) data).toBigInteger();
+        } else if(getType() == Type.COMPLEX) {
+            return ((BigComplex) data).re.toBigInteger();
+        } else if(getType() == Type.INTEGER) {
+            return (BigInteger) data;
+        } else {
+            throw new TypeError("Cannot get integer from non-integer atom " + getType());
+        }
     }
 
     public Callable getCallable() {
@@ -112,15 +142,23 @@ public class Atom {
     }
 
     public BigComplex getComplex() {
-        if(getType() != Type.COMPLEX) {
+        if(!isNumeric()) {
             throw new TypeError("Cannot get complex from non-complex atom " + getType());
         }
 
-        return (BigComplex) data;
+        if(getType() == Type.COMPLEX) {
+            return (BigComplex) data;
+        } else if(getType() == Type.REAL) {
+            return BigComplex.valueOf(getReal());
+        } else if(getType() == Type.INTEGER) {
+            return BigComplex.valueOf(new BigDecimal(getInteger()));
+        } else {
+            throw new TypeError("Cannot get complex from non-complex atom " + getType());
+        }
     }
 
     public boolean isNumeric() {
-        return getType() == Type.REAL || getType() == Type.COMPLEX;
+        return getType() == Type.REAL || getType() == Type.COMPLEX || getType() == Type.INTEGER;
     }
 
     @Override
@@ -140,6 +178,8 @@ public class Atom {
                 return getCallable().stringify();
             case IDENTIFIER:
                 return Identifier.of(getIdentifier());
+            case INTEGER:
+                return getInteger().toString();
             case COMPLEX:
                 return getComplex().re.toString() + "J" + getComplex().im.toString();
             default:
@@ -153,6 +193,8 @@ public class Atom {
                 return getString();
             case REAL:
                 return getReal().toString();
+            case INTEGER:
+                return getInteger().toString();
             case LIST:
                 if(getList().isEmpty())
                     return "nil";
@@ -211,6 +253,7 @@ public class Atom {
         return switch (getType()) {
             case STRING -> "\"" + getString() + "\"";
             case REAL -> getReal().toString();
+            case INTEGER -> getInteger().toString();
             case LIST -> getList().isEmpty() ? "nil"
                     : getList().get(0) instanceof ReactiveFunction ? getList().get(0).toString()
                         : "(" + getList().get(0).shortString() + (getList().size() > 2 ? " ...)" : ")");
@@ -255,6 +298,9 @@ public class Atom {
                 case COMPLEX -> {
                     return getComplex().equals(other.getComplex());
                 }
+                case INTEGER -> {
+                    return getInteger().equals(other.getInteger());
+                }
             }
         }
         return false;
@@ -267,6 +313,7 @@ public class Atom {
             case LIST -> !getList().isEmpty();
             case CALLABLE, IDENTIFIER -> true;
             case COMPLEX -> !getComplex().equals(BigComplex.ZERO);
+            case INTEGER -> !getInteger().equals(BigInteger.ZERO);
         };
     }
 

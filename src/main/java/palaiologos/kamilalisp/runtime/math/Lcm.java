@@ -13,14 +13,6 @@ public class Lcm extends PrimitiveFunction implements Lambda {
         return "lcm";
     }
 
-    private static BigComplex asComplex(Atom a) {
-        a.assertTypes(Type.REAL, Type.COMPLEX);
-        if(a.getType() == Type.REAL)
-            return BigComplex.valueOf(a.getReal());
-        else
-            return a.getComplex();
-    }
-
     private static Atom min2(Environment e, Atom a, Atom b) {
         a.assertTypes(Type.REAL, Type.COMPLEX, Type.LIST);
         b.assertTypes(Type.REAL, Type.COMPLEX, Type.LIST);
@@ -37,9 +29,9 @@ public class Lcm extends PrimitiveFunction implements Lambda {
             Atom gcd = Gcd.gcd2(e, a, b);
             BigComplex result;
             if(gcd.getType() == Type.COMPLEX)
-                result = asComplex(a).multiply(asComplex(b).divide(gcd.getComplex(), e.getMathContext()));
+                result = a.getComplex().multiply(b.getComplex().divide(gcd.getComplex(), e.getMathContext()));
             else
-                result = asComplex(a).multiply(asComplex(b).divide(gcd.getReal(), e.getMathContext()));
+                result = a.getComplex().multiply(b.getComplex().divide(gcd.getReal(), e.getMathContext()));
             if(result.isReal())
                 return new Atom(result.re);
             else

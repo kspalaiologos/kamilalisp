@@ -15,14 +15,6 @@ public class Gcd extends PrimitiveFunction implements Lambda {
         return "gcd";
     }
 
-    private static BigComplex asComplex(Atom a) {
-        a.assertTypes(Type.REAL, Type.COMPLEX);
-        if(a.getType() == Type.REAL)
-            return BigComplex.valueOf(a.getReal());
-        else
-            return a.getComplex();
-    }
-
     private static BigComplex gaussianRem(Environment env, BigComplex a, BigComplex b) {
         BigComplex prod = a.multiply(b.conjugate());
         BigDecimal p = prod.re.divide(b.absSquare(env.getMathContext()), env.getMathContext());
@@ -75,7 +67,7 @@ public class Gcd extends PrimitiveFunction implements Lambda {
         } else if(a.isNumeric() && b.getType() == Type.LIST) {
             return new Atom(b.getList().stream().map(x -> gcd2(e, a, x)).toList());
         } else {
-            BigComplex aD = asComplex(a), bD = asComplex(b);
+            BigComplex aD = a.getComplex(), bD = b.getComplex();
             // Scale aD and bD to integers
             BigDecimal base = BigDecimal.ONE;
             int dp = Math.max(Math.max(decimalPlaces(aD.re), decimalPlaces(aD.im)), Math.max(decimalPlaces(bD.re), decimalPlaces(bD.im)));
