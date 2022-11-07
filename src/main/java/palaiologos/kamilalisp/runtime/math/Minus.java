@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 
 public class Minus extends PrimitiveFunction implements Lambda {
     public static Atom subtract2(Atom a, Atom b) {
-        a.assertTypes(Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
-        b.assertTypes(Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
+        a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
+        b.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
         if(a.getType() == Type.COMPLEX && b.getType() == Type.COMPLEX) {
             return new Atom(a.getComplex().subtract(b.getComplex()));
         } else if(a.getType() == Type.REAL && b.getType() == Type.REAL) {
@@ -24,6 +24,16 @@ public class Minus extends PrimitiveFunction implements Lambda {
             return new Atom(a.getComplex().subtract(b.getReal()));
         } else if(a.getType() == Type.STRING && b.getType() == Type.STRING) {
             return new Atom(StringUtils.remove(a.getString(), b.getString()));
+        } else if(a.getType() == Type.INTEGER && b.getType() == Type.INTEGER) {
+            return new Atom(a.getInteger().subtract(b.getInteger()));
+        } else if(a.getType() == Type.INTEGER && b.getType() == Type.REAL) {
+            return new Atom(a.getReal().subtract(b.getReal()));
+        } else if(a.getType() == Type.REAL && b.getType() == Type.INTEGER) {
+            return new Atom(a.getReal().subtract(b.getReal()));
+        } else if(a.getType() == Type.INTEGER && b.getType() == Type.COMPLEX) {
+            return new Atom(a.getComplex().subtract(b.getComplex()));
+        } else if(a.getType() == Type.COMPLEX && b.getType() == Type.INTEGER) {
+            return new Atom(a.getComplex().subtract(b.getComplex()));
         } else if(a.getType() == Type.LIST && b.getType() == Type.LIST) {
             List<Atom> A = a.getList();
             List<Atom> B = b.getList();

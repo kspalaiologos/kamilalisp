@@ -19,7 +19,7 @@ public class Sqrt extends PrimitiveFunction implements Lambda {
         switch(a.getType()) {
             case LIST:
                 return new Atom(a.getList().stream().map(x -> sqrt(e, x)).toList());
-            case REAL:
+            case REAL: case INTEGER:
                 return new Atom(BigDecimalMath.sqrt(a.getReal(), e.getMathContext()));
             case COMPLEX:
                 return new Atom(BigComplexMath.sqrt(a.getComplex(), e.getMathContext()));

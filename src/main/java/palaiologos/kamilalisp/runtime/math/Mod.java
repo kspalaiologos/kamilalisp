@@ -21,8 +21,8 @@ public class Mod extends PrimitiveFunction implements Lambda {
         return A.add(B.multiply(rho));
     }
     public static Atom quot2(Environment e, Atom a, Atom b) {
-        a.assertTypes(Type.REAL, Type.COMPLEX, Type.LIST);
-        b.assertTypes(Type.REAL, Type.COMPLEX, Type.LIST);
+        a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
+        b.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
         if(a.getType() == Type.COMPLEX && b.getType() == Type.COMPLEX) {
             return new Atom(mod(e, a.getComplex(), b.getComplex()));
         } else if(a.getType() == Type.REAL && b.getType() == Type.REAL) {
@@ -31,6 +31,16 @@ public class Mod extends PrimitiveFunction implements Lambda {
             return new Atom(mod(e, BigComplex.valueOf(a.getReal()), b.getComplex()));
         } else if(a.getType() == Type.COMPLEX && b.getType() == Type.REAL) {
             return new Atom(mod(e, a.getComplex(), BigComplex.valueOf(b.getReal())));
+        } else if(a.getType() == Type.INTEGER && b.getType() == Type.INTEGER) {
+            return new Atom(a.getInteger().remainder(b.getInteger()));
+        } else if(a.getType() == Type.INTEGER && b.getType() == Type.REAL) {
+            return new Atom(a.getReal().remainder(b.getReal(), e.getMathContext()));
+        } else if(a.getType() == Type.REAL && b.getType() == Type.INTEGER) {
+            return new Atom(a.getReal().remainder(b.getReal(), e.getMathContext()));
+        } else if(a.getType() == Type.INTEGER && b.getType() == Type.COMPLEX) {
+            return new Atom(mod(e, a.getComplex(), b.getComplex()));
+        } else if(a.getType() == Type.COMPLEX && b.getType() == Type.INTEGER) {
+            return new Atom(mod(e, a.getComplex(), b.getComplex()));
         } else if(a.getType() == Type.LIST && b.getType() == Type.LIST) {
             List<Atom> A = a.getList();
             List<Atom> B = b.getList();

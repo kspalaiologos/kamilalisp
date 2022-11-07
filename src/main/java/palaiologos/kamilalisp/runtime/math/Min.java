@@ -17,6 +17,12 @@ public class Min extends PrimitiveFunction implements Lambda {
             return new Atom(Streams.zip(a.getList().stream(), b.getList().stream(), (x, y) -> min2(e, x, y)).toList());
         } else if(a.getType() == Type.REAL && b.getType() == Type.REAL) {
             return new Atom(a.getReal().min(b.getReal()));
+        } else if(a.getType() == Type.INTEGER && b.getType() == Type.INTEGER) {
+            return new Atom(a.getInteger().min(b.getInteger()));
+        } else if(a.getType() == Type.INTEGER && b.getType() == Type.REAL) {
+            return new Atom(a.getReal().min(b.getReal()));
+        } else if(a.getType() == Type.REAL && b.getType() == Type.INTEGER) {
+            return new Atom(a.getReal().min(b.getReal()));
         } else if(a.getType() == Type.LIST && b.getType() == Type.REAL) {
             return new Atom(a.getList().stream().map(x -> min2(e, x, b)).toList());
         } else if(a.getType() == Type.REAL && b.getType() == Type.LIST) {

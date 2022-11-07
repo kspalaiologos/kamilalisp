@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Pi extends PrimitiveFunction implements Lambda {
     private static Atom pi(Environment env, Atom x) {
-        if(x.getType() == Type.REAL)
+        if(x.getType() == Type.REAL || x.getType() == Type.INTEGER)
             return new Atom(BigDecimalMath.pi(env.getMathContext()).multiply(x.getReal()));
         else if(x.getType() == Type.COMPLEX)
             return new Atom(BigComplex.valueOf(BigDecimalMath.pi(env.getMathContext())).multiply(x.getComplex()));
@@ -22,7 +22,7 @@ public class Pi extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if(args.isEmpty())
-            return new Atom(BigDecimalMath.e(env.getMathContext()));
+            return new Atom(BigDecimalMath.pi(env.getMathContext()));
         else if(args.size() == 1)
             return pi(env, args.get(0));
         else
