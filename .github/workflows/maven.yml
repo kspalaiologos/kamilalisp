@@ -20,10 +20,9 @@ jobs:
         java-version: 17
         components: native-image,python,llvm
         cache: maven
-        native-image-musl: true
         github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Build with Maven
-      run: mvn package -P native --file pom.xml
+      run: mvn package -P native-dynamic --file pom.xml
     - name: Install UPX
       run: |
         brew install upx
@@ -52,7 +51,7 @@ jobs:
         native-image-musl: true
         github-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Build with Maven
-      run: mvn package -P native --file pom.xml
+      run: mvn package -P native-static --file pom.xml
     - name: Install UPX
       run: |
         sudo apt update -q -y
