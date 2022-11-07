@@ -21,6 +21,9 @@ public class Lcm extends PrimitiveFunction implements Lambda {
         } else if(a.getType() == Type.REAL && b.getType() == Type.REAL) {
             Atom gcd = Gcd.gcd2(e, a, b);
             return new Atom(a.getReal().multiply(b.getReal().divide(gcd.getReal(), e.getMathContext())));
+        } else if(a.getType() == Type.INTEGER && b.getType() == Type.INTEGER) {
+            Atom gcd = Gcd.gcd2(e, a, b);
+            return new Atom(a.getInteger().multiply(b.getInteger().divide(gcd.getInteger())));
         } else if(a.getType() == Type.LIST && b.isNumeric()) {
             return new Atom(a.getList().stream().map(x -> min2(e, x, b)).toList());
         } else if(a.isNumeric() && b.getType() == Type.LIST) {

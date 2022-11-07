@@ -43,6 +43,8 @@ public class Gcd extends PrimitiveFunction implements Lambda {
         b.assertTypes(Type.REAL, Type.COMPLEX, Type.LIST);
         if(a.getType() == Type.LIST && b.getType() == Type.LIST) {
             return new Atom(Streams.zip(a.getList().stream(), b.getList().stream(), (x, y) -> gcd2(e, x, y)).toList());
+        } else if(a.getType() == Type.INTEGER && b.getType() == Type.INTEGER) {
+            return new Atom(a.getInteger().gcd(b.getInteger()));
         } else if(a.getType() == Type.REAL && b.getType() == Type.REAL) {
             BigDecimal aD = a.getReal();
             BigDecimal bD = b.getReal();

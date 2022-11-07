@@ -13,6 +13,8 @@ public class E extends PrimitiveFunction implements Lambda {
             return new Atom(BigDecimalMath.e(env.getMathContext()).multiply(x.getReal()));
         else if(x.getType() == Type.COMPLEX)
             return new Atom(BigComplex.valueOf(BigDecimalMath.e(env.getMathContext())).multiply(x.getComplex()));
+        else if(x.getType() == Type.INTEGER)
+            return new Atom(BigDecimalMath.e(env.getMathContext()).multiply(x.getReal()));
         else if(x.getType() == Type.LIST)
             return new Atom(x.getList().stream().map(y -> e(env, y)).toList());
         else
