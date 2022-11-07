@@ -7,11 +7,13 @@ import palaiologos.kamilalisp.error.TypeError;
 import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class Atom {
+public class Atom implements Comparable<Atom> {
     @Nonnull
     private Object data;
     private Type type;
@@ -370,5 +372,38 @@ public class Atom {
     @Override
     public int hashCode() {
         return Objects.hash(type, data);
+    }
+
+    @Override
+    public int compareTo(Atom a) {
+        if(a == null)
+            return 1;
+
+        if((getType() == Type.REAL || getType() == Type.INTEGER) && (a.getType() == Type.REAL || a.getType() == Type.INTEGER)) {
+            return getReal().compareTo(a.getReal());
+        } else if(isNumeric() && a.isNumeric()) {
+            return getComplex().abs(MathContext.DECIMAL128).compareTo(a.getComplex().abs(MathContext.DECIMAL128));
+        } else if(getType() == Type.STRING && a.getType() == Type.STRING) {
+            return getString().compareTo(a.getString());
+        } else if(getType() == Type.LIST && a.getType() == Type.LIST) {
+            List<Atom> l1 = getList();
+            List<Atom> l2 = a.getList();
+            if(l1.size() != l2.size()) {
+                return l1.size() - l2.size();
+            }
+            for(int i = 0; i < l1.size(); i++) {
+                int c = l1.get(i).compareTo(l2.get(i));
+                if(c != 0) {
+                    return c;
+                }
+            }
+            return 0;
+        } else if(getType() == Type.IDENTIFIER && a.getType() == Type.IDENTIFIER) {
+            return Identifier.of(getIdentifier()).compareTo(Identifier.of(a.getIdentifier()));
+        } else if(getType() == Type.CALLABLE && a.getType() == Type.CALLABLE) {
+            return Integer.valueOf(getCallable().hashCode()).compareTo(a.getCallable().hashCode());
+        } else {
+            return getType().ordinal() - a.getType().ordinal();
+        }
     }
 }
