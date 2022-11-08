@@ -11,6 +11,7 @@ form: form_rem (('@'|'∘') form_rem)*
     ;
 
 form_rem: reader_macro
+        | form_rem '$' sqlist
         | bind
         | any_list
         | literal
@@ -125,7 +126,7 @@ NIL : 'nil' | '⍬';
 // Normally I'd have made a rule with NOTID and inverted it in a set.
 
 fragment
-NOTID: ~('∘' | '⍬' | '@' | '^' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';') ;
+NOTID: ~('∘' | '⍬' | '@' | '$' | '^' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';') ;
 
 fragment
 NOTID_START: ~('∘' | '⍬' | '#' | '^' | '$' | '\\' | '\'' | '@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | ':' | '0'..'9') ;

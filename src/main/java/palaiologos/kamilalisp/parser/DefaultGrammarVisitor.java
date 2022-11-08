@@ -35,9 +35,31 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
         }
     }
 
+    private Atom normalListFromSquare(GrammarParser.SqlistContext ctx) {
+        if(ctx.isEmpty()) {
+            return new Atom(List.of());
+        }
+        if(ctx.list_form(0).getText().equals("\\")) {
+            throw new RuntimeException("List cannot start with a \\ partition.");
+        }
+        if(ctx.list_form(ctx.list_form().size() - 1).getText().equals("\\")) {
+            throw new RuntimeException("List cannot end with a \\ partition.");
+        }
+        for(int i = 0; i < ctx.list_form().size() - 1; i++) {
+            if(ctx.list_form(i).getText().equals("\\") && ctx.list_form(i + 1).getText().equals("\\")) {
+                throw new RuntimeException("List cannot have multiple consecutive \\ partitions.");
+            }
+        }
+        return new CodeAtom(listFromContent(ctx.list_form())).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+    }
+
     @Override
     public Atom visitForm_rem(GrammarParser.Form_remContext ctx) {
-        return visit(ctx.children.get(0));
+        if(ctx.children.size() == 1) {
+            return visit(ctx.children.get(0));
+        } else {
+            return new CodeAtom(new Index(visit(ctx.form_rem()), normalListFromSquare(ctx.sqlist()))).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+        }
     }
 
     @Override
