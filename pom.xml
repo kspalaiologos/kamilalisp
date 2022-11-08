@@ -130,14 +130,13 @@
                 <configuration>
                     <options>
                         <option>-libraryjars &lt;java.home&gt;/jmods</option>
-                        <option>-forceprocessing</option>
-                        <option>-dontshrink</option>
-                        <option>-dontoptimize</option>
-                        <option>-dontusemixedcaseclassnames</option>
-                        <option>-repackageclasses kamilalisp</option>
-                        <option>-dontnote</option>
-                        <option>-dontwarn</option>
                         <option>-keep class org.jline.** { *; }</option>
+                        <option>-optimizationpasses 9</option>
+                        <option>-allowaccessmodification</option>
+                        <option>-flattenpackagehierarchy ''</option>
+                        <option>-dontwarn</option>
+                        <option>-dontnote</option>
+                        <option>-forceprocessing</option>
                         <option>-keep class palaiologos.kamilalisp.error.** { *; }</option>
                         <option>-keepclasseswithmembers public class * { public static void main(java.lang.String[]); }</option>
                         <option>-keepclassmembers enum  * { public static **[] values(); public static ** valueOf(java.lang.String); }</option>
