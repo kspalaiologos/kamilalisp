@@ -4,7 +4,7 @@ import palaiologos.kamilalisp.atom.*;
 
 import java.util.List;
 
-public class Lift extends PrimitiveFunction implements SpecialForm {
+public class Lift extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         assertArity(args, 2);
