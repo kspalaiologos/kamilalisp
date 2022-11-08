@@ -33,7 +33,7 @@ public class FunctionRegistry {
             "round", "and", "or", "abs", "to-string", "filter", "parallel-filter", "any", "all",
             "none", "sort", "scanl", "scanl1", "scanr", "scanr1", "replicate", "defun", "λ",
             "⌽", "⍳", "⊤", "⊥", "≠", "π", "√", "≥", "≤", "Γ", "¬", "⌈", "⌊", "∧", "∨", "⍭", "⍴",
-            "same", "not-same", "≢", "≡", "grade-up", "grade-down", "⍋", "⍒"
+            "same", "not-same", "≢", "≡", "grade-up", "grade-down", "⍋", "⍒", "cons"
     );
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(10)));
@@ -160,5 +160,6 @@ public class FunctionRegistry {
         env.set("grade-down", new Atom(new GradeDown()));
         env.set("⍋", new Atom(new GradeUp()));
         env.set("⍒", new Atom(new GradeDown()));
+        env.set("cons", new Atom(new Cons()));
     }
 }
