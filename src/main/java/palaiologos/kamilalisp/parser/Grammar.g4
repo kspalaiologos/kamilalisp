@@ -7,7 +7,7 @@ grammar Grammar;
 
 file_: form * EOF;
 
-form: form_rem ('@' form_rem)*
+form: form_rem (('@'|'∘') form_rem)*
     ;
 
 form_rem: reader_macro
@@ -118,17 +118,17 @@ HEX: '0' [xX] HEXD+ ;
 BIN: '0' [bB] [10]+ ;
 LONG: '-'? [0-9]+;
 
-NIL : 'nil';
+NIL : 'nil' | '⍬';
 
 // Note: This all is required only because ANTLR is garbage
 // and can't inline rules on it's own.
 // Normally I'd have made a rule with NOTID and inverted it in a set.
 
 fragment
-NOTID: ~('@' | '^' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';') ;
+NOTID: ~('∘' | '⍬' | '@' | '^' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';') ;
 
 fragment
-NOTID_START: ~('#' | '^' | '$' | '\\' | '\'' | '@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | ':' | '0'..'9') ;
+NOTID_START: ~('∘' | '⍬' | '#' | '^' | '$' | '\\' | '\'' | '@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | ':' | '0'..'9') ;
 
 NAME: NOTID_START NOTID* ;
 

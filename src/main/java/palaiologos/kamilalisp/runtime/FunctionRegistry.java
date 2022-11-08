@@ -10,6 +10,8 @@ import palaiologos.kamilalisp.runtime.math.hyperbolic.*;
 import palaiologos.kamilalisp.runtime.math.trig.*;
 import palaiologos.kamilalisp.runtime.meta.Defun;
 import palaiologos.kamilalisp.runtime.meta.EnvKeys;
+import palaiologos.kamilalisp.runtime.meta.NotSame;
+import palaiologos.kamilalisp.runtime.meta.Same;
 import palaiologos.kamilalisp.runtime.string.Format;
 import palaiologos.kamilalisp.runtime.string.Levenshtein;
 import palaiologos.kamilalisp.runtime.string.Lines;
@@ -29,11 +31,14 @@ public class FunctionRegistry {
             "acoth", "asech", "acsch", "log2", "log10", "gcd", "lcm", "gamma", "not", "bit-and",
             "bit-or", "bit-xor", "bit-nand", "bit-not", "bit-popcount", "fib", "ceil", "floor",
             "round", "and", "or", "abs", "to-string", "filter", "parallel-filter", "any", "all",
-            "none", "sort", "scanl", "scanl1", "scanr", "scanr1", "replicate", "defun"
+            "none", "sort", "scanl", "scanl1", "scanr", "scanr1", "replicate", "defun", "λ",
+            "⌽", "⍳", "⊤", "⊥", "≠", "π", "√", "≥", "≤", "Γ", "¬", "⌈", "⌊", "∧", "∨", "⍭", "⍴",
+            "same", "not-same", "≢", "≡"
     );
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(10)));
         env.set("lambda", new Atom(new Dfn()));
+        env.set("λ", new Atom(new Dfn()));
         env.set("def", new Atom(new GlobalBinding()));
         env.set("+", new Atom(new Plus()));
         env.set("-", new Atom(new Minus()));
@@ -42,7 +47,9 @@ public class FunctionRegistry {
         env.set("car", new Atom(new Car()));
         env.set("cdr", new Atom(new Cdr()));
         env.set("reverse", new Atom(new Reverse()));
+        env.set("⌽", new Atom(new Reverse()));
         env.set("range", new Atom(new Range()));
+        env.set("⍳", new Atom(new Range()));
         env.set("foldl", new Atom(new Foldl()));
         env.set("foldr", new Atom(new Foldr()));
         env.set("foldl1", new Atom(new Foldl1()));
@@ -54,22 +61,29 @@ public class FunctionRegistry {
         env.set("max", new Atom(new Max()));
         env.set("min", new Atom(new Min()));
         env.set("signum", new Atom(new Signum()));
-        env.set("true", new Atom(BigDecimal.valueOf(1)));
-        env.set("false", new Atom(BigDecimal.valueOf(0)));
+        env.set("true", Atom.TRUE);
+        env.set("⊤", Atom.TRUE);
+        env.set("false", Atom.FALSE);
+        env.set("⊥", Atom.FALSE);
         env.set("if", new Atom(new If()));
         env.set("=", new Atom(new Eq()));
         env.set("/=", new Atom(new Neq()));
+        env.set("≠", new Atom(new Neq()));
         env.set("pi", new Atom(new Pi()));
+        env.set("π", new Atom(new Pi()));
         env.set("e", new Atom(new E()));
         env.set("str-format", new Atom(new Format()));
         env.set("str-lines", new Atom(new Lines()));
         env.set("**", new Atom(new DoubleStar()));
         env.set("ln", new Atom(new Ln()));
         env.set("sqrt", new Atom(new Sqrt()));
+        env.set("√", new Atom(new Sqrt()));
         env.set(">", new Atom(new Gt()));
         env.set("<", new Atom(new Lt()));
         env.set(">=", new Atom(new Ge()));
+        env.set("≥", new Atom(new Ge()));
         env.set("<=", new Atom(new Le()));
+        env.set("≤", new Atom(new Le()));
         env.set("sin", new Atom(new Sin()));
         env.set("cos", new Atom(new Cos()));
         env.set("tan", new Atom(new Tan()));
@@ -99,7 +113,9 @@ public class FunctionRegistry {
         env.set("gcd", new Atom(new Gcd()));
         env.set("lcm", new Atom(new Lcm()));
         env.set("gamma", new Atom(new Gamma()));
+        env.set("Γ", new Atom(new Gamma()));
         env.set("not", new Atom(new Not()));
+        env.set("¬", new Atom(new Not()));
         env.set("bit-and", new Atom(new BitAnd()));
         env.set("bit-or", new Atom(new BitOr()));
         env.set("bit-xor", new Atom(new BitXor()));
@@ -108,13 +124,18 @@ public class FunctionRegistry {
         env.set("bit-popcount", new Atom(new BitPopcount()));
         env.set("fib", new Atom(new Fib()));
         env.set("ceil", new Atom(new Ceil()));
+        env.set("⌈", new Atom(new Ceil()));
         env.set("floor", new Atom(new Floor()));
+        env.set("⌊", new Atom(new Floor()));
         env.set("round", new Atom(new Round()));
         env.set("and", new Atom(new And()));
         env.set("or", new Atom(new Or()));
+        env.set("∧", new Atom(new And()));
+        env.set("∨", new Atom(new Or()));
         env.set("abs", new Atom(new Abs()));
         env.set("to-string", new Atom(new ToString()));
         env.set("filter", new Atom(new Filter()));
+        env.set("⍭", new Atom(new Filter()));
         env.set("parallel-filter", new Atom(new ParallelFilter()));
         env.set("any", new Atom(new Any()));
         env.set("all", new Atom(new All()));
@@ -130,5 +151,10 @@ public class FunctionRegistry {
         env.set("env-keys", new Atom(new EnvKeys()));
         env.set("levenshtein", new Atom(new Levenshtein()));
         env.set("tally", new Atom(new Tally()));
+        env.set("⍴", new Atom(new Tally()));
+        env.set("same", new Atom(new Same()));
+        env.set("not-same", new Atom(new NotSame()));
+        env.set("≡", new Atom(new Same()));
+        env.set("≢", new Atom(new NotSame()));
     }
 }
