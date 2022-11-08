@@ -184,7 +184,9 @@ public class Atom implements Comparable<Atom> {
             case STRING:
                 return "\"" + getString() + "\"";
             case REAL:
-                return getReal().toString();
+                String s = getReal().toString();
+                if(s.contains(".")) return s;
+                return s + ".";
             case LIST:
                 if(getList().isEmpty())
                     return "nil";
@@ -196,7 +198,7 @@ public class Atom implements Comparable<Atom> {
             case IDENTIFIER:
                 return Identifier.of(getIdentifier());
             case INTEGER:
-                return "$" + getInteger().toString();
+                return getInteger().toString();
             case COMPLEX:
                 return getComplex().re.toString() + "J" + getComplex().im.toString();
             default:
@@ -209,9 +211,11 @@ public class Atom implements Comparable<Atom> {
             case STRING:
                 return getString();
             case REAL:
-                return getReal().toString();
+                String s = getReal().toString();
+                if(s.contains(".")) return s;
+                return s + ".";
             case INTEGER:
-                return "$" + getInteger().toString();
+                return getInteger().toString();
             case LIST:
                 if(getList().isEmpty())
                     return "nil";
@@ -267,17 +271,28 @@ public class Atom implements Comparable<Atom> {
     }
 
     public String shortString() {
-        return switch (getType()) {
-            case STRING -> "\"" + getString() + "\"";
-            case REAL -> getReal().toString();
-            case INTEGER -> "$" + getInteger().toString();
-            case LIST -> getList().isEmpty() ? "nil"
-                    : getList().get(0) instanceof ReactiveFunction ? getList().get(0).toString()
+        switch (getType()) {
+            case STRING:
+                return "\"" + getString() + "\"";
+            case REAL:
+                String s = getReal().toString();
+                if(s.contains(".")) return s;
+                return s + ".";
+            case INTEGER:
+                return getInteger().toString();
+            case LIST:
+                return getList().isEmpty() ? "nil"
+                        : getList().get(0) instanceof ReactiveFunction ? getList().get(0).toString()
                         : "(" + getList().get(0).shortString() + (getList().size() > 2 ? " ...)" : ")");
-            case CALLABLE -> "(sic) " + getCallable().frameString() + ".";
-            case IDENTIFIER -> Identifier.of(getIdentifier());
-            case COMPLEX -> getComplex().re.toString() + "J" + getComplex().im.toString();
-        };
+            case CALLABLE:
+                return "(sic) " + getCallable().frameString() + ".";
+            case IDENTIFIER:
+                return Identifier.of(getIdentifier());
+            case COMPLEX:
+                return getComplex().re.toString() + "J" + getComplex().im.toString();
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     @Override
