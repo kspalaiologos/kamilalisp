@@ -25,6 +25,6 @@ class TestTack {
 
     @Test
     void testTackLists() {
-        assertTrue(Common.runCode("(#1 '(1 2) '(2 3) '(3 4))").equals(Common.runCode("(tie 2 3)")));
+        assertEquals(Common.runCode("(#1 '(1 2) '(2 3) '(3 4))"), Common.runCode("(tie 2 3)"));
     }
 }

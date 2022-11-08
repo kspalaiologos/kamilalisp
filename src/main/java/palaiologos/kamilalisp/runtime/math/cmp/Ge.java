@@ -15,9 +15,7 @@ public class Ge extends PrimitiveFunction implements Lambda {
     }
 
     private static Atom cmp2(Environment e, Atom a, Atom b) {
-        if(a.getType() == Type.LIST && b.getType() == Type.LIST) {
-            return new Atom(Streams.zip(a.getList().stream(), b.getList().stream(), (x, y) -> cmp2(e, x, y)).toList());
-        } else if(a.getType() == Type.REAL && b.getType() == Type.REAL) {
+        if(a.getType() == Type.REAL && b.getType() == Type.REAL) {
             return new Atom(a.getReal().compareTo(b.getReal()) >= 0);
         } else if(a.getType() == Type.REAL && b.getType() == Type.INTEGER) {
             return new Atom(a.getReal().compareTo(new BigDecimal(b.getInteger())) >= 0);
@@ -28,9 +26,11 @@ public class Ge extends PrimitiveFunction implements Lambda {
         } else if(a.getType() == Type.STRING && b.getType() == Type.STRING) {
             return new Atom(a.getString().compareTo(b.getString()) >= 0);
         } else if(a.getType() == Type.LIST && (b.getType() == Type.REAL || b.getType() == Type.INTEGER || b.getType() == Type.STRING)) {
-            return new Atom(a.getList().stream().allMatch(x -> cmp2(e, x, b).coerceBool()));
+            return new Atom(a.getList().stream().map(x -> cmp2(e, x, b)).toList());
         } else if((a.getType() == Type.REAL || a.getType() == Type.INTEGER || a.getType() == Type.STRING) && b.getType() == Type.LIST) {
-            return new Atom(b.getList().stream().allMatch(x -> cmp2(e, a, x).coerceBool()));
+            return new Atom(b.getList().stream().map(x -> cmp2(e, a, x)).toList());
+        } else if(a.getType() == Type.LIST && b.getType() == Type.LIST) {
+            return new Atom(Streams.zip(a.getList().stream(), b.getList().stream(), (x, y) -> cmp2(e, x, y)).toList());
         } else {
             throw new UnsupportedOperationException(name + " not defined for: " + a.getType() + " and " + b.getType());
         }
@@ -38,21 +38,7 @@ public class Ge extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.isEmpty())
-            throw new RuntimeException(name + " called with no arguments.");
-
-        if(args.size() == 1 && args.get(0).getType() == Type.LIST) {
-            List<Atom> data = args.get(0).getList();
-
-            for(int i = 0; i < data.size() - 1; i++)
-                if(!cmp2(env, data.get(i), data.get(i + 1)).coerceBool())
-                    return Atom.FALSE;
-            return Atom.TRUE;
-        }
-
-        for(int i = 0; i < args.size() - 1; i++)
-            if(!cmp2(env, args.get(i), args.get(i + 1)).coerceBool())
-                return Atom.FALSE;
-        return Atom.TRUE;
+        assertArity(args, 2);
+        return cmp2(env, args.get(0), args.get(1));
     }
 }
