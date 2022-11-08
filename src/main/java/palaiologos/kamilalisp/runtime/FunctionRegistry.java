@@ -8,10 +8,7 @@ import palaiologos.kamilalisp.runtime.math.bit.*;
 import palaiologos.kamilalisp.runtime.math.cmp.*;
 import palaiologos.kamilalisp.runtime.math.hyperbolic.*;
 import palaiologos.kamilalisp.runtime.math.trig.*;
-import palaiologos.kamilalisp.runtime.meta.Defun;
-import palaiologos.kamilalisp.runtime.meta.EnvKeys;
-import palaiologos.kamilalisp.runtime.meta.NotSame;
-import palaiologos.kamilalisp.runtime.meta.Same;
+import palaiologos.kamilalisp.runtime.meta.*;
 import palaiologos.kamilalisp.runtime.string.Format;
 import palaiologos.kamilalisp.runtime.string.Levenshtein;
 import palaiologos.kamilalisp.runtime.string.Lines;
@@ -34,7 +31,7 @@ public class FunctionRegistry {
             "none", "sort", "scanl", "scanl1", "scanr", "scanr1", "replicate", "defun", "λ",
             "⌽", "⍳", "⊤", "⊥", "≠", "π", "√", "≥", "≤", "Γ", "¬", "⌈", "⌊", "∧", "∨", "⍭", "⍴",
             "same", "not-same", "≢", "≡", "grade-up", "grade-down", "⍋", "⍒", "cons", "flatten",
-            "∊"
+            "∊", "let", "cond"
     );
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(10)));
@@ -164,5 +161,7 @@ public class FunctionRegistry {
         env.set("cons", new Atom(new Cons()));
         env.set("flatten", new Atom(new Flatten()));
         env.set("∊", new Atom(new Flatten()));
+        env.set("let", new Atom(new Let()));
+        env.set("cond", new Atom(new Cond()));
     }
 }
