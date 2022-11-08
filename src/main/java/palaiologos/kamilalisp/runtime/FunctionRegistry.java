@@ -8,6 +8,7 @@ import palaiologos.kamilalisp.runtime.math.bit.*;
 import palaiologos.kamilalisp.runtime.math.cmp.*;
 import palaiologos.kamilalisp.runtime.math.hyperbolic.*;
 import palaiologos.kamilalisp.runtime.math.trig.*;
+import palaiologos.kamilalisp.runtime.meta.Defun;
 import palaiologos.kamilalisp.runtime.meta.EnvKeys;
 import palaiologos.kamilalisp.runtime.string.Format;
 import palaiologos.kamilalisp.runtime.string.Levenshtein;
@@ -28,7 +29,7 @@ public class FunctionRegistry {
             "acoth", "asech", "acsch", "log2", "log10", "gcd", "lcm", "gamma", "not", "bit-and",
             "bit-or", "bit-xor", "bit-nand", "bit-not", "bit-popcount", "fib", "ceil", "floor",
             "round", "and", "or", "abs", "to-string", "filter", "parallel-filter", "any", "all",
-            "none", "sort", "scanl", "scanl1", "scanr", "scanr1", "replicate"
+            "none", "sort", "scanl", "scanl1", "scanr", "scanr1", "replicate", "defun"
     );
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(10)));
@@ -124,6 +125,7 @@ public class FunctionRegistry {
         env.set("scanr", new Atom(new Scanr()));
         env.set("scanr1", new Atom(new Scanr1()));
         env.set("replicate", new Atom(new Replicate()));
+        env.set("defun", new Atom(new Defun()));
         env.set("outer-product", new Atom(new OuterProduct()));
         env.set("env-keys", new Atom(new EnvKeys()));
         env.set("levenshtein", new Atom(new Levenshtein()));
