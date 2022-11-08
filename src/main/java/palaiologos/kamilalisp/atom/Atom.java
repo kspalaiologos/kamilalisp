@@ -3,6 +3,7 @@ package palaiologos.kamilalisp.atom;
 import ch.obermuhlner.math.big.BigComplex;
 import com.google.common.base.Strings;
 import palaiologos.kamilalisp.error.TypeError;
+import palaiologos.kamilalisp.runtime.Index;
 
 import javax.annotation.Nonnull;
 import java.math.BigDecimal;
@@ -190,8 +191,10 @@ public class Atom implements Comparable<Atom> {
             case LIST:
                 if(getList().isEmpty())
                     return "nil";
-                if(getList().get(0) instanceof ReactiveFunction)
+                if(getList().get(0).getType() == Type.CALLABLE && getList().get(0).getCallable() instanceof ReactiveFunction)
                     return getList().get(0).toString();
+                else if(getList().get(0).getType() == Type.CALLABLE && getList().get(0).getCallable() instanceof Index)
+                    return getList().get(0).toString() + "[" + getList().stream().skip(1).map(Atom::toString).collect(Collectors.joining(" ")) + "]";
                 return "(" + getList().stream().map(Atom::toString).collect(Collectors.joining(" ")) + ")";
             case CALLABLE:
                 return getCallable().stringify();
@@ -219,8 +222,10 @@ public class Atom implements Comparable<Atom> {
             case LIST:
                 if(getList().isEmpty())
                     return "nil";
-                if(getList().get(0) instanceof ReactiveFunction)
+                if(getList().get(0).getType() == Type.CALLABLE && getList().get(0).getCallable() instanceof ReactiveFunction)
                     return getList().get(0).toString();
+                else if(getList().get(0).getType() == Type.CALLABLE && getList().get(0).getCallable() instanceof Index)
+                    return getList().get(0).toString() + "[" + getList().stream().skip(1).map(Atom::toString).collect(Collectors.joining(" ")) + "]";
                 if(getList().stream().allMatch(x -> x.getType().equals(Type.LIST))) {
                     int len = getList().get(0).getList().size();
                     if(getList().stream().allMatch(x -> x.getList().size() == len)
@@ -281,9 +286,13 @@ public class Atom implements Comparable<Atom> {
             case INTEGER:
                 return getInteger().toString();
             case LIST:
-                return getList().isEmpty() ? "nil"
-                        : getList().get(0) instanceof ReactiveFunction ? getList().get(0).toString()
-                        : "(" + getList().get(0).shortString() + (getList().size() > 2 ? " ...)" : ")");
+                if(getList().isEmpty())
+                    return "nil";
+                if(getList().get(0).getType() == Type.CALLABLE && getList().get(0).getCallable() instanceof ReactiveFunction)
+                    return getList().get(0).shortString();
+                else if(getList().get(0).getType() == Type.CALLABLE && getList().get(0).getCallable() instanceof Index)
+                    return getList().get(0).shortString() + "[" + getList().stream().skip(1).map(Atom::shortString).collect(Collectors.joining(" ")) + "]";
+                return "(" + getList().stream().limit(2).map(Atom::toString).collect(Collectors.joining(" ")) + (getList().size() > 2 ? " ..." : "") + ")";
             case CALLABLE:
                 return "(sic) " + getCallable().frameString() + ".";
             case IDENTIFIER:

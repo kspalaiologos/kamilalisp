@@ -5,61 +5,55 @@ import palaiologos.kamilalisp.atom.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Index extends PrimitiveFunction implements Lambda {
-    private Atom indexed, indexer;
+public class Index implements SpecialForm {
+    private Atom indexed;
+    private int c, l;
 
-    public Index(Atom indexed, Atom indexer) {
+    public Index(Atom indexed, int c, int l) {
         this.indexed = indexed;
-        this.indexer = indexer;
     }
 
-    private List<Atom> index(Atom head, List<Atom> indices) {
-        return indices.stream().map(x -> {
-            if(x.getType() == Type.INTEGER) {
-                return head.getList().get(x.getInteger().intValueExact());
-            } else if(x.getType() == Type.REAL) {
-                return head.getList().get(x.getReal().intValue());
-            } else if(x.getType() == Type.LIST) {
-                return new Atom(index(head, x.getList()));
-            } else {
-                throw new RuntimeException("Can't index with a " + x.getType() + ".");
-            }
-        }).collect(Collectors.toList());
+    @Override
+    public int line() {
+        return l;
+    }
+
+    @Override
+    public int column() {
+        return c;
     }
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(indexer.getList().size() == 1) {
-            // The indexer is either a scalar value or some variable,
-            // in which case if it evaluates into a list we want to also obtain elements from it.
-            Atom indexedAtom = Evaluation.evaluate(env, indexed);
-            indexedAtom.assertTypes(Type.LIST);
-            Atom indexerHead = Evaluation.evaluate(env, indexer.getList().get(0));
-            if(indexerHead.getType() == Type.INTEGER) {
-                return indexedAtom.getList().get(indexerHead.getInteger().intValueExact());
-            } else if(indexerHead.getType() == Type.REAL) {
-                return indexedAtom.getList().get(indexerHead.getReal().intValue());
-            } else if(indexerHead.getType() == Type.LIST) {
-                return new Atom(indexerHead.getList().stream().map(x -> {
-                    x.assertTypes(Type.INTEGER, Type.REAL);
-                    if(x.getType() == Type.INTEGER) {
-                        return indexedAtom.getList().get(x.getInteger().intValueExact());
-                    } else if(x.getType() == Type.REAL) {
-                        return indexedAtom.getList().get(x.getReal().intValue());
-                    } else
-                        throw new RuntimeException("Can't index with a " + x.getType() + ".");
-                }).collect(Collectors.toList()));
-            } else
-                throw new RuntimeException("Can't index with a " + indexerHead.getType() + ".");
-        } else if(indexer.getList().size() > 1) {
-            return new Atom(index(Evaluation.evaluate(env, indexed), indexer.getList().stream().map(x -> Evaluation.evaluate(env, x)).toList()));
+        Atom indexedAtom = Evaluation.evaluate(env, indexed);
+        indexedAtom.assertTypes(Type.LIST);
+        Atom ix = Evaluation.evaluate(env, new Atom(args));
+        if(ix.getType() == Type.INTEGER) {
+            return indexedAtom.getList().get(ix.getInteger().intValueExact());
+        } else if(ix.getType() == Type.REAL) {
+            return indexedAtom.getList().get(ix.getReal().intValue());
+        } else if(ix.getType() == Type.LIST) {
+            return new Atom(ix.getList().stream().map(x -> {
+                if(x.getType() == Type.INTEGER) {
+                    return indexedAtom.getList().get(x.getInteger().intValueExact());
+                } else if(x.getType() == Type.REAL) {
+                    return indexedAtom.getList().get(x.getReal().intValue());
+                } else {
+                    throw new RuntimeException("Can't index with type " + x.getType());
+                }
+            }).toList());
         } else {
-            return Atom.NULL;
+            throw new RuntimeException("Can't index with type " + ix.getType());
         }
     }
 
     @Override
-    protected String name() {
-        return "..$[...]/syn";
+    public String frameString() {
+        return "?$[?]/syn";
+    }
+
+    @Override
+    public String stringify() {
+        return indexed.toString() + "$";
     }
 }

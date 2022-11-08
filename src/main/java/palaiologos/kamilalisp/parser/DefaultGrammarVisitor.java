@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
     private final int lineNumberOffset;
@@ -35,9 +36,9 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
         }
     }
 
-    private Atom normalListFromSquare(GrammarParser.SqlistContext ctx) {
+    private List<Atom> normalListFromSquare(GrammarParser.SqlistContext ctx) {
         if(ctx.isEmpty()) {
-            return new Atom(List.of());
+            return List.of();
         }
         if(ctx.list_form(0).getText().equals("\\")) {
             throw new RuntimeException("List cannot start with a \\ partition.");
@@ -50,7 +51,7 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
                 throw new RuntimeException("List cannot have multiple consecutive \\ partitions.");
             }
         }
-        return new CodeAtom(listFromContent(ctx.list_form())).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+        return listFromContent(ctx.list_form());
     }
 
     @Override
@@ -58,7 +59,9 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
         if(ctx.children.size() == 1) {
             return visit(ctx.children.get(0));
         } else {
-            return new CodeAtom(new Index(visit(ctx.form_rem()), normalListFromSquare(ctx.sqlist()))).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+            Atom head = new CodeAtom(new Index(visit(ctx.form_rem()), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+            List<Atom> tail = normalListFromSquare(ctx.sqlist());
+            return new Atom(Stream.concat(Stream.of(head), tail.stream()).toList());
         }
     }
 
