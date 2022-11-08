@@ -85,7 +85,7 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
 
     @Override
     public Atom visitList_(GrammarParser.List_Context ctx) {
-        if(ctx.isEmpty()) {
+        if(ctx.isEmpty() || ctx.list_form().isEmpty()) {
             return new Atom(List.of());
         }
         if(ctx.list_form(0).getText().equals("\\")) {
