@@ -7,6 +7,60 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Dfn extends PrimitiveFunction implements SpecialForm {
+    public class DfnClass implements Lambda {
+        List<Identifier> bindings;
+        boolean wantsVararg;
+        Atom code;
+        Environment env;
+        int f_line, f_col;
+
+        public DfnClass(List<Identifier> bindings, boolean wantsVararg, Atom code, Environment env, int f_line, int f_col) {
+            this.bindings = bindings;
+            this.wantsVararg = wantsVararg;
+            this.code = code;
+            this.env = env;
+            this.f_line = f_line;
+            this.f_col = f_col;
+        }
+
+        @Override
+        public String stringify() {
+            return "(λ " + bindings.stream().map(Identifier::of).collect(Collectors.joining(" ")) + " . " + code.toString() + ")";
+        }
+
+        @Override
+        public String frameString() {
+            return "(λ " + bindings.stream().map(Identifier::of).collect(Collectors.joining(" ")) + " . " + code.shortString() + ")";
+        }
+
+        @Override
+        public Atom apply(Environment throwaway, List<Atom> args) {
+            Environment descendantEnv = new Environment(env);
+            if(!wantsVararg) {
+                assertArity(args, bindings.size());
+                for (int i = 0; i < bindings.size(); i++)
+                    descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
+            } else {
+                if(args.size() < bindings.size() - 1)
+                    throw new TypeError("Expected at least " + (bindings.size() - 1) + " arguments to `" + stringify() + "'.");
+                for (int i = 0; i < bindings.size() - 1; i++)
+                    descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
+                descendantEnv.set(Identifier.of(bindings.get(bindings.size() - 1)), new Atom(args.subList(bindings.size() - 1, args.size())));
+            }
+            return Evaluation.evaluate(descendantEnv, code);
+        }
+
+        @Override
+        public int line() {
+            return f_line;
+        }
+
+        @Override
+        public int column() {
+            return f_col;
+        }
+    };
+
     @Override
     protected String name() {
         return "lambda";
@@ -44,43 +98,6 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
 
         final int f_line = line, f_col = col;
 
-        return new CodeAtom(new Lambda() {
-            @Override
-            public String stringify() {
-                return "(λ " + bindings.stream().map(Identifier::of).collect(Collectors.joining(" ")) + " . " + code.toString() + ")";
-            }
-
-            @Override
-            public String frameString() {
-                return "(λ " + bindings.stream().map(Identifier::of).collect(Collectors.joining(" ")) + " . " + code.shortString() + ")";
-            }
-
-            @Override
-            public Atom apply(Environment throwaway, List<Atom> args) {
-                Environment descendantEnv = new Environment(env);
-                if(!wantsVararg) {
-                    assertArity(args, bindings.size());
-                    for (int i = 0; i < bindings.size(); i++)
-                        descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
-                } else {
-                    if(args.size() < bindings.size() - 1)
-                        throw new TypeError("Expected at least " + (bindings.size() - 1) + " arguments to `" + stringify() + "'.");
-                    for (int i = 0; i < bindings.size() - 1; i++)
-                        descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
-                    descendantEnv.set(Identifier.of(bindings.get(bindings.size() - 1)), new Atom(args.subList(bindings.size() - 1, args.size())));
-                }
-                return Evaluation.evaluate(descendantEnv, code);
-            }
-
-            @Override
-            public int line() {
-                return f_line;
-            }
-
-            @Override
-            public int column() {
-                return f_col;
-            }
-        }).setCol(col).setLine(line);
+        return new CodeAtom(new DfnClass(bindings, wantsVararg, code, env, f_line, f_col)).setCol(col).setLine(line);
     }
 }
