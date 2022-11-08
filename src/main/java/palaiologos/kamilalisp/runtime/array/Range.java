@@ -39,12 +39,21 @@ public class Range extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        assertArity(args, 2);
-        BigInteger begin = args.get(0).getInteger();
-        BigInteger end = args.get(1).getInteger();
-        if(begin.compareTo(end) == 0)
-            return new Atom(List.of());
-        return new Atom(new RangeList(begin, end));
+        if(args.size() == 2) {
+            BigInteger begin = args.get(0).getInteger();
+            BigInteger end = args.get(1).getInteger();
+            if (begin.compareTo(end) == 0)
+                return new Atom(List.of());
+            return new Atom(new RangeList(begin, end));
+        } else if(args.size() == 1) {
+            BigInteger begin = BigInteger.ZERO;
+            BigInteger end = args.get(0).getInteger();
+            if (begin.compareTo(end) == 0)
+                return new Atom(List.of());
+            return new Atom(new RangeList(begin, end));
+        } else {
+            throw new IllegalArgumentException("`range' requires 1 or 2 arguments");
+        }
     }
 
     @Override
