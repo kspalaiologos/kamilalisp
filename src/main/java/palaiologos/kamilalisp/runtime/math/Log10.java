@@ -8,6 +8,7 @@ import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class Log10 extends PrimitiveFunction implements Lambda {
@@ -21,7 +22,10 @@ public class Log10 extends PrimitiveFunction implements Lambda {
             case LIST:
                 return new Atom(a.getList().stream().map(x -> ln(e, x)).toList());
             case REAL: case INTEGER:
-                return new Atom(BigDecimalMath.log10(a.getReal(), e.getMathContext()));
+                if(a.getReal().compareTo(BigDecimal.ZERO) > 0)
+                    return new Atom(BigDecimalMath.log10(a.getReal(), e.getMathContext()));
+                else
+                    return new Atom(BigComplexMath.log(a.getComplex(), e.getMathContext()).divide(BigComplexMath.log(BigComplex.valueOf(10), e.getMathContext()), e.getMathContext()));
             case COMPLEX:
                 return new Atom(BigComplexMath.log(a.getComplex(), e.getMathContext()).divide(BigComplexMath.log(BigComplex.valueOf(10), e.getMathContext()), e.getMathContext()));
             default:
