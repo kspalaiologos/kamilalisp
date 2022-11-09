@@ -7,6 +7,10 @@ public class PollardRhoStateManager {
     private static ThreadLocal<PollardRho> pollardRho = new ThreadLocal<>();
 
     public static List<BigInteger> factor(BigInteger i) {
+        if(pollardRho.get() == null) {
+            pollardRho.set(new PollardRho());
+        }
+
         PollardRho instance = pollardRho.get();
         instance.factor(i);
         List<BigInteger> factors = instance.getFactors();
