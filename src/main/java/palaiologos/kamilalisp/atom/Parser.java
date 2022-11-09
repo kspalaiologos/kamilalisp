@@ -24,6 +24,19 @@ public class Parser {
         }
     }
 
+    public static Atom parseNumber(String input) {
+        GrammarLexer lex = new GrammarLexer(CharStreams.fromString(input));
+        lex.removeErrorListeners();
+        lex.addErrorListener(new ThrowingErrorListener(0));
+        CommonTokenStream tokens = new CommonTokenStream(lex);
+        GrammarParser parser = new GrammarParser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(new ThrowingErrorListener(0));
+        ParseTree tree = parser.number();
+        DefaultGrammarVisitor visitor = new DefaultGrammarVisitor(0);
+        return visitor.visit(tree);
+    }
+
     public static List<Atom> parse(int lineNumberOffset, String input) {
         GrammarLexer lex = new GrammarLexer(CharStreams.fromString(input));
         lex.removeErrorListeners();

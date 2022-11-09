@@ -9,13 +9,12 @@ import palaiologos.kamilalisp.runtime.math.*;
 import palaiologos.kamilalisp.runtime.math.bit.*;
 import palaiologos.kamilalisp.runtime.math.cmp.*;
 import palaiologos.kamilalisp.runtime.math.hyperbolic.*;
+import palaiologos.kamilalisp.runtime.math.prime.IsPrime;
+import palaiologos.kamilalisp.runtime.math.prime.NextPrime;
 import palaiologos.kamilalisp.runtime.math.prime.PrimeFactors;
 import palaiologos.kamilalisp.runtime.math.trig.*;
 import palaiologos.kamilalisp.runtime.meta.*;
-import palaiologos.kamilalisp.runtime.string.Format;
-import palaiologos.kamilalisp.runtime.string.Levenshtein;
-import palaiologos.kamilalisp.runtime.string.Lines;
-import palaiologos.kamilalisp.runtime.string.ToString;
+import palaiologos.kamilalisp.runtime.string.*;
 
 import java.math.BigDecimal;
 import java.util.Set;
@@ -35,7 +34,7 @@ public class FunctionRegistry {
             "⌽", "⍳", "⊤", "⊥", "≠", "π", "√", "≥", "≤", "Γ", "¬", "⌈", "⌊", "∧", "∨", "⍭", "⍴",
             "same", "not-same", "≢", "≡", "grade-up", "grade-down", "⍋", "⍒", "cons", "flatten",
             "∊", "let", "cond", "cmpx", "import", "get-file", "try-catch", "writeln", "let-seq",
-            "prime-factors", "is-prime", "next-prime"
+            "prime-factors", "is-prime", "next-prime", "parse-number"
     );
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(10)));
@@ -174,5 +173,8 @@ public class FunctionRegistry {
         env.set("writeln", new Atom(new Writeln()));
         env.set("let-seq", new Atom(new LetSeq()));
         env.set("prime-factors", new Atom(new PrimeFactors()));
+        env.set("parse-number", new Atom(new ParseNumber()));
+        env.set("is-prime", new Atom(new IsPrime()));
+        env.set("next-prime", new Atom(new NextPrime()));
     }
 }

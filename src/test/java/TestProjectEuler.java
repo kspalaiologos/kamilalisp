@@ -37,4 +37,13 @@ class TestProjectEuler {
             throw new RuntimeException(e);
         }
     }
+
+    @Test
+    void testProblem4() {
+        try {
+            assertTrue(Common.runCode(Files.readString(Path.of("project-euler/problem4.lisp"))).coerceBool());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
