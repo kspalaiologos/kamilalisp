@@ -22,11 +22,6 @@ jobs:
       run: mvn -B package --file pom.xml
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1
-      with:
-        # Comma-separated list of files to upload
-        files: target/jacoco.exec
-        # Path to coverage file to upload
-        file: target/jacoco.exec
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.1
       with:
