@@ -50,11 +50,13 @@ public class Minus extends PrimitiveFunction implements Lambda {
     }
 
     public static Atom subtract1(Atom a) {
-        a.assertTypes(Type.REAL, Type.COMPLEX, Type.LIST);
+        a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
         if(a.getType() == Type.COMPLEX) {
             return new Atom(a.getComplex().negate());
         } else if(a.getType() == Type.REAL) {
             return new Atom(a.getReal().negate());
+        } else if(a.getType() == Type.INTEGER) {
+            return new Atom(a.getInteger().negate());
         } else if(a.getType() == Type.LIST) {
             return new Atom(a.getList().stream().map(Minus::subtract1).collect(Collectors.toList()));
         } else {
