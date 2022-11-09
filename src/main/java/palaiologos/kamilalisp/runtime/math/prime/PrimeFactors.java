@@ -7,9 +7,7 @@ import java.util.List;
 public class PrimeFactors extends PrimitiveFunction implements Lambda {
     private static Atom factor(Atom a) {
         if(a.getType() == Type.INTEGER) {
-            PollardRho rho = new PollardRho();
-            rho.factor(a.getInteger());
-            return new Atom(rho.getFactors().stream().map(Atom::new).toList());
+            return new Atom(PollardRhoStateManager.factor(a.getInteger()).stream().map(Atom::new).toList());
         } else if(a.getType() == Type.LIST) {
             return new Atom(a.getList().stream().map(PrimeFactors::factor).toList());
         } else {

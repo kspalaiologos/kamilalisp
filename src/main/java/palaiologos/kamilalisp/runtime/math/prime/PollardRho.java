@@ -42,4 +42,8 @@ public class PollardRho {
     public List<BigInteger> getFactors() {
         return factors;
     }
+
+    public void reset() {
+        factors = new ArrayList<>();
+    }
 }
