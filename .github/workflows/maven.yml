@@ -1,5 +1,5 @@
 
-name: Java CI with Maven
+name: Maven Package
 
 on:
   push:
