@@ -33,7 +33,7 @@ public class FunctionRegistry {
             "none", "sort", "scanl", "scanl1", "scanr", "scanr1", "replicate", "defun", "λ",
             "⌽", "⍳", "⊤", "⊥", "≠", "π", "√", "≥", "≤", "Γ", "¬", "⌈", "⌊", "∧", "∨", "⍭", "⍴",
             "same", "not-same", "≢", "≡", "grade-up", "grade-down", "⍋", "⍒", "cons", "flatten",
-            "∊", "let", "cond", "cmpx", "import", "get-file", "try-catch"
+            "∊", "let", "cond", "cmpx", "import", "get-file", "try-catch", "writeln", "let-seq"
     );
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(10)));
@@ -170,5 +170,6 @@ public class FunctionRegistry {
         env.set("get-file", new Atom(new GetFile()));
         env.set("try-catch", new Atom(new TryCatch()));
         env.set("writeln", new Atom(new Writeln()));
+        env.set("let-seq", new Atom(new LetSeq()));
     }
 }
