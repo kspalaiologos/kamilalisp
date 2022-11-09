@@ -2,6 +2,7 @@ package palaiologos.kamilalisp.runtime;
 
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
+import palaiologos.kamilalisp.runtime.IO.GetFile;
 import palaiologos.kamilalisp.runtime.array.*;
 import palaiologos.kamilalisp.runtime.math.*;
 import palaiologos.kamilalisp.runtime.math.bit.*;
@@ -31,7 +32,7 @@ public class FunctionRegistry {
             "none", "sort", "scanl", "scanl1", "scanr", "scanr1", "replicate", "defun", "λ",
             "⌽", "⍳", "⊤", "⊥", "≠", "π", "√", "≥", "≤", "Γ", "¬", "⌈", "⌊", "∧", "∨", "⍭", "⍴",
             "same", "not-same", "≢", "≡", "grade-up", "grade-down", "⍋", "⍒", "cons", "flatten",
-            "∊", "let", "cond", "cmpx", "import"
+            "∊", "let", "cond", "cmpx", "import", "get-file"
     );
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(10)));
@@ -165,5 +166,6 @@ public class FunctionRegistry {
         env.set("cond", new Atom(new Cond()));
         env.set("cmpx", new Atom(new Cmpx()));
         env.set("import", new Atom(new Import()));
+        env.set("get-file", new Atom(new GetFile()));
     }
 }
