@@ -6,6 +6,8 @@
 
 # KamilaLisp Two: Electric Boogaloo
 
+[![codecov](https://codecov.io/gh/kspalaiologos/kamilalisp/branch/v0.2/graph/badge.svg?token=V9D86RYQO8)](https://codecov.io/gh/kspalaiologos/kamilalisp) [![Java CI with Maven](https://github.com/kspalaiologos/kamilalisp/actions/workflows/maven.yml/badge.svg)](https://github.com/kspalaiologos/kamilalisp/actions/workflows/maven.yml)
+
 A functional, flexible and concise Lisp inspired by Haskell and APL, among others. A ground-up rewrite.
 
 Useful links:
