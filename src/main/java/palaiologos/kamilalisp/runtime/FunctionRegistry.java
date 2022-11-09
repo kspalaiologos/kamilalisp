@@ -3,6 +3,7 @@ package palaiologos.kamilalisp.runtime;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.runtime.IO.GetFile;
+import palaiologos.kamilalisp.runtime.IO.Writeln;
 import palaiologos.kamilalisp.runtime.array.*;
 import palaiologos.kamilalisp.runtime.math.*;
 import palaiologos.kamilalisp.runtime.math.bit.*;
@@ -32,7 +33,7 @@ public class FunctionRegistry {
             "none", "sort", "scanl", "scanl1", "scanr", "scanr1", "replicate", "defun", "λ",
             "⌽", "⍳", "⊤", "⊥", "≠", "π", "√", "≥", "≤", "Γ", "¬", "⌈", "⌊", "∧", "∨", "⍭", "⍴",
             "same", "not-same", "≢", "≡", "grade-up", "grade-down", "⍋", "⍒", "cons", "flatten",
-            "∊", "let", "cond", "cmpx", "import", "get-file", "try"
+            "∊", "let", "cond", "cmpx", "import", "get-file", "try-catch"
     );
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(10)));
@@ -167,6 +168,7 @@ public class FunctionRegistry {
         env.set("cmpx", new Atom(new Cmpx()));
         env.set("import", new Atom(new Import()));
         env.set("get-file", new Atom(new GetFile()));
-        env.set("try", new Atom(new TryCatch()));
+        env.set("try-catch", new Atom(new TryCatch()));
+        env.set("writeln", new Atom(new Writeln()));
     }
 }
