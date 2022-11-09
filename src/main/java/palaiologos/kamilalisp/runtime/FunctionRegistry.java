@@ -9,6 +9,7 @@ import palaiologos.kamilalisp.runtime.math.*;
 import palaiologos.kamilalisp.runtime.math.bit.*;
 import palaiologos.kamilalisp.runtime.math.cmp.*;
 import palaiologos.kamilalisp.runtime.math.hyperbolic.*;
+import palaiologos.kamilalisp.runtime.math.prime.PrimeFactors;
 import palaiologos.kamilalisp.runtime.math.trig.*;
 import palaiologos.kamilalisp.runtime.meta.*;
 import palaiologos.kamilalisp.runtime.string.Format;
@@ -33,7 +34,8 @@ public class FunctionRegistry {
             "none", "sort", "scanl", "scanl1", "scanr", "scanr1", "replicate", "defun", "λ",
             "⌽", "⍳", "⊤", "⊥", "≠", "π", "√", "≥", "≤", "Γ", "¬", "⌈", "⌊", "∧", "∨", "⍭", "⍴",
             "same", "not-same", "≢", "≡", "grade-up", "grade-down", "⍋", "⍒", "cons", "flatten",
-            "∊", "let", "cond", "cmpx", "import", "get-file", "try-catch", "writeln", "let-seq"
+            "∊", "let", "cond", "cmpx", "import", "get-file", "try-catch", "writeln", "let-seq",
+            "prime-factors"
     );
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(10)));
@@ -171,5 +173,6 @@ public class FunctionRegistry {
         env.set("try-catch", new Atom(new TryCatch()));
         env.set("writeln", new Atom(new Writeln()));
         env.set("let-seq", new Atom(new LetSeq()));
+        env.set("prime-factors", new Atom(new PrimeFactors()));
     }
 }
