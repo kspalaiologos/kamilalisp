@@ -72,12 +72,12 @@ public class Cdr extends PrimitiveFunction implements Lambda {
                 return new Atom(new CdrListFacade(args.get(0).getList(), 1));
             }
         } else {
-            return new Atom(args.stream().map(l -> {
-                if(l.getType() == Type.STRING) {
-                    return new Atom(l.getString().substring(1));
+            return new Atom(args.stream().map(a -> {
+                if(a.getType() == Type.STRING) {
+                    return new Atom(a.getString().substring(1));
                 }
 
-                List<Atom> l = l.getList();
+                List<Atom> l = a.getList();
                 if(l.isEmpty())
                     return Atom.NULL;
                 if(l instanceof CdrListFacade) {
