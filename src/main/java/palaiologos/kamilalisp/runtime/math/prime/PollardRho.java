@@ -33,7 +33,7 @@ public class PollardRho {
 
     public void factor(BigInteger N) {
         if (N.compareTo(ONE) == 0) return;
-        if (N.isProbablePrime(50)) { factors.add(N); return; }
+        if (N.isProbablePrime(100)) { factors.add(N); return; }
         BigInteger divisor = rho(N);
         factor(divisor);
         factor(N.divide(divisor));

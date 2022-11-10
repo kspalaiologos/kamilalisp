@@ -7,7 +7,7 @@ import java.util.List;
 public class IsPrime extends PrimitiveFunction implements Lambda {
     private static Atom factor(Atom a) {
         if(a.getType() == Type.INTEGER) {
-            return new Atom(a.getInteger().isProbablePrime(50));
+            return new Atom(a.getInteger().isProbablePrime(100));
         } else if(a.getType() == Type.LIST) {
             return new Atom(a.getList().stream().map(IsPrime::factor).toList());
         } else {
