@@ -43,6 +43,11 @@ public class Atom implements Comparable<Atom> {
         }
     }
 
+    public Atom(Userdata u) {
+        this.data = u;
+        this.type = Type.USERDATA;
+    }
+
     public Atom(BigInteger data) {
         this.data = data;
         this.type = Type.INTEGER;
@@ -101,6 +106,14 @@ public class Atom implements Comparable<Atom> {
         }
 
         return (String) data;
+    }
+
+    public Userdata getUserdata() {
+        if(getType() != Type.USERDATA) {
+            throw new TypeError("Cannot get userdata from non-userdata atom " + getType());
+        }
+
+        return (Userdata) data;
     }
 
     public BigDecimal getReal() {
@@ -204,6 +217,8 @@ public class Atom implements Comparable<Atom> {
                 return getInteger().toString();
             case COMPLEX:
                 return getComplex().re.toString() + "J" + getComplex().im.toString();
+            case USERDATA:
+                return getUserdata().toString();
             default:
                 throw new IllegalArgumentException();
         }
@@ -270,6 +285,8 @@ public class Atom implements Comparable<Atom> {
                 return Identifier.of(getIdentifier());
             case COMPLEX:
                 return getComplex().re.toString() + "J" + getComplex().im.toString();
+            case USERDATA:
+                return getUserdata().toDisplayString();
             default:
                 throw new IllegalArgumentException();
         }
@@ -299,6 +316,10 @@ public class Atom implements Comparable<Atom> {
                 return Identifier.of(getIdentifier());
             case COMPLEX:
                 return getComplex().re.toString() + "J" + getComplex().im.toString();
+            case USERDATA:
+                String ud = getUserdata().toDisplayString();
+                if(ud.length() > 20) ud = ud.substring(0, 20) + "...";
+                return ud;
             default:
                 throw new IllegalArgumentException();
         }
@@ -364,6 +385,9 @@ public class Atom implements Comparable<Atom> {
                 case INTEGER -> {
                     return getInteger().equals(other.getInteger());
                 }
+                case USERDATA -> {
+                    return getUserdata().equals(other.getUserdata());
+                }
             }
         }
         return false;
@@ -377,6 +401,7 @@ public class Atom implements Comparable<Atom> {
             case CALLABLE, IDENTIFIER -> true;
             case COMPLEX -> !getComplex().equals(BigComplex.ZERO);
             case INTEGER -> !getInteger().equals(BigInteger.ZERO);
+            case USERDATA -> getUserdata().coerceBoolean();
         };
     }
 
@@ -426,6 +451,8 @@ public class Atom implements Comparable<Atom> {
             return Identifier.of(getIdentifier()).compareTo(Identifier.of(a.getIdentifier()));
         } else if(getType() == Type.CALLABLE && a.getType() == Type.CALLABLE) {
             return Integer.valueOf(getCallable().hashCode()).compareTo(a.getCallable().hashCode());
+        } else if(getType() == Type.USERDATA && a.getType() == Type.USERDATA) {
+            return getUserdata().compareTo(a.getUserdata());
         } else {
             return getType().ordinal() - a.getType().ordinal();
         }

@@ -10,9 +10,7 @@ public class Evaluation {
     @Nonnull
     public static Atom evaluate(Environment env, Atom atom) {
         switch(atom.getType()) {
-            case STRING: case REAL: case COMPLEX: case INTEGER:
-                return atom;
-            case CALLABLE:
+            case STRING: case REAL: case COMPLEX: case INTEGER: case CALLABLE:
                 return atom;
             case LIST:
                 if(atom.getList().get(0) instanceof CodeAtom) {
@@ -26,8 +24,6 @@ public class Evaluation {
                 Atom result;
                 if(c instanceof Lambda) {
                     result = evaluate(env, c, atom.getList().stream().skip(1).map(x -> evaluate(env, x)).toList());
-                } else if(c instanceof Macro) {
-                    result = evaluate(env, evaluate(env, c, atom.getList().subList(1, atom.getList().size())));
                 } else if(c instanceof SpecialForm) {
                     result = evaluate(env, c, atom.getList().subList(1, atom.getList().size()));
                 } else {
@@ -50,9 +46,7 @@ public class Evaluation {
     @Nonnull
     public static Atom safeEvaluate(Environment env, Atom atom, Function<String, Atom> exceptionHandler) {
         switch(atom.getType()) {
-            case STRING: case REAL: case COMPLEX: case INTEGER:
-                return atom;
-            case CALLABLE:
+            case STRING: case REAL: case COMPLEX: case INTEGER: case CALLABLE:
                 return atom;
             case LIST:
                 int depth = StackFrame.depth();
@@ -68,8 +62,6 @@ public class Evaluation {
                     Atom result;
                     if (c instanceof Lambda) {
                         result = evaluate(env, c, atom.getList().stream().skip(1).map(x -> evaluate(env, x)).toList());
-                    } else if (c instanceof Macro) {
-                        result = evaluate(env, evaluate(env, c, atom.getList().subList(1, atom.getList().size())));
                     } else if (c instanceof SpecialForm) {
                         result = evaluate(env, c, atom.getList().subList(1, atom.getList().size()));
                     } else {
