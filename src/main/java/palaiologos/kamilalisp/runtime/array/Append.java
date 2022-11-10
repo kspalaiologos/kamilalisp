@@ -9,6 +9,10 @@ public class Append extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         assertArity(args, 2);
+        if(args.get(0).getType() == Type.STRING && args.get(1).getType() == Type.STRING) {
+            return new Atom(args.get(0).getString() + args.get(1).getString());
+        }
+
         Atom a1, a2;
         if(args.get(0).getType() == Type.LIST) {
             a1 = args.get(0);

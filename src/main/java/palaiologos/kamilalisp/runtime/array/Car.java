@@ -6,6 +6,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Car extends PrimitiveFunction implements Lambda {
+    private static Atom car(Atom a) {
+        if(a.getType() == Type.LIST) {
+            return a.getList().get(0);
+        } else if(a.getType() == Type.STRING) {
+            return new Atom(String.valueOf(a.getString().charAt(0)));
+        } else {
+            throw new UnsupportedOperationException("car not defined for: " + a.getType());
+        }
+    }
+
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if(args.isEmpty()) {
@@ -13,11 +23,9 @@ public class Car extends PrimitiveFunction implements Lambda {
         }
 
         if(args.size() == 1) {
-            args.get(0).assertTypes(Type.LIST);
-            return args.get(0).getList().get(0);
+            return car(args.get(0));
         } else {
-            args.forEach(a -> a.assertTypes(Type.LIST));
-            return new Atom(args.stream().map(Atom::getList).map(l -> l.get(0)).collect(Collectors.toList()));
+            return new Atom(args.stream().map(Car::car).collect(Collectors.toList()));
         }
     }
 
