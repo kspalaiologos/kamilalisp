@@ -1,8 +1,10 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.parallel.ExecutionMode.CONCURRENT;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -10,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+@Execution(CONCURRENT)
 class TestProjectEuler {
     @Test
     void testProblem1() {
@@ -78,6 +81,15 @@ class TestProjectEuler {
     void testProblem10() {
         try {
             assertTrue(Common.runCode(Files.readString(Path.of("project-euler/problem10.lisp"))).coerceBool());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void testProblem14() {
+        try {
+            assertTrue(Common.runCode(Files.readString(Path.of("project-euler/problem14.lisp"))).coerceBool());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
