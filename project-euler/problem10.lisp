@@ -1,0 +1,1 @@
+(= 142913828922 \while '(2 0) (lambda x (if (< (car x) 2000000) (tie 1 (tie (next-prime@car x) (+ (car x) (car@cdr x)))) (tie 0 x))))
