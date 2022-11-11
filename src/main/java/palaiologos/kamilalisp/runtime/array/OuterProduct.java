@@ -5,11 +5,17 @@ import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.TypeError;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OuterProduct extends PrimitiveFunction implements Lambda {
     public Atom op2(Atom a, Atom b) {
         if(a.getType() == Type.LIST && b.getType() == Type.LIST) {
             return new Atom(Lists.cartesianProduct(a.getList(), b.getList()).stream().map(Atom::new).toList());
+        } else if(a.getType() == Type.STRING && b.getType() == Type.STRING) {
+            return new Atom(Lists.cartesianProduct(
+                    a.getString().chars().mapToObj(x -> (char) x).toList(),
+                    b.getString().chars().mapToObj(x -> (char) x).toList()
+            ).stream().map(x -> new Atom(x.stream().map(Object::toString).collect(Collectors.joining()))).toList());
         } else if(a.getType() == Type.LIST && b.getType() != Type.LIST) {
             return new Atom(Lists.cartesianProduct(a.getList(), List.of(b)).stream().map(Atom::new).toList());
         } else if(a.getType() != Type.LIST && b.getType() == Type.LIST) {
@@ -25,7 +31,7 @@ public class OuterProduct extends PrimitiveFunction implements Lambda {
             throw new TypeError("outer-product called with too few arguments.");
         }
 
-        return args.stream().reduce((acc, x) -> op2(acc, x)).get();
+        return args.stream().reduce(this::op2).get();
     }
 
     @Override
