@@ -67,32 +67,34 @@ public class Main {
         int lineNumberOffset = 0;
         try {
             while (true) {
-                String code = r.readLine("--> ");
-                if (code.length() == 0 || code.trim().length() == 0 || code.trim().startsWith(";"))
-                    continue;
                 try {
-                    List<Atom> data;
-                    try {
-                        data = Parser.parse(lineNumberOffset, code.startsWith("?") ? code.substring(1) : "(" + code + "\n)");
-                    } catch(ParseCancellationException e) {
-                        System.out.println("Syntax error: " + e.getMessage());
+                    String code = r.readLine("--> ");
+                    if (code.length() == 0 || code.trim().length() == 0 || code.trim().startsWith(";"))
                         continue;
+                    try {
+                        List<Atom> data;
+                        try {
+                            data = Parser.parse(lineNumberOffset, code.startsWith("?") ? code.substring(1) : "(" + code + "\n)");
+                        } catch (ParseCancellationException e) {
+                            System.out.println("Syntax error: " + e.getMessage());
+                            continue;
+                        }
+                        for (Atom atom : data)
+                            System.out.println(Evaluation.safeEvaluate(env, atom, s -> {
+                                System.err.println(s);
+                                throw new InterruptionError();
+                            }).toDisplayString());
+                    } catch (InterruptionError e) {
+                        // Ignore, we just wanted to unwind the stack.
                     }
-                    for (Atom atom : data)
-                        System.out.println(Evaluation.safeEvaluate(env, atom, s -> {
-                            System.err.println(s);
-                            throw new InterruptionError();
-                        }).toDisplayString());
-                } catch(InterruptionError e) {
-                    // Ignore, we just wanted to unwind the stack.
+                    // count newlines in code
+                    lineNumberOffset += code.chars().filter(c -> c == '\n').count();
+                } catch(UserInterruptException e) {
+                    System.err.println("Interrupted.");
                 }
-                // count newlines in code
-                lineNumberOffset += code.chars().filter(c -> c == '\n').count();
             }
         } catch (EndOfFileException e) {
-            System.out.println("Bye.");
-        } catch (UserInterruptException e) {
-            System.out.println("Interrupted.");
+            System.err.println("Bye.");
         }
     }
 }

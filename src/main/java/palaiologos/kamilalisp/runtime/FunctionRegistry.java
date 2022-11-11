@@ -36,7 +36,7 @@ public class FunctionRegistry {
             "same", "not-same", "≢", "≡", "grade-up", "grade-down", "⍋", "⍒", "cons", "flatten",
             "∊", "let", "cond", "cmpx", "import", "get-file", "try-catch", "writeln", "let-seq",
             "prime-factors", "is-prime", "next-prime", "parse-number", "while", "prime-no", "memo",
-            "index-of"
+            "index-of", "to-digits", "from-digits"
     );
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(200)));
@@ -182,5 +182,7 @@ public class FunctionRegistry {
         env.set("prime-no", new Atom(new PrimeNo()));
         env.set("memo", new Atom(new Memo()));
         env.set("index-of", new Atom(new IndexOf()));
+        env.set("to-digits", new Atom(new ToDigits()));
+        env.set("from-digits", new Atom(new FromDigits()));
     }
 }
