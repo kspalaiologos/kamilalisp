@@ -9,6 +9,7 @@ import palaiologos.kamilalisp.runtime.math.*;
 import palaiologos.kamilalisp.runtime.math.bit.*;
 import palaiologos.kamilalisp.runtime.math.cmp.*;
 import palaiologos.kamilalisp.runtime.math.hyperbolic.*;
+import palaiologos.kamilalisp.runtime.math.numeric.NSum;
 import palaiologos.kamilalisp.runtime.math.prime.IsPrime;
 import palaiologos.kamilalisp.runtime.math.prime.NextPrime;
 import palaiologos.kamilalisp.runtime.math.prime.PrimeFactors;
@@ -36,7 +37,7 @@ public class FunctionRegistry {
             "same", "not-same", "≢", "≡", "grade-up", "grade-down", "⍋", "⍒", "cons", "flatten",
             "∊", "let", "cond", "cmpx", "import", "get-file", "try-catch", "writeln", "let-seq",
             "prime-factors", "is-prime", "next-prime", "parse-number", "while", "prime-no", "memo",
-            "index-of", "to-digits", "from-digits"
+            "index-of", "to-digits", "from-digits", "n-sum", "Σ"
     );
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(200)));
@@ -184,5 +185,7 @@ public class FunctionRegistry {
         env.set("index-of", new Atom(new IndexOf()));
         env.set("to-digits", new Atom(new ToDigits()));
         env.set("from-digits", new Atom(new FromDigits()));
+        env.set("n-sum", new Atom(new NSum()));
+        env.set("Σ", new Atom(new NSum()));
     }
 }

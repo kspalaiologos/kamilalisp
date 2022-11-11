@@ -14,7 +14,10 @@ public class Writeln extends PrimitiveFunction implements Lambda {
             System.out.println(arg.toDisplayString());
         }
 
-        return new Atom(args);
+        if(args.size() == 1)
+            return args.get(0);
+        else
+            return new Atom(args);
     }
 
     @Override

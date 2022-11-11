@@ -457,4 +457,9 @@ public class Atom implements Comparable<Atom> {
             return getType().ordinal() - a.getType().ordinal();
         }
     }
+
+    public void hack(Type t, Object obj) {
+        this.data = obj;
+        this.type = t;
+    }
 }

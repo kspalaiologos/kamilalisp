@@ -42,7 +42,7 @@ public class Slash extends PrimitiveFunction implements Lambda {
     }
 
     public static Atom quot1(Environment e, Atom a) {
-        a.assertTypes(Type.REAL, Type.COMPLEX, Type.LIST);
+        a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
         if(a.getType() == Type.COMPLEX) {
             return new Atom(a.getComplex().reciprocal(e.getMathContext()));
         } else if(a.getType() == Type.REAL || a.getType() == Type.INTEGER) {
