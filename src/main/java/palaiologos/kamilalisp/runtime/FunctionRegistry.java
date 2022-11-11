@@ -10,6 +10,7 @@ import palaiologos.kamilalisp.runtime.math.*;
 import palaiologos.kamilalisp.runtime.math.bit.*;
 import palaiologos.kamilalisp.runtime.math.cmp.*;
 import palaiologos.kamilalisp.runtime.math.hyperbolic.*;
+import palaiologos.kamilalisp.runtime.math.numeric.NProd;
 import palaiologos.kamilalisp.runtime.math.numeric.NSum;
 import palaiologos.kamilalisp.runtime.math.prime.IsPrime;
 import palaiologos.kamilalisp.runtime.math.prime.NextPrime;
@@ -38,7 +39,8 @@ public class FunctionRegistry {
             "same", "not-same", "≢", "≡", "grade-up", "grade-down", "⍋", "⍒", "cons", "flatten",
             "∊", "let", "cond", "cmpx", "import", "get-file", "try-catch", "writeln", "let-seq",
             "prime-factors", "is-prime", "next-prime", "parse-number", "while", "prime-no", "memo",
-            "index-of", "to-digits", "from-digits", "n-sum", "Σ", "cycle", "take", "↑", "drop", "↓"
+            "index-of", "to-digits", "from-digits", "n-sum", "Σ", "cycle", "take", "↑", "drop", "↓",
+            "n-prod", "Π"
     );
 
     public static void registerDefault(Environment env) {
@@ -194,5 +196,7 @@ public class FunctionRegistry {
         env.set("↑", new Atom(new Take()));
         env.set("drop", new Atom(new Drop()));
         env.set("↓", new Atom(new Drop()));
+        env.set("n-prod", new Atom(new NProd()));
+        env.set("Π", new Atom(new NProd()));
     }
 }
