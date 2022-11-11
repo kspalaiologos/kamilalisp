@@ -40,7 +40,7 @@ public class FunctionRegistry {
             "∊", "let", "cond", "cmpx", "import", "get-file", "try-catch", "writeln", "let-seq",
             "prime-factors", "is-prime", "next-prime", "parse-number", "while", "prime-no", "memo",
             "index-of", "to-digits", "from-digits", "n-sum", "Σ", "cycle", "take", "↑", "drop", "↓",
-            "n-prod", "Π"
+            "n-prod", "Π", "unique-mask", "unique", "intersection", "union"
     );
 
     public static void registerDefault(Environment env) {
@@ -198,5 +198,9 @@ public class FunctionRegistry {
         env.set("↓", new Atom(new Drop()));
         env.set("n-prod", new Atom(new NProd()));
         env.set("Π", new Atom(new NProd()));
+        env.set("unique-mask", new Atom(new UniqueMask()));
+        env.set("unique", new Atom(new Unique()));
+        env.set("intersection", new Atom(new Intersection()));
+        env.set("union", new Atom(new Union()));
     }
 }
