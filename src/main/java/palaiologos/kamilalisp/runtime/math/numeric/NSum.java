@@ -19,15 +19,7 @@ public class NSum extends PrimitiveFunction implements SpecialForm {
         Identifier variable = start.get(1).getIdentifier();
         BigInteger startValue, endValue;
         startValue = Evaluation.evaluate(env, start.get(2)).getInteger();
-
-        if(args.get(1).getType() == Type.IDENTIFIER && (
-                Identifier.of(args.get(1).getIdentifier()).equals("oo")
-                        || Identifier.of(args.get(1).getIdentifier()).equals("∞")
-        )) {
-            endValue = BigInteger.valueOf((long) precision * precision * 10);
-        } else {
-            endValue = Evaluation.evaluate(env, args.get(1)).getInteger();
-        }
+        endValue = Evaluation.evaluate(env, args.get(1)).getInteger();
 
         Atom expr = args.get(2);
 
@@ -38,34 +30,18 @@ public class NSum extends PrimitiveFunction implements SpecialForm {
         Environment sumEnv = new Environment(env);
         Atom sumAtom = new Atom();
 
-        if(endValue != null) {
-            for (BigInteger i = startValue; i.compareTo(endValue) <= 0; i = i.add(BigInteger.ONE)) {
-                sumAtom.hack(Type.INTEGER, i);
-                sumEnv.set(Identifier.of(variable), sumAtom);
-                Atom n = Evaluation.evaluate(sumEnv, expr);
-                if(n.getType() == Type.INTEGER)
-                    sumZ = sumZ.add(n.getInteger());
-                else if(n.getType() == Type.REAL)
-                    sumR = sumR.add(n.getReal());
-                else if(n.getType() == Type.COMPLEX)
-                    sumC = sumC.add(n.getComplex());
-                else
-                    throw new TypeError("Expected a number as the result of the expression in `nsum'.");
-            }
-        } else {
-            for (BigInteger i = startValue; i.compareTo(endValue) <= 0; i = i.add(BigInteger.ONE)) {
-                sumAtom.hack(Type.INTEGER, i);
-                sumEnv.set(Identifier.of(variable), sumAtom);
-                Atom n = Evaluation.evaluate(sumEnv, expr);
-                if(n.getType() == Type.INTEGER)
-                    sumZ = sumZ.add(n.getInteger());
-                else if(n.getType() == Type.REAL)
-                    sumR = sumR.add(n.getReal());
-                else if(n.getType() == Type.COMPLEX)
-                    sumC = sumC.add(n.getComplex());
-                else
-                    throw new TypeError("Expected a number as the result of the expression in `nsum'.");
-            }
+        for (BigInteger i = startValue; i.compareTo(endValue) <= 0; i = i.add(BigInteger.ONE)) {
+            sumAtom.hack(Type.INTEGER, i);
+            sumEnv.set(Identifier.of(variable), sumAtom);
+            Atom n = Evaluation.evaluate(sumEnv, expr);
+            if(n.getType() == Type.INTEGER)
+                sumZ = sumZ.add(n.getInteger());
+            else if(n.getType() == Type.REAL)
+                sumR = sumR.add(n.getReal());
+            else if(n.getType() == Type.COMPLEX)
+                sumC = sumC.add(n.getComplex());
+            else
+                throw new TypeError("Expected a number as the result of the expression in `nsum'.");
         }
 
         return new Atom(sumC.add(BigComplex.valueOf(sumR)).add(BigComplex.valueOf(new BigDecimal(sumZ))));
