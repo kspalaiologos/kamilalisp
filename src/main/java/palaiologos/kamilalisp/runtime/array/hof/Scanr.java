@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime.array;
+package palaiologos.kamilalisp.runtime.array.hof;
 
 import com.google.common.collect.Lists;
 import palaiologos.kamilalisp.atom.*;

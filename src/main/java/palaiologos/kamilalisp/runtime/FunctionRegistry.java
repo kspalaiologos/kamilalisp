@@ -5,6 +5,7 @@ import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.runtime.IO.GetFile;
 import palaiologos.kamilalisp.runtime.IO.Writeln;
 import palaiologos.kamilalisp.runtime.array.*;
+import palaiologos.kamilalisp.runtime.array.hof.*;
 import palaiologos.kamilalisp.runtime.math.*;
 import palaiologos.kamilalisp.runtime.math.bit.*;
 import palaiologos.kamilalisp.runtime.math.cmp.*;

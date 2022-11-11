@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime.array;
+package palaiologos.kamilalisp.runtime.array.hof;
 
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.InterruptionError;
