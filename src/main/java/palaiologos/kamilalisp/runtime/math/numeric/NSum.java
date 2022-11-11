@@ -14,7 +14,6 @@ public class NSum extends PrimitiveFunction implements SpecialForm {
         // Σ (= k 0) (- n 1) (** k 2)
         assertArity(args, 3);
         List<Atom> start = args.get(0).getList();
-        int precision = env.getMathContext().getPrecision();
 
         Identifier variable = start.get(1).getIdentifier();
         BigInteger startValue, endValue;
