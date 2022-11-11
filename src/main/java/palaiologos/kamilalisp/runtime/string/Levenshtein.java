@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime.string;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import palaiologos.kamilalisp.atom.*;
 
@@ -15,7 +14,7 @@ public class Levenshtein extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.size() != 2)
+        if (args.size() != 2)
             throw new RuntimeException("levenshtein called with wrong number of arguments.");
 
         args.get(0).assertTypes(Type.STRING);

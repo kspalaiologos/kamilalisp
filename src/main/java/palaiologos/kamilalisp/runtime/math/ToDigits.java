@@ -10,12 +10,12 @@ import java.util.List;
 public class ToDigits extends PrimitiveFunction implements Lambda {
 
     private static Atom toDigits(BigInteger base, Atom arg) {
-        if(arg.getType() == Type.LIST)
+        if (arg.getType() == Type.LIST)
             return new Atom(arg.getList().stream().map(x -> toDigits(base, x)).toList());
-        else if(arg.getType() == Type.INTEGER) {
+        else if (arg.getType() == Type.INTEGER) {
             ArrayList<Atom> result = new ArrayList<>();
             BigInteger x = arg.getInteger();
-            while(x.compareTo(BigInteger.ZERO) > 0) {
+            while (x.compareTo(BigInteger.ZERO) > 0) {
                 result.add(new Atom(x.mod(base)));
                 x = x.divide(base);
             }

@@ -9,32 +9,36 @@ import java.util.function.Function;
 public class Evaluation {
     @Nonnull
     public static Atom evaluate(Environment env, Atom atom) {
-        switch(atom.getType()) {
-            case STRING: case REAL: case COMPLEX: case INTEGER: case CALLABLE:
+        switch (atom.getType()) {
+            case STRING:
+            case REAL:
+            case COMPLEX:
+            case INTEGER:
+            case CALLABLE:
                 return atom;
             case LIST:
-                if(atom.getList().get(0) instanceof CodeAtom) {
+                if (atom.getList().get(0) instanceof CodeAtom) {
                     StackFrame.push((CodeAtom) atom.getList().get(0));
                 }
                 Atom head = evaluate(env, atom.getList().get(0));
-                if(head.getType() != Type.CALLABLE) {
+                if (head.getType() != Type.CALLABLE) {
                     throw new TypeError("Cannot call non-callable atom");
                 }
                 Callable c = head.getCallable();
                 Atom result;
-                if(c instanceof Lambda) {
+                if (c instanceof Lambda) {
                     result = evaluate(env, c, atom.getList().stream().skip(1).map(x -> evaluate(env, x)).toList());
-                } else if(c instanceof SpecialForm) {
+                } else if (c instanceof SpecialForm) {
                     result = evaluate(env, c, atom.getList().subList(1, atom.getList().size()));
                 } else {
                     throw new RuntimeException("Unknown callable type: " + c.getClass().getName());
                 }
-                if(atom.getList().get(0) instanceof CodeAtom) {
+                if (atom.getList().get(0) instanceof CodeAtom) {
                     StackFrame.pop();
                 }
                 return result;
             case IDENTIFIER:
-                if(env.has(Identifier.of(atom.getIdentifier())))
+                if (env.has(Identifier.of(atom.getIdentifier())))
                     return env.get(Identifier.of(atom.getIdentifier()));
                 else
                     return atom;
@@ -45,8 +49,12 @@ public class Evaluation {
 
     @Nonnull
     public static Atom safeEvaluate(Environment env, Atom atom, Function<String, Atom> exceptionHandler) {
-        switch(atom.getType()) {
-            case STRING: case REAL: case COMPLEX: case INTEGER: case CALLABLE:
+        switch (atom.getType()) {
+            case STRING:
+            case REAL:
+            case COMPLEX:
+            case INTEGER:
+            case CALLABLE:
                 return atom;
             case LIST:
                 int depth = StackFrame.depth();
@@ -55,7 +63,7 @@ public class Evaluation {
                         StackFrame.push((CodeAtom) atom.getList().get(0));
                     }
                     Atom head = evaluate(env, atom.getList().get(0));
-                    if(head.getType() != Type.CALLABLE) {
+                    if (head.getType() != Type.CALLABLE) {
                         throw new TypeError("Cannot call non-callable atom");
                     }
                     Callable c = head.getCallable();
@@ -71,14 +79,14 @@ public class Evaluation {
                         StackFrame.pop();
                     }
                     return result;
-                } catch(Throwable t) {
+                } catch (Throwable t) {
                     String trace = StackFrame.stackTrace(t);
-                    while(StackFrame.depth() > depth)
+                    while (StackFrame.depth() > depth)
                         StackFrame.pop();
                     return exceptionHandler.apply(trace);
                 }
             case IDENTIFIER:
-                if(env.has(Identifier.of(atom.getIdentifier())))
+                if (env.has(Identifier.of(atom.getIdentifier())))
                     return env.get(Identifier.of(atom.getIdentifier()));
                 else
                     return atom;
@@ -103,7 +111,7 @@ public class Evaluation {
             return r;
         } catch (Throwable t) {
             String trace = StackFrame.stackTrace(t);
-            while(StackFrame.depth() > depth)
+            while (StackFrame.depth() > depth)
                 StackFrame.pop();
             return exceptionHandler.apply(trace);
         }

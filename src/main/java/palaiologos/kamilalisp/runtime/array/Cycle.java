@@ -13,8 +13,8 @@ public class Cycle extends PrimitiveFunction implements Lambda {
     }
 
     static class CycleListFacade extends AbstractList<Atom> {
-        private List<Atom> list;
-        private int len;
+        private final List<Atom> list;
+        private final int len;
 
         public CycleListFacade(List<Atom> list, int len) {
             this.list = list;
@@ -23,7 +23,7 @@ public class Cycle extends PrimitiveFunction implements Lambda {
 
         @Override
         public Atom get(int index) {
-            if(index >= len)
+            if (index >= len)
                 throw new IndexOutOfBoundsException();
             return list.get(index % list.size());
         }
@@ -35,18 +35,18 @@ public class Cycle extends PrimitiveFunction implements Lambda {
     }
 
     private static Atom cycle(Atom a, Atom b) {
-        if(a.getType() == Type.INTEGER && b.getType() == Type.LIST) {
-            if(a.getInteger().intValueExact() < 0)
+        if (a.getType() == Type.INTEGER && b.getType() == Type.LIST) {
+            if (a.getInteger().intValueExact() < 0)
                 throw new RuntimeException("cycle: negative length");
             return new Atom(new CycleListFacade(b.getList(), a.getInteger().intValueExact()));
-        } else if(a.getType() == Type.LIST && b.getType() == Type.LIST) {
+        } else if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
             return new Atom(Streams.zip(a.getList().stream(), b.getList().stream(), Cycle::cycle).toList());
-        } else if(a.getType() == Type.INTEGER && b.getType() == Type.STRING) {
-            if(a.getInteger().intValueExact() < 0)
+        } else if (a.getType() == Type.INTEGER && b.getType() == Type.STRING) {
+            if (a.getInteger().intValueExact() < 0)
                 throw new RuntimeException("cycle: negative length");
             StringBuilder result = new StringBuilder();
             int times = a.getInteger().intValueExact() / b.getString().length();
-            for(int i = 0; i < times; i++)
+            for (int i = 0; i < times; i++)
                 result.append(b.getString());
             result.append(b.getString(), 0, a.getInteger().intValueExact() % b.getString().length());
             return new Atom(result.toString());

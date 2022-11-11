@@ -1,19 +1,18 @@
 package palaiologos.kamilalisp.runtime.array;
 
-import com.google.common.collect.Lists;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.AbstractList;
 import java.util.List;
 
 public class Range extends PrimitiveFunction implements Lambda {
     class RangeList extends AbstractList<Atom> {
-        private BigInteger begin, end;
+        private final BigInteger begin;
+        private final BigInteger end;
         boolean sign;
 
         public RangeList(BigInteger begin, BigInteger end) {
@@ -24,7 +23,7 @@ public class Range extends PrimitiveFunction implements Lambda {
 
         @Override
         public Atom get(int index) {
-            if(index > size()) {
+            if (index > size()) {
                 throw new IndexOutOfBoundsException();
             }
 
@@ -39,13 +38,13 @@ public class Range extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.size() == 2) {
+        if (args.size() == 2) {
             BigInteger begin = args.get(0).getInteger();
             BigInteger end = args.get(1).getInteger();
             if (begin.compareTo(end) == 0)
                 return new Atom(List.of());
             return new Atom(new RangeList(begin, end));
-        } else if(args.size() == 1) {
+        } else if (args.size() == 1) {
             BigInteger begin = BigInteger.ZERO;
             BigInteger end = args.get(0).getInteger();
             if (begin.compareTo(end) == 0)

@@ -41,49 +41,49 @@ public class Gcd extends PrimitiveFunction implements Lambda {
     public static Atom gcd2(Environment e, Atom a, Atom b) {
         a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
         b.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
-        if(a.getType() == Type.LIST && b.getType() == Type.LIST) {
+        if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
             return new Atom(Streams.zip(a.getList().stream(), b.getList().stream(), (x, y) -> gcd2(e, x, y)).toList());
-        } else if(a.getType() == Type.INTEGER && b.getType() == Type.INTEGER) {
+        } else if (a.getType() == Type.INTEGER && b.getType() == Type.INTEGER) {
             return new Atom(a.getInteger().gcd(b.getInteger()));
-        } else if((a.getType() == Type.REAL || a.getType() == Type.INTEGER) && (b.getType() == Type.REAL || b.getType() == Type.INTEGER)) {
+        } else if ((a.getType() == Type.REAL || a.getType() == Type.INTEGER) && (b.getType() == Type.REAL || b.getType() == Type.INTEGER)) {
             BigDecimal aD = a.getReal();
             BigDecimal bD = b.getReal();
             BigDecimal base = BigDecimal.ONE;
             int dpA = decimalPlaces(aD);
-            if(dpA > 0) {
+            if (dpA > 0) {
                 BigDecimal scale = BigDecimal.TEN.pow(dpA);
                 aD = aD.multiply(scale);
                 bD = bD.multiply(scale);
                 base = base.multiply(scale);
             }
             int dpB = decimalPlaces(bD);
-            if(dpB > 0) {
+            if (dpB > 0) {
                 BigDecimal scale = BigDecimal.TEN.pow(dpB);
                 aD = aD.multiply(scale);
                 bD = bD.multiply(scale);
                 base = base.multiply(scale);
             }
             return new Atom(new BigDecimal(aD.toBigInteger().gcd(bD.toBigInteger())).divide(base, e.getMathContext()));
-        } else if(a.getType() == Type.LIST && b.isNumeric()) {
+        } else if (a.getType() == Type.LIST && b.isNumeric()) {
             return new Atom(a.getList().stream().map(x -> gcd2(e, x, b)).toList());
-        } else if(a.isNumeric() && b.getType() == Type.LIST) {
+        } else if (a.isNumeric() && b.getType() == Type.LIST) {
             return new Atom(b.getList().stream().map(x -> gcd2(e, a, x)).toList());
         } else {
             BigComplex aD = a.getComplex(), bD = b.getComplex();
             // Scale aD and bD to integers
             BigDecimal base = BigDecimal.ONE;
             int dp = Math.max(Math.max(decimalPlaces(aD.re), decimalPlaces(aD.im)), Math.max(decimalPlaces(bD.re), decimalPlaces(bD.im)));
-            if(dp > 0) {
+            if (dp > 0) {
                 BigDecimal scale = BigDecimal.TEN.pow(dp);
                 aD = BigComplex.valueOf(aD.re.multiply(scale), aD.im.multiply(scale));
                 bD = BigComplex.valueOf(bD.re.multiply(scale), bD.im.multiply(scale));
                 base = base.multiply(scale);
             }
             BigComplex result = gaussianGcd(e, aD, bD);
-            if(dp > 0) {
+            if (dp > 0) {
                 result = BigComplex.valueOf(result.re.divide(base, e.getMathContext()), result.im.divide(base, e.getMathContext()));
             }
-            if(result.isReal())
+            if (result.isReal())
                 return new Atom(result.re);
             else
                 return new Atom(result);
@@ -92,9 +92,9 @@ public class Gcd extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.size() == 1 && args.get(0).getType() == Type.LIST)
+        if (args.size() == 1 && args.get(0).getType() == Type.LIST)
             return args.get(0).getList().stream().reduce((a, b) -> gcd2(env, a, b)).orElseThrow(() -> new ArrayError("can't fold a list with gcd."));
-        else if(args.size() <= 1)
+        else if (args.size() <= 1)
             throw new RuntimeException("gcd called with too few arguments.");
 
         return args.stream().reduce((a, b) -> gcd2(env, a, b)).orElseThrow(() -> new ArrayError("can't fold a list with gcd."));

@@ -16,10 +16,11 @@ public class Sqrt extends PrimitiveFunction implements Lambda {
     }
 
     private static Atom sqrt(Environment e, Atom a) {
-        switch(a.getType()) {
+        switch (a.getType()) {
             case LIST:
                 return new Atom(a.getList().stream().map(x -> sqrt(e, x)).toList());
-            case REAL: case INTEGER:
+            case REAL:
+            case INTEGER:
                 return new Atom(BigDecimalMath.sqrt(a.getReal(), e.getMathContext()));
             case COMPLEX:
                 return new Atom(BigComplexMath.sqrt(a.getComplex(), e.getMathContext()));
@@ -30,11 +31,11 @@ public class Sqrt extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.isEmpty()) {
+        if (args.isEmpty()) {
             throw new RuntimeException("sqrt called with no arguments.");
         }
 
-        if(args.size() == 1) {
+        if (args.size() == 1) {
             return sqrt(env, args.get(0));
         }
 

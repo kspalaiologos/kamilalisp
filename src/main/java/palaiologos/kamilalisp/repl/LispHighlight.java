@@ -10,7 +10,6 @@ import org.jline.utils.AttributedStyle;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.parser.GrammarLexer;
 
-import java.util.Set;
 import java.util.regex.Pattern;
 
 public class LispHighlight implements Highlighter {
@@ -25,10 +24,14 @@ public class LispHighlight implements Highlighter {
     }
 
     public AttributedStyle getStyleForToken(Token t, boolean isKw, boolean isWs) {
-        if(isKw)
+        if (isKw)
             return new AttributedStyle().foreground(AttributedStyle.MAGENTA);
-        switch(t.getType()) {
-            case GrammarLexer.BIN: case GrammarLexer.FLOAT: case GrammarLexer.HEX: case GrammarLexer.LONG: case GrammarLexer.COMPLEX:
+        switch (t.getType()) {
+            case GrammarLexer.BIN:
+            case GrammarLexer.FLOAT:
+            case GrammarLexer.HEX:
+            case GrammarLexer.LONG:
+            case GrammarLexer.COMPLEX:
                 return new AttributedStyle().foreground(AttributedStyle.YELLOW);
             case GrammarLexer.NAME:
                 return new AttributedStyle();
@@ -46,7 +49,7 @@ public class LispHighlight implements Highlighter {
     @Override
     public AttributedString highlight(LineReader lineReader, String s) {
         AttributedStringBuilder b = new AttributedStringBuilder();
-        if(s.length() == 0 || s.trim().length() == 0)
+        if (s.length() == 0 || s.trim().length() == 0)
             return b.toAttributedString();
         GrammarLexer lex = new GrammarLexer(CharStreams.fromString(s));
         lex.getAllTokens().forEach(x -> {

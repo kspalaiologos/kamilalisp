@@ -11,7 +11,7 @@ public class Let extends PrimitiveFunction implements SpecialForm {
         args.get(0).assertTypes(Type.LIST);
         args.get(1).assertTypes(Type.LIST);
         Environment newEnv = new Environment(env);
-        for(Atom a : args.get(0).getList()) {
+        for (Atom a : args.get(0).getList()) {
             a.assertTypes(Type.LIST);
             a.getList().get(0).assertTypes(Type.IDENTIFIER);
             newEnv.set(Identifier.of(a.getList().get(0).getIdentifier()), a.getList().get(1));

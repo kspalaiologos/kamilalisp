@@ -11,8 +11,8 @@ public class Flatten extends PrimitiveFunction implements Lambda {
         assertArity(args, 1);
         args.get(0).assertTypes(Type.LIST);
         ArrayList<Atom> result = new ArrayList<>();
-        for(Atom a : args.get(0).getList()) {
-            if(a.getType() == Type.LIST)
+        for (Atom a : args.get(0).getList()) {
+            if (a.getType() == Type.LIST)
                 result.addAll(a.getList());
             else
                 result.add(a);

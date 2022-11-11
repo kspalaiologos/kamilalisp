@@ -9,18 +9,18 @@ import java.util.stream.IntStream;
 
 public class Take extends PrimitiveFunction implements Lambda {
     private static Atom take(Atom a, Atom b) {
-        if(a.getType() == Type.INTEGER && b.getType() == Type.LIST) {
+        if (a.getType() == Type.INTEGER && b.getType() == Type.LIST) {
             int len = a.getInteger().intValueExact();
             List<Atom> list = b.getList();
             boolean doReverse = false;
 
-            if(len < 0) {
+            if (len < 0) {
                 len = -len;
                 list = Lists.reverse(list);
                 doReverse = true;
             }
 
-            if(len > list.size()) {
+            if (len > list.size()) {
                 Atom prototype = Prototype.getPrototype(list);
                 List<Atom> l = Streams.concat(list.stream(),
                         IntStream.generate(() -> 0)
@@ -32,7 +32,7 @@ public class Take extends PrimitiveFunction implements Lambda {
                 List<Atom> l = list.subList(0, len);
                 return new Atom(doReverse ? Lists.reverse(l) : l);
             }
-        } else if(a.getType() == Type.INTEGER && b.getType() == Type.STRING) {
+        } else if (a.getType() == Type.INTEGER && b.getType() == Type.STRING) {
             int len = a.getInteger().intValueExact();
             String str = b.getString();
             boolean doReverse = false;
@@ -44,7 +44,7 @@ public class Take extends PrimitiveFunction implements Lambda {
             }
 
             if (len > str.length()) {
-                if(doReverse)
+                if (doReverse)
                     return new Atom(new StringBuilder(str)
                             .append(new String(new char[len - str.length()])
                                     .replace("\0", " "))
@@ -52,12 +52,12 @@ public class Take extends PrimitiveFunction implements Lambda {
                 else
                     return new Atom(str + new String(new char[len - str.length()]).replace("\0", " "));
             } else {
-                if(doReverse)
+                if (doReverse)
                     return new Atom(new StringBuilder(str.substring(0, len)).reverse().toString());
                 else
                     return new Atom(str.substring(0, len));
             }
-        } else if(a.getType() == Type.LIST && b.getType() == Type.LIST) {
+        } else if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
             return new Atom(Streams.zip(a.getList().stream(), b.getList().stream(), Take::take).toList());
         } else {
             throw new UnsupportedOperationException("take not defined for: " + a.getType() + " and " + b.getType());

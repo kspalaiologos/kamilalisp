@@ -1,29 +1,27 @@
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.parallel.ExecutionMode.CONCURRENT;
-
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 
 import java.math.BigDecimal;
-import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.parallel.ExecutionMode.CONCURRENT;
 
 @Execution(CONCURRENT)
 class TestTack {
     @Test
     void testTack0() {
-        assertTrue(Common.runCode("(#0 1 2 3)").getReal().equals(new BigDecimal(1)));
+        assertEquals(Common.runCode("(#0 1 2 3)").getReal(), new BigDecimal(1));
     }
 
     @Test
     void testTack1() {
-        assertTrue(Common.runCode("(#1 1 2 3)").getReal().equals(new BigDecimal(2)));
+        assertEquals(Common.runCode("(#1 1 2 3)").getReal(), new BigDecimal(2));
     }
 
     @Test
     void testTack2() {
-        assertTrue(Common.runCode("(#2 1 2 3)").getReal().equals(new BigDecimal(3)));
+        assertEquals(Common.runCode("(#2 1 2 3)").getReal(), new BigDecimal(3));
     }
 
     @Test

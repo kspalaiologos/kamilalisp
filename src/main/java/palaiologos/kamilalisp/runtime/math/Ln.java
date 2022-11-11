@@ -17,11 +17,12 @@ public class Ln extends PrimitiveFunction implements Lambda {
     }
 
     private static Atom ln(Environment e, Atom a) {
-        switch(a.getType()) {
+        switch (a.getType()) {
             case LIST:
                 return new Atom(a.getList().stream().map(x -> ln(e, x)).toList());
-            case REAL: case INTEGER:
-                if(a.getReal().compareTo(BigDecimal.ZERO) > 0)
+            case REAL:
+            case INTEGER:
+                if (a.getReal().compareTo(BigDecimal.ZERO) > 0)
                     return new Atom(BigDecimalMath.log(a.getReal(), e.getMathContext()));
                 else
                     return new Atom(BigComplexMath.log(a.getComplex(), e.getMathContext()));
@@ -34,11 +35,11 @@ public class Ln extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.isEmpty()) {
+        if (args.isEmpty()) {
             throw new RuntimeException("ln called with no arguments.");
         }
 
-        if(args.size() == 1) {
+        if (args.size() == 1) {
             return ln(env, args.get(0));
         }
 

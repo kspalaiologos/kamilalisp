@@ -3,15 +3,13 @@ package palaiologos.kamilalisp.runtime;
 import com.google.common.collect.Lists;
 import palaiologos.kamilalisp.atom.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class Over implements Lambda {
-    private Atom form;
+    private final Atom form;
 
-    private int l, c;
+    private final int l;
+    private final int c;
 
     @Override
     public int line() {

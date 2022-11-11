@@ -8,8 +8,9 @@ import palaiologos.kamilalisp.atom.SpecialForm;
 import java.util.List;
 
 public class Quote implements SpecialForm, ReactiveFunction {
-    private Atom form;
-    private int l, c;
+    private final Atom form;
+    private final int l;
+    private final int c;
 
     @Override
     public int line() {
@@ -23,7 +24,9 @@ public class Quote implements SpecialForm, ReactiveFunction {
 
 
     public Quote(Atom form, int l, int c) {
-        this.form = form; this.l = l; this.c = c;
+        this.form = form;
+        this.l = l;
+        this.c = c;
     }
 
     @Override

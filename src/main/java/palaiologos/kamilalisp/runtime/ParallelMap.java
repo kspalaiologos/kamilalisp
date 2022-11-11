@@ -10,9 +10,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ParallelMap implements Lambda {
-    private Atom form;
+    private final Atom form;
 
-    private int l, c;
+    private final int l;
+    private final int c;
 
     @Override
     public int line() {
@@ -33,9 +34,9 @@ public class ParallelMap implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         Callable lambda = Evaluation.evaluate(env, form).getCallable();
-        if(args.size() == 0)
+        if (args.size() == 0)
             return Atom.NULL;
-        if(args.size() == 1) {
+        if (args.size() == 1) {
             // map
             return new Atom((List<Atom>)
                     args.get(0).getList().stream().parallel().map(x -> {

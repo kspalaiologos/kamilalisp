@@ -33,11 +33,11 @@ public class NSum extends PrimitiveFunction implements SpecialForm {
             sumAtom.hack(Type.INTEGER, i);
             sumEnv.set(Identifier.of(variable), sumAtom);
             Atom n = Evaluation.evaluate(sumEnv, expr);
-            if(n.getType() == Type.INTEGER)
+            if (n.getType() == Type.INTEGER)
                 sumZ = sumZ.add(n.getInteger());
-            else if(n.getType() == Type.REAL)
+            else if (n.getType() == Type.REAL)
                 sumR = sumR.add(n.getReal());
-            else if(n.getType() == Type.COMPLEX)
+            else if (n.getType() == Type.COMPLEX)
                 sumC = sumC.add(n.getComplex());
             else
                 throw new TypeError("Expected a number as the result of the expression in `nsum'.");

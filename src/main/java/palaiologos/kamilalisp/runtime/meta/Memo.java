@@ -5,7 +5,6 @@ import palaiologos.kamilalisp.atom.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Memo extends PrimitiveFunction implements Lambda {
@@ -19,23 +18,23 @@ public class Memo extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("memo takes a lambda as an argument");
         }
         int max = -1;
-        if(args.size() == 2) {
+        if (args.size() == 2) {
             Atom maxArg = args.get(1);
-            if(maxArg.getType() == Type.INTEGER)
+            if (maxArg.getType() == Type.INTEGER)
                 max = maxArg.getInteger().intValueExact();
             else
                 throw new RuntimeException("memo takes an integer as a second argument");
         }
         final Lambda mfn = (Lambda) arg.getCallable();
-        if(max != -1) {
+        if (max != -1) {
             int finalMax = max;
             return new Atom(new Lambda() {
                 class LRUCache<K, V> {
                     class Node<T, U> {
                         Node<T, U> previous;
                         Node<T, U> next;
-                        T key;
-                        U value;
+                        final T key;
+                        final U value;
 
                         public Node(Node<T, U> previous, Node<T, U> next, T key, U value) {
                             this.previous = previous;
@@ -45,10 +44,10 @@ public class Memo extends PrimitiveFunction implements Lambda {
                         }
                     }
 
-                    private HashMap<K, Node<K, V>> cache;
+                    private final HashMap<K, Node<K, V>> cache;
                     private Node<K, V> leastRecentlyUsed;
                     private Node<K, V> mostRecentlyUsed;
-                    private int maxSize;
+                    private final int maxSize;
                     private int currentSize;
 
                     public LRUCache(int maxSize) {
@@ -123,14 +122,14 @@ public class Memo extends PrimitiveFunction implements Lambda {
                     }
                 }
 
-                private LRUCache<List<Atom>, Atom> cache = new LRUCache<>(finalMax);
-                private ReentrantLock lock = new ReentrantLock();
+                private final LRUCache<List<Atom>, Atom> cache = new LRUCache<>(finalMax);
+                private final ReentrantLock lock = new ReentrantLock();
 
                 @Override
                 public Atom apply(Environment env, List<Atom> args) {
                     lock.lock();
                     Atom result = cache.get(args);
-                    if(result == null) {
+                    if (result == null) {
                         result = Evaluation.safeEvaluate(env, mfn, args, msg -> {
                             lock.unlock();
                             throw new RuntimeException(msg);
@@ -164,12 +163,12 @@ public class Memo extends PrimitiveFunction implements Lambda {
             });
         } else {
             return new Atom(new Lambda() {
-                private ConcurrentHashMap<List<Atom>, Atom> cache = new ConcurrentHashMap<>();
+                private final ConcurrentHashMap<List<Atom>, Atom> cache = new ConcurrentHashMap<>();
 
                 @Override
                 public Atom apply(Environment env, List<Atom> args) {
                     Atom result = cache.get(args);
-                    if(result == null) {
+                    if (result == null) {
                         result = Evaluation.evaluate(env, mfn, args);
                         cache.put(args, result);
                     }

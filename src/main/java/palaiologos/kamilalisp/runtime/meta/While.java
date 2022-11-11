@@ -10,7 +10,7 @@ public class While extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.size() == 2) {
+        if (args.size() == 2) {
             Atom value = args.get(0);
             Callable body = args.get(1).getCallable();
 
@@ -21,19 +21,19 @@ public class While extends PrimitiveFunction implements Lambda {
                 List<Atom> list = result.getList();
                 doContinue = list.get(0).coerceBool();
                 value = list.get(1);
-            } while(doContinue);
+            } while (doContinue);
 
             return value;
-        } else if(args.size() == 3) {
+        } else if (args.size() == 3) {
             Atom value = args.get(0);
-            if(args.get(1).getType() == Type.CALLABLE) {
+            if (args.get(1).getType() == Type.CALLABLE) {
                 Callable condition = args.get(1).getCallable();
                 Callable body = args.get(2).getCallable();
 
                 while (Evaluation.evaluate(env, condition, List.of(value)).coerceBool()) {
                     value = Evaluation.evaluate(env, body, List.of(value));
                 }
-            } else if(args.get(1).getType() == Type.INTEGER) {
+            } else if (args.get(1).getType() == Type.INTEGER) {
                 BigInteger count = args.get(1).getInteger();
                 Callable body = args.get(2).getCallable();
 

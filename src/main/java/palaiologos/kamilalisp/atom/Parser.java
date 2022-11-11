@@ -11,7 +11,7 @@ import java.util.List;
 
 public class Parser {
     static class ThrowingErrorListener extends BaseErrorListener {
-        private int lineNumberOffset;
+        private final int lineNumberOffset;
 
         public ThrowingErrorListener(int lineNumberOffset) {
             this.lineNumberOffset = lineNumberOffset;

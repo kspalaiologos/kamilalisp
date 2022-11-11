@@ -11,15 +11,15 @@ import java.util.stream.Collectors;
 public class Floor extends PrimitiveFunction implements Lambda {
     public static Atom sgn1(Environment e, Atom a) {
         a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
-        if(a.getType() == Type.COMPLEX) {
+        if (a.getType() == Type.COMPLEX) {
             return new Atom(BigComplex.valueOf(
                     a.getComplex().re.setScale(0, RoundingMode.FLOOR),
                     a.getComplex().im.setScale(0, RoundingMode.FLOOR)));
-        } else if(a.getType() == Type.REAL) {
+        } else if (a.getType() == Type.REAL) {
             return new Atom(a.getReal().setScale(0, RoundingMode.FLOOR).unscaledValue());
-        } else if(a.getType() == Type.INTEGER) {
+        } else if (a.getType() == Type.INTEGER) {
             return a;
-        } else if(a.getType() == Type.LIST) {
+        } else if (a.getType() == Type.LIST) {
             return new Atom(a.getList().stream().map(x -> sgn1(e, x)).collect(Collectors.toList()));
         } else {
             throw new TypeError("`floor' not defined for: " + a.getType());
@@ -28,9 +28,9 @@ public class Floor extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.size() == 1) {
+        if (args.size() == 1) {
             return sgn1(env, args.get(0));
-        } else if(args.size() == 0) {
+        } else if (args.size() == 0) {
             throw new TypeError("Expected 1 or more arguments to `floor'.");
         } else {
             return new Atom(args.stream().map(x -> sgn1(env, x)).toList());

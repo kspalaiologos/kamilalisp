@@ -9,11 +9,11 @@ public class Prototype {
     public static Atom getPrototype(List<Atom> list) {
         Atom prototype;
 
-        if(list.isEmpty())
+        if (list.isEmpty())
             prototype = Atom.NULL;
-        else if(list.get(0).isNumeric())
+        else if (list.get(0).isNumeric())
             prototype = Atom.FALSE;
-        else if(list.get(0).getType() == Type.STRING)
+        else if (list.get(0).getType() == Type.STRING)
             prototype = new Atom("");
         else
             prototype = Atom.NULL;

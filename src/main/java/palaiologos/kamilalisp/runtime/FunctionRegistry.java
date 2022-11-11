@@ -40,6 +40,7 @@ public class FunctionRegistry {
             "prime-factors", "is-prime", "next-prime", "parse-number", "while", "prime-no", "memo",
             "index-of", "to-digits", "from-digits", "n-sum", "Σ", "cycle", "take", "↑", "drop", "↓"
     );
+
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(200)));
         env.set("lambda", new Atom(new Dfn()));

@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime.math;
 
-import ch.obermuhlner.math.big.BigComplex;
 import ch.obermuhlner.math.big.BigComplexMath;
 import ch.obermuhlner.math.big.BigDecimalMath;
 import palaiologos.kamilalisp.atom.Atom;
@@ -17,10 +16,11 @@ public class Exp extends PrimitiveFunction implements Lambda {
     }
 
     private static Atom exp(Environment e, Atom a) {
-        switch(a.getType()) {
+        switch (a.getType()) {
             case LIST:
                 return new Atom(a.getList().stream().map(x -> exp(e, x)).toList());
-            case REAL: case INTEGER:
+            case REAL:
+            case INTEGER:
                 return new Atom(BigDecimalMath.exp(a.getReal(), e.getMathContext()));
             case COMPLEX:
                 return new Atom(BigComplexMath.exp(a.getComplex(), e.getMathContext()));
@@ -31,11 +31,11 @@ public class Exp extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.isEmpty()) {
+        if (args.isEmpty()) {
             throw new RuntimeException("exp called with no arguments.");
         }
 
-        if(args.size() == 1) {
+        if (args.size() == 1) {
             return exp(env, args.get(0));
         }
 

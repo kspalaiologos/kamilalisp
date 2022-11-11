@@ -6,9 +6,9 @@ import java.util.List;
 
 public class PrimeFactors extends PrimitiveFunction implements Lambda {
     private static Atom factor(Atom a) {
-        if(a.getType() == Type.INTEGER) {
+        if (a.getType() == Type.INTEGER) {
             return new Atom(PollardRhoStateManager.factor(a.getInteger()).stream().map(Atom::new).toList());
-        } else if(a.getType() == Type.LIST) {
+        } else if (a.getType() == Type.LIST) {
             return new Atom(a.getList().stream().map(PrimeFactors::factor).toList());
         } else {
             throw new UnsupportedOperationException("prime-factors not defined for: " + a.getType());
@@ -17,11 +17,11 @@ public class PrimeFactors extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.isEmpty()) {
+        if (args.isEmpty()) {
             throw new RuntimeException("prime-factors called with no arguments.");
         }
 
-        if(args.size() == 1) {
+        if (args.size() == 1) {
             return factor(args.get(0));
         }
 

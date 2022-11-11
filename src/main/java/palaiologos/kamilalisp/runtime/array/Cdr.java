@@ -3,14 +3,13 @@ package palaiologos.kamilalisp.runtime.array;
 import palaiologos.kamilalisp.atom.*;
 
 import java.util.AbstractList;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Cdr extends PrimitiveFunction implements Lambda {
     class CdrListFacade extends AbstractList<Atom> {
-        private List<Atom> list;
-        private int cdrOffset;
+        private final List<Atom> list;
+        private final int cdrOffset;
 
         public CdrListFacade(List<Atom> list, int cdrOffset) {
             this.list = list;
@@ -43,9 +42,9 @@ public class Cdr extends PrimitiveFunction implements Lambda {
         }
 
         public List<Atom> cdr() {
-            if(size() <= 1)
+            if (size() <= 1)
                 return List.of();
-            if(cdrOffset <= 16) {
+            if (cdrOffset <= 16) {
                 return new CdrListFacade(list, cdrOffset + 1);
             } else {
                 return new CdrListFacade(list.stream().skip(cdrOffset).toList(), 1);
@@ -55,32 +54,32 @@ public class Cdr extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.isEmpty()) {
+        if (args.isEmpty()) {
             throw new RuntimeException("Expected one or more arguments to `cdr'.");
         }
 
-        if(args.size() == 1) {
-            if(args.get(0).getType() == Type.STRING) {
+        if (args.size() == 1) {
+            if (args.get(0).getType() == Type.STRING) {
                 return new Atom(args.get(0).getString().substring(1));
             }
 
-            if(args.get(0).getList().isEmpty())
+            if (args.get(0).getList().isEmpty())
                 return Atom.NULL;
-            if(args.get(0).getList() instanceof CdrListFacade) {
+            if (args.get(0).getList() instanceof CdrListFacade) {
                 return new Atom(((CdrListFacade) args.get(0).getList()).cdr());
             } else {
                 return new Atom(new CdrListFacade(args.get(0).getList(), 1));
             }
         } else {
             return new Atom(args.stream().map(a -> {
-                if(a.getType() == Type.STRING) {
+                if (a.getType() == Type.STRING) {
                     return new Atom(a.getString().substring(1));
                 }
 
                 List<Atom> l = a.getList();
-                if(l.isEmpty())
+                if (l.isEmpty())
                     return Atom.NULL;
-                if(l instanceof CdrListFacade) {
+                if (l instanceof CdrListFacade) {
                     return new Atom(((CdrListFacade) l).cdr());
                 } else {
                     return new Atom(new CdrListFacade(l, 1));

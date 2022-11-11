@@ -8,12 +8,12 @@ import java.util.List;
 public class Sort extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.size() == 1) {
+        if (args.size() == 1) {
             List<Atom> list = new ArrayList<>();
             list.addAll(args.get(0).getList());
             list.sort(Atom::compareTo);
             return new Atom(list);
-        } else if(args.size() == 2) {
+        } else if (args.size() == 2) {
             List<Atom> list = new ArrayList<>();
             list.addAll(args.get(0).getList());
             Callable reductor = args.get(1).getCallable();

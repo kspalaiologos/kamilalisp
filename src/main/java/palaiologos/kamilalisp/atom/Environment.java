@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Set;
 
 public class Environment {
-    private HashMap<String, Atom> data;
-    private Environment parent;
+    private final HashMap<String, Atom> data;
+    private final Environment parent;
 
     public Environment() {
         data = new HashMap<>();
@@ -25,9 +25,9 @@ public class Environment {
     }
 
     public Atom get(String key) {
-        if(data.containsKey(key)) {
+        if (data.containsKey(key)) {
             return data.get(key);
-        } else if(parent != null) {
+        } else if (parent != null) {
             return parent.get(key);
         } else {
             return Atom.NULL;

@@ -9,13 +9,13 @@ import java.util.List;
 
 public class E extends PrimitiveFunction implements Lambda {
     private static Atom e(Environment env, Atom x) {
-        if(x.getType() == Type.REAL)
+        if (x.getType() == Type.REAL)
             return new Atom(BigDecimalMath.e(env.getMathContext()).multiply(x.getReal()));
-        else if(x.getType() == Type.COMPLEX)
+        else if (x.getType() == Type.COMPLEX)
             return new Atom(BigComplex.valueOf(BigDecimalMath.e(env.getMathContext())).multiply(x.getComplex()));
-        else if(x.getType() == Type.INTEGER)
+        else if (x.getType() == Type.INTEGER)
             return new Atom(BigDecimalMath.e(env.getMathContext()).multiply(x.getReal()));
-        else if(x.getType() == Type.LIST)
+        else if (x.getType() == Type.LIST)
             return new Atom(x.getList().stream().map(y -> e(env, y)).toList());
         else
             throw new TypeError("`e' not defined for: " + x.getType());
@@ -23,9 +23,9 @@ public class E extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.isEmpty())
+        if (args.isEmpty())
             return new Atom(BigDecimalMath.e(env.getMathContext()));
-        else if(args.size() == 1)
+        else if (args.size() == 1)
             return e(env, args.get(0));
         else
             return new Atom(args.stream().map(x -> e(env, x)).toList());

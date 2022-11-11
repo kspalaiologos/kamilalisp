@@ -7,10 +7,11 @@ import java.util.stream.Collectors;
 
 public class Fork implements Lambda {
     // Need to evaluate these.
-    private Atom reductor;
-    private List<Atom> reductees;
+    private final Atom reductor;
+    private final List<Atom> reductees;
 
-    private int l, c;
+    private final int l;
+    private final int c;
 
     @Override
     public int line() {
@@ -25,7 +26,8 @@ public class Fork implements Lambda {
     public Fork(Atom reductor, List<Atom> reductees, int l, int c) {
         this.reductor = reductor;
         this.reductees = reductees;
-        this.l = l; this.c = c;
+        this.l = l;
+        this.c = c;
     }
 
     @Override
@@ -39,7 +41,7 @@ public class Fork implements Lambda {
                 .apply(env, reductees.isEmpty() ? args :
                         reductees.stream().map(x -> {
                             Atom a = Evaluation.evaluate(env, x);
-                            if(a.getType() == Type.CALLABLE)
+                            if (a.getType() == Type.CALLABLE)
                                 return a.getCallable().apply(env, args);
                             else
                                 return a;

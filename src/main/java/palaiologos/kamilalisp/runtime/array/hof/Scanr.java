@@ -14,11 +14,11 @@ public class Scanr extends PrimitiveFunction implements Lambda {
         Callable reductor = args.get(0).getCallable();
         Atom identity = args.get(1);
         List<Atom> list = Lists.reverse(args.get(2).getList());
-        if(list.isEmpty())
+        if (list.isEmpty())
             return identity;
         // Reduce and keep intermediate results.
         ArrayList<Atom> result = new ArrayList<>();
-        for(int i = 1; i < list.size(); i++) {
+        for (int i = 1; i < list.size(); i++) {
             Stream.concat(Stream.of(identity), Lists.reverse(list.subList(0, i)).stream()).reduce((acc, x) -> Evaluation.evaluate(env, reductor, List.of(x, acc))).ifPresent(result::add);
         }
         return new Atom(result);

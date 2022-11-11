@@ -36,12 +36,12 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
         @Override
         public Atom apply(Environment throwaway, List<Atom> args) {
             Environment descendantEnv = new Environment(env);
-            if(!wantsVararg) {
+            if (!wantsVararg) {
                 assertArity(args, bindings.size());
                 for (int i = 0; i < bindings.size(); i++)
                     descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
             } else {
-                if(args.size() < bindings.size() - 1)
+                if (args.size() < bindings.size() - 1)
                     throw new TypeError("Expected at least " + (bindings.size() - 1) + " arguments to `" + stringify() + "'.");
                 for (int i = 0; i < bindings.size() - 1; i++)
                     descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
@@ -59,7 +59,7 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
         public int column() {
             return f_col;
         }
-    };
+    }
 
     @Override
     protected String name() {
@@ -74,16 +74,16 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
         assertArity(args, 2);
 
         List<Identifier> bindings;
-        if(args.get(0).getType() == Type.LIST) {
+        if (args.get(0).getType() == Type.LIST) {
             bindings = args.get(0).getList().stream().map(Atom::getIdentifier).toList();
-        } else if(args.get(0).getType() == Type.IDENTIFIER) {
+        } else if (args.get(0).getType() == Type.IDENTIFIER) {
             bindings = List.of(args.get(0).getIdentifier());
         } else {
             throw new TypeError("Expected a list or an identifier as the first argument to `lambda'.");
         }
 
-        for(int i = 0; i < bindings.size(); i++)
-            if(Identifier.of(bindings.get(i)).startsWith("...") && i != bindings.size() - 1)
+        for (int i = 0; i < bindings.size(); i++)
+            if (Identifier.of(bindings.get(i)).startsWith("...") && i != bindings.size() - 1)
                 throw new TypeError("Cannot use a name ends with `...' as a binding.");
 
         final boolean wantsVararg = bindings.size() > 0 && Identifier.of(bindings.get(bindings.size() - 1)).startsWith("...");
@@ -91,7 +91,7 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
         Atom code = args.get(1);
 
         int line = 0, col = 0;
-        if(args.get(0) instanceof CodeAtom) {
+        if (args.get(0) instanceof CodeAtom) {
             col = (((CodeAtom) args.get(0)).getCol());
             line = (((CodeAtom) args.get(0)).getLine());
         }

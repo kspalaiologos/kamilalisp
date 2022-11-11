@@ -18,12 +18,12 @@ public class Import extends PrimitiveFunction implements Lambda {
             String code = Files.readString(Path.of(fileName));
             Environment childEnv = Environment.defaultEnvironment();
             List<Atom> data = Parser.parse(code);
-            for(int i = 0; i < data.size() - 1; i++) {
+            for (int i = 0; i < data.size() - 1; i++) {
                 Evaluation.evaluate(childEnv, data.get(i));
             }
             Atom result = Evaluation.evaluate(childEnv, data.get(data.size() - 1));
-            for(String key : childEnv.keys())
-                if(!env.has(key) && !key.startsWith("public:"))
+            for (String key : childEnv.keys())
+                if (!env.has(key) && !key.startsWith("public:"))
                     env.set(key, childEnv.get(key.substring(6)));
             return result;
         } catch (IOException e) {

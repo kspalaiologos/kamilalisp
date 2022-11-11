@@ -18,7 +18,7 @@ public class If extends PrimitiveFunction implements SpecialForm {
         Atom ifTrue = args.get(1);
         Atom ifFalse = args.get(2);
 
-        if(condition.coerceBool())
+        if (condition.coerceBool())
             return Evaluation.evaluate(env, ifTrue);
         else
             return Evaluation.evaluate(env, ifFalse);

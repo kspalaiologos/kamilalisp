@@ -4,10 +4,10 @@ import java.math.BigInteger;
 import java.util.List;
 
 public class PollardRhoStateManager {
-    private static ThreadLocal<PollardRho> pollardRho = new ThreadLocal<>();
+    private static final ThreadLocal<PollardRho> pollardRho = new ThreadLocal<>();
 
     public static List<BigInteger> factor(BigInteger i) {
-        if(pollardRho.get() == null) {
+        if (pollardRho.get() == null) {
             pollardRho.set(new PollardRho());
         }
 

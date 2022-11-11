@@ -3,10 +3,8 @@ package palaiologos.kamilalisp.atom;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import java.util.HashMap;
-
 public class Identifier {
-    private static BiMap<String, Identifier> identifiers = HashBiMap.create();
+    private static final BiMap<String, Identifier> identifiers = HashBiMap.create();
 
     public static String of(Identifier i) {
         return identifiers.inverse().get(i);

@@ -8,17 +8,17 @@ import java.util.List;
 public class FromDigits extends PrimitiveFunction implements Lambda {
 
     private static Atom toDigits(BigInteger base, List<Atom> arg) {
-        if(arg.isEmpty())
+        if (arg.isEmpty())
             return new Atom(BigInteger.ZERO);
 
-        for(Atom a : arg) {
-            if(a.getType() != Type.INTEGER)
+        for (Atom a : arg) {
+            if (a.getType() != Type.INTEGER)
                 throw new RuntimeException("Invalid argument type");
         }
 
         BigInteger result = BigInteger.ZERO;
         BigInteger multiplier = BigInteger.ONE;
-        for(int i = arg.size() - 1; i >= 0; i--) {
+        for (int i = arg.size() - 1; i >= 0; i--) {
             result = result.add(arg.get(i).getInteger().multiply(multiplier));
             multiplier = multiplier.multiply(base);
         }

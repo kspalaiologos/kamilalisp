@@ -9,7 +9,10 @@ import org.jline.reader.impl.DefaultParser;
 import org.jline.reader.impl.history.DefaultHistory;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
-import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.atom.Atom;
+import palaiologos.kamilalisp.atom.Environment;
+import palaiologos.kamilalisp.atom.Evaluation;
+import palaiologos.kamilalisp.atom.Parser;
 import palaiologos.kamilalisp.error.InterruptionError;
 
 import java.io.IOException;
@@ -33,7 +36,7 @@ public class Main {
                     throw new InterruptionError();
                 });
             }
-        } catch(InterruptionError e) {
+        } catch (InterruptionError e) {
             // Ignore, we just wanted to unwind the stack.
         }
     }
@@ -74,7 +77,7 @@ public class Main {
                     List<Atom> data;
                     try {
                         data = Parser.parse(lineNumberOffset, code.startsWith("?") ? code.substring(1) : "(" + code + "\n)");
-                    } catch(ParseCancellationException e) {
+                    } catch (ParseCancellationException e) {
                         System.out.println("Syntax error: " + e.getMessage());
                         continue;
                     }
@@ -83,7 +86,7 @@ public class Main {
                             System.err.println(s);
                             throw new InterruptionError();
                         }).toDisplayString());
-                } catch(InterruptionError e) {
+                } catch (InterruptionError e) {
                     // Ignore, we just wanted to unwind the stack.
                 }
                 // count newlines in code

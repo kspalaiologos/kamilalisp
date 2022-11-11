@@ -55,5 +55,7 @@ public class CodeAtom extends Atom {
         super(data);
     }
 
-    public CodeAtom(BigInteger data) { super(data); }
+    public CodeAtom(BigInteger data) {
+        super(data);
+    }
 }

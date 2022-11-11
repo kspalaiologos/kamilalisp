@@ -16,7 +16,7 @@ public abstract class PrimitiveFunction implements Callable {
     }
 
     protected void assertArity(List<Atom> args, int n) {
-        if(args.size() != n) {
+        if (args.size() != n) {
             throw new TypeError(n + " arguments expected in application.");
         }
     }
