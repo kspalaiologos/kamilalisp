@@ -12,35 +12,50 @@ public class Take extends PrimitiveFunction implements Lambda {
         if(a.getType() == Type.INTEGER && b.getType() == Type.LIST) {
             int len = a.getInteger().intValueExact();
             List<Atom> list = b.getList();
+            boolean doReverse = false;
 
             if(len < 0) {
                 len = -len;
                 list = Lists.reverse(list);
+                doReverse = true;
             }
 
             if(len > list.size()) {
                 Atom prototype = Prototype.getPrototype(list);
-                return new Atom(Streams.concat(list.stream(),
+                List<Atom> l = Streams.concat(list.stream(),
                         IntStream.generate(() -> 0)
                                 .limit(len - list.size())
                                 .mapToObj(x -> prototype)
-                ).toList());
+                ).toList();
+                return new Atom(doReverse ? Lists.reverse(l) : l);
             } else {
-                return new Atom(list.subList(0, len));
+                List<Atom> l = list.subList(0, len);
+                return new Atom(doReverse ? Lists.reverse(l) : l);
             }
         } else if(a.getType() == Type.INTEGER && b.getType() == Type.STRING) {
             int len = a.getInteger().intValueExact();
             String str = b.getString();
+            boolean doReverse = false;
 
             if (len < 0) {
                 len = -len;
                 str = new StringBuilder(str).reverse().toString();
+                doReverse = true;
             }
 
             if (len > str.length()) {
-                return new Atom(str + new String(new char[len - str.length()]).replace("\0", " "));
+                if(doReverse)
+                    return new Atom(new StringBuilder(str)
+                            .append(new String(new char[len - str.length()])
+                                    .replace("\0", " "))
+                            .reverse().toString());
+                else
+                    return new Atom(str + new String(new char[len - str.length()]).replace("\0", " "));
             } else {
-                return new Atom(str.substring(0, len));
+                if(doReverse)
+                    return new Atom(new StringBuilder(str.substring(0, len)).reverse().toString());
+                else
+                    return new Atom(str.substring(0, len));
             }
         } else if(a.getType() == Type.LIST && b.getType() == Type.LIST) {
             return new Atom(Streams.zip(a.getList().stream(), b.getList().stream(), Take::take).toList());
