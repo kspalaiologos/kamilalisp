@@ -19,6 +19,8 @@ public class Tally extends PrimitiveFunction implements Lambda {
     private static Atom tally(Atom a) {
         if(a.getType() == Type.LIST) {
             return new Atom(BigInteger.valueOf(a.getList().size()));
+        } else if(a.getType() == Type.STRING) {
+            return new Atom(BigInteger.valueOf(a.getString().length()))
         } else {
             return new Atom(BigInteger.ZERO);
         }
