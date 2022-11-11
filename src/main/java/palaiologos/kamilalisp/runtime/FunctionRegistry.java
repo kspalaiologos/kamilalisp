@@ -37,7 +37,7 @@ public class FunctionRegistry {
             "same", "not-same", "≢", "≡", "grade-up", "grade-down", "⍋", "⍒", "cons", "flatten",
             "∊", "let", "cond", "cmpx", "import", "get-file", "try-catch", "writeln", "let-seq",
             "prime-factors", "is-prime", "next-prime", "parse-number", "while", "prime-no", "memo",
-            "index-of", "to-digits", "from-digits", "n-sum", "Σ"
+            "index-of", "to-digits", "from-digits", "n-sum", "Σ", "cycle"
     );
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(200)));
@@ -187,5 +187,6 @@ public class FunctionRegistry {
         env.set("from-digits", new Atom(new FromDigits()));
         env.set("n-sum", new Atom(new NSum()));
         env.set("Σ", new Atom(new NSum()));
+        env.set("cycle", new Atom(new Cycle()));
     }
 }
