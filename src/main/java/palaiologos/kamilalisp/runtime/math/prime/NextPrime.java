@@ -11,14 +11,14 @@ public class NextPrime extends PrimitiveFunction implements Lambda {
         } else if (a.getType() == Type.LIST) {
             return new Atom(a.getList().stream().map(NextPrime::factor).toList());
         } else {
-            throw new UnsupportedOperationException("next-prime not defined for: " + a.getType());
+            throw new UnsupportedOperationException("prime:next not defined for: " + a.getType());
         }
     }
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if (args.isEmpty()) {
-            throw new RuntimeException("next-prime called with no arguments.");
+            throw new RuntimeException("prime:next called with no arguments.");
         }
 
         if (args.size() == 1) {
@@ -30,6 +30,6 @@ public class NextPrime extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "next-prime";
+        return "prime:next";
     }
 }

@@ -11,14 +11,14 @@ public class PrimeFactors extends PrimitiveFunction implements Lambda {
         } else if (a.getType() == Type.LIST) {
             return new Atom(a.getList().stream().map(PrimeFactors::factor).toList());
         } else {
-            throw new UnsupportedOperationException("prime-factors not defined for: " + a.getType());
+            throw new UnsupportedOperationException("prime:factors not defined for: " + a.getType());
         }
     }
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if (args.isEmpty()) {
-            throw new RuntimeException("prime-factors called with no arguments.");
+            throw new RuntimeException("prime:factors called with no arguments.");
         }
 
         if (args.size() == 1) {
@@ -30,6 +30,6 @@ public class PrimeFactors extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "prime-factors";
+        return "prime:factors";
     }
 }

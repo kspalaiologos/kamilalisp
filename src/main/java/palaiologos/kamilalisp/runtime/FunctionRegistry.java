@@ -116,6 +116,12 @@ public class FunctionRegistry {
         env.set("unique", new Atom(new Unique()));
         env.set("intersection", new Atom(new Intersection()));
         env.set("union", new Atom(new Union()));
+        env.set("parse-number", new Atom(new ParseNumber()));
+
+        env.set("prime:factors", new Atom(new PrimeFactors()));
+        env.set("prime:is?", new Atom(new IsPrime()));
+        env.set("prime:next", new Atom(new NextPrime()));
+        env.set("prime:nth", new Atom(new PrimeNo()));
 
         env.set("abs", new Atom(new Abs()));
         env.set("bernoulli", new Atom(new Bernoulli()));
@@ -123,11 +129,6 @@ public class FunctionRegistry {
         env.set("Π", new Atom(new NProd()));
         env.set("n-sum", new Atom(new NSum()));
         env.set("Σ", new Atom(new NSum()));
-        env.set("prime-factors", new Atom(new PrimeFactors()));
-        env.set("parse-number", new Atom(new ParseNumber()));
-        env.set("is-prime", new Atom(new IsPrime()));
-        env.set("next-prime", new Atom(new NextPrime()));
-        env.set("prime-no", new Atom(new PrimeNo()));
         env.set("**", new Atom(new DoubleStar()));
         env.set("ln", new Atom(new Ln()));
         env.set("sqrt", new Atom(new Sqrt()));

@@ -31,14 +31,14 @@ public class PrimeNo extends PrimitiveFunction implements Lambda {
                 return new Atom(last);
             }
         } else {
-            throw new UnsupportedOperationException("prime-no not defined for: " + a.getType());
+            throw new UnsupportedOperationException("prime:nth not defined for: " + a.getType());
         }
     }
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if (args.isEmpty()) {
-            throw new RuntimeException("is-prime called with no arguments.");
+            throw new RuntimeException("prime:nth called with no arguments.");
         }
 
         if (args.size() == 1) {
@@ -50,6 +50,6 @@ public class PrimeNo extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "prime-no";
+        return "prime:nth";
     }
 }
