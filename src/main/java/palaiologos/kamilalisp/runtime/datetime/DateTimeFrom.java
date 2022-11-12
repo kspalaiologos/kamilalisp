@@ -38,12 +38,12 @@ public class DateTimeFrom extends PrimitiveFunction implements Lambda {
             int nanosecond = args.get(6).getInteger().intValueExact();
             return new Atom(new DateTime(LocalDateTime.of(year, month, day, hour, minute, second, nanosecond)));
         } else {
-            throw new RuntimeException("datetime-from takes one, three, six or seven arguments.");
+            throw new RuntimeException("date:from takes one, three, six or seven arguments.");
         }
     }
 
     @Override
     protected String name() {
-        return "datetime-from";
+        return "date:from";
     }
 }

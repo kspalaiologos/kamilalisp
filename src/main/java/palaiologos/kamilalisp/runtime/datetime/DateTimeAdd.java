@@ -60,7 +60,7 @@ public class DateTimeAdd extends PrimitiveFunction implements Lambda {
         if (args.size() == 2) {
             return f(args.get(0), args.get(1));
         } else if (args.size() == 0) {
-            throw new TypeError("Expected 2 or more arguments to `datetime-add'.");
+            throw new TypeError("Expected 2 or more arguments to `date:add'.");
         } else {
             return args.stream().reduce(DateTimeAdd::f).get();
         }
@@ -68,6 +68,6 @@ public class DateTimeAdd extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "datetime-add";
+        return "date:add";
     }
 }

@@ -60,7 +60,7 @@ public class DateTimeDifference extends PrimitiveFunction implements Lambda {
         if (args.size() == 2) {
             return f(args.get(0), args.get(1));
         } else if (args.size() == 0) {
-            throw new TypeError("Expected 2 or more arguments to `datetime-difference'.");
+            throw new TypeError("Expected 2 or more arguments to `date:difference'.");
         } else {
             return args.stream().reduce(DateTimeDifference::f).get();
         }
@@ -68,6 +68,6 @@ public class DateTimeDifference extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "datetime-difference";
+        return "date:difference";
     }
 }

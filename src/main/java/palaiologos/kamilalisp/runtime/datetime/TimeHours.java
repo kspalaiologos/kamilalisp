@@ -28,7 +28,7 @@ public class TimeHours extends PrimitiveFunction implements Lambda {
             Duration d = Duration.ofHours(hours.longValueExact()).plusMinutes(minutes.longValueExact()).plusSeconds(seconds.longValueExact()).plusNanos(nanos.longValueExact());
             return new Atom(new Time(d));
         } else {
-            throw new TypeError("`time-hours' not defined for: " + a.getType());
+            throw new TypeError("`date:hours' not defined for: " + a.getType());
         }
     }
 
@@ -42,6 +42,6 @@ public class TimeHours extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "time-hours";
+        return "date:hours";
     }
 }

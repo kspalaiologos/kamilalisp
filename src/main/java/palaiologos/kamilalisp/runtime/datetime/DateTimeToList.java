@@ -24,8 +24,16 @@ public class DateTimeToList extends PrimitiveFunction implements Lambda {
                     new Atom(BigInteger.valueOf(d.getSecond())),
                     new Atom(BigInteger.valueOf(d.getNano()))
             ));
+        } else if(a.isUserdata(Time.class)) {
+            Duration d = a.getUserdata(Time.class).getValue();
+            return new Atom(List.of(
+                    new Atom(BigInteger.valueOf(d.toHoursPart())),
+                    new Atom(BigInteger.valueOf(d.toMinutesPart())),
+                    new Atom(BigInteger.valueOf(d.toSecondsPart())),
+                    new Atom(BigInteger.valueOf(d.toNanosPart()))
+            ));
         } else {
-            throw new TypeError("`datetime-to-list' not defined for: " + a.getType());
+            throw new TypeError("`time:to-list' not defined for: " + a.getType());
         }
     }
 
@@ -39,6 +47,6 @@ public class DateTimeToList extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "datetime-to-list";
+        return "time:to-list";
     }
 }

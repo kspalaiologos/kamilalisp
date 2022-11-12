@@ -24,7 +24,7 @@ public class TimeSeconds extends PrimitiveFunction implements Lambda {
             Duration d = Duration.ofSeconds(seconds.longValueExact()).plusNanos(nanos.longValueExact());
             return new Atom(new Time(d));
         } else {
-            throw new TypeError("`time-seconds' not defined for: " + a.getType());
+            throw new TypeError("`date:seconds' not defined for: " + a.getType());
         }
     }
 
@@ -38,6 +38,6 @@ public class TimeSeconds extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "time-seconds";
+        return "date:seconds";
     }
 }

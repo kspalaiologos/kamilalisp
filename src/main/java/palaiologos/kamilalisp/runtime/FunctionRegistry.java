@@ -39,9 +39,9 @@ public class FunctionRegistry {
             "prime-factors", "is-prime", "next-prime", "parse-number", "while", "prime-no", "memo",
             "index-of", "to-digits", "from-digits", "n-sum", "Σ", "cycle", "take", "↑", "drop", "↓",
             "n-prod", "Π", "unique-mask", "unique", "intersection", "union", "bernoulli", "regex-matches?",
-            "datetime-from", "time-from", "datetime-add", "datetime-difference", "time-hours",
-            "time-minutes", "time-seconds", "time-nanoseconds", "date-years", "date-months", "date-days",
-            "time-to-list", "datetime-to-list"
+            "date:from", "date:time-from", "date:add", "date:difference", "date:hours",
+            "date:minutes", "date:seconds", "date:nanoseconds", "date:years", "date:months",
+            "date:days", "date:to-list", "time:day-of-week"
     );
 
     public static void registerDefault(Environment env) {
@@ -205,18 +205,19 @@ public class FunctionRegistry {
         env.set("union", new Atom(new Union()));
         env.set("bernoulli", new Atom(new Bernoulli()));
         env.set("regex-matches?", new Atom(new RegexMatches()));
-        env.set("datetime-from", new Atom(new DateTimeFrom()));
-        env.set("time-from", new Atom(new TimeFrom()));
-        env.set("datetime-add", new Atom(new DateTimeAdd()));
-        env.set("datetime-difference", new Atom(new DateTimeDifference()));
-        env.set("time-hours", new Atom(new TimeHours()));
-        env.set("time-minutes", new Atom(new TimeMinutes()));
-        env.set("time-seconds", new Atom(new TimeSeconds()));
-        env.set("time-nanoseconds", new Atom(new TimeNanoseconds()));
-        env.set("date-years", new Atom(new DateYears()));
-        env.set("date-months", new Atom(new DateMonths()));
-        env.set("date-days", new Atom(new DateDays()));
-        env.set("datetime-to-list", new Atom(new DateTimeToList()));
-        env.set("time-to-list", new Atom(new TimeToList()));
+
+        env.set("date:from", new Atom(new DateTimeFrom()));
+        env.set("date:time-from", new Atom(new TimeFrom()));
+        env.set("date:add", new Atom(new DateTimeAdd()));
+        env.set("date:difference", new Atom(new DateTimeDifference()));
+        env.set("date:hours", new Atom(new TimeHours()));
+        env.set("date:minutes", new Atom(new TimeMinutes()));
+        env.set("date:seconds", new Atom(new TimeSeconds()));
+        env.set("date:nanoseconds", new Atom(new TimeNanoseconds()));
+        env.set("date:years", new Atom(new DateYears()));
+        env.set("date:months", new Atom(new DateMonths()));
+        env.set("date:days", new Atom(new DateDays()));
+        env.set("date:to-list", new Atom(new DateTimeToList()));
+        env.set("date:day-of-week", new Atom(new DateTimeDayOfWeek()));
     }
 }

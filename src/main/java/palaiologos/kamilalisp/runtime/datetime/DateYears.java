@@ -18,7 +18,7 @@ public class DateYears extends PrimitiveFunction implements Lambda {
         } else if(a.getType() == Type.INTEGER) {
             return new Atom(new DateTime(LocalDateTime.of(0, 1, 1, 0, 0).plus(Period.ofYears(a.getInteger().intValueExact()))));
         } else {
-            throw new TypeError("`date-years' not defined for: " + a.getType());
+            throw new TypeError("`date:years' not defined for: " + a.getType());
         }
     }
 
@@ -32,6 +32,6 @@ public class DateYears extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "date-years";
+        return "date:years";
     }
 }
