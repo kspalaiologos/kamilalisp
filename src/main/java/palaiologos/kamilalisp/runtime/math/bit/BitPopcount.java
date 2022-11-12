@@ -15,7 +15,7 @@ public class BitPopcount extends PrimitiveFunction implements Lambda {
         } else if (a.getType() == Type.LIST) {
             return new Atom(a.getList().stream().map(BitPopcount::sgn1).collect(Collectors.toList()));
         } else {
-            throw new TypeError("`bit-popcount' not defined for: " + a.getType());
+            throw new TypeError("`bit:popcount' not defined for: " + a.getType());
         }
     }
 
@@ -24,7 +24,7 @@ public class BitPopcount extends PrimitiveFunction implements Lambda {
         if (args.size() == 1) {
             return sgn1(args.get(0));
         } else if (args.size() == 0) {
-            throw new TypeError("Expected 1 or more arguments to `bit-popcount'.");
+            throw new TypeError("Expected 1 or more arguments to `bit:popcount'.");
         } else {
             return new Atom(args.stream().map(BitPopcount::sgn1).toList());
         }
@@ -32,6 +32,6 @@ public class BitPopcount extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "bit-popcount";
+        return "bit:popcount";
     }
 }

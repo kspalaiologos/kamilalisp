@@ -14,7 +14,7 @@ public class BitNot extends PrimitiveFunction implements Lambda {
         } else if (a.getType() == Type.LIST) {
             return new Atom(a.getList().stream().map(BitNot::sgn1).collect(Collectors.toList()));
         } else {
-            throw new TypeError("`bit-not' not defined for: " + a.getType());
+            throw new TypeError("`bit:not' not defined for: " + a.getType());
         }
     }
 
@@ -23,7 +23,7 @@ public class BitNot extends PrimitiveFunction implements Lambda {
         if (args.size() == 1) {
             return sgn1(args.get(0));
         } else if (args.size() == 0) {
-            throw new TypeError("Expected 1 or more arguments to `bit-not'.");
+            throw new TypeError("Expected 1 or more arguments to `bit:not'.");
         } else {
             return new Atom(args.stream().map(BitNot::sgn1).toList());
         }
@@ -31,6 +31,6 @@ public class BitNot extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "bit-not";
+        return "bit:not";
     }
 }

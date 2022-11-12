@@ -19,6 +19,6 @@ public class RegexMatches extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "regex-matches?";
+        return "regex:matches?";
     }
 }

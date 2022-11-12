@@ -170,12 +170,12 @@ public class FunctionRegistry {
         env.set("Γ", new Atom(new Gamma()));
         env.set("not", new Atom(new Not()));
         env.set("¬", new Atom(new Not()));
-        env.set("bit-and", new Atom(new BitAnd()));
-        env.set("bit-or", new Atom(new BitOr()));
-        env.set("bit-xor", new Atom(new BitXor()));
-        env.set("bit-nand", new Atom(new BitNand()));
-        env.set("bit-not", new Atom(new BitNot()));
-        env.set("bit-popcount", new Atom(new BitPopcount()));
+        env.set("bit:and", new Atom(new BitAnd()));
+        env.set("bit:or", new Atom(new BitOr()));
+        env.set("bit:xor", new Atom(new BitXor()));
+        env.set("bit:nand", new Atom(new BitNand()));
+        env.set("bit:not", new Atom(new BitNot()));
+        env.set("bit:popcount", new Atom(new BitPopcount()));
         env.set("fib", new Atom(new Fib()));
         env.set("ceil", new Atom(new Ceil()));
         env.set("⌈", new Atom(new Ceil()));
@@ -206,7 +206,7 @@ public class FunctionRegistry {
         env.set("/", new Atom(new Slash()));
         env.set("mod", new Atom(new Mod()));
 
-        env.set("regex-matches?", new Atom(new RegexMatches()));
+        env.set("regex:matches?", new Atom(new RegexMatches()));
 
         env.set("date:from", new Atom(new DateTimeFrom()));
         env.set("date:time-from", new Atom(new TimeFrom()));

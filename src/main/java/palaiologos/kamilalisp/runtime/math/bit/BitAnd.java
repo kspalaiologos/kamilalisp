@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BitAnd extends PrimitiveFunction implements Lambda {
-    private static final String name = "bit-and";
+    private static final String name = "bit:and";
 
     public static Atom bitop2(Atom a, Atom b) {
         a.assertTypes(Type.INTEGER, Type.LIST);
