@@ -10,12 +10,8 @@ import palaiologos.kamilalisp.runtime.math.*;
 import palaiologos.kamilalisp.runtime.math.bit.*;
 import palaiologos.kamilalisp.runtime.math.cmp.*;
 import palaiologos.kamilalisp.runtime.math.hyperbolic.*;
-import palaiologos.kamilalisp.runtime.math.numeric.NProd;
-import palaiologos.kamilalisp.runtime.math.numeric.NSum;
-import palaiologos.kamilalisp.runtime.math.prime.IsPrime;
-import palaiologos.kamilalisp.runtime.math.prime.NextPrime;
-import palaiologos.kamilalisp.runtime.math.prime.PrimeFactors;
-import palaiologos.kamilalisp.runtime.math.prime.PrimeNo;
+import palaiologos.kamilalisp.runtime.math.numeric.*;
+import palaiologos.kamilalisp.runtime.math.prime.*;
 import palaiologos.kamilalisp.runtime.math.trig.*;
 import palaiologos.kamilalisp.runtime.meta.*;
 import palaiologos.kamilalisp.runtime.string.*;
@@ -40,7 +36,7 @@ public class FunctionRegistry {
             "∊", "let", "cond", "cmpx", "import", "get-file", "try-catch", "writeln", "let-seq",
             "prime-factors", "is-prime", "next-prime", "parse-number", "while", "prime-no", "memo",
             "index-of", "to-digits", "from-digits", "n-sum", "Σ", "cycle", "take", "↑", "drop", "↓",
-            "n-prod", "Π", "unique-mask", "unique", "intersection", "union"
+            "n-prod", "Π", "unique-mask", "unique", "intersection", "union", "bernoulli"
     );
 
     public static void registerDefault(Environment env) {
@@ -202,5 +198,6 @@ public class FunctionRegistry {
         env.set("unique", new Atom(new Unique()));
         env.set("intersection", new Atom(new Intersection()));
         env.set("union", new Atom(new Union()));
+        env.set("bernoulli", new Atom(new Bernoulli()));
     }
 }
