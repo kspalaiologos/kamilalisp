@@ -40,7 +40,7 @@ public class FunctionRegistry {
             "index-of", "to-digits", "from-digits", "n-sum", "Σ", "cycle", "take", "↑", "drop", "↓",
             "n-prod", "Π", "unique-mask", "unique", "intersection", "union", "bernoulli", "regex-matches?",
             "datetime-from", "time-from", "datetime-add", "datetime-difference", "time-hours",
-            "time-minutes", "time-seconds", "time-nanoseconds"
+            "time-minutes", "time-seconds", "time-nanoseconds", "date-years", "date-months", "date-days"
     );
 
     public static void registerDefault(Environment env) {
@@ -212,5 +212,8 @@ public class FunctionRegistry {
         env.set("time-minutes", new Atom(new TimeMinutes()));
         env.set("time-seconds", new Atom(new TimeSeconds()));
         env.set("time-nanoseconds", new Atom(new TimeNanoseconds()));
+        env.set("date-years", new Atom(new DateYears()));
+        env.set("date-months", new Atom(new DateMonths()));
+        env.set("date-days", new Atom(new DateDays()));
     }
 }
