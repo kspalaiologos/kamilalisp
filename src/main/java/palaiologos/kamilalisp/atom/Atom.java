@@ -115,6 +115,23 @@ public class Atom implements Comparable<Atom> {
         return (Userdata) data;
     }
 
+    public <T extends Userdata> T getUserdata(Class<T> type) {
+        if (getType() != Type.USERDATA)
+            throw new TypeError("Cannot get userdata from non-userdata atom " + getType());
+
+        if(!type.isInstance(data))
+            throw new TypeError("Cannot get desired userdata from atom of type " + ((Userdata) data).toDisplayString());
+
+        return type.cast(data);
+    }
+
+    public boolean isUserdata(Class<? extends Userdata> type) {
+        if (getType() != Type.USERDATA)
+            return false;
+
+        return type.isInstance(data);
+    }
+
     public BigDecimal getReal() {
         if (!isNumeric()) {
             throw new TypeError("Cannot get integer from non-integer atom " + getType());

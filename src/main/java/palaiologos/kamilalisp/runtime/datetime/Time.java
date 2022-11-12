@@ -10,6 +10,10 @@ import java.time.LocalTime;
 public class Time implements Userdata {
     private final LocalTime value;
 
+    public LocalTime getValue() {
+        return value;
+    }
+
     public Time(LocalTime value) {
         this.value = value;
     }

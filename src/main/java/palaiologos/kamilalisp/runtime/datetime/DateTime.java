@@ -9,6 +9,10 @@ import java.time.LocalDateTime;
 public class DateTime implements Userdata {
     private final LocalDateTime value;
 
+    public LocalDateTime getValue() {
+        return value;
+    }
+
     public DateTime(LocalDateTime value) {
         this.value = value;
     }
