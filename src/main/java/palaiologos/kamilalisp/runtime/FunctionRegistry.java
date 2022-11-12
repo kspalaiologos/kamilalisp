@@ -14,6 +14,7 @@ import palaiologos.kamilalisp.runtime.math.numeric.*;
 import palaiologos.kamilalisp.runtime.math.prime.*;
 import palaiologos.kamilalisp.runtime.math.trig.*;
 import palaiologos.kamilalisp.runtime.meta.*;
+import palaiologos.kamilalisp.runtime.regex.RegexMatches;
 import palaiologos.kamilalisp.runtime.string.*;
 
 import java.math.BigDecimal;
@@ -36,7 +37,7 @@ public class FunctionRegistry {
             "∊", "let", "cond", "cmpx", "import", "get-file", "try-catch", "writeln", "let-seq",
             "prime-factors", "is-prime", "next-prime", "parse-number", "while", "prime-no", "memo",
             "index-of", "to-digits", "from-digits", "n-sum", "Σ", "cycle", "take", "↑", "drop", "↓",
-            "n-prod", "Π", "unique-mask", "unique", "intersection", "union", "bernoulli"
+            "n-prod", "Π", "unique-mask", "unique", "intersection", "union", "bernoulli", "regex-matches?"
     );
 
     public static void registerDefault(Environment env) {
@@ -199,5 +200,6 @@ public class FunctionRegistry {
         env.set("intersection", new Atom(new Intersection()));
         env.set("union", new Atom(new Union()));
         env.set("bernoulli", new Atom(new Bernoulli()));
+        env.set("regex-matches?", new Atom(new RegexMatches()));
     }
 }
