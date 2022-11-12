@@ -1,12 +1,10 @@
 package palaiologos.kamilalisp.runtime.datetime;
 
-import palaiologos.kamilalisp.atom.Atom;
-import palaiologos.kamilalisp.atom.Environment;
-import palaiologos.kamilalisp.atom.Lambda;
-import palaiologos.kamilalisp.atom.PrimitiveFunction;
+import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.TypeError;
 
 import java.math.BigInteger;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,6 +13,8 @@ public class DateTimeDayOfWeek extends PrimitiveFunction implements Lambda {
         if(a.isUserdata(DateTime.class)) {
             LocalDateTime d = a.getUserdata(DateTime.class).getValue();
             return new Atom(BigInteger.valueOf(d.getDayOfWeek().ordinal()));
+        } else if(a.getType() == Type.INTEGER) {
+            return new Atom(DayOfWeek.of(a.getInteger().intValueExact()).toString());
         } else {
             throw new TypeError("`date:day-of-week' not defined for: " + a.getType());
         }

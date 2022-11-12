@@ -41,7 +41,7 @@ public class FunctionRegistry {
             "n-prod", "Π", "unique-mask", "unique", "intersection", "union", "bernoulli", "regex-matches?",
             "date:from", "date:time-from", "date:add", "date:difference", "date:hours",
             "date:minutes", "date:seconds", "date:nanoseconds", "date:years", "date:months",
-            "date:days", "date:to-list", "time:day-of-week"
+            "date:days", "date:to-list", "time:day-of-week", "⍣"
     );
 
     public static void registerDefault(Environment env) {
@@ -103,6 +103,7 @@ public class FunctionRegistry {
         env.set("writeln", new Atom(new Writeln()));
         env.set("let-seq", new Atom(new LetSeq()));
         env.set("while", new Atom(new While()));
+        env.set("⍣", new Atom(new While()));
         env.set("memo", new Atom(new Memo()));
         env.set("index-of", new Atom(new IndexOf()));
         env.set("to-digits", new Atom(new ToDigits()));
