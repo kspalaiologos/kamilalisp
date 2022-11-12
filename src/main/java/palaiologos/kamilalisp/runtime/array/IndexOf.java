@@ -9,10 +9,12 @@ public class IndexOf extends PrimitiveFunction implements Lambda {
     private static Atom indexOf(Atom a, Atom b) {
         if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
             return new Atom(a.getList().stream().map(x -> indexOf(x, b)).toList());
+        } else if (a.getType() == Type.STRING && b.getType() == Type.STRING) {
+            return new Atom(BigInteger.valueOf(a.getString().indexOf(b.getString())));
         } else if (b.getType() == Type.LIST) {
             return new Atom(BigInteger.valueOf(b.getList().indexOf(a)));
         } else {
-            throw new RuntimeException("indexOf takes a list and an atom as arguments");
+            throw new RuntimeException("index-of takes a list and an atom as arguments");
         }
     }
 
