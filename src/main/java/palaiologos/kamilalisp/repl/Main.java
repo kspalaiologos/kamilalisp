@@ -81,11 +81,15 @@ public class Main {
                         System.out.println("Syntax error: " + e.getMessage());
                         continue;
                     }
-                    for (Atom atom : data)
-                        System.out.println(Evaluation.safeEvaluate(env, atom, s -> {
+                    for (Atom atom : data) {
+                        Atom a = Evaluation.safeEvaluate(env, atom, s -> {
                             System.err.println(s);
                             throw new InterruptionError();
-                        }).toDisplayString());
+                        });
+                        if(a.equals(Atom.NULL))
+                            continue;
+                        System.out.println(a.toDisplayString());
+                    }
                 } catch (InterruptionError e) {
                     // Ignore, we just wanted to unwind the stack.
                 }

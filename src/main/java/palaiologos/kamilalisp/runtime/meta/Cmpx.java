@@ -1,8 +1,11 @@
 package palaiologos.kamilalisp.runtime.meta;
 
 import com.google.common.collect.Streams;
+import org.apache.commons.lang3.tuple.Pair;
 import palaiologos.kamilalisp.atom.*;
 
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -13,10 +16,27 @@ public class Cmpx extends PrimitiveFunction implements SpecialForm {
         return "cmpx";
     }
 
+    private long getGC() {
+        long garbageCollectionTime = 0;
+
+        for(GarbageCollectorMXBean gc : ManagementFactory.getGarbageCollectorMXBeans()) {
+            long time = gc.getCollectionTime();
+
+            if(time >= 0) {
+                garbageCollectionTime += time;
+            }
+        }
+
+        return garbageCollectionTime;
+    }
+
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if (args.isEmpty())
             throw new RuntimeException("cmpx requires at least one argument");
+
+        long gcBefore = getGC();
+
         List<Integer> initialTimings = args.stream().map(x -> {
             int start = (int) System.currentTimeMillis();
             Evaluation.evaluate(env, x);
@@ -63,13 +83,19 @@ public class Cmpx extends PrimitiveFunction implements SpecialForm {
 
         List<Double> percentageChange = means.stream().map(x -> (x - meanOfMeans) * 100.0 / meanOfMeans).toList();
 
+        System.gc();
+
+        long gcAfter = getGC();
+
         for (int i = 0; i < args.size(); i++) {
             System.out.println("Expression " + i + ":");
             System.out.println("\t" + args.get(i));
             System.out.println("avg: " + means.get(i) + "ms, med: " + medians.get(i) + "ms");
             System.out.println("dev: " + stdDevs.get(i) + "ms, %ch: " + percentageChange.get(i) + "%");
-            if (i != args.size() - 1) System.out.println();
+            System.out.println();
         }
+
+        System.out.println("GC time: " + (gcAfter - gcBefore) + "ms");
 
         return Atom.NULL;
     }
