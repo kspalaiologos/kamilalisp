@@ -7,6 +7,7 @@ import palaiologos.kamilalisp.atom.PrimitiveFunction;
 import palaiologos.kamilalisp.error.TypeError;
 import palaiologos.kamilalisp.runtime.math.Plus;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
@@ -27,27 +28,27 @@ public class DateTimeAdd extends PrimitiveFunction implements Lambda {
             return new Atom(new DateTime(v));
         } else if(a.isUserdata(DateTime.class) && b.isUserdata(Time.class)) {
             LocalDateTime v = a.getUserdata(DateTime.class).getValue();
-            LocalTime x = b.getUserdata(Time.class).getValue();
-            v = v.plusHours(x.getHour());
-            v = v.plusMinutes(x.getMinute());
-            v = v.plusSeconds(x.getSecond());
-            v = v.plusNanos(x.getNano());
+            Duration x = b.getUserdata(Time.class).getValue();
+            v = v.plusHours(x.toHoursPart());
+            v = v.plusMinutes(x.toMinutesPart());
+            v = v.plusSeconds(x.toSecondsPart());
+            v = v.plusNanos(x.toNanosPart());
             return new Atom(new DateTime(v));
         } else if(a.isUserdata(Time.class) && b.isUserdata(DateTime.class)) {
             LocalDateTime v = b.getUserdata(DateTime.class).getValue();
-            LocalTime x = a.getUserdata(Time.class).getValue();
-            v = v.plusHours(x.getHour());
-            v = v.plusMinutes(x.getMinute());
-            v = v.plusSeconds(x.getSecond());
-            v = v.plusNanos(x.getNano());
+            Duration x = a.getUserdata(Time.class).getValue();
+            v = v.plusHours(x.toHoursPart());
+            v = v.plusMinutes(x.toMinutesPart());
+            v = v.plusSeconds(x.toSecondsPart());
+            v = v.plusNanos(x.toNanosPart());
             return new Atom(new DateTime(v));
         } else if(a.isUserdata(Time.class) && b.isUserdata(Time.class)) {
-            LocalTime v = b.getUserdata(Time.class).getValue();
-            LocalTime x = a.getUserdata(Time.class).getValue();
-            v = v.plusHours(x.getHour());
-            v = v.plusMinutes(x.getMinute());
-            v = v.plusSeconds(x.getSecond());
-            v = v.plusNanos(x.getNano());
+            Duration v = b.getUserdata(Time.class).getValue();
+            Duration x = a.getUserdata(Time.class).getValue();
+            v = v.plusHours(x.toHoursPart());
+            v = v.plusMinutes(x.toMinutesPart());
+            v = v.plusSeconds(x.toSecondsPart());
+            v = v.plusNanos(x.toNanosPart());
             return new Atom(new Time(v));
         } else {
             throw new TypeError("Cannot add " + a.getType() + " and " + b.getType());

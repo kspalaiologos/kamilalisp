@@ -6,10 +6,7 @@ import palaiologos.kamilalisp.runtime.IO.GetFile;
 import palaiologos.kamilalisp.runtime.IO.Writeln;
 import palaiologos.kamilalisp.runtime.array.*;
 import palaiologos.kamilalisp.runtime.array.hof.*;
-import palaiologos.kamilalisp.runtime.datetime.DateTimeAdd;
-import palaiologos.kamilalisp.runtime.datetime.DateTimeDifference;
-import palaiologos.kamilalisp.runtime.datetime.DateTimeFrom;
-import palaiologos.kamilalisp.runtime.datetime.TimeFrom;
+import palaiologos.kamilalisp.runtime.datetime.*;
 import palaiologos.kamilalisp.runtime.math.*;
 import palaiologos.kamilalisp.runtime.math.bit.*;
 import palaiologos.kamilalisp.runtime.math.cmp.*;
@@ -42,7 +39,8 @@ public class FunctionRegistry {
             "prime-factors", "is-prime", "next-prime", "parse-number", "while", "prime-no", "memo",
             "index-of", "to-digits", "from-digits", "n-sum", "Σ", "cycle", "take", "↑", "drop", "↓",
             "n-prod", "Π", "unique-mask", "unique", "intersection", "union", "bernoulli", "regex-matches?",
-            "datetime-from", "time-from", "datetime-add", "datetime-difference"
+            "datetime-from", "time-from", "datetime-add", "datetime-difference", "time-hours",
+            "time-minutes", "time-seconds", "time-nanoseconds"
     );
 
     public static void registerDefault(Environment env) {
@@ -210,5 +208,9 @@ public class FunctionRegistry {
         env.set("time-from", new Atom(new TimeFrom()));
         env.set("datetime-add", new Atom(new DateTimeAdd()));
         env.set("datetime-difference", new Atom(new DateTimeDifference()));
+        env.set("time-hours", new Atom(new TimeHours()));
+        env.set("time-minutes", new Atom(new TimeMinutes()));
+        env.set("time-seconds", new Atom(new TimeSeconds()));
+        env.set("time-nanoseconds", new Atom(new TimeNanoseconds()));
     }
 }

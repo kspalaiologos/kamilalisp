@@ -4,17 +4,18 @@ import com.google.common.collect.ImmutableMap;
 import palaiologos.kamilalisp.atom.Callable;
 import palaiologos.kamilalisp.atom.Userdata;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class Time implements Userdata {
-    private final LocalTime value;
+    private final Duration value;
 
-    public LocalTime getValue() {
+    public Duration getValue() {
         return value;
     }
 
-    public Time(LocalTime value) {
+    public Time(Duration value) {
         this.value = value;
     }
 

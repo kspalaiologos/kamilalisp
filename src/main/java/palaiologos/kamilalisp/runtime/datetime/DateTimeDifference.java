@@ -6,6 +6,7 @@ import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 import palaiologos.kamilalisp.error.TypeError;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -25,27 +26,29 @@ public class DateTimeDifference extends PrimitiveFunction implements Lambda {
             return new Atom(new DateTime(v));
         } else if(a.isUserdata(DateTime.class) && b.isUserdata(Time.class)) {
             LocalDateTime v = a.getUserdata(DateTime.class).getValue();
-            LocalTime x = b.getUserdata(Time.class).getValue();
-            v = v.minusHours(x.getHour());
-            v = v.minusMinutes(x.getMinute());
-            v = v.minusSeconds(x.getSecond());
-            v = v.minusNanos(x.getNano());
+            Duration x = b.getUserdata(Time.class).getValue();
+            v = v.minusHours(x.toHoursPart());
+            v = v.minusMinutes(x.toMinutesPart());
+            v = v.minusSeconds(x.toSecondsPart());
+            v = v.minusNanos(x.toNanosPart());
             return new Atom(new DateTime(v));
         } else if(a.isUserdata(Time.class) && b.isUserdata(DateTime.class)) {
-            LocalDateTime v = b.getUserdata(DateTime.class).getValue();
-            LocalTime x = a.getUserdata(Time.class).getValue();
-            v = v.minusHours(x.getHour());
-            v = v.minusMinutes(x.getMinute());
-            v = v.minusSeconds(x.getSecond());
-            v = v.minusNanos(x.getNano());
-            return new Atom(new DateTime(v));
+            Duration v = a.getUserdata(Time.class).getValue();
+            LocalDateTime x = b.getUserdata(DateTime.class).getValue();
+            LocalDateTime z = LocalDateTime.of(0, 1, 1, v.toHoursPart(), v.toMinutesPart(), v.toSecondsPart(), v.toNanosPart());
+            z = z.plusDays(v.toDaysPart());
+            z = z.minusHours(x.getHour());
+            z = z.minusMinutes(x.getMinute());
+            z = z.minusSeconds(x.getSecond());
+            z = z.minusNanos(x.getNano());
+            return new Atom(new DateTime(z));
         } else if(a.isUserdata(Time.class) && b.isUserdata(Time.class)) {
-            LocalTime v = b.getUserdata(Time.class).getValue();
-            LocalTime x = a.getUserdata(Time.class).getValue();
-            v = v.minusHours(x.getHour());
-            v = v.minusMinutes(x.getMinute());
-            v = v.minusSeconds(x.getSecond());
-            v = v.minusNanos(x.getNano());
+            Duration v = b.getUserdata(Time.class).getValue();
+            Duration x = a.getUserdata(Time.class).getValue();
+            v = v.minusHours(x.toHoursPart());
+            v = v.minusMinutes(x.toMinutesPart());
+            v = v.minusSeconds(x.toSecondsPart());
+            v = v.minusNanos(x.toNanosPart());
             return new Atom(new Time(v));
         } else {
             throw new TypeError("Cannot subtract " + a.getType() + " and " + b.getType());
