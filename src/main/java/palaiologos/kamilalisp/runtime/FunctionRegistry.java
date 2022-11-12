@@ -6,6 +6,8 @@ import palaiologos.kamilalisp.runtime.IO.GetFile;
 import palaiologos.kamilalisp.runtime.IO.Writeln;
 import palaiologos.kamilalisp.runtime.array.*;
 import palaiologos.kamilalisp.runtime.array.hof.*;
+import palaiologos.kamilalisp.runtime.datetime.DateTimeFrom;
+import palaiologos.kamilalisp.runtime.datetime.TimeFrom;
 import palaiologos.kamilalisp.runtime.math.*;
 import palaiologos.kamilalisp.runtime.math.bit.*;
 import palaiologos.kamilalisp.runtime.math.cmp.*;
@@ -37,7 +39,8 @@ public class FunctionRegistry {
             "∊", "let", "cond", "cmpx", "import", "get-file", "try-catch", "writeln", "let-seq",
             "prime-factors", "is-prime", "next-prime", "parse-number", "while", "prime-no", "memo",
             "index-of", "to-digits", "from-digits", "n-sum", "Σ", "cycle", "take", "↑", "drop", "↓",
-            "n-prod", "Π", "unique-mask", "unique", "intersection", "union", "bernoulli", "regex-matches?"
+            "n-prod", "Π", "unique-mask", "unique", "intersection", "union", "bernoulli", "regex-matches?",
+            "datetime-from", "time-from"
     );
 
     public static void registerDefault(Environment env) {
@@ -201,5 +204,7 @@ public class FunctionRegistry {
         env.set("union", new Atom(new Union()));
         env.set("bernoulli", new Atom(new Bernoulli()));
         env.set("regex-matches?", new Atom(new RegexMatches()));
+        env.set("datetime-from", new Atom(new DateTimeFrom()));
+        env.set("time-from", new Atom(new TimeFrom()));
     }
 }
