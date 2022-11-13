@@ -2,21 +2,27 @@ package palaiologos.kamilalisp.runtime.math.numeric;
 
 import ch.obermuhlner.math.big.BigComplex;
 import ch.obermuhlner.math.big.BigDecimalMath;
+import com.google.common.math.BigIntegerMath;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.checkerframework.checker.units.qual.A;
 import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.runtime.meta.ConcurrentLRUCache;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
 
 public class NQuad extends PrimitiveFunction implements SpecialForm {
+    private static ConcurrentLRUCache<Integer, Triple<BigDecimal, List<BigDecimal>, List<BigComplex>>> coefficientCache = new ConcurrentLRUCache<>(10);
+
     public static Atom quad(Environment e, Atom begin, Atom end, Atom expr, Atom variable) {
-        MathContext mc = new MathContext(e.getMathContext().getPrecision() * 10);
-        final int m = 7;
+        final int m = (int) (5 + Math.log(e.getMathContext().getPrecision() / 30.0) / Math.log(2));
+        MathContext mc = new MathContext(e.getMathContext().getPrecision() * m);
 
         if(begin.getInteger().compareTo(BigInteger.valueOf(-1)) != 0)
             throw new RuntimeException("begin must be -1");
@@ -32,15 +38,22 @@ public class NQuad extends PrimitiveFunction implements SpecialForm {
 
         sumEnv.set(v, sumAtom);
 
-        List<BigDecimal> xk = new ArrayList<>();
-        List<BigComplex> wk = new ArrayList<>();
-
+        List<BigDecimal> xk;
+        List<BigComplex> wk;
         BigDecimal h;
 
-        final BigDecimal half = new BigDecimal("0.5");
+        if(coefficientCache.get(m) != null) {
+            Triple<BigDecimal, List<BigDecimal>, List<BigComplex>> t = coefficientCache.get(m);
+            h = t.getLeft();
+            xk = t.getMiddle();
+            wk = t.getRight();
+        } else {
+            xk = new ArrayList<>();
+            wk = new ArrayList<>();
 
-        {
-            BigDecimal tol = half.pow(mc.getPrecision() + 10);
+            final BigDecimal half = new BigDecimal("0.5");
+
+            BigDecimal tol = half.pow(mc.getPrecision());
             BigDecimal pi4 = BigDecimalMath.pi(mc).divide(BigDecimal.valueOf(4), mc);
 
             h = half.pow(m - 1, mc);
@@ -51,7 +64,7 @@ public class NQuad extends PrimitiveFunction implements SpecialForm {
             BigDecimal udelta = BigDecimalMath.exp(h, mc);
             BigDecimal urdelta = BigDecimal.ONE.divide(udelta, mc);
 
-            for(int k = 0; k < 3 * Math.pow(2, m); k++) {
+            for (int k = 0; k < 3 * Math.pow(2, m); k++) {
                 BigDecimal c = BigDecimalMath.exp(a.subtract(b), mc);
                 BigDecimal d = BigDecimal.ONE.divide(c, mc);
                 BigDecimal co = c.add(d).multiply(half, mc);
@@ -59,13 +72,15 @@ public class NQuad extends PrimitiveFunction implements SpecialForm {
                 BigDecimal x = si.divide(co, mc);
                 BigDecimal w = a.add(b).divide(co.multiply(co), mc);
                 BigDecimal diff = x.subtract(BigDecimal.ONE).abs();
-                if(diff.compareTo(tol) <= 0)
+                if (diff.compareTo(tol) <= 0)
                     break;
                 xk.add(x);
                 wk.add(BigComplex.valueOf(w));
                 a = a.multiply(udelta, mc);
                 b = b.multiply(urdelta, mc);
             }
+
+            coefficientCache.put(m, Triple.of(h, xk, wk));
         }
 
         for(int i = 0; i < xk.size(); i++) {
@@ -77,7 +92,7 @@ public class NQuad extends PrimitiveFunction implements SpecialForm {
             sumAtom.hack(Type.REAL, xk.get(i).negate());
             result = result.add(wk.get(i).multiply(Evaluation.evaluate(sumEnv, expr).getComplex()));
 
-            sum = sum.add(result.multiply(h));
+            sum = sum.add(result.multiply(h), e.getMathContext());
         }
 
         return new Atom(sum);
