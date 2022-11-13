@@ -19,7 +19,7 @@ public class DoubleStar extends PrimitiveFunction implements Lambda {
         if (a.getType() == Type.COMPLEX && b.getType() == Type.COMPLEX) {
             return new Atom(BigComplexMath.pow(a.getComplex(), b.getComplex(), e.getMathContext()));
         } else if (a.getType() == Type.REAL && b.getType() == Type.REAL) {
-            return new Atom(BigDecimalMath.pow(a.getReal(), b.getReal(), e.getMathContext()));
+            return new Atom(BigComplexMath.pow(a.getComplex(), b.getComplex(), e.getMathContext()));
         } else if (a.getType() == Type.REAL && b.getType() == Type.COMPLEX) {
             return new Atom(BigComplexMath.pow(BigComplex.valueOf(a.getReal()), b.getComplex(), e.getMathContext()));
         } else if (a.getType() == Type.COMPLEX && b.getType() == Type.REAL) {
@@ -27,9 +27,9 @@ public class DoubleStar extends PrimitiveFunction implements Lambda {
         } else if (a.getType() == Type.INTEGER && b.getType() == Type.INTEGER) {
             return new Atom(a.getInteger().pow(b.getInteger().intValue()));
         } else if (a.getType() == Type.INTEGER && b.getType() == Type.REAL) {
-            return new Atom(BigDecimalMath.pow(new BigDecimal(a.getInteger()), b.getReal(), e.getMathContext()));
+            return new Atom(BigComplexMath.pow(a.getComplex(), b.getComplex(), e.getMathContext()));
         } else if (a.getType() == Type.REAL && b.getType() == Type.INTEGER) {
-            return new Atom(BigDecimalMath.pow(a.getReal(), new BigDecimal(b.getInteger()), e.getMathContext()));
+            return new Atom(BigComplexMath.pow(a.getComplex(), b.getComplex(), e.getMathContext()));
         } else if (a.getType() == Type.INTEGER && b.getType() == Type.COMPLEX) {
             return new Atom(BigComplexMath.pow(BigComplex.valueOf(new BigDecimal(a.getInteger())), b.getComplex(), e.getMathContext()));
         } else if (a.getType() == Type.COMPLEX && b.getType() == Type.INTEGER) {
