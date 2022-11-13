@@ -100,8 +100,8 @@ public class NQuad extends PrimitiveFunction implements SpecialForm {
                 sum = sum.add(result.multiply(h), e.getMathContext());
             }
 
-            return new Atom(sum.divide(bma, e.getMathContext()));
-        } else {
+            return new Atom(sum.multiply(bma, e.getMathContext()));
+        } else if(begin.getType() == Type.INTEGER && end.getType() == Type.INTEGER && begin.getInteger().equals(BigInteger.valueOf(-1)) && end.getInteger().equals(BigInteger.valueOf(1))) {
             for (int i = 0; i < xk.size(); i++) {
                 BigComplex result = BigComplex.ZERO;
 
@@ -116,6 +116,8 @@ public class NQuad extends PrimitiveFunction implements SpecialForm {
 
             return new Atom(sum);
         }
+
+        throw new RuntimeException("Invalid arguments to n-quad.");
     }
 
     @Override
