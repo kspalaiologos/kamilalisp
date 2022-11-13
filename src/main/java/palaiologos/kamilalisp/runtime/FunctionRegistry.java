@@ -41,7 +41,7 @@ public class FunctionRegistry {
             "n-prod", "Π", "unique-mask", "unique", "intersection", "union", "bernoulli", "regex-matches?",
             "date:from", "date:time-from", "date:add", "date:difference", "date:hours",
             "date:minutes", "date:seconds", "date:nanoseconds", "date:years", "date:months",
-            "date:days", "date:to-list", "time:day-of-week", "⍣", "<=>", "⇔"
+            "date:days", "date:to-list", "time:day-of-week", "⍣", "<=>", "⇔", "n-quad"
     );
 
     public static void registerDefault(Environment env) {
@@ -209,6 +209,7 @@ public class FunctionRegistry {
         env.set("mod", new Atom(new Mod()));
         env.set("<=>", new Atom(new Spaceship()));
         env.set("⇔", new Atom(new Spaceship()));
+        env.set("n-quad", new Atom(new NQuad()));
 
         env.set("regex:matches?", new Atom(new RegexMatches()));
 
