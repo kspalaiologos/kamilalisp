@@ -24,11 +24,6 @@ public class NQuad extends PrimitiveFunction implements SpecialForm {
         final int m = (int) (5 + Math.log(e.getMathContext().getPrecision() / 30.0) / Math.log(2));
         MathContext mc = new MathContext(e.getMathContext().getPrecision() * m);
 
-        if(begin.getInteger().compareTo(BigInteger.valueOf(-1)) != 0)
-            throw new RuntimeException("begin must be -1");
-        if(end.getInteger().compareTo(BigInteger.valueOf(1)) != 0)
-            throw new RuntimeException("end must be 1");
-
         BigComplex sum = BigComplex.ZERO;
 
         Environment sumEnv = new Environment(e);
@@ -83,19 +78,44 @@ public class NQuad extends PrimitiveFunction implements SpecialForm {
             coefficientCache.put(m, Triple.of(h, xk, wk));
         }
 
-        for(int i = 0; i < xk.size(); i++) {
-            BigComplex result = BigComplex.ZERO;
+        if(begin.isNumeric() && end.isNumeric() && begin.getReal().equals(end.getReal()))
+            return new Atom(BigDecimal.ZERO);
 
-            sumAtom.hack(Type.REAL, xk.get(i));
-            result = result.add(wk.get(i).multiply(Evaluation.evaluate(sumEnv, expr).getComplex()));
+        if(begin.isNumeric() && end.isNumeric() && (begin.getInteger().compareTo(BigInteger.valueOf(-1)) != 0 || end.getInteger().compareTo(BigInteger.valueOf(1)) != 0)) {
+            // (a+b+y(b-a))/2=x
+            // r*(dx/dy)=r*(b-a)/2
 
-            sumAtom.hack(Type.REAL, xk.get(i).negate());
-            result = result.add(wk.get(i).multiply(Evaluation.evaluate(sumEnv, expr).getComplex()));
+            BigDecimal apb = begin.getReal().add(end.getReal(), mc).divide(BigDecimal.valueOf(2), mc);
+            BigDecimal bma = end.getReal().subtract(begin.getReal(), mc).divide(BigDecimal.valueOf(2), mc);
 
-            sum = sum.add(result.multiply(h), e.getMathContext());
+            for(int i = 0; i < xk.size(); i++) {
+                BigComplex result = BigComplex.ZERO;
+
+                sumAtom.hack(Type.REAL, xk.get(i).multiply(bma).add(apb));
+                result = result.add(wk.get(i).multiply(Evaluation.evaluate(sumEnv, expr).getComplex()));
+
+                sumAtom.hack(Type.REAL, xk.get(i).multiply(bma).negate().add(apb));
+                result = result.add(wk.get(i).multiply(Evaluation.evaluate(sumEnv, expr).getComplex()));
+
+                sum = sum.add(result.multiply(h), e.getMathContext());
+            }
+
+            return new Atom(sum.divide(bma, e.getMathContext()));
+        } else {
+            for (int i = 0; i < xk.size(); i++) {
+                BigComplex result = BigComplex.ZERO;
+
+                sumAtom.hack(Type.REAL, xk.get(i));
+                result = result.add(wk.get(i).multiply(Evaluation.evaluate(sumEnv, expr).getComplex()));
+
+                sumAtom.hack(Type.REAL, xk.get(i).negate());
+                result = result.add(wk.get(i).multiply(Evaluation.evaluate(sumEnv, expr).getComplex()));
+
+                sum = sum.add(result.multiply(h), e.getMathContext());
+            }
+
+            return new Atom(sum);
         }
-
-        return new Atom(sum);
     }
 
     @Override
