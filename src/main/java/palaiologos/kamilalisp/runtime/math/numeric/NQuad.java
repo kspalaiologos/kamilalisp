@@ -18,8 +18,6 @@ public class NQuad extends PrimitiveFunction implements SpecialForm {
         MathContext mc = new MathContext(e.getMathContext().getPrecision() * 10);
         final int m = 7;
 
-        BigDecimal pitwo = BigDecimalMath.pi(mc).divide(BigDecimal.valueOf(2), mc);
-
         if(begin.getInteger().compareTo(BigInteger.valueOf(-1)) != 0)
             throw new RuntimeException("begin must be -1");
         if(end.getInteger().compareTo(BigInteger.valueOf(1)) != 0)
@@ -32,26 +30,45 @@ public class NQuad extends PrimitiveFunction implements SpecialForm {
 
         String v = Identifier.of(variable.getIdentifier()).substring(1);
 
-        BigDecimal h = new BigDecimal("0.5").pow(m - 1, mc);
-
         sumEnv.set(v, sumAtom);
 
         List<BigDecimal> xk = new ArrayList<>();
         List<BigComplex> wk = new ArrayList<>();
 
-        IntStream.range(0, (int) (3 * Math.pow(2, m))).mapToObj(BigDecimal::valueOf).parallel().map(i -> {
-            BigDecimal x = i.multiply(h, mc);
-            BigDecimal sinhCoeff = pitwo.multiply(BigDecimalMath.sinh(x, mc));
-            BigDecimal cxk = BigDecimalMath.tanh(sinhCoeff, mc);
-            BigDecimal cwk = pitwo.multiply(BigDecimalMath.cosh(x, mc))
-                    .divide(BigDecimalMath.cosh(sinhCoeff, mc).pow(2), mc);
-            return Pair.of(cxk, BigComplex.valueOf(cwk));
-        }).toList().forEach(p -> {
-            xk.add(p.getLeft());
-            wk.add(p.getRight());
-        });
+        BigDecimal h;
 
-        for(int i = 0; i < 3 * Math.pow(2, m); i++) {
+        final BigDecimal half = new BigDecimal("0.5");
+
+        {
+            BigDecimal tol = half.pow(mc.getPrecision() + 10);
+            BigDecimal pi4 = BigDecimalMath.pi(mc).divide(BigDecimal.valueOf(4), mc);
+
+            h = half.pow(m - 1, mc);
+
+            BigDecimal expt0 = BigDecimalMath.exp(half.pow(m), mc);
+            BigDecimal a = pi4.multiply(expt0);
+            BigDecimal b = pi4.divide(expt0, mc);
+            BigDecimal udelta = BigDecimalMath.exp(h, mc);
+            BigDecimal urdelta = BigDecimal.ONE.divide(udelta, mc);
+
+            for(int k = 0; k < 3 * Math.pow(2, m); k++) {
+                BigDecimal c = BigDecimalMath.exp(a.subtract(b), mc);
+                BigDecimal d = BigDecimal.ONE.divide(c, mc);
+                BigDecimal co = c.add(d).multiply(half, mc);
+                BigDecimal si = c.subtract(d).multiply(half, mc);
+                BigDecimal x = si.divide(co, mc);
+                BigDecimal w = a.add(b).divide(co.multiply(co), mc);
+                BigDecimal diff = x.subtract(BigDecimal.ONE).abs();
+                if(diff.compareTo(tol) <= 0)
+                    break;
+                xk.add(x);
+                wk.add(BigComplex.valueOf(w));
+                a = a.multiply(udelta, mc);
+                b = b.multiply(urdelta, mc);
+            }
+        }
+
+        for(int i = 0; i < xk.size(); i++) {
             BigComplex result = BigComplex.ZERO;
 
             sumAtom.hack(Type.REAL, xk.get(i));
