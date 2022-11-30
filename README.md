@@ -12,7 +12,7 @@ A functional, flexible and concise Lisp inspired by Haskell and APL, among other
 
 Useful links:
 
-- **[Channel on the /r/PL Discord server](https://discord.gg/xr5VapADw7)**
+- A public read-only channel to track the development of KamilaLisp: `#kamilalisp:coven.palaiologos.rocks`
 
 ## Setup
 
