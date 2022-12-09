@@ -41,7 +41,7 @@ public class FunctionRegistry {
             "date:from", "date:time-from", "date:add", "date:difference", "date:hours",
             "date:minutes", "date:seconds", "date:nanoseconds", "date:years", "date:months",
             "date:days", "date:to-list", "time:day-of-week", "⍣", "<=>", "⇔", "filter-idx",
-            "map-idx", "re", "im", "complex-parts"
+            "map-idx", "re", "im", "complex-parts", "partial-while"
     );
 
     public static void registerDefault(Environment env) {
