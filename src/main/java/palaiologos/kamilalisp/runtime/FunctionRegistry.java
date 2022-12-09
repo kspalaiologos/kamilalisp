@@ -11,7 +11,6 @@ import palaiologos.kamilalisp.runtime.math.*;
 import palaiologos.kamilalisp.runtime.math.bit.*;
 import palaiologos.kamilalisp.runtime.math.cmp.*;
 import palaiologos.kamilalisp.runtime.math.hyperbolic.*;
-import palaiologos.kamilalisp.runtime.math.numeric.*;
 import palaiologos.kamilalisp.runtime.math.prime.*;
 import palaiologos.kamilalisp.runtime.math.trig.*;
 import palaiologos.kamilalisp.runtime.meta.*;
@@ -37,11 +36,11 @@ public class FunctionRegistry {
             "same", "not-same", "≢", "≡", "grade-up", "grade-down", "⍋", "⍒", "cons", "flatten",
             "∊", "let", "cond", "cmpx", "import", "get-file", "try-catch", "writeln", "let-seq",
             "prime-factors", "is-prime", "next-prime", "parse-number", "while", "prime-no", "memo",
-            "index-of", "to-digits", "from-digits", "n-sum", "Σ", "cycle", "take", "↑", "drop", "↓",
-            "n-prod", "Π", "unique-mask", "unique", "intersection", "union", "bernoulli", "regex-matches?",
+            "index-of", "to-digits", "from-digits", "cycle", "take", "↑", "drop", "↓",
+            "unique-mask", "unique", "intersection", "union", "bernoulli", "regex-matches?",
             "date:from", "date:time-from", "date:add", "date:difference", "date:hours",
             "date:minutes", "date:seconds", "date:nanoseconds", "date:years", "date:months",
-            "date:days", "date:to-list", "time:day-of-week", "⍣", "<=>", "⇔", "n-quad"
+            "date:days", "date:to-list", "time:day-of-week", "⍣", "<=>", "⇔"
     );
 
     public static void registerDefault(Environment env) {
@@ -126,10 +125,6 @@ public class FunctionRegistry {
 
         env.set("abs", new Atom(new Abs()));
         env.set("bernoulli", new Atom(new Bernoulli()));
-        env.set("n-prod", new Atom(new NProd()));
-        env.set("Π", new Atom(new NProd()));
-        env.set("n-sum", new Atom(new NSum()));
-        env.set("Σ", new Atom(new NSum()));
         env.set("**", new Atom(new DoubleStar()));
         env.set("ln", new Atom(new Ln()));
         env.set("sqrt", new Atom(new Sqrt()));
@@ -209,7 +204,6 @@ public class FunctionRegistry {
         env.set("mod", new Atom(new Mod()));
         env.set("<=>", new Atom(new Spaceship()));
         env.set("⇔", new Atom(new Spaceship()));
-        env.set("n-quad", new Atom(new NQuad()));
 
         env.set("regex:matches?", new Atom(new RegexMatches()));
 
