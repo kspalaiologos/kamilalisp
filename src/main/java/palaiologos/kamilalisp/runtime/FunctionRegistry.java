@@ -41,7 +41,8 @@ public class FunctionRegistry {
             "date:from", "date:time-from", "date:add", "date:difference", "date:hours",
             "date:minutes", "date:seconds", "date:nanoseconds", "date:years", "date:months",
             "date:days", "date:to-list", "time:day-of-week", "⍣", "<=>", "⇔", "filter-idx",
-            "map-idx", "re", "im", "complex-parts", "partial-while", "converge"
+            "map-idx", "re", "im", "complex-parts", "partial-while", "converge", "ucs",
+            "prefixes", "suffixes"
     );
 
     public static void registerDefault(Environment env) {
@@ -122,6 +123,8 @@ public class FunctionRegistry {
         env.set("intersection", new Atom(new Intersection()));
         env.set("union", new Atom(new Union()));
         env.set("parse-number", new Atom(new ParseNumber()));
+        env.set("prefixes", new Atom(new Prefixes()));
+        env.set("suffixes", new Atom(new Suffixes()));
 
         env.set("prime:factors", new Atom(new PrimeFactors()));
         env.set("prime:is?", new Atom(new IsPrime()));
@@ -212,6 +215,7 @@ public class FunctionRegistry {
         env.set("mod", new Atom(new Mod()));
         env.set("<=>", new Atom(new Spaceship()));
         env.set("⇔", new Atom(new Spaceship()));
+        env.set("ucs", new Atom(new Ucs()));
 
         env.set("regex:matches?", new Atom(new RegexMatches()));
 
