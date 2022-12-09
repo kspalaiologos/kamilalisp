@@ -40,7 +40,8 @@ public class FunctionRegistry {
             "unique-mask", "unique", "intersection", "union", "bernoulli", "regex-matches?",
             "date:from", "date:time-from", "date:add", "date:difference", "date:hours",
             "date:minutes", "date:seconds", "date:nanoseconds", "date:years", "date:months",
-            "date:days", "date:to-list", "time:day-of-week", "⍣", "<=>", "⇔"
+            "date:days", "date:to-list", "time:day-of-week", "⍣", "<=>", "⇔", "filter-idx",
+            "map-idx", "re", "im", "complex-parts"
     );
 
     public static void registerDefault(Environment env) {
@@ -66,6 +67,8 @@ public class FunctionRegistry {
         env.set("to-string", new Atom(new ToString()));
         env.set("filter", new Atom(new Filter()));
         env.set("⍭", new Atom(new Filter()));
+        env.set("filter-idx", new Atom(new FilterIdx()));
+        env.set("map-idx", new Atom(new MapIdx()));
         env.set("parallel-filter", new Atom(new ParallelFilter()));
         env.set("any", new Atom(new Any()));
         env.set("all", new Atom(new All()));
@@ -141,6 +144,9 @@ public class FunctionRegistry {
         env.set("asin", new Atom(new Asin()));
         env.set("acos", new Atom(new Acos()));
         env.set("atan", new Atom(new Atan()));
+        env.set("re", new Atom(new Re()));
+        env.set("complex-parts", new Atom(new ComplexParts()));
+        env.set("im", new Atom(new Im()));
         env.set("csc", new Atom(new Csc()));
         env.set("sec", new Atom(new Sec()));
         env.set("cot", new Atom(new Cot()));
