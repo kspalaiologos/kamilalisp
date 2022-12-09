@@ -42,7 +42,7 @@ public class FunctionRegistry {
             "date:minutes", "date:seconds", "date:nanoseconds", "date:years", "date:months",
             "date:days", "date:to-list", "time:day-of-week", "⍣", "<=>", "⇔", "filter-idx",
             "map-idx", "re", "im", "complex-parts", "partial-while", "converge", "ucs",
-            "prefixes", "suffixes"
+            "prefixes", "suffixes", "count", "⍏", "interleave"
     );
 
     public static void registerDefault(Environment env) {
@@ -74,6 +74,8 @@ public class FunctionRegistry {
         env.set("any", new Atom(new Any()));
         env.set("all", new Atom(new All()));
         env.set("none", new Atom(new None()));
+        env.set("count", new Atom(new Count()));
+        env.set("⍏", new Atom(new Count()));
         env.set("sort", new Atom(new Sort()));
         env.set("scanl", new Atom(new Scanl()));
         env.set("scanl1", new Atom(new Scanl1()));
@@ -125,6 +127,7 @@ public class FunctionRegistry {
         env.set("parse-number", new Atom(new ParseNumber()));
         env.set("prefixes", new Atom(new Prefixes()));
         env.set("suffixes", new Atom(new Suffixes()));
+        env.set("interleave", new Atom(new Interleave()));
 
         env.set("prime:factors", new Atom(new PrimeFactors()));
         env.set("prime:is?", new Atom(new IsPrime()));
