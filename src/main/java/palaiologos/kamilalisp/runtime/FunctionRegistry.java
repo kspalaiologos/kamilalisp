@@ -15,6 +15,8 @@ import palaiologos.kamilalisp.runtime.math.prime.*;
 import palaiologos.kamilalisp.runtime.math.trig.*;
 import palaiologos.kamilalisp.runtime.meta.*;
 import palaiologos.kamilalisp.runtime.regex.RegexMatches;
+import palaiologos.kamilalisp.runtime.regex.RegexReplace;
+import palaiologos.kamilalisp.runtime.regex.RegexSplit;
 import palaiologos.kamilalisp.runtime.string.*;
 
 import java.math.BigDecimal;
@@ -42,7 +44,7 @@ public class FunctionRegistry {
             "date:minutes", "date:seconds", "date:nanoseconds", "date:years", "date:months",
             "date:days", "date:to-list", "time:day-of-week", "⍣", "<=>", "⇔", "filter-idx",
             "map-idx", "re", "im", "complex-parts", "partial-while", "converge", "ucs",
-            "prefixes", "suffixes", "count", "⍏", "interleave"
+            "prefixes", "suffixes", "count", "⍏", "interleave", "regex:replace", "regex:split"
     );
 
     public static void registerDefault(Environment env) {
@@ -221,6 +223,8 @@ public class FunctionRegistry {
         env.set("ucs", new Atom(new Ucs()));
 
         env.set("regex:matches?", new Atom(new RegexMatches()));
+        env.set("regex:replace", new Atom(new RegexReplace()));
+        env.set("regex:split", new Atom(new RegexSplit()));
 
         env.set("date:from", new Atom(new DateTimeFrom()));
         env.set("date:time-from", new Atom(new TimeFrom()));
