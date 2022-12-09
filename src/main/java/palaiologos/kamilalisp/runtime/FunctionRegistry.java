@@ -41,7 +41,7 @@ public class FunctionRegistry {
             "date:from", "date:time-from", "date:add", "date:difference", "date:hours",
             "date:minutes", "date:seconds", "date:nanoseconds", "date:years", "date:months",
             "date:days", "date:to-list", "time:day-of-week", "⍣", "<=>", "⇔", "filter-idx",
-            "map-idx", "re", "im", "complex-parts", "partial-while"
+            "map-idx", "re", "im", "complex-parts", "partial-while", "converge"
     );
 
     public static void registerDefault(Environment env) {
@@ -86,6 +86,7 @@ public class FunctionRegistry {
         env.set("tally", new Atom(new Tally()));
         env.set("⍴", new Atom(new Tally()));
         env.set("same", new Atom(new Same()));
+        env.set("converge", new Atom(new Converge()));
         env.set("not-same", new Atom(new NotSame()));
         env.set("≡", new Atom(new Same()));
         env.set("≢", new Atom(new NotSame()));
