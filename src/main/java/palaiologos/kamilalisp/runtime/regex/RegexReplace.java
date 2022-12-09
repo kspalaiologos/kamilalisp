@@ -20,24 +20,21 @@ public class RegexReplace extends PrimitiveFunction implements Lambda {
         Pattern pattern = PatternCache.get(regex);
         Matcher matcher = pattern.matcher(string);
         if(replacement.getType() == Type.CALLABLE) {
-            String s = matcher.replaceAll(new Function<MatchResult, String>() {
-                @Override
-                public String apply(MatchResult matchResult) {
-                    List<Atom> groups = IntStream.range(0, matchResult.groupCount() + 1)
-                            .mapToObj(matchResult::group)
-                            .map(Atom::new)
-                            .toList();
-                    List<Atom> begins = IntStream.range(0, matchResult.groupCount() + 1)
-                            .mapToObj(matchResult::start)
-                            .map(x -> new Atom(BigInteger.valueOf(x)))
-                            .toList();
-                    List<Atom> ends = IntStream.range(0, matchResult.groupCount() + 1)
-                            .mapToObj(matchResult::end)
-                            .map(x -> new Atom(BigInteger.valueOf(x)))
-                            .toList();
-                    List<Atom> args = List.of(new Atom(groups), new Atom(begins), new Atom(ends));
-                    return Evaluation.evaluate(env, replacement.getCallable(), args).getString();
-                }
+            String s = matcher.replaceAll(matchResult -> {
+                List<Atom> groups = IntStream.range(0, matchResult.groupCount() + 1)
+                        .mapToObj(matchResult::group)
+                        .map(Atom::new)
+                        .toList();
+                List<Atom> begins = IntStream.range(0, matchResult.groupCount() + 1)
+                        .mapToObj(matchResult::start)
+                        .map(x -> new Atom(BigInteger.valueOf(x)))
+                        .toList();
+                List<Atom> ends = IntStream.range(0, matchResult.groupCount() + 1)
+                        .mapToObj(matchResult::end)
+                        .map(x -> new Atom(BigInteger.valueOf(x)))
+                        .toList();
+                List<Atom> args1 = List.of(new Atom(groups), new Atom(begins), new Atom(ends));
+                return Evaluation.evaluate(env, replacement.getCallable(), args1).getString();
             });
             return new Atom(s);
         } else if(replacement.getType() == Type.STRING) {
