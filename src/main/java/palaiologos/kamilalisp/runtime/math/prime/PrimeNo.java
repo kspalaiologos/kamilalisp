@@ -6,11 +6,12 @@ import java.math.BigInteger;
 import java.util.List;
 
 public class PrimeNo extends PrimitiveFunction implements Lambda {
+    private static BigInteger pitabScaled = BigInteger.valueOf(10000 * PiTab.ptab.length);
     public static Atom primeNo(Atom a) {
         if (a.getType() == Type.LIST) {
             return new Atom(a.getList().stream().map(PrimeNo::primeNo).toList());
         } else if (a.getType() == Type.INTEGER) {
-            if (a.getInteger().divide(BigInteger.valueOf(10000)).compareTo(BigInteger.valueOf(PiTab.ptab.length)) < 0) {
+            if (a.getInteger().compareTo(pitabScaled) < 0) {
                 // We have the approximate starting value now!
                 BigInteger no = a.getInteger().divide(BigInteger.valueOf(10000));
                 BigInteger last = BigInteger.valueOf(PiTab.ptab[no.intValue()]);
@@ -23,7 +24,7 @@ public class PrimeNo extends PrimitiveFunction implements Lambda {
             } else {
                 // Take the last number.
                 BigInteger last = BigInteger.valueOf(PiTab.ptab[PiTab.ptab.length - 1]);
-                BigInteger no = BigInteger.valueOf(PiTab.ptab.length * 10000);
+                BigInteger no = pitabScaled;
                 while (no.compareTo(a.getInteger()) < 0) {
                     last = last.nextProbablePrime();
                     no = no.add(BigInteger.ONE);

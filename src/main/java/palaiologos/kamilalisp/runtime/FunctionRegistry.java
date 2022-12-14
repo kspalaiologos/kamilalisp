@@ -37,7 +37,7 @@ public class FunctionRegistry {
             "⌽", "⍳", "⊤", "⊥", "≠", "π", "√", "≥", "≤", "Γ", "¬", "⌈", "⌊", "∧", "∨", "⍭", "⍴",
             "same", "not-same", "≢", "≡", "grade-up", "grade-down", "⍋", "⍒", "cons", "flatten",
             "∊", "let", "cond", "cmpx", "import", "get-file", "try-catch", "writeln", "let-seq",
-            "prime-factors", "is-prime", "next-prime", "parse-number", "while", "prime-no", "memo",
+            "prime:factors", "prime:is?", "prime:next", "parse-number", "while", "prime:nth", "memo",
             "index-of", "to-digits", "from-digits", "cycle", "take", "↑", "drop", "↓",
             "unique-mask", "unique", "intersection", "union", "bernoulli", "regex-matches?",
             "date:from", "date:time-from", "date:add", "date:difference", "date:hours",

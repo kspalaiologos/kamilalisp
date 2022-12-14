@@ -10,6 +10,7 @@ public class LetSeq extends PrimitiveFunction implements SpecialForm {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         List<Atom> bindings = args.get(0).getList();
+        Atom lastValue = Atom.NULL;
         for (Atom arg : bindings) {
             if (arg.getType() == Type.LIST && !arg.getList().isEmpty()) {
                 if (arg.getList().get(0).getType() == Type.IDENTIFIER) {
@@ -26,7 +27,7 @@ public class LetSeq extends PrimitiveFunction implements SpecialForm {
                             env.set(name, lambda);
                             continue;
                         }
-                        case "def:" -> {
+                        case "def" -> {
                             List<Atom> declaration = arg.getList();
                             if (declaration.get(1).getType() != Type.IDENTIFIER) {
                                 throw new RuntimeException("Expected identifier in `def' declaration in `let-seq'.");
@@ -45,10 +46,10 @@ public class LetSeq extends PrimitiveFunction implements SpecialForm {
                 }
             }
 
-            return Evaluation.evaluate(env, arg);
+            lastValue = Evaluation.evaluate(env, arg);
         }
 
-        return Atom.NULL;
+        return lastValue;
     }
 
     @Override
