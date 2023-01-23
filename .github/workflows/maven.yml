@@ -9,7 +9,7 @@ on:
 
 jobs:
   build-linux-x86_64:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
