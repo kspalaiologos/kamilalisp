@@ -33,7 +33,7 @@ public class DateTimeToList extends PrimitiveFunction implements Lambda {
                     new Atom(BigInteger.valueOf(d.toNanosPart()))
             ));
         } else {
-            throw new TypeError("`time:to-list' not defined for: " + a.getType());
+            throw new TypeError("`date:to-list' not defined for: " + a.getType());
         }
     }
 
@@ -47,6 +47,6 @@ public class DateTimeToList extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "time:to-list";
+        return "date:to-list";
     }
 }
