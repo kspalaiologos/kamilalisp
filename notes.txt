@@ -1,7 +1,0 @@
-FORMS:
-- Lambda expression: evaluate all arguments before calling the function.
-- Macro: don't evaluate the arguments, evaluate the result. Expanded before execution.
-- Special form: don't evaluate the arguments, don't evaluate the result.
-
-IMPLEMENTATION NOTES:
-Make sure to use safeEvaluate in non-pooled threads. This will help with the exception handling.
