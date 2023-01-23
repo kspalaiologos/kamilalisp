@@ -57,6 +57,13 @@
             <version>3.21.0</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.pcollections/pcollections -->
+        <dependency>
+            <groupId>org.pcollections</groupId>
+            <artifactId>pcollections</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+
         <!-- Testing dependencies. -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
