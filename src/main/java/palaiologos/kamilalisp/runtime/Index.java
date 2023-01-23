@@ -1,6 +1,7 @@
 package palaiologos.kamilalisp.runtime;
 
 import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.error.TypeError;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class Index implements SpecialForm {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         Atom indexedAtom = Evaluation.evaluate(env, indexed);
-        indexedAtom.assertTypes(Type.LIST);
+        indexedAtom.assertTypes(Type.LIST, Type.STRING);
         Atom ix = Evaluation.evaluate(env, new Atom(args));
         if (ix.getType() == Type.INTEGER) {
             return indexedAtom.getList().get(ix.getInteger().intValueExact());

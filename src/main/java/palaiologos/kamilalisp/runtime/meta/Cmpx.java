@@ -30,6 +30,10 @@ public class Cmpx extends PrimitiveFunction implements SpecialForm {
         return garbageCollectionTime;
     }
 
+    private boolean isSpecial(double d) {
+        return Double.isNaN(d) || Double.isInfinite(d);
+    }
+
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if (args.isEmpty())
@@ -91,7 +95,7 @@ public class Cmpx extends PrimitiveFunction implements SpecialForm {
             System.out.println("Expression " + i + ":");
             System.out.println("\t" + args.get(i));
             System.out.println("avg: " + means.get(i) + "ms, med: " + medians.get(i) + "ms");
-            System.out.println("dev: " + stdDevs.get(i) + "ms, %ch: " + percentageChange.get(i) + "%");
+            System.out.println("dev: " + stdDevs.get(i) + "ms, %ch: " + (isSpecial(percentageChange.get(i)) ? "--" : percentageChange.get(i)) + "%");
             System.out.println();
         }
 
