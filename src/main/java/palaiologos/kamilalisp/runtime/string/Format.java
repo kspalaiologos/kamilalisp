@@ -9,13 +9,13 @@ public class Format extends PrimitiveFunction implements SpecialForm {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if (args.size() != 1) {
-            throw new TypeError("Expected 1 argument to `str-format'.");
+            throw new TypeError("Expected 1 argument to `str:format'.");
         }
 
         Atom a = args.get(0);
 
         if (a.getType() != Type.STRING) {
-            throw new TypeError("Expected string constant as argument to `str-format'.");
+            throw new TypeError("Expected string constant as argument to `str:format'.");
         }
 
         String format = a.getString();
@@ -62,6 +62,6 @@ public class Format extends PrimitiveFunction implements SpecialForm {
 
     @Override
     protected String name() {
-        return "str-format";
+        return "str:format";
     }
 }

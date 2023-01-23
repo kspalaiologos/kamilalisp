@@ -65,8 +65,8 @@ public class FunctionRegistry {
         env.set("lift", new Atom(new Lift()));
         env.set("tie", new Atom(new Tie()));
         env.set("if", new Atom(new If()));
-        env.set("str-format", new Atom(new Format()));
-        env.set("str-lines", new Atom(new Lines()));
+        env.set("str:format", new Atom(new Format()));
+        env.set("str:lines", new Atom(new Lines()));
         env.set("to-string", new Atom(new ToString()));
         env.set("filter", new Atom(new Filter()));
         env.set("⍭", new Atom(new Filter()));

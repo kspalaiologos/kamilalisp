@@ -14,7 +14,7 @@ public class Lines extends PrimitiveFunction implements Lambda {
         } else if (a.getType() == Type.LIST) {
             return new Atom(a.getList().stream().map(Lines::lines1).collect(Collectors.toList()));
         } else {
-            throw new TypeError("`str-lines' not defined for: " + a.getType());
+            throw new TypeError("`str:lines' not defined for: " + a.getType());
         }
     }
 
@@ -23,7 +23,7 @@ public class Lines extends PrimitiveFunction implements Lambda {
         if (args.size() == 1) {
             return lines1(args.get(0));
         } else if (args.size() == 0) {
-            throw new TypeError("Expected 1 or more arguments to `str-lines'.");
+            throw new TypeError("Expected 1 or more arguments to `str:lines'.");
         } else {
             return new Atom(args.stream().map(Lines::lines1).toList());
         }
@@ -31,6 +31,6 @@ public class Lines extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "str-lines";
+        return "str:lines";
     }
 }
