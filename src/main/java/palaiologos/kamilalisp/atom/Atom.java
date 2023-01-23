@@ -149,6 +149,10 @@ public class Atom implements Comparable<Atom> {
     }
 
     public List<Atom> getList() {
+        if(getType() == Type.STRING) {
+            return ((String) data).chars().mapToObj(c -> new Atom(String.valueOf((char) c))).collect(Collectors.toList());
+        }
+
         if (getType() != Type.LIST) {
             throw new TypeError("Cannot get list from non-list atom " + getType());
         }
