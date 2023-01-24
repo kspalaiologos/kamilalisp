@@ -5,7 +5,7 @@ import palaiologos.kamilalisp.atom.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Fork implements Lambda {
+public class Fork implements SpecialForm, ReactiveFunction {
     // Need to evaluate these.
     private final Atom reductor;
     private final List<Atom> reductees;
@@ -37,15 +37,40 @@ public class Fork implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        return Evaluation.evaluate(env, reductor).getCallable()
-                .apply(env, reductees.isEmpty() ? args :
-                        reductees.stream().map(x -> {
-                            Atom a = Evaluation.evaluate(env, x);
+        Atom eReductor = Evaluation.evaluate(env, reductor);
+        List<Atom> eReductees = reductees.stream().map(x -> Evaluation.evaluate(env, x)).toList();
+        return new Atom(new Lambda() {
+            @Override
+            public String stringify() {
+                return null;
+            }
+
+            @Override
+            public String frameString() {
+                return null;
+            }
+
+            @Override
+            public Atom apply(Environment env, List<Atom> args) {
+                return eReductor.getCallable()
+                        .apply(env, !eReductees.isEmpty() ? eReductees.stream().map(a -> {
                             if (a.getType() == Type.CALLABLE)
                                 return a.getCallable().apply(env, args);
                             else
                                 return a;
-                        }).collect(Collectors.toList()));
+                        }).collect(Collectors.toList()) : args);
+            }
+
+            @Override
+            public int line() {
+                return 0;
+            }
+
+            @Override
+            public int column() {
+                return 0;
+            }
+        });
     }
 
     @Override

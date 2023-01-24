@@ -1,14 +1,11 @@
 package palaiologos.kamilalisp.runtime;
 
-import palaiologos.kamilalisp.atom.Atom;
-import palaiologos.kamilalisp.atom.Environment;
-import palaiologos.kamilalisp.atom.Evaluation;
-import palaiologos.kamilalisp.atom.Lambda;
+import palaiologos.kamilalisp.atom.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Compose implements Lambda {
+public class Compose implements SpecialForm, ReactiveFunction {
     private final List<Atom> atoms;
     private final int l;
     private final int c;
@@ -38,10 +35,35 @@ public class Compose implements Lambda {
     public Atom apply(Environment env, List<Atom> args) {
         // Evaluate all atoms, then run the last function on args, and pass the return type to the previous function, and so on.
         List<Atom> evaluatedAtoms = atoms.stream().map(x -> Evaluation.evaluate(env, x)).toList();
-        Atom result = Evaluation.evaluate(env, evaluatedAtoms.get(evaluatedAtoms.size() - 1).getCallable(), args);
-        for (int i = evaluatedAtoms.size() - 2; i >= 0; i--)
-            result = Evaluation.evaluate(env, evaluatedAtoms.get(i).getCallable(), List.of(result));
-        return result;
+        return new Atom(new Lambda() {
+            @Override
+            public String stringify() {
+                return Compose.this.stringify();
+            }
+
+            @Override
+            public String frameString() {
+                return Compose.this.frameString();
+            }
+
+            @Override
+            public Atom apply(Environment env, List<Atom> args) {
+                Atom result = Evaluation.evaluate(env, evaluatedAtoms.get(evaluatedAtoms.size() - 1).getCallable(), args);
+                for (int i = evaluatedAtoms.size() - 2; i >= 0; i--)
+                    result = Evaluation.evaluate(env, evaluatedAtoms.get(i).getCallable(), List.of(result));
+                return result;
+            }
+
+            @Override
+            public int line() {
+                return Compose.this.line();
+            }
+
+            @Override
+            public int column() {
+                return Compose.this.column();
+            }
+        });
     }
 
     @Override
