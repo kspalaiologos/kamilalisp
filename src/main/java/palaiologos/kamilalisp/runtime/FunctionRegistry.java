@@ -82,6 +82,7 @@ public class FunctionRegistry {
         env.set("cond", new Atom(new Cond()));
         env.set("cmpx", new Atom(new Cmpx()));
         env.set("import", new Atom(new Import()));
+        env.set("append", new Atom(new Append()));
         env.set("get-file", new Atom(new GetFile()));
         env.set("try-catch", new Atom(new TryCatch()));
         env.set("writeln", new Atom(new Writeln()));
