@@ -28,12 +28,12 @@ public class TimeFrom extends PrimitiveFunction implements Lambda {
             int nanosecond = args.get(3).getInteger().intValueExact();
             return new Atom(new Time(Duration.ofHours(hour).plusMinutes(minute).plusSeconds(second).plusNanos(nanosecond)));
         } else {
-            throw new RuntimeException("date:time-from expects 3 or 4 arguments.");
+            throw new RuntimeException("time:from expects 3 or 4 arguments.");
         }
     }
 
     @Override
     protected String name() {
-        return "date:time-from";
+        return "time:from";
     }
 }

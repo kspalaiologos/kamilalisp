@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+// while that keeps partial results
 public class PartialWhile extends PrimitiveFunction implements Lambda {
 
     @Override
@@ -47,17 +48,17 @@ public class PartialWhile extends PrimitiveFunction implements Lambda {
                     results.add(value);
                 }
             } else {
-                throw new TypeError("Expected a callable or an integer as the second argument to `while'.");
+                throw new TypeError("Expected a callable or an integer as the second argument to `partial-while'.");
             }
 
             return new Atom(results);
         } else {
-            throw new TypeError("Expected 2 or 3 arguments to `while'.");
+            throw new TypeError("Expected 2 or 3 arguments to `partial-while'.");
         }
     }
 
     @Override
     protected String name() {
-        return "while";
+        return "partial-while";
     }
 }

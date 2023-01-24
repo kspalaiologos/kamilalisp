@@ -21,7 +21,7 @@ public class TimeNanoseconds extends PrimitiveFunction implements Lambda {
             BigInteger nanos = current.setScale(0, RoundingMode.FLOOR).unscaledValue();
             return new Atom(new Time(Duration.ofNanos(nanos.longValueExact())));
         } else {
-            throw new TypeError("`date:nanoseconds' not defined for: " + a.getType());
+            throw new TypeError("`time:nanoseconds' not defined for: " + a.getType());
         }
     }
 
@@ -35,6 +35,6 @@ public class TimeNanoseconds extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "date:nanoseconds";
+        return "time:nanoseconds";
     }
 }

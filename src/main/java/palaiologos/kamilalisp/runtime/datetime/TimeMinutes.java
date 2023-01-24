@@ -27,7 +27,7 @@ public class TimeMinutes extends PrimitiveFunction implements Lambda {
             Duration d = Duration.ofMinutes(minutes.longValueExact()).plusSeconds(seconds.longValueExact()).plusNanos(nanos.longValueExact());
             return new Atom(new Time(d));
         } else {
-            throw new TypeError("`date:minutes' not defined for: " + a.getType());
+            throw new TypeError("`time:minutes' not defined for: " + a.getType());
         }
     }
 
@@ -41,6 +41,6 @@ public class TimeMinutes extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "date:minutes";
+        return "time:minutes";
     }
 }
