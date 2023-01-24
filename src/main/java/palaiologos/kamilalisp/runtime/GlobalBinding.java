@@ -1,6 +1,7 @@
 package palaiologos.kamilalisp.runtime;
 
 import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.repl.Main;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class GlobalBinding extends PrimitiveFunction implements SpecialForm {
 
         assertArity(args, 2);
 
-        if (FunctionRegistry.BUILTIN_BINDINGS.contains(Identifier.of(args.get(0).getIdentifier()))) {
+        if (Main.isBuiltin(Identifier.of(args.get(0).getIdentifier()))) {
             throw new RuntimeException("def can not shadow or redefine built-in bindings.");
         }
 

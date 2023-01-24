@@ -14,6 +14,7 @@ import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Evaluation;
 import palaiologos.kamilalisp.atom.Parser;
 import palaiologos.kamilalisp.error.InterruptionError;
+import palaiologos.kamilalisp.runtime.FunctionRegistry;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,6 +22,17 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class Main {
+    private static Environment defaultRegistry;
+
+    public static boolean isBuiltin(String name) {
+        if(defaultRegistry == null) {
+            defaultRegistry = new Environment();
+            FunctionRegistry.registerDefault(defaultRegistry);
+        }
+
+        return defaultRegistry.keys().contains(name);
+    }
+
     private static void banner() {
         System.out.println("KamilaLisp v 0.2 - Copyright (C) Kamila Szewczyk, 2021 - 2022.");
         System.out.println("Interactive mode.");

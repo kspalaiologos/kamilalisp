@@ -23,31 +23,6 @@ import java.math.BigDecimal;
 import java.util.Set;
 
 public class FunctionRegistry {
-    public static final Set<String> BUILTIN_BINDINGS = Set.of(
-            "foldr", "**", "<=", "ln", "mod", "def", "range", "str-format", "tie", "lambda",
-            "min", "car", "sqrt", "env-keys", "foldl", "str-lines", "foldl1", "exp", "foldr1",
-            "if", "signum", "max", "e", "false", "*", "outer-product", "+", "reverse", "-",
-            "/=", "/", "cdr", "true", "lift", "pi", "<", "=", ">", ">=", "levenshtein", "sin",
-            "cos", "tan", "csc", "sec", "cot", "asin", "acos", "atan", "acot", "acsc", "asec",
-            "sinh", "cosh", "tanh", "coth", "sech", "csch", "tally", "asinh", "acosh", "atanh",
-            "acoth", "asech", "acsch", "log2", "log10", "gcd", "lcm", "gamma", "not", "bit-and",
-            "bit-or", "bit-xor", "bit-nand", "bit-not", "bit-popcount", "fib", "ceil", "floor",
-            "round", "and", "or", "abs", "to-string", "filter", "parallel-filter", "any", "all",
-            "none", "sort", "scanl", "scanl1", "scanr", "scanr1", "replicate", "defun", "λ",
-            "⌽", "⍳", "⊤", "⊥", "≠", "π", "√", "≥", "≤", "Γ", "¬", "⌈", "⌊", "∧", "∨", "⍭", "⍴",
-            "same", "not-same", "≢", "≡", "grade-up", "grade-down", "⍋", "⍒", "cons", "flatten",
-            "∊", "let", "cond", "cmpx", "import", "get-file", "try-catch", "writeln", "let-seq",
-            "prime:factors", "prime:is?", "prime:next", "parse-number", "while", "prime:nth", "memo",
-            "index-of", "to-digits", "from-digits", "cycle", "take", "↑", "drop", "↓",
-            "unique-mask", "unique", "intersection", "union", "bernoulli", "regex-matches?",
-            "date:from", " time:from", "date:add", "date:difference", "time:hours",
-            "time:minutes", "time:seconds", "time:nanoseconds", "date:years", "date:months",
-            "date:days", "date:to-list", "date:day-of-week", "⍣", "<=>", "⇔", "filter-idx",
-            "map-idx", "re", "im", "complex-parts", "partial-while", "converge", "ucs",
-            "prefixes", "suffixes", "count", "⍏", "interleave", "regex:replace", "regex:split",
-            "time:now", "date:now", "time:now-tz", "date:now-tz", "take-while", "drop-while"
-    );
-
     public static void registerDefault(Environment env) {
         env.set("fr", new Atom(new BigDecimal(200)));
         env.set("lambda", new Atom(new Dfn()));
