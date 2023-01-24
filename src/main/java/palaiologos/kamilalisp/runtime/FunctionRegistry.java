@@ -222,5 +222,7 @@ public class FunctionRegistry {
         env.set("date:now-tz", new Atom(new DateNowTZ()));
         env.set("time:now", new Atom(new TimeNow()));
         env.set("time:now-tz", new Atom(new TimeNowTZ()));
+        env.set("date:parse", new Atom(new DateParse()));
+        env.set("time:parse", new Atom(new TimeParse()));
     }
 }

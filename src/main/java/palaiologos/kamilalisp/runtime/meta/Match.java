@@ -1,9 +1,6 @@
 package palaiologos.kamilalisp.runtime.meta;
 
-import palaiologos.kamilalisp.atom.Atom;
-import palaiologos.kamilalisp.atom.Environment;
-import palaiologos.kamilalisp.atom.PrimitiveFunction;
-import palaiologos.kamilalisp.atom.SpecialForm;
+import palaiologos.kamilalisp.atom.*;
 
 import java.util.List;
 
@@ -30,7 +27,8 @@ public class Match extends PrimitiveFunction implements SpecialForm {
          *     ((S 'x 'y 'z) (tie (tie x z) (tie y z)))
          *     ((K 'x 'y) x)
          *     ((I 'x) x)
-         *     ('_ (throw "Invalid SKI term"))))
+         *     (('x 'y) (tie (ski x) (ski y)))
+         *     ('x x)))
          *
          * Use match with guards:
          * (defun is-even (x)
@@ -40,6 +38,8 @@ public class Match extends PrimitiveFunction implements SpecialForm {
          *
          * More examples pending...
          */
+        Atom matchedAtom = Evaluation.evaluate(env, args.get(0));
+        List<Atom> clauses = args.subList(1, args.size());
         return null;
     }
 }
