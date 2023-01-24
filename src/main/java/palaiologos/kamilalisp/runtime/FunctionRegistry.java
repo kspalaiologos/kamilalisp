@@ -93,6 +93,7 @@ public class FunctionRegistry {
         env.set("memo", new Atom(new Memo()));
         env.set("index-of", new Atom(new IndexOf()));
         env.set("to-digits", new Atom(new ToDigits()));
+        env.set("without", new Atom(new Without()));
         env.set("from-digits", new Atom(new FromDigits()));
         env.set("cycle", new Atom(new Cycle()));
         env.set("take", new Atom(new Take()));
