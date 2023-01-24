@@ -42,12 +42,12 @@ public class Fork implements SpecialForm, ReactiveFunction {
         return new Atom(new Lambda() {
             @Override
             public String stringify() {
-                return null;
+                return Fork.this.stringify();
             }
 
             @Override
             public String frameString() {
-                return null;
+                return Fork.this.frameString();
             }
 
             @Override
@@ -63,12 +63,12 @@ public class Fork implements SpecialForm, ReactiveFunction {
 
             @Override
             public int line() {
-                return 0;
+                return Fork.this.line();
             }
 
             @Override
             public int column() {
-                return 0;
+                return Fork.this.column();
             }
         });
     }
