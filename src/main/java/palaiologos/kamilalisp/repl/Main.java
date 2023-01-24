@@ -88,7 +88,15 @@ public class Main {
                 try {
                     List<Atom> data;
                     try {
-                        data = Parser.parse(lineNumberOffset, code.startsWith("?") ? code.substring(1) : "(" + code + "\n)");
+                        String cc;
+                        if(code.startsWith("?")) {
+                            cc = code.substring(1);
+                        } else if(code.startsWith("(") && code.endsWith(")")) {
+                            cc = code;
+                        } else {
+                            cc = "(" + code + "\n)";
+                        }
+                        data = Parser.parse(lineNumberOffset, cc);
                     } catch (ParseCancellationException e) {
                         System.out.println("Syntax error: " + e.getMessage());
                         continue;

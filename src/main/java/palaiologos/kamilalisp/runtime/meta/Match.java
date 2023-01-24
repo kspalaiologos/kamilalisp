@@ -13,18 +13,18 @@ public class Match extends PrimitiveFunction implements SpecialForm {
     }
 
     private boolean isIdInPattern(Atom a){
-        if(a.getType() != Type.CALLABLE)
+        if(a.getType() != Type.LIST)
             return false;
-        return a.getCallable() instanceof Quote;
+        if(a.getList().size() != 1)
+            return false;
+        if(a.getList().get(0).getType() != Type.CALLABLE)
+            return false;
+        return a.getList().get(0).getCallable() instanceof Quote;
     }
 
     private Identifier getIdFromPattern(Atom a) {
-        if(a.getType() != Type.CALLABLE)
-            return null;
-        Callable c = a.getCallable();
-        if(c instanceof Quote)
-            return ((Quote) c).apply(null, null).getIdentifier();
-        return null;
+        Callable c = a.getList().get(0).getCallable();
+        return ((Quote) c).apply(null, null).getIdentifier();
     }
 
     private boolean match(Atom a, Atom pat, Environment env) {
@@ -46,19 +46,23 @@ public class Match extends PrimitiveFunction implements SpecialForm {
 
             List<Atom> patList = pat.getList();
             List<Atom> aList = a.getList();
-            if(patList.size() > aList.size())
-                return false;
-            for(int i = 0; i < aList.size(); i++) {
+            int len = Math.max(patList.size(), aList.size());
+            for(int i = 0; i < len; i++) {
+                if(patList.size() < i + 1)
+                    return false;
                 Atom patternAtom = patList.get(i);
                 if(isIdInPattern(patternAtom)) {
                     Identifier id = getIdFromPattern(patternAtom);
-                    if(Identifier.of(id).endsWith("...")) {
+                    String s = Identifier.of(id);
+                    if(s.endsWith("...")) {
                         // This is the last element of the pattern list.
                         // Bind the identifier to the rest of the list.
-                        env.set(Identifier.of(id), new Atom(aList.subList(i, aList.size())));
+                        env.set(s.substring(0, s.length() - 3), new Atom(aList.subList(i, aList.size())));
                         return true;
                     }
                 }
+                if(aList.size() < i + 1)
+                    return false;
                 if(!match(aList.get(i), patList.get(i), env))
                     return false;
             }
