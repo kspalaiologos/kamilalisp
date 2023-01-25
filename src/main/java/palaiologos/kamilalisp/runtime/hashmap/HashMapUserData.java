@@ -1,21 +1,15 @@
-package palaiologos.kamilalisp.runtime.datetime;
+package palaiologos.kamilalisp.runtime.hashmap;
 
 import com.google.common.collect.ImmutableMap;
+import org.pcollections.HashPMap;
+import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Callable;
 import palaiologos.kamilalisp.atom.Userdata;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+public class HashMapUserData implements Userdata {
+    public final HashPMap<Atom, Atom> value;
 
-public class Time implements Userdata {
-    private final Duration value;
-
-    public Duration getValue() {
-        return value;
-    }
-
-    public Time(Duration value) {
+    public HashMapUserData(HashPMap<Atom, Atom> value) {
         this.value = value;
     }
 
@@ -26,16 +20,16 @@ public class Time implements Userdata {
 
     @Override
     public int compareTo(Userdata other) {
-        if(!(other instanceof Time))
+        if (!(other instanceof HashMapUserData))
             return other.hashCode() - hashCode();
-        return value.compareTo(((Time) other).value);
+        return value.size() - ((HashMapUserData) other).value.size();
     }
 
     @Override
     public boolean equals(Userdata other) {
-        if(!(other instanceof Time))
+        if (!(other instanceof HashMapUserData))
             return false;
-        return value.equals(((Time) other).value);
+        return value.equals(((HashMapUserData) other).value);
     }
 
     @Override
@@ -45,11 +39,11 @@ public class Time implements Userdata {
 
     @Override
     public String typeName() {
-        return "time";
+        return "hashmap";
     }
 
     @Override
     public boolean coerceBoolean() {
-        return true;
+        return !value.isEmpty();
     }
 }

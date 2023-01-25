@@ -7,6 +7,7 @@ import palaiologos.kamilalisp.runtime.IO.Writeln;
 import palaiologos.kamilalisp.runtime.array.*;
 import palaiologos.kamilalisp.runtime.array.hof.*;
 import palaiologos.kamilalisp.runtime.datetime.*;
+import palaiologos.kamilalisp.runtime.hashmap.*;
 import palaiologos.kamilalisp.runtime.math.*;
 import palaiologos.kamilalisp.runtime.math.bit.*;
 import palaiologos.kamilalisp.runtime.math.cmp.*;
@@ -235,5 +236,13 @@ public class FunctionRegistry {
         env.set("time:now-tz", new Atom(new TimeNowTZ()));
         env.set("date:parse", new Atom(new DateParse()));
         env.set("time:parse", new Atom(new TimeParse()));
+
+        env.set("hashmap:from-list", new Atom(new HashMapFromList()));
+        env.set("hashmap:as-list", new Atom(new HashMapAsList()));
+        env.set("hashmap:size", new Atom(new HashMapSize()));
+        env.set("hashmap:key-list", new Atom(new HashMapKeyList()));
+        env.set("hashmap:value-list", new Atom(new HashMapValueList()));
+        env.set("hashmap:contains-key?", new Atom(new HashMapContainsKey()));
+        env.set("hashmap:contains-value?", new Atom(new HashMapContainsValue()));
     }
 }

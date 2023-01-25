@@ -24,11 +24,15 @@ public class DateTime implements Userdata {
 
     @Override
     public int compareTo(Userdata other) {
+        if(!(other instanceof DateTime))
+            return other.hashCode() - hashCode();
         return value.compareTo(((DateTime) other).value);
     }
 
     @Override
     public boolean equals(Userdata other) {
+        if(!(other instanceof DateTime))
+            return false;
         return value.equals(((DateTime) other).value);
     }
 

@@ -99,9 +99,23 @@ public class Atom implements Comparable<Atom> {
         return type;
     }
 
+    private String typeString() {
+        return switch (type) {
+            case INTEGER -> "integer";
+            case REAL -> "real";
+            case COMPLEX -> "complex";
+            case STRING -> "string";
+            case LIST -> "list";
+            case CALLABLE -> "callable";
+            case IDENTIFIER -> "identifier";
+            case USERDATA -> "userdata " + ((Userdata) data).typeName();
+            default -> "unknown";
+        };
+    }
+
     public String getString() {
         if (getType() != Type.STRING) {
-            throw new TypeError("Cannot get string from non-string atom " + getType());
+            throw new TypeError("Cannot get string from non-string atom " + typeString());
         }
 
         return (String) data;
@@ -109,7 +123,7 @@ public class Atom implements Comparable<Atom> {
 
     public Userdata getUserdata() {
         if (getType() != Type.USERDATA) {
-            throw new TypeError("Cannot get userdata from non-userdata atom " + getType());
+            throw new TypeError("Cannot get userdata from non-userdata atom " + typeString());
         }
 
         return (Userdata) data;
@@ -117,10 +131,10 @@ public class Atom implements Comparable<Atom> {
 
     public <T extends Userdata> T getUserdata(Class<T> type) {
         if (getType() != Type.USERDATA)
-            throw new TypeError("Cannot get userdata from non-userdata atom " + getType());
+            throw new TypeError("Cannot get userdata from non-userdata atom " + typeString());
 
         if(!type.isInstance(data))
-            throw new TypeError("Cannot get desired userdata from atom of type " + ((Userdata) data).toDisplayString());
+            throw new TypeError("Cannot get desired userdata from atom of type " + ((Userdata) data).typeName());
 
         return type.cast(data);
     }
@@ -134,7 +148,7 @@ public class Atom implements Comparable<Atom> {
 
     public BigDecimal getReal() {
         if (!isNumeric()) {
-            throw new TypeError("Cannot get integer from non-integer atom " + getType());
+            throw new TypeError("Cannot get integer from non-integer atom " + typeString());
         }
 
         if (getType() == Type.INTEGER) {
@@ -144,7 +158,7 @@ public class Atom implements Comparable<Atom> {
         } else if (getType() == Type.COMPLEX) {
             return ((BigComplex) data).re;
         } else {
-            throw new TypeError("Cannot get integer from non-integer atom " + getType());
+            throw new TypeError("Cannot get integer from non-integer atom " + typeString());
         }
     }
 
@@ -154,7 +168,7 @@ public class Atom implements Comparable<Atom> {
         }
 
         if (getType() != Type.LIST) {
-            throw new TypeError("Cannot get list from non-list atom " + getType());
+            throw new TypeError("Cannot get list from non-list atom " + typeString());
         }
 
         return (List<Atom>) data;
@@ -162,7 +176,7 @@ public class Atom implements Comparable<Atom> {
 
     public BigInteger getInteger() {
         if (!isNumeric()) {
-            throw new TypeError("Cannot get integer from non-integer atom " + getType());
+            throw new TypeError("Cannot get integer from non-integer atom " + typeString());
         }
 
         if (getType() == Type.REAL) {
@@ -172,7 +186,7 @@ public class Atom implements Comparable<Atom> {
         } else if (getType() == Type.INTEGER) {
             return (BigInteger) data;
         } else {
-            throw new TypeError("Cannot get integer from non-integer atom " + getType());
+            throw new TypeError("Cannot get integer from non-integer atom " + typeString());
         }
     }
 
@@ -186,7 +200,7 @@ public class Atom implements Comparable<Atom> {
 
     public Identifier getIdentifier() {
         if (getType() != Type.IDENTIFIER) {
-            throw new TypeError("Cannot get identifier from non-identifier atom " + getType());
+            throw new TypeError("Cannot get identifier from non-identifier atom " + typeString());
         }
 
         return (Identifier) data;
@@ -194,7 +208,7 @@ public class Atom implements Comparable<Atom> {
 
     public BigComplex getComplex() {
         if (!isNumeric()) {
-            throw new TypeError("Cannot get complex from non-complex atom " + getType());
+            throw new TypeError("Cannot get complex from non-complex atom " + typeString());
         }
 
         if (getType() == Type.COMPLEX) {
@@ -204,7 +218,7 @@ public class Atom implements Comparable<Atom> {
         } else if (getType() == Type.INTEGER) {
             return BigComplex.valueOf(new BigDecimal(getInteger()));
         } else {
-            throw new TypeError("Cannot get complex from non-complex atom " + getType());
+            throw new TypeError("Cannot get complex from non-complex atom " + typeString());
         }
     }
 
@@ -476,10 +490,5 @@ public class Atom implements Comparable<Atom> {
         } else {
             return getType().ordinal() - a.getType().ordinal();
         }
-    }
-
-    public void hack(Type t, Object obj) {
-        this.data = obj;
-        this.type = t;
     }
 }
