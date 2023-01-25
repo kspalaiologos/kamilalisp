@@ -217,7 +217,7 @@ public class FunctionRegistry {
         env.set("⇔", new Atom(new Spaceship()));
         env.set("ucs", new Atom(new Ucs()));
         env.set("match", new Atom(new Match()));
-        env.set("⟿", new Atom(new Match()));
+        env.set("≅", new Atom(new Match()));
 
         env.set("regex:matches?", new Atom(new RegexMatches()));
         env.set("regex:replace", new Atom(new RegexReplace()));
