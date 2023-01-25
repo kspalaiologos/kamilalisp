@@ -34,6 +34,8 @@ public class FunctionRegistry {
         env.set("⋲", new Atom(new Cdr()));
         env.set("reverse", new Atom(new Reverse()));
         env.set("⌽", new Atom(new Reverse()));
+        env.set("rotate", new Atom(new Rotate()));
+        env.set("⊖", new Atom(new Rotate()));
         env.set("range", new Atom(new Range()));
         env.set("⍳", new Atom(new Range()));
         env.set("foldl", new Atom(new Foldl()));
