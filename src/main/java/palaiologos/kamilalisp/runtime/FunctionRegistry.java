@@ -30,6 +30,8 @@ public class FunctionRegistry {
         env.set("def", new Atom(new GlobalBinding()));
         env.set("car", new Atom(new Car()));
         env.set("cdr", new Atom(new Cdr()));
+        env.set("⋺", new Atom(new Car()));
+        env.set("⋲", new Atom(new Cdr()));
         env.set("reverse", new Atom(new Reverse()));
         env.set("⌽", new Atom(new Reverse()));
         env.set("range", new Atom(new Range()));
@@ -79,6 +81,7 @@ public class FunctionRegistry {
         env.set("⍋", new Atom(new GradeUp()));
         env.set("⍒", new Atom(new GradeDown()));
         env.set("cons", new Atom(new Cons()));
+        env.set("≁", new Atom(new Cons()));
         env.set("flatten", new Atom(new Flatten()));
         env.set("∊", new Atom(new Flatten()));
         env.set("let", new Atom(new Let()));
