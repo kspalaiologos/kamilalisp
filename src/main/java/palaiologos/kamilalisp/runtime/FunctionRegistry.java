@@ -62,6 +62,9 @@ public class FunctionRegistry {
         env.set("replicate", new Atom(new Replicate()));
         env.set("defun", new Atom(new Defun()));
         env.set("outer-product", new Atom(new OuterProduct()));
+        env.set("⊠", new Atom(new OuterProduct()));
+        env.set("inner-product", new Atom(new InnerProduct()));
+        env.set("⊡", new Atom(new InnerProduct()));
         env.set("env-keys", new Atom(new EnvKeys()));
         env.set("levenshtein", new Atom(new Levenshtein()));
         env.set("tally", new Atom(new Tally()));
