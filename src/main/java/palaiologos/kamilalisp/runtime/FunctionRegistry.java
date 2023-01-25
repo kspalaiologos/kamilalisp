@@ -111,12 +111,18 @@ public class FunctionRegistry {
         env.set("↓", new Atom(new Drop()));
         env.set("unique-mask", new Atom(new UniqueMask()));
         env.set("unique", new Atom(new Unique()));
+        env.set("⊙", new Atom(new Unique()));
         env.set("intersection", new Atom(new Intersection()));
+        env.set("⋂", new Atom(new Intersection()));
         env.set("union", new Atom(new Union()));
+        env.set("⋃", new Atom(new Union()));
         env.set("parse-number", new Atom(new ParseNumber()));
         env.set("prefixes", new Atom(new Prefixes()));
+        env.set("⋉", new Atom(new Prefixes()));
         env.set("suffixes", new Atom(new Suffixes()));
+        env.set("⋊", new Atom(new Suffixes()));
         env.set("interleave", new Atom(new Interleave()));
+        env.set("⋈", new Atom(new Interleave()));
         env.set("take-while", new Atom(new TakeWhile()));
         env.set("drop-while", new Atom(new DropWhile()));
 
@@ -211,6 +217,7 @@ public class FunctionRegistry {
         env.set("⇔", new Atom(new Spaceship()));
         env.set("ucs", new Atom(new Ucs()));
         env.set("match", new Atom(new Match()));
+        env.set("⟿", new Atom(new Match()));
 
         env.set("regex:matches?", new Atom(new RegexMatches()));
         env.set("regex:replace", new Atom(new RegexReplace()));
