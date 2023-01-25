@@ -1,5 +1,8 @@
-- Vector (mutable concurrent list)
-- HashMap (mutable concurrent associative array)
+- More persistent data structures?
 - File/Terminal I/O functions
 - More string utilities (interpolate, capitalize, etc.)
 - Web server stuff
+- RNG
+- graphics/sound
+- extend regex library
+- partitioning
