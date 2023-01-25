@@ -21,7 +21,6 @@ import palaiologos.kamilalisp.runtime.regex.RegexSplit;
 import palaiologos.kamilalisp.runtime.string.*;
 
 import java.math.BigDecimal;
-import java.util.Set;
 
 public class FunctionRegistry {
     public static void registerDefault(Environment env) {
@@ -244,5 +243,10 @@ public class FunctionRegistry {
         env.set("hashmap:value-list", new Atom(new HashMapValueList()));
         env.set("hashmap:contains-key?", new Atom(new HashMapContainsKey()));
         env.set("hashmap:contains-value?", new Atom(new HashMapContainsValue()));
+        env.set("hashmap:get", new Atom(new HashMapGet()));
+        env.set("hashmap:adjoin", new Atom(new HashMapAdjoin()));
+        env.set("hashmap:minus", new Atom(new HashMapMinus()));
+        env.set("hashmap:merge", new Atom(new HashMapMerge()));
+        env.set("hashmap:without", new Atom(new HashMapWithout()));
     }
 }
