@@ -171,4 +171,37 @@ class TestRangeFoldScan {
                 "(foldr - 0 (range 5))"
         ), Common.runCode("2"));
     }
+
+    @Test
+    void testScanr1Scanl1() {
+        // Scanr1 with + from 0 to 5:
+        assertEquals(Common.runCode(
+                "(scanr1 + (range 5))"
+        ), Common.runCode("(tie 10 10 9 7 4)"));
+
+        // Scanl1 with + from 0 to 5:
+        assertEquals(Common.runCode(
+                "(scanl1 + (range 5))"
+        ), Common.runCode("(tie 0 1 3 6 10)"));
+
+        // Scanr1 with * from 1 to 5:
+        assertEquals(Common.runCode(
+                "(scanr1 * (range 1 5))"
+        ), Common.runCode("(tie 24 24 12 4)"));
+
+        // Scanl1 with * from 1 to 5:
+        assertEquals(Common.runCode(
+                "(scanl1 * (range 1 5))"
+        ), Common.runCode("(tie 1 2 6 24)"));
+
+        // Scanr1 with - from 0 to 5:
+        assertEquals(Common.runCode(
+                "(scanr1 - (range 5))"
+        ), Common.runCode("(tie 2 -2 3 -1 4)"));
+
+        // Scanl1 with - from 0 to 5:
+        assertEquals(Common.runCode(
+                "(scanl1 - (range 5))"
+        ), Common.runCode("(tie 0 -1 -3 -6 -10)"));
+    }
 }
