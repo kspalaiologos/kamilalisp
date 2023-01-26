@@ -39,7 +39,7 @@ class TestFilterMapAnyAll {
     @Test
     void testMapAsZipWith() {
         assertEquals(Common.runCode("(= 1 \\⍴@⊙@[:+ #0 ⌽@#0] \\⍳ 1 100)").getInteger().intValueExact(), 1);
-        assertEquals(Common.runCode("(= 1 \\⍴∘⊙∘[:+ #0 ⌽∘#0] \\⍳ 1 10000)").getInteger().intValueExact(), 1);
+        assertEquals(Common.runCode("(= 1 \\⍴∘⊙∘[+ #0 ⌽] \\⍳ 1 10000)").getInteger().intValueExact(), 1);
     }
 
     @Test
