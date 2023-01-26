@@ -12,6 +12,7 @@ import java.math.MathContext;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Atom implements Comparable<Atom> {
     @Nonnull
@@ -274,7 +275,7 @@ public class Atom implements Comparable<Atom> {
                 if (getList().get(0).getType() == Type.CALLABLE && getList().get(0).getCallable() instanceof ReactiveFunction)
                     return getList().get(0).toString();
                 else if (getList().get(0).getType() == Type.CALLABLE && getList().get(0).getCallable() instanceof Index)
-                    return getList().get(0).toString() + "[" + getList().stream().skip(1).map(Atom::toString).collect(Collectors.joining(" ")) + "]";
+                    return getList().get(0).toString() + "$[" + getList().stream().skip(1).map(Atom::toString).collect(Collectors.joining(" ")) + "]";
                 if (getList().stream().allMatch(x -> x.getType().equals(Type.LIST))) {
                     int len = getList().get(0).getList().size();
                     if (getList().stream().allMatch(x -> x.getList().size() == len)
