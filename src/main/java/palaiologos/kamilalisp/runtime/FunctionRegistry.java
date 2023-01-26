@@ -43,8 +43,9 @@ public class FunctionRegistry {
         env.set("foldl1", new Atom(new Foldl1()));
         env.set("foldr1", new Atom(new Foldr1()));
         env.set("lift", new Atom(new Lift()));
+        env.set("⍍", new Atom(new Lift()));
         env.set("tie", new Atom(new Tie()));
-        env.set("if", new Atom(new If()));
+        env.set("⍰", new Atom(new If()));
         env.set("str:format", new Atom(new Format()));
         env.set("str:lines", new Atom(new Lines()));
         env.set("to-string", new Atom(new ToString()));
@@ -58,7 +59,10 @@ public class FunctionRegistry {
         env.set("none", new Atom(new None()));
         env.set("count", new Atom(new Count()));
         env.set("⍏", new Atom(new Count()));
-        env.set("sort", new Atom(new Sort()));
+        env.set("sort-asc", new Atom(new Sort()));
+        env.set("sort-desc", new Atom(new SortDesc()));
+        env.set("⋏", new Atom(new Sort()));
+        env.set("⋎", new Atom(new SortDesc()));
         env.set("scanl", new Atom(new Scanl()));
         env.set("scanl1", new Atom(new Scanl1()));
         env.set("scanr", new Atom(new Scanr()));
@@ -82,6 +86,10 @@ public class FunctionRegistry {
         env.set("grade-down", new Atom(new GradeDown()));
         env.set("⍋", new Atom(new GradeUp()));
         env.set("⍒", new Atom(new GradeDown()));
+        env.set("ungrade-up", new Atom(new UnGradeUp()));
+        env.set("ungrade-down", new Atom(new UnGradeDown()));
+        env.set("⍋⌜", new Atom(new UnGradeUp()));
+        env.set("⍒⌜", new Atom(new UnGradeDown()));
         env.set("cons", new Atom(new Cons()));
         env.set("≁", new Atom(new Cons()));
         env.set("flatten", new Atom(new Flatten()));
@@ -91,8 +99,8 @@ public class FunctionRegistry {
         env.set("cmpx", new Atom(new Cmpx()));
         env.set("import", new Atom(new Import()));
         env.set("append", new Atom(new Append()));
-        env.set("list:keys", new Atom(new Keys()));
-        env.set("⌸", new Atom(new Keys()));
+        env.set("list:group", new Atom(new Group()));
+        env.set("⌸", new Atom(new Group()));
         env.set("⊔", new Atom(new Append()));
         env.set("get-file", new Atom(new GetFile()));
         env.set("try-catch", new Atom(new TryCatch()));
@@ -105,6 +113,7 @@ public class FunctionRegistry {
         env.set("index-of", new Atom(new IndexOf()));
         env.set("to-digits", new Atom(new ToDigits()));
         env.set("without", new Atom(new Without()));
+        env.set("⍪", new Atom(new Without()));
         env.set("from-digits", new Atom(new FromDigits()));
         env.set("cycle", new Atom(new Cycle()));
         env.set("take", new Atom(new Take()));
@@ -186,6 +195,12 @@ public class FunctionRegistry {
         env.set("bit:nand", new Atom(new BitNand()));
         env.set("bit:not", new Atom(new BitNot()));
         env.set("bit:popcount", new Atom(new BitPopcount()));
+        env.set("⌶:∧", new Atom(new BitAnd()));
+        env.set("⌶:∨", new Atom(new BitOr()));
+        env.set("⌶:≠", new Atom(new BitXor()));
+        env.set("⌶:¬∧", new Atom(new BitNand()));
+        env.set("⌶:¬", new Atom(new BitNot()));
+        env.set("⌶:⍏", new Atom(new BitPopcount()));
         env.set("fib", new Atom(new Fib()));
         env.set("ceil", new Atom(new Ceil()));
         env.set("⌈", new Atom(new Ceil()));
@@ -257,5 +272,20 @@ public class FunctionRegistry {
         env.set("hashmap:minus", new Atom(new HashMapMinus()));
         env.set("hashmap:merge", new Atom(new HashMapMerge()));
         env.set("hashmap:without", new Atom(new HashMapWithout()));
+        env.set("hashmap:group", new Atom(new HashMapGroup()));
+
+        env.set("⍔:⏁", new Atom(new HashMapFromList()));
+        env.set("⍔:⏂", new Atom(new HashMapAsList()));
+        env.set("⍔:⍴", new Atom(new HashMapSize()));
+        env.set("⍔:⋺", new Atom(new HashMapKeyList()));
+        env.set("⍔:⋲", new Atom(new HashMapValueList()));
+        env.set("⍔:⋺⍰", new Atom(new HashMapContainsKey()));
+        env.set("⍔:⋲⍰", new Atom(new HashMapContainsValue()));
+        env.set("⍔:⍆", new Atom(new HashMapGet()));
+        env.set("⍔:+", new Atom(new HashMapAdjoin()));
+        env.set("⍔:-", new Atom(new HashMapMinus()));
+        env.set("⍔:⋃", new Atom(new HashMapMerge()));
+        env.set("⍔:⍪", new Atom(new HashMapWithout()));
+        env.set("⍔:⌸", new Atom(new HashMapGroup()));
     }
 }
