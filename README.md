@@ -24,6 +24,31 @@ cd kamilalisp
 mvn package
 ```
 
+## Examples
+
+```lisp
+; SKI calculus
+(defun SKI x
+   (match x
+      ((((S 'x) 'y) 'z) (tie (tie x z) (tie y z)))
+      (((K 'x) 'y) x)
+      ((I 'x) x)
+      (('x 'y) (tie (SKI x) (SKI y)))
+      ('x x)))
+
+converge SKI '(((S I) I) K)
+
+; Take numbers from 0 to 9999, sum the resulting list and its reverse,
+; then take the amount of unique items, and verify if it equals one.
+= 1 \⍴∘⊙∘[+ #0 ⌽] \⍳ 10000
+
+; In Haskell:
+; (==1) . length . nub $ zipWith (+) <$> id <*> reverse $ [0..10000]
+
+; In APL:
+; 1=⍴∪(⊢+⌽)⍳10000
+```
+
 ## License
 
 KamilaLisp is distributed under the GNU General Public License v3. See [LICENSE](https://github.com/kspalaiologos/kamilalisp/v0.2/main/LICENSE) for details.
