@@ -13,7 +13,7 @@ public class Scanl extends PrimitiveFunction implements Lambda {
         Atom identity = args.get(1);
         List<Atom> list = args.get(2).getList();
         if (list.isEmpty())
-            return identity;
+            return new Atom(List.of(identity));
         // Reduce and keep intermediate results.
         List<Atom> result = new ArrayList<>();
         result.add(identity);
