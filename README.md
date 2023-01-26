@@ -26,6 +26,7 @@ mvn package
 
 ## Examples
 
+SKI calculus:
 ```lisp
 ; SKI calculus
 (defun SKI x
@@ -37,7 +38,10 @@ mvn package
       ('x x)))
 
 converge SKI '(((S I) I) K)
+```
 
+List operations and point-free programming:
+```lisp
 ; Take numbers from 0 to 9999, sum the resulting list and its reverse,
 ; then take the amount of unique items, and verify if it equals one.
 = 1 \⍴∘⊙∘[+ #0 ⌽] \⍳ 10000
