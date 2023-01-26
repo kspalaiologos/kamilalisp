@@ -29,11 +29,11 @@ public class TimeNow implements SpecialForm, ReactiveFunction {
 
     @Override
     public String stringify() {
-        return "time-now";
+        return "time:now";
     }
 
     @Override
     public String frameString() {
-        return "time-now/reactive-primitive function";
+        return "time:now/reactive-primitive function";
     }
 }

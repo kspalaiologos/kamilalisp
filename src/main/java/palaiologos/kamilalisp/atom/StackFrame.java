@@ -1,5 +1,7 @@
 package palaiologos.kamilalisp.atom;
 
+import palaiologos.kamilalisp.runtime.Dfn;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Stack;
@@ -17,6 +19,27 @@ public class StackFrame {
     }
 
     private static final ThreadLocal<Stack<StackFrameEntry>> stack = ThreadLocal.withInitial(Stack::new);
+    private static final ThreadLocal<Stack<Dfn.DfnClass>> lambdaStack = ThreadLocal.withInitial(Stack::new);
+
+    public static boolean isDeBruijnAllowed(int index) {
+        return lambdaStack.get().size() > index;
+    }
+
+    public static int currentLambdaIdx() {
+        return lambdaStack.get().size() - 1;
+    }
+
+    public static void pushLambda(Dfn.DfnClass lambda) {
+        lambdaStack.get().push(lambda);
+    }
+
+    public static void popLambda() {
+        lambdaStack.get().pop();
+    }
+
+    public static Dfn.DfnClass lambdaDeBruijn(int x) {
+        return lambdaStack.get().get(lambdaStack.get().size() - x - 1);
+    }
 
     public static void push(Callable c) {
         if (c.line() < 0 || c.column() < 0) {

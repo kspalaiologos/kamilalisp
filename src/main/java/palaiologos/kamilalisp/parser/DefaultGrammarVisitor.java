@@ -6,6 +6,7 @@ import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.CodeAtom;
 import palaiologos.kamilalisp.atom.Identifier;
 import palaiologos.kamilalisp.runtime.*;
+import palaiologos.kamilalisp.runtime.Self;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -147,6 +148,11 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
     @Override
     public Atom visitReader_macro(GrammarParser.Reader_macroContext ctx) {
         return visit(ctx.children.get(0));
+    }
+
+    @Override
+    public Atom visitSelf(GrammarParser.SelfContext ctx) {
+        return new CodeAtom(new Self(Integer.parseInt(ctx.LONG().getText()), ctx.start.getLine() + lineNumberOffset, ctx.start.getCharPositionInLine())).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
     }
 
     @Override

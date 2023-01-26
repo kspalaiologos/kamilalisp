@@ -22,7 +22,6 @@ public class Quote implements SpecialForm, ReactiveFunction {
         return c;
     }
 
-
     public Quote(Atom form, int l, int c) {
         this.form = form;
         this.l = l;

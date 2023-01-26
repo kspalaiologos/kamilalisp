@@ -36,18 +36,34 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
         @Override
         public Atom apply(Environment throwaway, List<Atom> args) {
             Environment descendantEnv = new Environment(env);
-            if (!wantsVararg) {
-                assertArity(args, bindings.size());
-                for (int i = 0; i < bindings.size(); i++)
-                    descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
-            } else {
-                if (args.size() < bindings.size() - 1)
-                    throw new TypeError("Expected at least " + (bindings.size() - 1) + " arguments to `" + stringify() + "'.");
-                for (int i = 0; i < bindings.size() - 1; i++)
-                    descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
-                descendantEnv.set(Identifier.of(bindings.get(bindings.size() - 1)), new Atom(args.subList(bindings.size() - 1, args.size())));
+            StackFrame.pushLambda(this);
+            while(true) {
+                if (!wantsVararg) {
+                    assertArity(args, bindings.size());
+                    for (int i = 0; i < bindings.size(); i++)
+                        descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
+                } else {
+                    if (args.size() < bindings.size() - 1)
+                        throw new TypeError("Expected at least " + (bindings.size() - 1) + " arguments to `" + stringify() + "'.");
+                    for (int i = 0; i < bindings.size() - 1; i++)
+                        descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
+                    descendantEnv.set(Identifier.of(bindings.get(bindings.size() - 1)), new Atom(args.subList(bindings.size() - 1, args.size())));
+                }
+                Atom a = Evaluation.evaluate(descendantEnv, code);
+                if (a.getType() == Type.LIST && !a.getList().isEmpty() && a.getList().get(0).getType() == Type.CALLABLE && a.getList().get(0).getCallable() instanceof Self.SelfThunk) {
+                    Self.SelfThunk selfThunk = (Self.SelfThunk) a.getList().get(0).getCallable();
+                    if (selfThunk.index() == StackFrame.currentLambdaIdx()) {
+                        args = selfThunk.args();
+                    } else {
+                        a = selfThunk.apply(descendantEnv, List.of());
+                        StackFrame.popLambda();
+                        return a;
+                    }
+                } else {
+                    StackFrame.popLambda();
+                    return a;
+                }
             }
-            return Evaluation.evaluate(descendantEnv, code);
         }
 
         @Override

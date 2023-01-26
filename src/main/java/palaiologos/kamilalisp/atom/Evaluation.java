@@ -38,9 +38,14 @@ public class Evaluation {
                 }
                 return result;
             case IDENTIFIER:
-                if (env.has(Identifier.of(atom.getIdentifier())))
-                    return env.get(Identifier.of(atom.getIdentifier()));
-                else
+                if (env.has(Identifier.of(atom.getIdentifier()))) {
+                    Atom a = env.get(Identifier.of(atom.getIdentifier()));
+                    if(a != null && a.getType() == Type.LIST && !a.getList().isEmpty() && a.getList().get(0).getType() == Type.CALLABLE && a.getList().get(0).getCallable() instanceof ReactiveFunction) {
+                        Callable rf = a.getList().get(0).getCallable();
+                        return rf.apply(env, List.of());
+                    }
+                    return a;
+                } else
                     return atom;
         }
 
@@ -64,7 +69,7 @@ public class Evaluation {
                     }
                     Atom head = evaluate(env, atom.getList().get(0));
                     if (head.getType() != Type.CALLABLE) {
-                        throw new TypeError("Cannot call non-callable atom");
+                        throw new TypeError("Cannot call non-callable atom in evaluation of list with head " + head.toDisplayString());
                     }
                     Callable c = head.getCallable();
                     Atom result;
@@ -86,8 +91,14 @@ public class Evaluation {
                     return exceptionHandler.apply(trace);
                 }
             case IDENTIFIER:
-                if (env.has(Identifier.of(atom.getIdentifier())))
-                    return env.get(Identifier.of(atom.getIdentifier()));
+                if (env.has(Identifier.of(atom.getIdentifier()))) {
+                    Atom a = env.get(Identifier.of(atom.getIdentifier()));
+                    if(a != null && a.getType() == Type.LIST && !a.getList().isEmpty() && a.getList().get(0).getType() == Type.CALLABLE && a.getList().get(0).getCallable() instanceof ReactiveFunction) {
+                        Callable rf = a.getList().get(0).getCallable();
+                        return evaluate(env, rf, List.of());
+                    }
+                    return a;
+                }
                 else
                     return atom;
         }

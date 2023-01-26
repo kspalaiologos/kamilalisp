@@ -1,4 +1,6 @@
 
+// ! % &
+
 grammar Grammar;
 
 @header {
@@ -33,6 +35,11 @@ reader_macro
     : quote
     | tack
     | over
+    | self
+    ;
+
+self
+    : '&' LONG
     ;
 
 quote
@@ -126,10 +133,10 @@ NIL : 'nil' | '⍬';
 // Normally I'd have made a rule with NOTID and inverted it in a set.
 
 fragment
-NOTID: ~('∘' | '⍬' | '⍨' | '@' | '$' | '^' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';') ;
+NOTID: ~('∘' | '⍬' | '⍨' | '@' | '$' | '^' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | '&') ;
 
 fragment
-NOTID_START: ~('∘' | '⍬' | '⍨' | '#' | '^' | '$' | '\\' | '\'' | '@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | ':' | '0'..'9') ;
+NOTID_START: ~('∘' | '⍬' | '⍨' | '#' | '^' | '$' | '\\' | '\'' | '@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | ':' | '&' | '0'..'9') ;
 
 NAME: NOTID_START NOTID* ;
 
