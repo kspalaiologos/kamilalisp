@@ -22,7 +22,7 @@ public class Evaluation {
                 }
                 Atom head = evaluate(env, atom.getList().get(0));
                 if (head.getType() != Type.CALLABLE) {
-                    throw new TypeError("Cannot call non-callable atom in evaluation of " + atom.toDisplayString());
+                    throw new TypeError("Cannot call non-callable atom in evaluation of list with head " + head.toDisplayString());
                 }
                 Callable c = head.getCallable();
                 Atom result;

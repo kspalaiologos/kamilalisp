@@ -1,6 +1,7 @@
 package palaiologos.kamilalisp.parser;
 
 import ch.obermuhlner.math.big.BigComplex;
+import org.apache.commons.text.StringEscapeUtils;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.CodeAtom;
 import palaiologos.kamilalisp.atom.Identifier;
@@ -196,7 +197,8 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
 
     @Override
     public Atom visitString_(GrammarParser.String_Context ctx) {
-        return new CodeAtom(ctx.getText().substring(1, ctx.getText().length() - 1)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+        String msg = ctx.getText().substring(1, ctx.getText().length() - 1);
+        return new CodeAtom(StringEscapeUtils.unescapeJava(msg)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
     }
 
     @Override
