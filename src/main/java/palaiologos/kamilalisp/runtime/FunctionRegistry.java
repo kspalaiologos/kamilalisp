@@ -86,10 +86,6 @@ public class FunctionRegistry {
         env.set("grade-down", new Atom(new GradeDown()));
         env.set("⍋", new Atom(new GradeUp()));
         env.set("⍒", new Atom(new GradeDown()));
-        env.set("ungrade-up", new Atom(new UnGradeUp()));
-        env.set("ungrade-down", new Atom(new UnGradeDown()));
-        env.set("⍋⌜", new Atom(new UnGradeUp()));
-        env.set("⍒⌜", new Atom(new UnGradeDown()));
         env.set("cons", new Atom(new Cons()));
         env.set("≁", new Atom(new Cons()));
         env.set("flatten", new Atom(new Flatten()));
