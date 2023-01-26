@@ -60,6 +60,8 @@ public class Cdr extends PrimitiveFunction implements Lambda {
 
         if (args.size() == 1) {
             if (args.get(0).getType() == Type.STRING) {
+                if(args.get(0).getString().isEmpty())
+                    return new Atom("");
                 return new Atom(args.get(0).getString().substring(1));
             }
 

@@ -13,21 +13,30 @@ public class Rotate extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("Expected two arguments to `rotate'.");
         }
 
-        int n = args.get(1).getInteger().intValueExact();
-        List<Atom> list = args.get(0).getList();
+        int n = args.get(0).getInteger().intValueExact();
+        List<Atom> list = args.get(1).getList();
+
+        if(list.isEmpty())
+            return args.get(1);
+        else
+            n %= list.size();
 
         // rotate 2 (1 2 3 4 5) = (4 5 1 2 3)
         // rotate -2 (1 2 3 4 5) = (3 4 5 1 2)
         if(n > 0) {
             List<Atom> front = list.subList(0, n);
             List<Atom> back = list.subList(n, list.size());
-            return new Atom(Lists.newArrayList(back).addAll(front));
+            List<Atom> result = Lists.newArrayList(back);
+            result.addAll(front);
+            return new Atom(result);
         } else if(n == 0) {
-            return args.get(0);
+            return args.get(1);
         } else {
             List<Atom> front = list.subList(0, list.size() + n);
             List<Atom> back = list.subList(list.size() + n, list.size());
-            return new Atom(Lists.newArrayList(back).addAll(front));
+            List<Atom> result = Lists.newArrayList(back);
+            result.addAll(front);
+            return new Atom(result);
         }
     }
 
