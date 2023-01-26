@@ -12,11 +12,11 @@ file_: form * EOF;
 form: form_rem (('@'|'∘') form_rem)*
     ;
 
-form_rem: reader_macro
+form_rem: literal
         | form_rem '$' sqlist
         | bind
         | any_list
-        | literal
+        | reader_macro
         | map
         | parallel_map
         ;
@@ -59,8 +59,8 @@ over
     ;
 
 tack
-    : '#' LONG
-    | LONG '#' LONG
+    : LONG '##' LONG
+    | '#' LONG
     ;
 
 bind
@@ -144,7 +144,7 @@ NAME: NOTID_START NOTID* ;
 //--------------------------------------------------------------------
 
 fragment
-WS : [ \n\r\t] ;
+WS : [ \t\r\n]+ ;
 
 fragment
 COMMENT: ';' ~[\r\n]* ;
