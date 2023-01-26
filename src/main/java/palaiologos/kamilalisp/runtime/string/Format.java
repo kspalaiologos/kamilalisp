@@ -41,7 +41,7 @@ public class Format extends PrimitiveFunction implements SpecialForm {
                     List<Atom> parsed = Parser.parse(code.startsWith("?") ? code.substring(1) : ("(" + code + "\n)"));
                     Atom expression = parsed.get(0);
                     Atom result = Evaluation.evaluate(env, expression);
-                    sb.append(result);
+                    sb.append(result.getType() == Type.STRING ? result.getString() : result.toString());
                     i = j + 1;
                 }
             } else if (format.charAt(i) == '}') {
