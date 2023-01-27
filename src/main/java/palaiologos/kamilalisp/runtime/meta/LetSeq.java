@@ -15,7 +15,7 @@ public class LetSeq extends PrimitiveFunction implements SpecialForm {
             if (arg.getType() == Type.LIST && !arg.getList().isEmpty()) {
                 if (arg.getList().get(0).getType() == Type.IDENTIFIER) {
                     switch (Identifier.of(arg.getList().get(0).getIdentifier())) {
-                        case "defun" -> {
+                        case "defun": {
                             List<Atom> declaration = arg.getList();
                             if (declaration.get(1).getType() != Type.IDENTIFIER) {
                                 throw new RuntimeException("Expected identifier in `def' declaration in `let-seq'.");
@@ -27,7 +27,7 @@ public class LetSeq extends PrimitiveFunction implements SpecialForm {
                             env.set(name, lambda);
                             continue;
                         }
-                        case "def" -> {
+                        case "○←": case "def": {
                             List<Atom> declaration = arg.getList();
                             if (declaration.get(1).getType() != Type.IDENTIFIER) {
                                 throw new RuntimeException("Expected identifier in `def' declaration in `let-seq'.");
@@ -37,7 +37,7 @@ public class LetSeq extends PrimitiveFunction implements SpecialForm {
                             env.set(name, value);
                             continue;
                         }
-                        case "discard" -> {
+                        case "discard": {
                             // Discard and ignore.
                             Evaluation.evaluate(env, arg);
                             continue;
