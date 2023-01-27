@@ -5,5 +5,4 @@
 - RNG
 - graphics/sound
 - extend regex library
-- partitioning
 - depth operator

@@ -66,6 +66,33 @@ class TestRangeFoldScan {
     }
 
     @Test
+    void testFoldl1Foldr1OneElement() {
+        assertEquals(Common.runCode(
+                "(foldl1 + (range 1))"
+        ), Common.runCode("0"));
+
+        assertEquals(Common.runCode(
+                "(foldr1 + (range 1))"
+        ), Common.runCode("0"));
+
+        assertEquals(Common.runCode(
+                "(foldl1 * (range 1))"
+        ), Common.runCode("0"));
+
+        assertEquals(Common.runCode(
+                "(foldr1 * (range 1))"
+        ), Common.runCode("0"));
+
+        assertEquals(Common.runCode(
+                "(foldl1 - (range 1))"
+        ), Common.runCode("0"));
+
+        assertEquals(Common.runCode(
+                "(foldr1 - (range 1))"
+        ), Common.runCode("0"));
+    }
+
+    @Test
     void testRangeBackwards() {
         // Range from 5 to 1:
         assertEquals(Common.runCode(

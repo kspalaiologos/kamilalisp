@@ -232,9 +232,11 @@ public class FunctionRegistry {
         env.set("ucs", new Atom(new Ucs()));
         env.set("match", new Atom(new Match()));
         env.set("≅", new Atom(new Match()));
+        env.set("list:shuffle", new Atom(new Shuffle()));
 
         env.set("bipartition", new Atom(new Bipartition()));
-        env.set("partition-range", new Atom(new PartitionRange()));
+        env.set("list:partition", new Atom(new PartitionRange()));
+        env.set("⍦", new Atom(new PartitionRange()));
 
         env.set("regex:matches?", new Atom(new RegexMatches()));
         env.set("regex:replace", new Atom(new RegexReplace()));
