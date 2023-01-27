@@ -8,7 +8,6 @@
 \usepackage{pmboxdraw}
 \usepackage{graphicx}
 \usepackage{bigfoot}
-\usepackage{minted}
 \usepackage[bottom]{footmisc}
 \graphicspath{ {.} }
 \usepackage{alltt,xcolor}
@@ -17,12 +16,9 @@
 \usepackage{fancyvrb}
 
 \usepackage{fontspec}
-\setmonofont{[Apl385.ttf]}[Scale=MatchLowercase]
+\setmonofont{[APL386.ttf]}[Scale=MatchLowercase]
 
-\makeatletter
-\AtBeginEnvironment{minted}{\dontdofcolorbox}
-\def\dontdofcolorbox{\renewcommand\fcolorbox[4][]{##4}}
-\makeatother
+\RecustomVerbatimEnvironment{Verbatim}{Verbatim}{frame=single,commandchars=!\[\]}
 
 \interfootnotelinepenalty=10000
 
