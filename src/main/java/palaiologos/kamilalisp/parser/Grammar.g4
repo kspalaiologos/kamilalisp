@@ -64,7 +64,7 @@ tack
     ;
 
 bind
-    : '$' any_list
+    : '$' list_
     ;
 
 literal

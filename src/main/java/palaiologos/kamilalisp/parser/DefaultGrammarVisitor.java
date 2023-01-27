@@ -193,7 +193,7 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
 
     @Override
     public Atom visitBind(GrammarParser.BindContext ctx) {
-        return new CodeAtom(new ParitalApplication(visit(ctx.any_list()), ctx.start.getLine() + lineNumberOffset, ctx.start.getCharPositionInLine())).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+        return new CodeAtom(new ParitalApplication(visit(ctx.list_()), ctx.start.getLine() + lineNumberOffset, ctx.start.getCharPositionInLine())).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
     }
 
     @Override
