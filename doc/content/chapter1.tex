@@ -1,0 +1,17 @@
+
+\chapter{Initial considerations}
+
+This chapter discusses the basics of KamilaLisp. Throughout this book, the author will use the KamilaLisp interpreter to check and execute the declarations of a program one by one. The emphasis will be put on list processing and mathematical functions to form elementary understanding of the language.
+
+\section{Programs and variables}
+
+A KamilaLisp program is a sequence of declarations, which are executed in the order they are written. The first program presented in this book is shown below:
+
+\begin{minted}{scheme}
+    (def a (+ (* 2 3) 2))
+    (def b (* 5 a))
+\end{minted}
+
+It consists of two declarations. The first declaration binds the identifier a to the integer 8, and the second declaration binds the identifier b to the integer 40, which follows frmo the intuitive understanding of the arithmetic operations. To the reader not accustomed with Lisp-like syntax, every element of the syntax tree that would otherwise be implicitly grouped by a language with usual arithmetical precedence rules is explicitly grouped by parentheses to form a list.
+
+Every list besides the empty list (usually written as \verb|`()'| or alternatively \verb|nil|) has a \textit{head} defined as the first element of it. When a Lisp program is evaluated, the \textit{head} of the current list is assumed to be a callable value, while the rest of the list (also called the \textit{tail}) is assumed to be a list of arguments.
