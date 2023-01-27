@@ -8,10 +8,52 @@ This chapter discusses the basics of KamilaLisp. Throughout this book, the autho
 A KamilaLisp program is a sequence of declarations, which are executed in the order they are written. The first program presented in this book is shown below:
 
 \begin{minted}{scheme}
-    (def a (+ (* 2 3) 2))
-    (def b (* 5 a))
+--> def a (+ (* 2 3) 2)
+8
+--> def b (* 5 a)
+40
 \end{minted}
 
-It consists of two declarations. The first declaration binds the identifier a to the integer 8, and the second declaration binds the identifier b to the integer 40, which follows frmo the intuitive understanding of the arithmetic operations. To the reader not accustomed with Lisp-like syntax, every element of the syntax tree that would otherwise be implicitly grouped by a language with usual arithmetical precedence rules is explicitly grouped by parentheses to form a list.
+It consists of two declarations. The first declaration binds the identifier a to the integer 8, and the second declaration binds the identifier b to the integer 40, which follows frmo the intuitive understanding of the arithmetic operations. To the reader not accustomed with Lisp-like syntax, every element of the syntax tree that would otherwise be implicitly grouped by a language with usual arithmetical precedence rules is explicitly grouped by parentheses to form a list. The resulting values of variables can be determined as follows:
+
+\begin{minted}{scheme}
+--> ?a
+8
+--> ?b
+40
+\end{minted}
+
+The question mark is a sign for the KamilaLisp interpreter not to evaluate the entire input as an expression, but rather, to query the value of what it refers to.
 
 Every list besides the empty list (usually written as \verb|`()'| or alternatively \verb|nil|) has a \textit{head} defined as the first element of it. When a Lisp program is evaluated, the \textit{head} of the current list is assumed to be a callable value, while the rest of the list (also called the \textit{tail}) is assumed to be a list of arguments.
+
+Because the list of arguments to a function is evaluated, a perceptive reader could point out a potential issue - \textit{How to introduce list literals in the code}? This question is indeed well-founded, since the list literal would be evaluated in order to pass it parameter to some callable object, hence the tail of the literal would be applied to its head, thus behaving undesirably and almost certainly raising an error. Every Lisp dialect addresses this issue in the same way using the quoting mechanism. Simply put, the quote prevents a list from being evaluated. To observe this behaviour, introduce two more functions called \verb|car| and \verb|cdr| to obtain respectively the \textit{head} and \textit{tail} of a list:
+
+\begin{minted}{scheme}
+--> car '(1 2 3)
+1
+--> cdr '(1 2 3)
+(2 3)
+\end{minted}
+
+KamilaLisp follows scoping rules familiar from other programming languages, such as Scheme or C++ - \textit{static scoping} (also called \textit{lexical scoping}), where an attempt is initially made to resolve a variable in the current scope. If this approach fails, the variable is resolved in the scope of its lexical ancestors until either the interpreter finds an environment where the variable is bound, or raises an error regarding an unbound variable. Additionally, variables may be \textit{shadowed}, as demonstrated below:
+
+\begin{minted}{scheme}
+--> def my-list '(1 2 3)
+(1 2 3)
+--> car my-list
+1
+--> def my-list (cdr my-list)
+(2 3)
+--> car my-list
+2
+\end{minted}
+
+However, it is not possible to shadow pre-defined variables and functions:
+
+\begin{minted}{scheme}
+--> def car 5
+RuntimeException thrown in thread 1dbd16a6: def can not shadow or redefine built-in bindings.
+    at entity def  2:1
+    at def primitive function
+\end{minted}
