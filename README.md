@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img src="https://github.com/kspalaiologos/kamilalisp/raw/v0.2/doc/logo.png">
+  <img src="https://github.com/kspalaiologos/kamilalisp/raw/v0.2/logo.png">
 </p>
 
 
