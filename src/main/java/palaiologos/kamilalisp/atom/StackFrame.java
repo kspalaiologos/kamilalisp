@@ -65,7 +65,7 @@ public class StackFrame {
         StringBuilder sb = new StringBuilder();
         String exceptionName = t.getClass().getSimpleName();
         exceptionName = exceptionName.substring(exceptionName.lastIndexOf('.') + 1);
-        sb.append(exceptionName).append(" thrown in thread ").append(Long.toHexString(Thread.currentThread().hashCode())).append(": ").append(t.getMessage()).append("\n");
+        sb.append(exceptionName).append(" thrown in thread ").append(Long.toHexString(Thread.currentThread().hashCode())).append(":\n        ").append(t.getMessage()).append("\n");
         for (StackFrameEntry e : stack.get()) {
             if (e.col == 0 || e.line == 0) {
                 sb.append("    at ").append(e.frameString).append("\n");
