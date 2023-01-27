@@ -129,6 +129,28 @@ Since functions are first-class in KamilaLisp, it is now also possible to return
     The value of f(x) for x=4.5 is 20.25
 \end{Verbatim}
 
+When writing complex functions, it is of particular interest to keep the partial results obtained during the execution of the function. This can be achieved by cascading the \textit{let} construct, or using the \textit{let-seq} construct. The following examples implement a function that raises its first argument to the eigth power:
+
+\begin{Verbatim}
+    --> defun p8 x (let-seq (
+    ...   (def y (* x x))
+    ...   (def z (* y y))
+    ...   (* z z)))
+    (λ x . (let-seq ((def y (* x x)) (def z (* y y)) (* z z))))
+    --> p8 4
+    65536
+    --> defun p8 x (let ((y (* x x))) (let ((z (* y y))) (* z z)))
+    (λ x . (let ((y (* x x)) (z (* y y))) (* z z)))
+    --> p8 4
+    65536
+    --> defun p8 x (let ((y (* x x)) (z (* y y))) (* z z))
+    (λ x . (let ((y (* x x)) (z (* y y))) (* z z)))
+    --> p8 4
+    65536
+\end{Verbatim}
+
+Notice that despite using \verb|def|, \verb|defun|, etc..., the \textit{let-seq} construct does not create any bindings in the global scope - the bindings are local to the block.
+
 \section{Conditional expressions and comparisons}
 
 The comparison operators in KamilaLisp don't differ significantly from the ones present in other, perhaps more orthodox programming languages (such as C). It is worth noting that equality is checked using the \verb|=| function, inequality is checked for using the \verb|/=| function, while the \verb|<=>| function is the so-called \textit{three way comparison} operator, which returns -1, 0 or 1 respectively if the first argument is less than, equal to, or greater than the second argument.
@@ -157,4 +179,50 @@ The \textit{if} construct is a special case of the \textit{cond} construct, whic
     1
     --> compare 5 5
     0
+\end{Verbatim}
+
+\section{Recursive functions}
+
+Recursion is a powerful technique extensively used in functional programming. Its role in KamilaLisp is admittedly not as important as in other functional programming languages, since the language provides a number of other often more weildy techniques for solving the same problems (e.g. using array programming). However, it is still worth mentioning that KamilaLisp provides a number of tools for writing recursive functions.
+
+The following function implements the \textit{factorial} function in a recursive manner:
+
+\begin{Verbatim}
+    --> defun factorial (n) (if (= n 0) 1 (* n (factorial (- n 1))))
+    (λ n . (if (= n 0) 1 (* n (factorial (- n 1)))))
+    --> factorial 5
+    120
+\end{Verbatim}
+
+Since KamilaLisp supports arbitrary precision integers, the factorial function can be applied to arbitrarily large numbers. However, at some point, this function will \textit{overflow its stack}, since the number of recursive calls will exceed the maximum stack size. This is a common problem in recursive functions, and it can be solved by using the \textit{tail recursion} technique. Tail recursion is a special case of recursion, where the recursive call is the last expression in the function body. In this case, the stack frame of the current function can be reused for the recursive call, which means that the stack will not grow indefinitely. To make use of this technique, the factorial function needs to be altered so that the recursive call is the last expression in the function body:
+
+\begin{Verbatim}
+    --> defun factorial (n) (let-seq (
+    ...   (defun f' (n acc) (if (= n 0) acc (f' (- n 1) (* n acc))))
+    ...   (f' n 1)))
+    (λ n . (let-seq ((defun f' (n acc) (if (= n 0) acc (f' (- n 1) (* n acc)))) (f' n 1))))
+    --> factorial 5
+    120
+\end{Verbatim}
+
+The factorial function defines a helper function that has an accumulator argument, which is used to store the intermediate results of the computation. The helper function is called recursively, and the accumulator argument is updated with the result of the multiplication. The \textit{let-seq} construct is used to define the helper function, so that it is not visible outside the factorial function. There is one more step to make this function tail-recursive: redefine the self-referential call to the helper function:
+
+\begin{Verbatim}
+    --> defun factorial (n) (let-seq (
+    ...   (defun f' (n acc) (if (= n 0) acc (&0 (- n 1) (* n acc))))
+    ...   (f' n 1)))
+    (λ n . (let-seq ((defun f' (n acc) (if (= n 0) acc (&0 (- n 1) (* n acc)))) (f' n 1))))
+    --> factorial 5
+    120
+\end{Verbatim}
+
+The self-referential call was replaced by \verb|&0|, which in simple terms is a reference to the current function. This is a special case of the \verb|&| operator, which is used to refer to functions by nesting level in the source code, akin to de Bruijn indices. The \verb|&0| operator refers to the current function, \verb|&1| refers to the function (anonymous or named) that is the lexical ancestor the current function, and so on. This way, the factorial function no longer errors when applied to large numbers, since the stack does not grow indefinitely:
+
+\begin{Verbatim}
+    --> factorial 1000
+    402387260077093773543702433923003985719374864210714
+    632543799910429938512398629020592044208486969404800
+    ; [...]
+    000000000000000000000000000000000000000000000000000
+    000000000000000000000000000000000000000000000000000
 \end{Verbatim}
