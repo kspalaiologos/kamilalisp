@@ -15,8 +15,8 @@ public class Sort extends PrimitiveFunction implements Lambda {
             return new Atom(list);
         } else if (args.size() == 2) {
             List<Atom> list = new ArrayList<>();
-            list.addAll(args.get(0).getList());
-            Callable reductor = args.get(1).getCallable();
+            list.addAll(args.get(1).getList());
+            Callable reductor = args.get(0).getCallable();
             list.sort((x, y) -> Evaluation.evaluate(env, reductor, List.of(x, y)).getInteger().intValueExact());
             return new Atom(list);
         } else {

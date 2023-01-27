@@ -46,5 +46,29 @@ class TestFilterMapAnyAll {
     void testAny() {
         assertEquals(Common.runCode("(any $(= _ 0) \\range 0 10)").getInteger().intValueExact(), 1);
         assertEquals(Common.runCode("(any $(= _ 10) \\range 0 10)").getInteger().intValueExact(), 0);
+
+        // Empty list case
+        assertEquals(Common.runCode("(any $(= _ 0) \\range 0 0)").getInteger().intValueExact(), 0);
+    }
+
+    @Test
+    void testNone() {
+        assertEquals(Common.runCode("(none $(= _ 0) \\range 0 10)").getInteger().intValueExact(), 0);
+        assertEquals(Common.runCode("(none $(= _ 10) \\range 0 10)").getInteger().intValueExact(), 1);
+
+        // Empty list case
+        assertEquals(Common.runCode("(none $(= _ 0) \\range 0 0)").getInteger().intValueExact(), 1);
+    }
+
+    @Test
+    void testCount() {
+        assertEquals(Common.runCode("(count $(= _ 0) \\range 0 10)").getInteger().intValueExact(), 1);
+        assertEquals(Common.runCode("(count $(= _ 10) \\range 0 10)").getInteger().intValueExact(), 0);
+
+        // Empty list case
+        assertEquals(Common.runCode("(count $(= _ 0) \\range 0 0)").getInteger().intValueExact(), 0);
+
+        // Many occurrences
+        assertEquals(Common.runCode("(count $(= _ 0) \\:$(mod _ 2)@range 0 100)").getInteger().intValueExact(), 50);
     }
 }
