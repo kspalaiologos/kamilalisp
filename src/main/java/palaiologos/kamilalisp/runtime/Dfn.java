@@ -79,7 +79,7 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
 
     @Override
     protected String name() {
-        return "lambda";
+        return "λ";
     }
 
     @Override

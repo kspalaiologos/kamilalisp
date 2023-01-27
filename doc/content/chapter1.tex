@@ -8,19 +8,19 @@ This chapter discusses the basics of KamilaLisp. Throughout this book, the autho
 A KamilaLisp program is a sequence of declarations, which are executed in the order they are written. The first program presented in this book is shown below:
 
 \begin{Verbatim}
---> def a (+ (* 2 3) 2)
-8
---> def b (* 5 a)
-40
+    --> def a (+ (* 2 3) 2)
+    8
+    --> def b (* 5 a)
+    40
 \end{Verbatim}
 
 It consists of two declarations. The first declaration binds the identifier a to the integer 8, and the second declaration binds the identifier b to the integer 40, which follows frmo the intuitive understanding of the arithmetic operations. To the reader not accustomed with Lisp-like syntax, every element of the syntax tree that would otherwise be implicitly grouped by a language with usual arithmetical precedence rules is explicitly grouped by parentheses to form a list. The resulting values of variables can be determined as follows:
 
 \begin{Verbatim}
---> ?a
-8
---> ?b
-40
+    --> ?a
+    8
+    --> ?b
+    40
 \end{Verbatim}
 
 The question mark is a sign for the KamilaLisp interpreter not to evaluate the entire input as an expression, but rather, to query the value of what it refers to.
@@ -30,31 +30,131 @@ Every list besides the empty list (usually written as \verb|`()'| or alternative
 Because the list of arguments to a function (the \textit{tail}) is evaluated before its applied to the \textit{head}, a perceptive reader could point out a potential issue - \textit{How to introduce list literals in the code}? This question is indeed well-founded, since the list literal would be evaluated in order to pass it parameter to some callable object, hence the tail of the literal would be applied to its head, thus behaving undesirably and almost certainly raising an error. Every Lisp dialect addresses this issue in the same way using the quoting mechanism. Simply put, the quote prevents a list from being evaluated. To observe this behaviour, introduce two more functions called \verb|car| and \verb|cdr| to obtain respectively the \textit{head} and \textit{tail} of a list:
 
 \begin{Verbatim}
---> car '(1 2 3)
-1
---> cdr '(1 2 3)
-(2 3)
+    --> car '(1 2 3)
+    1
+    --> cdr '(1 2 3)
+    (2 3)
 \end{Verbatim}
 
 KamilaLisp follows scoping rules familiar from other programming languages, such as Scheme or C++ - \textit{static scoping} (also called \textit{lexical scoping}), where an attempt is initially made to resolve a variable in the current scope. If this approach fails, the variable is resolved in the scope of its lexical ancestors until either the interpreter finds an environment where the variable is bound, or raises an error regarding an unbound variable. Additionally, variables may be \textit{shadowed}, as demonstrated below:
 
 \begin{Verbatim}
---> def my-list '(1 2 3)
-(1 2 3)
---> car my-list
-1
---> def my-list (cdr my-list)
-(2 3)
---> car my-list
-2
+    --> def my-list '(1 2 3)
+    (1 2 3)
+    --> car my-list
+    1
+    --> def my-list (cdr my-list)
+    (2 3)
+    --> car my-list
+    2
 \end{Verbatim}
 
-However, it is not possible to shadow pre-defined variables and functions:
+However, it is not possible to shadow pre-defined variables and functions in the global scope:
 
 \begin{Verbatim}
---> def car 5
-RuntimeException thrown in thread 1dbd16a6:
-        def can not shadow or redefine built-in bindings.
-    at entity def  1:1
-    at def primitive function
+    --> def car 5
+    RuntimeException thrown in thread 1dbd16a6:
+            def can not shadow or redefine built-in bindings.
+        at entity def  1:1
+        at def primitive function
+\end{Verbatim}
+
+To fully exercise lexical scoping, the language needs to provide a way of binding names inside a specific block of code (unlike \textit{def} which binds names in the global scope). This can be accomplished in a variety of ways, the most straight-forward one being the \textit{let} construct. The \textit{let} construct binds a list of name/value pairs, and evaluates the body of the construct in the context of the newly created environment. The syntax of the \textit{let} construct is demonstrated by the following example:
+
+\begin{Verbatim}
+    --> def a 5
+    5
+    --> def b 6
+    6
+    --> + a b
+    11
+    --> let ((a 10) (b 15)) (+ a b)
+    25
+\end{Verbatim}
+
+\section{Functions and lambda expressions}
+
+Functions are the core component of KamilaLisp. They are first-class objects, which means that they can be passed as arguments to other functions, returned from functions, and assigned to variables. The syntax of a function declaration is as follows:
+
+\begin{Verbatim}
+    --> defun square (x) (* x x)
+    (λ x . (* x x))
+\end{Verbatim}
+
+The function that has just been declared is called \verb|square|, and it takes one argument called \verb|x|. The body of the function is the expression \verb|(* x x)|. The function returns the value of theis expression, which is simply the square of the argument. Notice that when defining a monadic function, a pair of parentheses can be omitted for brevity:
+
+\begin{Verbatim}
+    --> defun square x (* x x)
+    (λ x . (* x x))
+\end{Verbatim}
+
+Since \verb|square| is now bound in the global scope, it can be applied to an argument. The code below binds the result of application of the number 5 to the function \verb|square| to the variable \verb|a|:
+
+\begin{Verbatim}
+    --> def a (square 5)
+    25
+\end{Verbatim}
+
+Functions do not need to be named. They can be introduced in the code \textit{anonymously} using the \textit{lambda} construct, which opens up many new possibilities. For example, the declaration of the function \verb|square| can be rewritten as follows:
+
+\begin{Verbatim}
+    --> def square (lambda x (* x x))
+    (λ x . (* x x))
+\end{Verbatim}
+
+Furthermore, multivariate lambda expressions could serve as a replacement for the \textit{let} construct:
+
+\begin{Verbatim}
+    --> let ((a 10) (b 15)) (+ a b)
+    25
+    --> (lambda (a b) (+ a b)) 10 15
+    25
+\end{Verbatim}
+
+Since functions are first-class in KamilaLisp, it is now also possible to return them from functions and take them as arguments. The following example demonstrates these programming techniques using the \textit{lambda} construct:
+
+\begin{Verbatim}
+    --> ; Returns a function that adds a given number to its argument.
+    --> ; The technique demonstrated is often called "currying".
+    --> defun make-adder (x) (lambda y (+ x y))
+    (λ x . (λ y . (+ x y)))
+    --> def add-5 (make-adder 5)
+    (λ y . (+ 5 y))
+    --> add-5 10
+    15
+    --> ; Returns a string explaining the value of a function at point.
+    --> defun explain (f x) (str:format "The value of f(x) for x={?x} is {f x}")
+    (λ f x . (str:format "The value of f(x) for x={?x} is {f x}"))
+    --> explain square 4.5
+    The value of f(x) for x=4.5 is 20.25
+\end{Verbatim}
+
+\section{Conditional expressions and comparisons}
+
+The comparison operators in KamilaLisp don't differ significantly from the ones present in other, perhaps more orthodox programming languages (such as C). It is worth noting that equality is checked using the \verb|=| function, inequality is checked for using the \verb|/=| function, while the \verb|<=>| function is the so-called \textit{three way comparison} operator, which returns -1, 0 or 1 respectively if the first argument is less than, equal to, or greater than the second argument.
+
+KamilaLisp provides a number of conditional expressions, which are used to control the flow of execution. The most basic one is the \textit{if} construct, which takes three arguments - a condition, an expression to be evaluated if the condition is true, and an expression to be evaluated if the condition is false. The syntax of the \textit{if} construct is demonstrated by the following example:
+
+\begin{Verbatim}
+    --> defun my-abs x (if (< x 0) (- x) x)
+    (λ x . (if (< x 0) (- x) x))
+    --> my-abs -5
+    5
+    --> my-abs 5
+    5
+    --> my-abs 0
+    0
+\end{Verbatim}
+
+The \textit{if} construct is a special case of the \textit{cond} construct, which takes a list of pairs of conditions and expressions. The first condition that evaluates to true is used to evaluate the corresponding expression. The syntax of the \textit{cond} construct is demonstrated by the following reimplementation of the three-way comparison operator:
+
+\begin{Verbatim}
+    --> defun compare (x y) (cond ((< x y) -1) ((> x y) 1) (0))
+    (λ x y . (cond ((< x y) -1) ((> x y) 1) (0)))
+    --> compare 5 10
+    -1
+    --> compare 10 5
+    1
+    --> compare 5 5
+    0
 \end{Verbatim}

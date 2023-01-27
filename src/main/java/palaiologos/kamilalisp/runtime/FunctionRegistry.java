@@ -282,8 +282,8 @@ public class FunctionRegistry {
         env.setp("⍔:⍴", new Atom(new HashMapSize()));
         env.setp("⍔:⍎", new Atom(new HashMapKeyList()));
         env.setp("⍔:⍕", new Atom(new HashMapValueList()));
-        env.setp("⍔:⍎⍰", new Atom(new HashMapContainsKey()));
-        env.setp("⍔:⍕⍰", new Atom(new HashMapContainsValue()));
+        env.setp("⍔:⍎?", new Atom(new HashMapContainsKey()));
+        env.setp("⍔:⍕?", new Atom(new HashMapContainsValue()));
         env.setp("⍔:⍆", new Atom(new HashMapGet()));
         env.setp("⍔:+", new Atom(new HashMapAdjoin()));
         env.setp("⍔:-", new Atom(new HashMapMinus()));
