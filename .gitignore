@@ -29,26 +29,25 @@ bin/
 .DS_Store
 target/
 
+## ANTLR stuff ##
 src/main/java/palaiologos/kamilalisp/parser/Grammar.interp
-
 src/main/java/palaiologos/kamilalisp/parser/Grammar.tokens
-
 src/main/java/palaiologos/kamilalisp/parser/GrammarBaseListener.java
-
 src/main/java/palaiologos/kamilalisp/parser/GrammarBaseVisitor.java
-
 src/main/java/palaiologos/kamilalisp/parser/GrammarLexer.interp
-
 src/main/java/palaiologos/kamilalisp/parser/GrammarLexer.java
-
 src/main/java/palaiologos/kamilalisp/parser/GrammarLexer.tokens
-
 src/main/java/palaiologos/kamilalisp/parser/GrammarListener.java
-
 src/main/java/palaiologos/kamilalisp/parser/GrammarParser.java
-
 src/main/java/palaiologos/kamilalisp/parser/GrammarVisitor.java
 
+## IDE stuff ##
 .idea/
-
 dependency-reduced-pom.xml
+
+## LaTeX stuff ##
+doc/_minted-main/
+doc/**/*.aux
+doc/*.toc
+doc/*.log
+doc/*.out
