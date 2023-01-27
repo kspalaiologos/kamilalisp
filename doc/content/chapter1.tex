@@ -14,7 +14,7 @@ A KamilaLisp program is a sequence of declarations, which are executed in the or
     40
 \end{Verbatim}
 
-It consists of two declarations. The first declaration binds the identifier a to the integer 8, and the second declaration binds the identifier b to the integer 40, which follows frmo the intuitive understanding of the arithmetic operations. To the reader not accustomed with Lisp-like syntax, every element of the syntax tree that would otherwise be implicitly grouped by a language with usual arithmetical precedence rules is explicitly grouped by parentheses to form a list. The resulting values of variables can be determined as follows:
+It consists of two declarations. The first declaration binds the identifier a to the integer 8, and the second declaration binds the identifier b to the integer 40, which follows from the intuitive understanding of the arithmetic operations. To the reader not accustomed with Lisp-like syntax, every element of the syntax tree that would otherwise be implicitly grouped by a language with usual arithmetical precedence rules is explicitly grouped by parentheses to form a list. The resulting values of variables can be determined as follows:
 
 \begin{Verbatim}
     --> ?a
@@ -81,7 +81,7 @@ Functions are the core component of KamilaLisp. They are first-class objects, wh
     (λ x . (* x x))
 \end{Verbatim}
 
-The function that has just been declared is called \verb|square|, and it takes one argument called \verb|x|. The body of the function is the expression \verb|(* x x)|. The function returns the value of theis expression, which is simply the square of the argument. Notice that when defining a monadic function, a pair of parentheses can be omitted for brevity:
+The function that has just been declared is called \verb|square|, and it takes one argument called \verb|x|. The body of the function is the expression \verb|(* x x)|. The function returns the value of their expression, which is simply the square of the argument. Notice that when defining a monadic function, a pair of parentheses can be omitted for brevity:
 
 \begin{Verbatim}
     --> defun square x (* x x)
@@ -183,7 +183,7 @@ The \textit{if} construct is a special case of the \textit{cond} construct, whic
 
 \section{Recursive functions}
 
-Recursion is a powerful technique extensively used in functional programming. Its role in KamilaLisp is admittedly not as important as in other functional programming languages, since the language provides a number of other often more weildy techniques for solving the same problems (e.g. using array programming). However, it is still worth mentioning that KamilaLisp provides a number of tools for writing recursive functions.
+Recursion is a powerful technique extensively used in functional programming. Its role in KamilaLisp is admittedly not as important as in other functional programming languages, since the language provides a number of other often more wieldy techniques for solving the same problems (e.g. using array programming). However, it is still worth mentioning that KamilaLisp provides a number of tools for writing recursive functions.
 
 The following function implements the \textit{factorial} function in a recursive manner:
 
