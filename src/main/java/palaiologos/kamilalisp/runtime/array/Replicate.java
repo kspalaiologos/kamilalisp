@@ -3,6 +3,7 @@ package palaiologos.kamilalisp.runtime.array;
 import palaiologos.kamilalisp.atom.*;
 
 import java.math.BigInteger;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +53,50 @@ public class Replicate extends PrimitiveFunction implements Lambda {
         return new Atom(result.toString());
     }
 
+    static class ReplicateListFacade extends AbstractList<Atom> {
+        private final List<Atom> list;
+        private final int len;
+
+        public ReplicateListFacade(List<Atom> list, int len) {
+            this.list = list;
+            this.len = len;
+        }
+
+        @Override
+        public Atom get(int index) {
+            if (index >= len * list.size())
+                throw new IndexOutOfBoundsException();
+            return list.get(index % list.size());
+        }
+
+        @Override
+        public int size() {
+            return len * list.size();
+        }
+    }
+
+    static class ReplicateListFacadeSingleton extends AbstractList<Atom> {
+        private final Atom a;
+        private final int len;
+
+        public ReplicateListFacadeSingleton(Atom a, int len) {
+            this.a = a;
+            this.len = len;
+        }
+
+        @Override
+        public Atom get(int index) {
+            if (index >= len)
+                throw new IndexOutOfBoundsException();
+            return a;
+        }
+
+        @Override
+        public int size() {
+            return len;
+        }
+    }
+
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         assertArity(args, 2);
@@ -63,6 +108,18 @@ public class Replicate extends PrimitiveFunction implements Lambda {
             List<Atom> s1 = args.get(0).getList();
             String s2 = args.get(1).getString();
             return replicate(s1, s2);
+        } else if(args.get(0).getType() == Type.INTEGER && args.get(1).getType() == Type.LIST) {
+            List<Atom> list = args.get(1).getList();
+            int n = args.get(0).getInteger().intValue();
+            return new Atom(new ReplicateListFacade(list, n));
+        } else if(args.get(0).getType() == Type.INTEGER && args.get(1).getType() == Type.STRING) {
+            String s = args.get(1).getString();
+            int n = args.get(0).getInteger().intValue();
+            return new Atom(s.repeat(n));
+        } else if(args.get(0).getType() == Type.INTEGER) {
+            Atom a = args.get(1);
+            int n = args.get(0).getInteger().intValue();
+            return new Atom(new ReplicateListFacadeSingleton(a, n));
         } else {
             throw new RuntimeException("replicate: invalid arguments.");
         }
