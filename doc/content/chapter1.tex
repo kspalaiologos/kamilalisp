@@ -226,3 +226,179 @@ The self-referential call was replaced by \verb|&0|, which in simple terms is a 
     000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000000000000000000
 \end{Verbatim}
+
+\section{Function composition}
+
+Function composition is a a common core concept in functional programming languages, an emphasis on which is placed in KamilaLisp. Using the \verb|@| operator, it is possible to compose two or more functions into a single function. An example follows:
+
+\begin{Verbatim}
+    --> defun f x (* x 2)
+    (λ x . (* x 2))
+    --> defun g x (+ x 1)
+    (λ x . (+ x 1))
+    --> f 2
+    4
+    --> g 2
+    3
+    --> f@g 2
+    6
+\end{Verbatim}
+
+The usefulness of function composition might be hard to appreciate at first. In the end, \verb|f@g x| $\Leftrightarrow$ \verb|f (g x)|, however, the function returned by the \verb|@| operator does not have to be immediately applied - it can be bound to a name and used later. Without the composition operator, it would be necessary to introduce a \textit{lambda} to achieve the same result as \verb|f@g| - that is, \verb|lambda x (f (g x))|. The difference between manually composing two functions to create a new function and using the \verb|@| operator is how they treat arguments. The \verb|@| operator variant of the same expression does not refer to the arguments of the composed functions (and thus does not manually relay an indeterminate amount of them to the innermost function), creating the basic building block for \textit{point-free programming}.
+
+Of course, it is possible to compose arbitrarily many functions by using the \verb|@| operator multiple times. The following example demonstrates the composition of three functions:
+
+\begin{Verbatim}
+    --> defun f x (* x 2)
+    (λ x . (* x 2))
+    --> defun g x (+ x 1)
+    (λ x . (+ x 1))
+    --> defun h x (- x 3)
+    (λ x . (- x 3))
+    --> f@g@h 2
+    0
+\end{Verbatim}
+
+Another form of function composition notoriously used in the APL family of programming languages is the so-called \textit{fork} (the \mu-recursive composition operator). Generally speaking, it is sometimes of special interest to preprocess the arguments using different functions (\textit{reductees}), and then funnel the results into a single function (\textit{reductor}). For instance, the arithmetic mean is defined as the quotient (\textit{reductor}) of the sum and length of a list (\textit{reductees}), while a palindrome is defined as a string for which the equality (\textit{reductor}) between it and its reverse (\textit{reductees}).
+
+To implement a sum function using a fork, it is necessary to define a function that sums a list beforehand using the \verb|tally| function which returns the length of a list. A non-zero value is considered truthy, hence the following definition of the \textit{sum} function:
+
+\begin{Verbatim}
+    --> defun sum (l) (if (tally l) (+ (car l) (sum (cdr l))) 0)
+    (λ l . (if (tally l) (+ (car l) (sum (cdr l))) 0))
+    --> sum '(1 6 2 3)
+    12
+\end{Verbatim}
+
+There are many alternative ways to implement it. One problem the reader may stumble upon is \verb|= 'nil 'nil| returning \verb|'nil|. This behaviour is reasoned by the fact that equality \textit{vectorises} over lists, meaning that equality is tested element-wise. To determine structural equality, it is advised to use the \verb|same| function. The following example demonstrates this behaviour:
+
+\begin{Verbatim}
+    --> = '(1 2 3) '(1 2 4)
+    (1 1 0)
+    --> same '(1 2 3) '(1 2 4)
+    0
+    --> same '(1 2 3) '(1 2 3)
+    0
+\end{Verbatim}
+
+Hence arguing for a simpler implementation of the \textit{sum} function:
+\begin{Verbatim}
+    --> defun sum (l) (if (same l '()) 0 (+ (car l) (sum (cdr l))))
+    (λ l . (if (same l '()) 0 (+ (car l) (sum (cdr l)))))
+    --> sum '(1 6 2 3)
+    12
+\end{Verbatim}
+
+The arithmetic mean function is thusly introduced as follows:
+
+\begin{Verbatim}
+    --> [/ sum tally] '(1 6 2 3 4)
+    3.2
+\end{Verbatim}
+
+Of course, it could also be bound to a name without applying the fork instantaneously:
+
+\begin{Verbatim}
+    --> def avg [/ sum tally]
+    [/ sum tally]
+    --> avg '(1 6 2 3 4)
+    3.2
+\end{Verbatim}
+
+The key merits of point-free programming are:
+
+\begin{itemize}
+    \item The code is more concise.
+    \item The code is often more readable.
+    \item The code is faster, because there is no need to allocate a stack frame.
+    \item The code does not need to bind any names.
+\end{itemize}
+
+\section{Partial application and \texorpdfstring{$\mu$}{mu}-recursive functions}
+
+Most functional programming languages, such as OCaml and Haskell automatically \textit{curry} functions by default, that is, allow applying functions to fewer arguments than they are defined to take. This is a useful feature, because it allows for the creation of new functions by binding some of the arguments of a function to a value. This is called \textit{partial application}. KamilaLisp supports partial application of functions but it does not happen by default, since unlike OCaml and Haskell, KamilaLisp supports variadic functions. Recall the following example given earlier in the book:
+
+\begin{Verbatim}
+    --> ; Returns a function that adds a given number to its argument.
+    --> ; The technique demonstrated is often called "currying".
+    --> defun make-adder (x) (lambda y (+ x y))
+    (λ x . (λ y . (+ x y)))
+    --> def add-5 (make-adder 5)
+    (λ y . (+ 5 y))
+    --> add-5 10
+    15
+\end{Verbatim}
+
+Using partial application, the example can be rewritten as follows:
+
+\begin{Verbatim}
+    --> defun add-x n $(+ n)
+    (λ n . $(+ n))
+    --> def add-5 (add-x 5)
+    $(+ n)
+    --> add-5 6
+    11
+\end{Verbatim}
+
+Partial application is particularly useful in conjunction with various kinds of function composition, as it allows for the vast majority of functions that are defined in terms of other functions to be defined in a point-free manner.
+
+Variadic functions were briefly mentioned earlier in the book. Simply speaking, they are functions that take an arbitrary number of arguments. \verb|+| is a good example of a variadic function, since when applied to more than two arguments, it just sums everything:
+
+\begin{Verbatim}
+    --> + 1 2 3 4 5
+    15
+\end{Verbatim}
+
+It is possible to define custom variadic functions in KamilaLisp using special argument syntax. To recall, \verb|lambda (x y) (code)| takes two arguments - \textit{x} and \textit{y}. This function can be made variadic by prepending the \textit{last argument} with an ellipsis - \verb|lambda (x ...xs) (code)|. The last argument is bound to a list of all the remaining arguments. This has an interesting property: while the aforementioned function takes \textit{at least} one argument (because \verb|...xs| can be empty), it can be modified to take any amount of arguments, even zero - \verb|lambda ...xs (code)|. To demonstrate this behaviour, the following function will obtain the arithmetic average of all its arguments, but will refuse to be called with zero arguments:
+
+\begin{Verbatim}
+    --> defun avg (x ...xs) (/ (+ x (sum ...xs)) (+ 1 (tally ...xs)))
+    (λ x ...xs . (/ (+ x (sum ...xs)) (+ 1 (tally ...xs))))
+    --> avg 1 6 2 3 4
+    3.2
+    --> avg 5
+    5
+    --> avg
+    TypeError thrown in thread 15eb5ee5:
+            Expected at least 1 arguments to `(λ x ...xs . (/ (+ x (sum ...xs)) ...))'.
+        at entity avg  1:1
+        at (λ x ...xs . (/ (+ x (sum ...xs)) ...))  1:11
+\end{Verbatim}
+
+Equipped with the power of variadic functions and recursion, the next natural step is to define $\mu$-recursive functions. Consider the following \textit{basic} $\mu$-recursive functions:
+
+\begin{itemize}
+    \item For all natural numbers $i, k$ where $0 \le i \le k$, the projection function (sometimes also called the identity function when $i=0$) is defined as $P_i^k(x_0, \dots, x_k)=x_i$. The projection function is a built-in operator in KamilaLisp, where \verb|#a| is equivalent to $P_a^k$.
+    \item For each natural $n$ and $k$, the constant function $C_n^k$ is defined as $C_n^k(x_0, \dots, x_k) = x_n$. This is easily implemented using the previously discussed projection function as \verb|$(#0 n)|.
+    \item For each natural $n$, the successor function $S_n$ is defined as $S_n(x) = x + 1$. This is easily implemented using just function composition - \verb|$(+ 1)|.
+\end{itemize}
+
+The $\mu$-recursive composition operator (also called the substitution operator) defined for an $m$-ary function $h(x_0, \dots, x_m)$ and exactly $m$ $n$-ary functions $g_0(x_0, \dots, x_n), \dots, g_m(x_0, \dots, x_n)$ as $h\circ(g_0, \dots, g_m) = f$ where $f(x_0, \dots, x_n) = h(g_0(x_0, \dots, x_n), \dots, g_m(x_0, \dots, x_n))$. This definition is essentially equivalent to KamilaLisp \textit{forks} - \verb|[h g_0 ... g_m] x_0 ... x_k|.
+
+The $\mu$-recursive primitive recursion operator $\rho(g,h)=f$ for $k$-ary function $g(x_0,\dots,x_k)$, $k+2$-ary function $h(y,z,x_0,\dots,x_k)$ and $k+1$-ary function $f$ yields the following piecewise function:
+
+\begin{equation*}
+f(a,x_0,\dots,x_k)=
+    \begin{cases}
+        g(x_0,\dots,x_k) & \text{if } x = 0\\
+        h(a-1,f(a,x_0,\dots,x_k),x_0,\dots,x_k) & \text{if } x \ne 0
+    \end{cases}
+\end{equation*}
+
+The KamilaLisp implementation of this concept is slightly more involved, requiring the \verb|lift| function to apply a function on a existing variadic parameter pack:
+
+\begin{Verbatim}
+    --> defun mu-prim-rec (g h) (
+    ...    lambda (a ...xs) (
+    ...        if (= a 0)
+    ...            (lift g ...xs)
+    ...            (lift $(h (- a 1) (lift $(mu-prim-rec g h) ...xs)) ...xs)))
+\end{Verbatim}
+
+The $\mu$-recursive \textit{minimization} operator is less demanding to implement. Intuitively, minimisation seeks, beginning the search from 0 and proceeding upwards, the smallest argument that causes the function to return zero; if there is no such argument, of if one encounters an argument for which f is not defined, then the search never terminates, and is not defined for the argument.
+
+\begin{Verbatim}
+    --> defun mu-min f (lambda ...xs (let-seq (
+    ...    (defun mu-min-iter i (if (lift f ...xs) (&0 (S i)) i))
+    ...    (mu-min-iter 0))))
+\end{Verbatim}

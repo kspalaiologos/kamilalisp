@@ -30,7 +30,7 @@ public class ParitalApplication implements SpecialForm, ReactiveFunction {
 
         @Override
         public String stringify() {
-            return ParitalApplication.this.stringify();
+            return "$" + data.toString();
         }
 
         @Override

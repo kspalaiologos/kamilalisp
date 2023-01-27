@@ -44,7 +44,7 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
                         descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
                 } else {
                     if (args.size() < bindings.size() - 1)
-                        throw new TypeError("Expected at least " + (bindings.size() - 1) + " arguments to `" + stringify() + "'.");
+                        throw new TypeError("Expected at least " + (bindings.size() - 1) + " arguments to `" + frameString() + "'.");
                     for (int i = 0; i < bindings.size() - 1; i++)
                         descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
                     descendantEnv.set(Identifier.of(bindings.get(bindings.size() - 1)), new Atom(args.subList(bindings.size() - 1, args.size())));
