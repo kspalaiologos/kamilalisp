@@ -100,6 +100,8 @@ public class FunctionRegistry {
         env.setp("⍫⍴", new Atom(new Shannon()));
         env.setp("tally", new Atom(new Tally()));
         env.setp("⍴", new Atom(new Tally()));
+        env.setp("rank", new Atom(new Rank()));
+        env.setp("⍴⍴", new Atom(new Rank()));
         env.setp("same", new Atom(new Same()));
         env.setp("converge", new Atom(new Converge()));
         env.setp("→≡", new Atom(new Converge()));
