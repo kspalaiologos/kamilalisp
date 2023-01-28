@@ -634,4 +634,29 @@ Another much more serious consequence is that the memoized version of the fibona
 
 \section{Exceptions}
 
-Exceptions are the main error handling mechanism in KamilaLisp, unlike in Haskell/Rust (which usually make use of optional types) or OCaml (which supplies exceptions alongside optional types).
+Exceptions are the main error handling mechanism in KamilaLisp, unlike in Haskell/Rust (which usually make use of optional types) or OCaml (which supplies exceptions alongside optional types). Exceptions usually propagate the stack and exhibit worse performance characteristics in the exceptional case, but they are much easier to use and are more familiar to programmers coming from other languages. Additionally, they exhibit better performance in the non-exceptional case.
+
+Using the \verb|raise| function, the arithmetic average function could be rewritten to throw an exception if the list is empty:
+
+\begin{Verbatim}
+    --> defun avg (l) (if (same l 'nil) (raise "empty list") (/ (sum l) (tally l)))
+    (λ l . (if (same l 'nil) (raise "empty list") (/ (sum l) (tally l))))
+    --> avg '(1 2 3 4 5)
+    3
+    --> avg '()
+    RaiseError thrown in thread 6b927fb:
+        empty list
+    at entity avg  1:1
+    at (λ l . (if (same l 'nil) ...))  1:11
+    at entity if  1:16
+    at if primitive function
+    at entity raise  1:34
+    at raise primitive function
+\end{Verbatim}
+
+The exception thrown by \verb|avg| and other kinds of exceptions (e.g. the one thrown by \verb|/ 1 0|) can be caught using the \verb|try-catch| function. For instance, it can be employed to return the length of the error message instead of the average in the exceptional case:
+
+\begin{Verbatim}
+    --> try-catch (avg '()) (tally error)
+    299
+\end{Verbatim}

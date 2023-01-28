@@ -1,6 +1,7 @@
 package palaiologos.kamilalisp.runtime.meta;
 
 import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.error.RaiseError;
 
 import java.util.List;
 
