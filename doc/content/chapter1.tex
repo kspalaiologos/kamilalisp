@@ -151,6 +151,28 @@ When writing complex functions, it is of particular interest to keep the partial
 
 Notice that despite using \verb|def|, \verb|defun|, etc..., the \textit{let-seq} construct does not create any bindings in the global scope - the bindings are local to the block.
 
+Function calls in KamilaLisp are performed using a \textit{call stack}. The call stack is a data structure inside of the interpreter that keeps track of the functions that are currently being executed. When a function is called, a new \textit{stack frame} is created and pushed onto the stack. When the function returns, the stack frame is popped from the stack - this way, the interpreter knows where to return to after the function yields a value. When an exception happens, the interpreter will present the user with a \textit{stack trace}, which is a list of functions that were executed before the exception was thrown, for example:
+
+\begin{Verbatim}
+    --> defun f x (/ 1 0) ; Oops! Division by zero!
+    (λ x . (/ 1 0))
+    --> defun g x (f x)
+    (λ x . (f x))
+    --> defun h x (g x)
+    (λ x . (g x))
+    --> h 10
+    ArithmeticException thrown in thread 5e82df6a:
+        Division by zero
+    at entity h  1:1
+    at (λ x . (g x))  1:9
+    at entity g  1:12
+    at (λ x . (f x))  1:9
+    at entity f  1:12
+    at (λ x . (/ 1 ...))  1:9
+    at entity /  1:12
+    at / primitive function
+\end{Verbatim}
+
 \section{Conditional expressions and comparisons}
 
 The comparison operators in KamilaLisp don't differ significantly from the ones present in other, perhaps more orthodox programming languages (such as C). It is worth noting that equality is checked using the \verb|=| function, inequality is checked for using the \verb|/=| function, while the \verb|<=>| function is the so-called \textit{three way comparison} operator, which returns -1, 0 or 1 respectively if the first argument is less than, equal to, or greater than the second argument.
@@ -194,7 +216,7 @@ The following function implements the \textit{factorial} function in a recursive
     120
 \end{Verbatim}
 
-Since KamilaLisp supports arbitrary precision integers, the factorial function can be applied to arbitrarily large numbers. However, at some point, this function will \textit{overflow its stack}, since the number of recursive calls will exceed the maximum stack size. This is a common problem in recursive functions, and it can be solved by using the \textit{tail recursion} technique. Tail recursion is a special case of recursion, where the recursive call is the last expression in the function body. In this case, the stack frame of the current function can be reused for the recursive call, which means that the stack will not grow indefinitely. To make use of this technique, the factorial function needs to be altered so that the recursive call is the last expression in the function body:
+Since KamilaLisp supports arbitrary precision integers, the factorial function can be applied to arbitrarily large numbers. However, at some point, this function will \textit{overflow its call stack}, meaning that the number of recursive calls will exceed the maximum call stack size. This is a common problem in recursive functions, and it can be solved by using the \textit{tail recursion} technique. Tail recursion is a special case of recursion, where the recursive call is the last expression in the function body. In this case, the stack frame of the current function can be reused for the recursive call, which means that the stack will not grow indefinitely. To make use of this technique, the factorial function needs to be altered so that the recursive call is the last expression in the function body:
 
 \begin{Verbatim}
     --> defun factorial (n) (let-seq (
@@ -225,6 +247,59 @@ The self-referential call was replaced by \verb|&0|, which in simple terms is a 
     ; [...]
     000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000000000000000000
+\end{Verbatim}
+
+Another, closely related function to the factorial function that can be implemented using tail recursion is the power function. The following function implements the power function in a simple recursive manner:
+
+\begin{Verbatim}
+    --> defun power (x n) (if (= n 0) 1 (* x (power x (- n 1))))
+    (λ x n . (if (= n 0) 1 (* x (power x (- n 1)))))
+    --> power 2 10
+    1024
+\end{Verbatim}
+
+Once again, the problem is that the stack will overflow when the power function is applied to large numbers. To prevent this and speed up the computation, the power function needs to be first transformed so that the recursive call is the last expression in the function body. Consider the following \textit{trace} of the power function applied to the arguments \verb|2| and \verb|4|:
+
+\begin{Verbatim}
+    --> power 2 4
+    (* 2 (power 2 3))
+    (* 2 (* 2 (power 2 2)))
+    (* 2 (* 2 (* 2 (power 2 1))))
+    (* 2 (* 2 (* 2 (* 2 (power 2 0)))))
+    (* 2 (* 2 (* 2 2)))
+    (* 2 (* 2 4))
+    (* 2 8)
+    16
+\end{Verbatim}
+
+After transforming the function to use an accumulator:
+
+\begin{Verbatim}
+    --> defun power (x n) (let-seq (
+    ...   (defun f' (x n acc) (if (= n 0) acc (f' x (- n 1) (* x acc))))
+    ...   (f' x n 1)))
+    (λ x n . (let-seq ((defun f' (x n acc) (if (= n 0) acc (f' x (- n 1) (* x acc)))) (f' x n 1))))
+\end{Verbatim}
+
+When this implementation of the power function is applied to the same arguments as before, the following trace is produced:
+
+\begin{Verbatim}
+    --> power 2 4
+    (f' 2 4 1)
+    (f' 2 3 2)
+    (f' 2 2 4)
+    (f' 2 1 8)
+    (f' 2 0 16)
+    16
+\end{Verbatim}
+
+Notice, that the size of the expression \textit{does not grow}, hence the function could in theory be rewritten as a simple loop with bounded storage space requirements, a concept more familiar from imperative programming languages such as C or C++. The final improvement that needs to be applied is actually telling the interpreter to perform tail call optimisation in this case, using the self-referential call \verb|&0|:
+
+\begin{Verbatim}
+    --> defun power (x n) ((lambda (x n acc) (if (= n 0) acc (&0 x (- n 1) (* x acc)))) x n 1)
+    (λ x n . ((λ (x n acc) (if (= n 0) acc (&0/syn x (- n 1) (* x acc)))) x n 1))
+    --> power 2 4
+    16
 \end{Verbatim}
 
 \section{Function composition}
@@ -314,9 +389,11 @@ The key merits of point-free programming are:
     \item The code does not need to bind any names.
 \end{itemize}
 
+The lack of argument naming gives the point-free paradigm a reputation of being unnecessarily obscure, hence the humorously used epithet "pointless style"\footnote{http://hdl.handle.net/1822/2869}. However, the point-free paradigm is not necessarily obscure. In fact, it is often more readable than the equivalent imperative code and favoured by many languages, such as Haskell, APL, J, PostScript, Forth, Factor, jq and the Unix shell\footnote{The pipe operator is essentially point-free function composition. The Unix shell has more interesting properties from a category theoretic perspective, due to its extensive use of monads. The pipe operator is an implementation of \verb|bind|, \verb|cat| is in reality monadic \verb|return|. Moreover, a pair of these operations, adding \verb|<| and \verb|>|, satisfy the monadic laws - \verb$cat f | cmd$ is the same as \verb|cmd <f| (left-hand identity); \verb$cmd | cat$ is the same as \verb|cmd| (right-hand identity); \verb$c1 | (c2 | c3)$ is the same as \verb$(c1 | c2) | c3$.}.
+
 \section{Partial application and \texorpdfstring{$\mu$}{mu}-recursive functions}
 
-Most functional programming languages, such as OCaml and Haskell automatically \textit{curry} functions by default, that is, allow applying functions to fewer arguments than they are defined to take. This is a useful feature, because it allows for the creation of new functions by binding some of the arguments of a function to a value. This is called \textit{partial application}. KamilaLisp supports partial application of functions but it does not happen by default, since unlike OCaml and Haskell, KamilaLisp supports variadic functions. Recall the following example given earlier in the book:
+Most functional programming languages, such as OCaml and Haskell automatically \textit{curry} functions by default, that is, allow applying functions to fewer arguments than they are defined to take. This is a useful feature, because it allows for the creation of new functions by binding some of the arguments of a function to a value. This mechanism is called \textit{partial application}. KamilaLisp supports partial application of functions but it does not happen by default, since unlike OCaml and Haskell, KamilaLisp supports variadic functions. Recall the following example given earlier in the book:
 
 \begin{Verbatim}
     --> ; Returns a function that adds a given number to its argument.
@@ -373,7 +450,7 @@ Equipped with the power of variadic functions and recursion, the next natural st
     \item For each natural $n$, the successor function $S_n$ is defined as $S_n(x) = x + 1$. This is easily implemented using just function composition - \verb|$(+ 1)|.
 \end{itemize}
 
-The $\mu$-recursive composition operator (also called the substitution operator) defined for an $m$-ary function $h(x_0, \dots, x_m)$ and exactly $m$ $n$-ary functions $g_0(x_0, \dots, x_n), \dots, g_m(x_0, \dots, x_n)$ as $h\circ(g_0, \dots, g_m) = f$ where $f(x_0, \dots, x_n) = h(g_0(x_0, \dots, x_n), \dots, g_m(x_0, \dots, x_n))$. This definition is essentially equivalent to KamilaLisp \textit{forks} - \verb|[h g_0 ... g_m] x_0 ... x_k|.
+The $\mu$-recursive composition operator (also called the substitution operator) defined for an $m$-ary function $h(x_0, \dots, x_m)$ and exactly $m$ $n$-ary functions $g_0(x_0, \dots, x_n), \dots, g_m(x_0, \dots, x_n)$ as $h\circ(g_0, \dots, g_m) = f$ where $f(x_0, \dots, x_n) = h(g_0(x_0, \dots, x_n), \dots, g_m(x_0, \dots, x_n))$. This definition is essentially equivalent to KamilaLisp \textit{forks}\footnote{A general version of APL 3-trains; https://aplwiki.com/wiki/Train\#3-trains} - \verb|[h g_0 ... g_m] x_0 ... x_k|.
 
 The $\mu$-recursive primitive recursion operator $\rho(g,h)=f$ for $k$-ary function $g(x_0,\dots,x_k)$, $k+2$-ary function $h(y,z,x_0,\dots,x_k)$ and $k+1$-ary function $f$ yields the following piecewise function:
 
@@ -402,3 +479,36 @@ The $\mu$-recursive \textit{minimization} operator is less demanding to implemen
     ...    (defun mu-min-iter i (if (lift f ...xs) (&0 (S i)) i))
     ...    (mu-min-iter 0))))
 \end{Verbatim}
+
+\section{Iteration}
+
+Given a function $f$, the $n$-fold application of $f$ to $x$ is usually denoted in mathematics as $f^n(x)$. For instance, $f^0(x) = x$, $f^1(x) = f(x)$, and $f^2(x) = f(f(x))$. More generally, a recursive relation can be defined as $f^k(x) = f(f^k-1(x))$ for $k \ge 1$. Given \textit{an iteration} of a function $f^n(x)$, the function $f$ is called the \textit{step function}, $n$ is called the order of iteration and $x$ is called the \textit{starting value}. In KamilaLisp, iteration is introduced using the \verb|while| higher order function which, in the presently most useful form to the mathematical definition, takes three arguments - the starting value, the order of iteration and the step function.
+
+Consider the successor function \verb|defun s x (+ x 1)|. To provide a basic example, addition of two numbers \verb|+ a b| can be implemented as an iteration of order $b$ of the successor function \verb|s| with the initial value $a$:
+
+\begin{Verbatim}
+    --> defun add (a b) (while a b $(+ 1))
+    (λ a b . (while a b $(+ 1)))
+    --> add 3 4
+    7
+\end{Verbatim}
+
+Recall the power function and its previously discussed, tail-recursive definition:
+
+\begin{Verbatim}
+    --> defun power (x n) ((lambda (x n acc) (if (= n 0) acc (&0 x (- n 1) (* x acc)))) x n 1)
+    (λ x n . ((λ (x n acc) (if (= n 0) acc (&0/syn x (- n 1) (* x acc)))) x n 1))
+\end{Verbatim}
+
+Since tail recursion is essentially equivalent to iteration, the power function can be implemented as an iteration of order $n-1$ of the multiplication function \verb|*| with the initial value $x$:
+
+\begin{Verbatim}
+    --> defun power (x n) (while x (- n 1) $(* x))
+    (λ x n . (while x (- n 1) $(* x)))
+    --> power 2 4
+    16
+\end{Verbatim}
+
+Iteration using \verb|while| and other higher order functions is described later on in the book. As a tool, iteration is more suitable to certain problems over recursive (functional) or array programming approaches\footnote{For instance, computing the \textit{Convex Hull} using the Graham scan algorithm, which has better asymptotic complexity than the more naive Jarvis scan as easily implemented in array fashion}.
+
+\section{Exceptions}
