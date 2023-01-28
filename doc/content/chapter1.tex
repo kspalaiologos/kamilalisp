@@ -654,9 +654,31 @@ Using the \verb|raise| function, the arithmetic average function could be rewrit
     at raise primitive function
 \end{Verbatim}
 
-The exception thrown by \verb|avg| and other kinds of exceptions (e.g. the one thrown by \verb|/ 1 0|) can be caught using the \verb|try-catch| function. For instance, it can be employed to return the length of the error message instead of the average in the exceptional case:
+The exception thrown by \verb|avg| and other kinds of exceptions (e.g. the one thrown by \verb|/ 1 0|) can be caught using the \verb|try-catch| function. For instance, it can be employed to return the length of the error message instead of the average in the exceptional case, since the \verb|error| variable is bound in the catch block supplying the error handler with the exception's message:
 
 \begin{Verbatim}
     --> try-catch (avg '()) (tally error)
     299
+\end{Verbatim}
+
+Of course, there is an extension to this system that allows the catch handler to distinguish different kinds of failures, as well as an extension to \verb|raise| that lets the programmer supply a custom exception type. An example of this follows:
+
+\begin{Verbatim}
+    --> defun frobnicate (x) (cond
+    ...     ((< x 10) (raise 'domain_error "Input too large."))
+    ...     ((> x 10) (raise 'domain_error "Input too small."))
+    ...     ((= x 0) (raise 'arithmetic_error "Division by zero."))
+    ...     ((= x 1) (raise 'logic_error "Unimplemented for x=1."))
+    ...     (/ 1 x))
+\end{Verbatim}
+
+The invocation and subsequent handling of the exception is as follows:
+
+\begin{Verbatim}
+    --> defun stringify-type error-id (cond
+    ...    ((same error-id 'domain_error) "Domain")
+    ...    ((same error-id 'arithmetic_error) "Arithmetic")
+    ...    ((same error-id 'logic_error) "Logic"))
+    --> try-catch (frobnicate 0) (str:format "Caught a {stringify-type error-id} error of length {tally error}.")
+    Caught a Domain error of length 357.
 \end{Verbatim}

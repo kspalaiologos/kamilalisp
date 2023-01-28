@@ -43,7 +43,7 @@ public class Main {
         List<Atom> data = Parser.parse(Files.readString(Path.of(source)));
         try {
             for (Atom atom : data) {
-                Evaluation.safeEvaluate(env, atom, x -> {
+                Evaluation.safeEvaluate(env, atom, (x, t) -> {
                     System.out.println(x);
                     throw new InterruptionError();
                 });
@@ -102,7 +102,7 @@ public class Main {
                         continue;
                     }
                     for (Atom atom : data) {
-                        Atom a = Evaluation.safeEvaluate(env, atom, s -> {
+                        Atom a = Evaluation.safeEvaluate(env, atom, (s, thr) -> {
                             System.err.println(s);
                             throw new InterruptionError();
                         });

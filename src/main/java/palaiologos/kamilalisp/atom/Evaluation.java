@@ -4,6 +4,7 @@ import palaiologos.kamilalisp.error.TypeError;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class Evaluation {
@@ -53,7 +54,7 @@ public class Evaluation {
     }
 
     @Nonnull
-    public static Atom safeEvaluate(Environment env, Atom atom, Function<String, Atom> exceptionHandler) {
+    public static Atom safeEvaluate(Environment env, Atom atom, BiFunction<String, Throwable, Atom> exceptionHandler) {
         switch (atom.getType()) {
             case STRING:
             case REAL:
@@ -88,7 +89,7 @@ public class Evaluation {
                     String trace = StackFrame.stackTrace(t);
                     while (StackFrame.depth() > depth)
                         StackFrame.pop();
-                    return exceptionHandler.apply(trace);
+                    return exceptionHandler.apply(trace, t);
                 }
             case IDENTIFIER:
                 if (env.has(Identifier.of(atom.getIdentifier()))) {
