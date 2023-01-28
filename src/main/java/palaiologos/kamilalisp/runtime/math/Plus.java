@@ -53,7 +53,7 @@ public class Plus extends PrimitiveFunction implements Lambda {
     }
 
     public static Atom add1(Atom a) {
-        a.assertTypes(Type.REAL, Type.COMPLEX, Type.LIST);
+        a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
         if (a.getType() == Type.COMPLEX) {
             return new Atom(a.getComplex().conjugate());
         } else if (a.getType() == Type.REAL) {

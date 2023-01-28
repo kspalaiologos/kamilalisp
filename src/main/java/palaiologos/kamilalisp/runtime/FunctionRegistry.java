@@ -280,6 +280,9 @@ public class FunctionRegistry {
         env.setp("list:partition", new Atom(new PartitionRange()));
         env.setp("⍡", new Atom(new PartitionRange()));
 
+        env.setp("⌹⇔⍡", new Atom(new Windows()));
+        env.setp("list:windows", new Atom(new Windows()));
+
         env.setp("regex:matches?", new Atom(new RegexMatches()));
         env.setp("regex:replace", new Atom(new RegexReplace()));
         env.setp("regex:split", new Atom(new RegexSplit()));
