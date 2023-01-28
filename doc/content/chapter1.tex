@@ -578,7 +578,7 @@ Another possible way to use \verb|while| is to omit the predicate argument and r
     (46 23 70 35 106 53 160 80 40 20 10 5 16 8 4 2 1)
 \end{Verbatim}
 
-Another valuable comparison to be made between recursion, tail recursion and iteration is the implementation of fibonacci numbers. Depsite being implemented in KamilaLisp already as the function \verb|fib|, consider the following reimplementation:
+Another valuable comparison to be made between recursion, tail recursion and iteration is the implementation of fibonacci numbers. Despite being implemented in KamilaLisp already as the function \verb|fib|, consider the following reimplementation:
 
 \begin{Verbatim}
     --> defun fibr (n) (if (< n 2) n (+ (fibr (- n 1)) (fibr (- n 2))))
@@ -619,7 +619,7 @@ Notice that the fibonacci function is considerably expensive to compute, yet it 
 
 The memoized version still has some problems (e.g. it will still overflow the stack if the cache is not big enough) but it is a good improvement over the original version. The built-in function \verb|fib| in KamilaLisp uses the Binet formula to compute the fibonacci numbers, which is a much faster method than the naive recursive approach.
 
-One nuissance that needs to be pointed out is that in functions and lambda expressions, names are updated ad-hoc and usually looked up when needed to allow the programmer to utilise some interesting concepts such as mutual recursion. This has a few consequences, for instance:
+One nuisance that needs to be pointed out is that in functions and lambda expressions, names are updated ad-hoc and usually looked up when needed to allow the programmer to utilise some interesting concepts such as mutual recursion. This has a few consequences, for instance:
 
 \begin{Verbatim}
     --> defun f (x) (+ x a)
