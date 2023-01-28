@@ -63,8 +63,9 @@ public class Main {
         Environment env = Environment.defaultEnvironment();
         DefaultParser parser = new DefaultParser();
         parser.setEofOnUnclosedBracket(DefaultParser.Bracket.ROUND, DefaultParser.Bracket.SQUARE);
-        parser.setEscapeChars(new char[]{});
-        parser.setQuoteChars(new char[]{});
+        parser.setEscapeChars(new char[]{'\\'});
+        parser.setQuoteChars(new char[]{'\"'});
+        parser.eofOnUnclosedQuote(true);
         Terminal t = TerminalBuilder.builder().dumb(true).build();
         // Bug workaround for JLine3.
         String promptPattern = t.getType().equals(Terminal.TYPE_DUMB) || t.getType().equals(Terminal.TYPE_DUMB_COLOR) ? "" : "%P. ";
