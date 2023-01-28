@@ -11,9 +11,10 @@ Using \verb|car| and \verb|cdr| it is possible to define a basic, non-tail recur
 
 \begin{Verbatim}
     --> defun length l (if (same l 'nil) 0 (+ 1 (length (cdr l))))
+    (λ l . (if (same l 'nil) 0 (+ 1 (length (cdr l)))))
 \end{Verbatim}
 
-A generalised version of this function that handles scalar values, variadic application and strings is available as \verb|tally|:
+A generalised version of this function that handles scalar values, variadic application and strings is available as \verb|tally|\footnote{\textit{tally} - to count or calculate something}:
 
 \begin{Verbatim}
     --> tally '(1 2 3) '(4 5)
@@ -26,4 +27,89 @@ A generalised version of this function that handles scalar values, variadic appl
     1
     --> tally
     0
+\end{Verbatim}
+
+Individual elements may be prepended to a list using the \verb|cons| function:
+
+\begin{Verbatim}
+    --> cons 6 'nil
+    (6)
+    --> cons 5 (cons 6 'nil)
+    (5 6)
+    --> cons 1 '(2 3)
+    (1 2 3)
+\end{Verbatim}
+
+Hence, one could define a countdown function as follows:
+
+\begin{Verbatim}
+    --> defun countdown x (if x (cons x (countdown (- x 1))) '(0))
+    (λ x . (if x (cons x (countdown (- x 1))) '(0)))
+    --> countdown 5
+    (5 4 3 2 1 0)
+\end{Verbatim}
+
+Once again, a general result of this function is available in KamilaLisp as the \verb|range| function:
+
+\begin{Verbatim}
+    --> range 5
+    (0 1 2 3 4)
+    --> range 5 10
+    (5 6 7 8 9)
+    --> range 10 5
+    (10 9 8 7 6)
+    --> range 5 -5
+    (5 4 3 2 1 0 -1 -2 -3 -4)
+\end{Verbatim}
+
+List concatenation in KamilaLisp is accomplished using the \verb|append| function. The \verb|append| function is of course variadic and accepts an empty parameter list:
+
+\begin{Verbatim}
+    --> append '(1 2 3) '(4 5)
+    (1 2 3 4 5)
+    --> append '(1 2 3) '(4 5) '(6 7)
+    (1 2 3 4 5 6 7)
+    --> append
+    'nil
+    --> append 'nil 'nil
+    'nil
+    --> append "Tomato" "sauce"
+    Tomatosauce
+\end{Verbatim}
+
+Prefixes and suffixes of lists may be extracted using the \verb|take| and \verb|drop| functions as follows:
+
+\begin{Verbatim}
+    --> take 3 '(1 2 3 4 5)
+    (1 2 3)
+    --> drop 3 '(1 2 3 4 5)
+    (4 5)
+    --> take 3 '(1 2 3)
+    (1 2 3)
+    --> drop 3 '(1 2 3)
+    --> take 3 'nil
+    [[]
+     []
+     []]
+    --> drop 3 'nil
+    --> take 5 '(1 2 3)
+    (1 2 3 0 0)
+\end{Verbatim}
+
+The \verb|take| and \verb|drop| functions also accept negative argument, which changes the direction of the operation:
+
+\begin{Verbatim}
+    --> take -3 "KamilaLisp is Fun"
+    Fun
+\end{Verbatim}
+
+More generally, \textit{all} prefixes and suffixes of a list are extracted using the \verb|prefixes| and \verb|suffixes| functions:
+
+\begin{Verbatim}
+    --> prefixes '(1 2 3 4 5)
+    ((1) (1 2) (1 2 3) (1 2 3 4) (1 2 3 4 5))
+    --> suffixes '(1 2 3 4 5)
+    ((1 2 3 4 5) (2 3 4 5) (3 4 5) (4 5) (5))
+    --> suffixes "Lisp"
+    ("Lisp" "isp" "sp" "p")
 \end{Verbatim}

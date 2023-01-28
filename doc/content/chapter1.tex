@@ -129,7 +129,7 @@ Since functions are first-class in KamilaLisp, it is now also possible to return
     The value of f(x) for x=4.5 is 20.25
 \end{Verbatim}
 
-When writing complex functions, it is of particular interest to keep the partial results obtained during the execution of the function. This can be achieved by cascading the \textit{let} construct, or using the \textit{let-seq} construct. The following examples implement a function that raises its first argument to the eigth power:
+When writing complex functions, it is of particular interest to keep the partial results obtained during the execution of the function. This can be achieved by cascading the \textit{let} construct, or using the \textit{let-seq} construct. The following examples implement a function that raises its first argument to the eigth power\footnote{Many reimplementations of common built-in functions mentioned in the book that are present in KamilaLisp are rather suboptimal and demonstrated only for the sake of completeness. The programmer is urged to use the optimised predefined routines when possible instead.}:
 
 \begin{Verbatim}
     --> defun p8 x (let-seq (

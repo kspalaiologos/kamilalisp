@@ -1,6 +1,7 @@
 package palaiologos.kamilalisp.runtime.array;
 
 import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.error.TypeError;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -8,23 +9,19 @@ import java.util.stream.Stream;
 public class Append extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        assertArity(args, 2);
-        if (args.get(0).getType() == Type.STRING && args.get(1).getType() == Type.STRING) {
-            return new Atom(args.get(0).getString() + args.get(1).getString());
-        }
-
-        Atom a1, a2;
-        if (args.get(0).getType() == Type.LIST) {
-            a1 = args.get(0);
-        } else {
-            a1 = new Atom(List.of(args.get(0)));
-        }
-        if (args.get(1).getType() == Type.LIST) {
-            a2 = args.get(1);
-        } else {
-            a2 = new Atom(List.of(args.get(1)));
-        }
-        return new Atom(Stream.concat(a1.getList().stream(), a2.getList().stream()).toList());
+        // 0. Check if there are any arguments.
+        if(args.isEmpty())
+            return Atom.NULL;
+        // 1. Assert that all types are either string or list.
+        if(args.stream().anyMatch(a -> a.getType() != Type.STRING && a.getType() != Type.LIST))
+            throw new TypeError("Expected all arguments to be either strings or lists.");
+        // 2. Check if all types are the same.
+        if(args.stream().map(Atom::getType).distinct().count() != 1)
+            throw new TypeError("Expected all arguments to be of the same type.");
+        if(args.get(0).getType() == Type.STRING)
+            return new Atom(args.stream().map(Atom::getString).reduce("", String::concat));
+        else
+            return new Atom(args.stream().flatMap(a -> a.getList().stream()).toList());
     }
 
     @Override
