@@ -20,6 +20,6 @@ public class TryCatch extends PrimitiveFunction implements SpecialForm {
 
     @Override
     protected String name() {
-        return "try..catch";
+        return "try-catch";
     }
 }

@@ -127,6 +127,8 @@ public class FunctionRegistry {
         env.setp("⍫⊢", new Atom(new GetFile()));
         env.setp("try-catch", new Atom(new TryCatch()));
         env.setp("‼", new Atom(new TryCatch()));
+        env.setp("raise", new Atom(new Raise()));
+        env.setp("↑‼", new Atom(new Raise()));
         env.setp("writeln", new Atom(new Writeln()));
         env.setp("↑⍫", new Atom(new Writeln()));
         env.setp("let-seq", new Atom(new LetSeq()));
