@@ -96,6 +96,8 @@ public class FunctionRegistry {
         env.setp("env-keys", new Atom(new EnvKeys()));
         env.setp("levenshtein", new Atom(new Levenshtein()));
         env.setp("⍫≉", new Atom(new Levenshtein()));
+        env.setp("shannon-entropy", new Atom(new Shannon()));
+        env.setp("⍫⍴", new Atom(new Shannon()));
         env.setp("tally", new Atom(new Tally()));
         env.setp("⍴", new Atom(new Tally()));
         env.setp("same", new Atom(new Same()));
