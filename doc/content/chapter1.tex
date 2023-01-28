@@ -679,6 +679,7 @@ The invocation and subsequent handling of the exception is as follows:
     ...    ((same error-id 'domain_error) "Domain")
     ...    ((same error-id 'arithmetic_error) "Arithmetic")
     ...    ((same error-id 'logic_error) "Logic"))
-    --> try-catch (frobnicate 0) (str:format "Caught a {stringify-type error-id} error of length {tally error}.")
+    --> try-catch (frobnicate 0) (str:format
+    ...    "Caught a {stringify-type error-id} error of length {tally error}.")
     Caught a Domain error of length 357.
 \end{Verbatim}
