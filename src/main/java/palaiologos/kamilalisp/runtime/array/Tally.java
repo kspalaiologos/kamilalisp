@@ -28,7 +28,7 @@ public class Tally extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if (args.isEmpty())
-            throw new TypeError("Expected 1 or more arguments to `" + name + "'.");
+            return Atom.FALSE;
         if (args.size() == 1)
             return tally(args.get(0));
         return new Atom(args.stream().map(Tally::tally).collect(Collectors.toList()));

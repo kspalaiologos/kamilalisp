@@ -1,2 +1,29 @@
 
 \chapter{List processing}
+
+Lists are one of the most important data structures used in functional programming and every major programming language provides means of finite sequence storage. KamilaLisp is no different and a special emphasis is put on list and array processing, the basic building block of dataflow programming.
+
+As mentioned before, every list besides the empty list contains a \textit{head} (the first element, \verb|car|) and a \textit{tail} (the last element, \verb|cdr|). The tail of a list is always another list, even if it is empty. The empty list literal is introduced in the code as \verb|'nil| or \verb|'()|. 
+
+\section{Basic list operations}
+
+Using \verb|car| and \verb|cdr| it is possible to define a basic, non-tail recursive function that yields the length of a list:
+
+\begin{Verbatim}
+    --> defun length l (if (same l 'nil) 0 (+ 1 (length (cdr l))))
+\end{Verbatim}
+
+A generalised version of this function that handles scalar values, variadic application and strings is available as \verb|tally|:
+
+\begin{Verbatim}
+    --> tally '(1 2 3) '(4 5)
+    (3 2)
+    --> tally '(1 2 3 4 5)
+    5
+    --> tally "abcde"
+    5
+    --> tally 5
+    1
+    --> tally
+    0
+\end{Verbatim}
