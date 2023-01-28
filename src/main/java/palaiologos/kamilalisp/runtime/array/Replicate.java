@@ -111,14 +111,22 @@ public class Replicate extends PrimitiveFunction implements Lambda {
         } else if(args.get(0).getType() == Type.INTEGER && args.get(1).getType() == Type.LIST) {
             List<Atom> list = args.get(1).getList();
             int n = args.get(0).getInteger().intValue();
+            if(n < 0)
+                throw new RuntimeException("replicate: negative count.");
+            if(list.size() == 0)
+                return Atom.NULL;
             return new Atom(new ReplicateListFacade(list, n));
         } else if(args.get(0).getType() == Type.INTEGER && args.get(1).getType() == Type.STRING) {
             String s = args.get(1).getString();
             int n = args.get(0).getInteger().intValue();
+            if(n < 0)
+                throw new RuntimeException("replicate: negative count.");
             return new Atom(s.repeat(n));
         } else if(args.get(0).getType() == Type.INTEGER) {
             Atom a = args.get(1);
             int n = args.get(0).getInteger().intValue();
+            if(n < 0)
+                throw new RuntimeException("replicate: negative count.");
             return new Atom(new ReplicateListFacadeSingleton(a, n));
         } else {
             throw new RuntimeException("replicate: invalid arguments.");

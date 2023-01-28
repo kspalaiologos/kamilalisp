@@ -38,6 +38,8 @@ public class Cycle extends PrimitiveFunction implements Lambda {
         if (a.getType() == Type.INTEGER && b.getType() == Type.LIST) {
             if (a.getInteger().intValueExact() < 0)
                 throw new RuntimeException("cycle: negative length");
+            if(b.getList().size() == 0)
+                return Atom.NULL;
             return new Atom(new CycleListFacade(b.getList(), a.getInteger().intValueExact()));
         } else if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
             return new Atom(Streams.zip(a.getList().stream(), b.getList().stream(), Cycle::cycle).toList());

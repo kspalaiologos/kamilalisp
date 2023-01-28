@@ -113,3 +113,73 @@ More generally, \textit{all} prefixes and suffixes of a list are extracted using
     --> suffixes "Lisp"
     ("Lisp" "isp" "sp" "p")
 \end{Verbatim}
+
+Going back to the \verb|take| function, it's easy to notice that when the list is shorter than expected, the resultant list is simply padded with zeroes. This may not be the desired behaviour, thus a variant of \verb|take| called \verb|cycle| is provided. The \verb|cycle| function takes a list and a number and returns a list of the same length as the number, where the elements are taken from the list in a cyclic manner:
+
+\begin{Verbatim}
+    --> cycle 5 '(1 2 3)
+    (1 2 3 1 2)
+    --> cycle 3 '(1 2 3)
+    (1 2 3)
+    --> cycle 2 '(1 2 3)
+    (1 2)
+    --> cycle 1 '(1 2 3)
+    (1)
+    --> cycle 0 '(1 2 3)
+    --> cycle -1 '(1 2 3)
+    RuntimeException thrown in thread 1dbd16a6:
+            cycle: negative length
+        at entity cycle  1:1
+        at cycle primitive function
+    --> cycle 'nil 5
+    --> cycle "abc" 5
+    abcab
+\end{Verbatim}
+
+KamilaLisp also provides a few functions for altering the \textit{order} of elements in a list. The \verb|reverse| function reverses the order of elements in a list:
+
+\begin{Verbatim}
+    --> reverse '(1 2 3 4 5)
+    (5 4 3 2 1)
+    --> reverse "KamilaLisp"
+    psiLalimaK
+\end{Verbatim}
+
+The \verb|rotate| function, as the name suggests, takes a list and a number and returns a list where the elements are rotated by the number:
+
+\begin{Verbatim}
+    --> rotate 2 '(1 2 3 4 5)
+    (3 4 5 1 2)
+    --> rotate -2 '(1 2 3 4 5)
+    (4 5 1 2 3)
+    --> rotate -4 "KamilaLisp"
+    LispKamila
+    --> rotate 1 'nil
+    --> rotate 0 'nil
+\end{Verbatim}
+
+The \verb|replicate| function ubiquitously used in APL and Haskell is also available in KamilaLisp, except its domain is extended to scalar values:
+
+\begin{Verbatim}
+    --> replicate 3 5
+    (5 5 5)
+    --> replicate 5 '(1 2 3)
+    (1 2 3 1 2 3 1 2 3 1 2 3 1 2 3)
+    --> replicate 5 "Kamila"
+    KamilaKamilaKamilaKamilaKamila
+    --> replicate 0 5
+    --> replicate 5 'nil
+    --> replicate '(1 2 3) '(4 5 6)
+    (4 5 5 6 6 6)
+\end{Verbatim}
+
+Finally, the \verb|list:shuffle| function will take a list and return a list with the same elements, but in a random order:
+
+\begin{Verbatim}
+    --> list:shuffle '(1 2 3 4 5)
+    (2 5 3 1 4)
+    --> list:shuffle "KamilaLisp"
+    LpLsikmaia
+\end{Verbatim}
+
+\section{Sorting, searching and indexing}

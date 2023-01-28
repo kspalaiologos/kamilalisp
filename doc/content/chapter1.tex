@@ -36,6 +36,15 @@ Because the list of arguments to a function (the \textit{tail}) is evaluated bef
     (2 3)
 \end{Verbatim}
 
+This may alert the observant reader once again - \textit{What if I want to create a list out of a set of expressions}? This question is once again well founded - because the quote stops something from being evaluated, then surely the expressions inside of it will stay untouched too. The answer is simple - use the \verb|tie| function as follows:
+
+\begin{Verbatim}
+    --> tie 1 2 3
+    (1 2 3)
+    --> tie (+ 2 2) (/ 6 3) (+ 2 3)
+    (4 2 5)
+\end{Verbatim}
+
 KamilaLisp follows scoping rules familiar from other programming languages, such as Scheme or C++ - \textit{static scoping} (also called \textit{lexical scoping}), where an attempt is initially made to resolve a variable in the current scope. If this approach fails, the variable is resolved in the scope of its lexical ancestors until either the interpreter finds an environment where the variable is bound, or raises an error regarding an unbound variable. Additionally, variables may be \textit{shadowed}, as demonstrated below:
 
 \begin{Verbatim}
@@ -480,7 +489,7 @@ Equipped with the power of variadic functions and recursion, the next natural st
 \begin{itemize}
     \item For all natural numbers $i, k$ where $0 \le i \le k$, the projection function (sometimes also called the identity function when $i=0$) is defined as $P_i^k(x_0, \dots, x_k)=x_i$. The projection function is a built-in operator in KamilaLisp, where \verb|#a| is equivalent to $P_a^k$.
     \item For each natural $n$ and $k$, the constant function $C_n^k$ is defined as $C_n^k(x_0, \dots, x_k) = x_n$. This is easily implemented using the previously discussed projection function as \verb|$(#0 n)|.
-    \item For each natural $n$, the successor function $S_n$ is defined as $S_n(x) = x + 1$. This is easily implemented using just function composition - \verb|$(+ 1)|.
+    \item For each natural $n$, the successor function $S_n$ is defined as $S_n(x) = x + 1$. This is easily implemented using just partial application - \verb|$(+ 1)|.
 \end{itemize}
 
 The $\mu$-recursive composition operator (also called the substitution operator) defined for an $m$-ary function $h(x_0, \dots, x_m)$ and exactly $m$ $n$-ary functions $g_0(x_0, \dots, x_n), \dots, g_m(x_0, \dots, x_n)$ as $h\circ(g_0, \dots, g_m) = f$ where $f(x_0, \dots, x_n) = h(g_0(x_0, \dots, x_n), \dots, g_m(x_0, \dots, x_n))$. This definition is essentially equivalent to KamilaLisp \textit{forks}\footnote{A general version of APL 3-trains; https://aplwiki.com/wiki/Train\#3-trains} - \verb|[h g_0 ... g_m] x_0 ... x_k|.
