@@ -6,11 +6,8 @@ import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.runtime.array.Rank;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Depth implements SpecialForm, ReactiveFunction {
@@ -99,7 +96,7 @@ public class Depth implements SpecialForm, ReactiveFunction {
 
                         // Only one possibility.
                         if(a.getType() != Type.LIST) {
-                            return List.of(Evaluation.evaluate(env, lambda, List.of(a)));
+                            return List.of(a);
                         }
 
                         List<Atom> dt = new ArrayList<>();

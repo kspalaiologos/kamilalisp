@@ -39,7 +39,7 @@ public class Match extends PrimitiveFunction implements SpecialForm {
         if (pat.getType() == Type.LIST) {
             // Ok. Try to match the lists together.
             // Notice that the pattern list can end with an identifier
-            // that ends with three dots "..." - this means that the identifier
+            // that starts with three dots "..." - this means that the identifier
             // will be bound to the rest of the list.
             if (a.getType() != Type.LIST)
                 return false;
@@ -54,10 +54,10 @@ public class Match extends PrimitiveFunction implements SpecialForm {
                 if (isIdInPattern(patternAtom)) {
                     Identifier id = getIdFromPattern(patternAtom);
                     String s = Identifier.of(id);
-                    if (s.endsWith("...")) {
+                    if (s.startsWith("...")) {
                         // This is the last element of the pattern list.
                         // Bind the identifier to the rest of the list.
-                        env.set(s.substring(0, s.length() - 3), new Atom(aList.subList(i, aList.size())));
+                        env.set(s.substring(3), new Atom(aList.subList(i, aList.size())));
                         return true;
                     }
                 }
@@ -81,7 +81,7 @@ public class Match extends PrimitiveFunction implements SpecialForm {
          * Use match to compute length using LITERAL match.
          * (defun length (list)
          *   (match list
-         *     (('x 'xs...) (+ 1 \length xs))
+         *     (('x '...xs) (+ 1 \length xs))
          *     (nil 0)))
          *
          * Use match to evaluate SKI combinator calculus.

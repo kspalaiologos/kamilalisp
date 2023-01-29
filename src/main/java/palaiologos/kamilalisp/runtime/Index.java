@@ -26,7 +26,17 @@ public class Index implements SpecialForm {
     public Atom apply(Environment env, List<Atom> args) {
         Atom indexedAtom = Evaluation.evaluate(env, indexed);
         indexedAtom.assertTypes(Type.LIST, Type.STRING);
-        Atom ix = Evaluation.evaluate(env, new Atom(args));
+        // Check if every element of args is integer.
+        Atom ix;
+        if(args.stream().allMatch(x -> x.getType() == Type.INTEGER)) {
+            // Treat it as a verbatim list or integer.
+            if(args.size() == 1)
+                ix = args.get(0);
+            else
+                ix = new Atom(args);
+        } else {
+            ix = Evaluation.evaluate(env, new Atom(args));
+        }
         if (ix.getType() == Type.INTEGER) {
             return indexedAtom.getList().get(ix.getInteger().intValueExact());
         } else if (ix.getType() == Type.REAL) {

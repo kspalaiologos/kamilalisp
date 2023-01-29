@@ -24,4 +24,6 @@
     \item \textit{Function composition} (or \verb|@|/\verb|∘|, as KamilaLisp calls it) is taking an arbitrary amount of functions where each function operates on the results of the function before, except the last function, which gets all the arguments passed to the anonymous function yielded by composition.
     \item \textit{Selfie} is a higher order function that duplicates the argument to the function it takes (e.g. \verb|×⍨|, computes the square of its argument).
     \item \textit{Commute} swaps the order of two arguments to a function. \verb|⍺ f ⍵| $\iff$ \verb|⍵ f⍨ ⍺|.
+    \item A \textit{variadic function} is a function that takes an arbitrary number of arguments.
+    \item \textit{Currying} is the technique of translating the evaluation of a function that takes multiple arguments into evaluating a sequence of functions, each with a single argument.
 \end{itemize}

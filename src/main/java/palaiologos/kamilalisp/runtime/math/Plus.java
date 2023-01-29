@@ -56,7 +56,7 @@ public class Plus extends PrimitiveFunction implements Lambda {
         a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
         if (a.getType() == Type.COMPLEX) {
             return new Atom(a.getComplex().conjugate());
-        } else if (a.getType() == Type.REAL) {
+        } else if (a.getType() == Type.REAL || a.getType() == Type.INTEGER) {
             return a;
         } else if (a.getType() == Type.LIST) {
             return new Atom(a.getList().stream().map(Plus::add1).collect(Collectors.toList()));

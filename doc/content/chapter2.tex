@@ -189,18 +189,23 @@ KamilaLisp uses a special syntax for indexing into lists. The syntax is as follo
 \begin{Verbatim}
     --> def x '(1 5 2 3 4)
     (1 5 2 3 4)
-    --> ?x$[#0 0]
+    --> ?x$[0]
     1
 \end{Verbatim}
 
-This syntax is very confusing when demonstrated in isolation. First, indexing returns a value without a function call involved, so it is mandatory to tell the interpreter that the intent is to obtain the value of an object, hence the \verb|?| prefix in the REPL. Furthermore, the contents of square brackets in the indexing syntax are interpreted \textit{as an expression}, hence it is needed to use \verb|#0| (the \textit{identity} function - a function that applied to an argument simply returns it). Finally, it is possible to index a list using a list, as follows:
+This syntax is very confusing when demonstrated in isolation. First, indexing returns a value without a function call involved, so it is mandatory to tell the interpreter that the intent is to obtain the value of an object, hence the \verb|?| prefix in the REPL. It is possible to index a list using a list, as follows:
 
 \begin{Verbatim}
-    --> ?x$[tie 1 3 4]
+    --> ?x$[1 3 4]
     (5 3 4)
 \end{Verbatim}
 
-The indexing function loops over the list it has received and returns respectively the first, third and fourth items of a list, all packed together into a single array. This is a very powerful feature, as it allows for a very concise syntax for extracting elements from a list, applying permutations and even sorting, as demonstrated later in the book.
+The indexing function loops over the list it has received and returns respectively the first, third and fourth items of a list, all packed together into a single array. This is a very powerful feature, as it allows for a very concise syntax for extracting elements from a list, applying permutations and even sorting, as demonstrated later in the book. Of course, indexing can also be done using an expression:
+
+\begin{Verbatim}
+    --> ?x$[random 5]
+    3
+\end{Verbatim}
 
 Another closely related functionality related to indexing is searching. The \verb|index-of| takes a value and a list and returns the index of the first occurrence of the value in the list:
 
@@ -209,4 +214,164 @@ Another closely related functionality related to indexing is searching. The \ver
     3
     --> index-of 5 '(9 8 6 4 7 2 3)
     -1
+\end{Verbatim}
+
+\section{Elementary higher order functions}
+
+KamilaLisp provides a wide range of higher order functions for manipulating lists. Many them can be defined using recursion, however almost all of them are guaranteed to terminate, while recursion in general case does not. The use of list processing functions that constitute the core of array programming is highly encouraged over recursion, because they tend to be more concise, easier to understand and less error prone.
+
+The most used function is a built-in function takes a function and a list and applies the function to each element of the list, returning a list of the results. Define a successor funciton and map it over a list by prepending a single colon before the function name:
+
+\begin{Verbatim}
+    --> def s $(+ 1)
+    $['+, '1]
+    --> :s '(1 2 3 4 5)
+    (2 3 4 5 6)
+\end{Verbatim}
+
+The \verb|map| function (which is the more familiar name of this construct, predominantly called that in Haskell and OCaml) has a few nuissances that are worth mentioning. First, it is possible to apply it to a non-list argument and an empty list:
+
+\begin{Verbatim}
+    --> :s 5
+    (6)
+    --> :s 'nil
+    -->
+\end{Verbatim}
+
+The functor returned by \verb|:| has the same arity as the function it is applied to, hence it is possible for it to act as a \verb|zipWith| operation known from e.g. Haskell:
+
+\begin{Verbatim}
+    --> :+ '(1 2 3) '(4 5 6)
+    (5 7 9)
+    --> :+ '(1 2 3) '(4 5 6 7)
+    (5 7 9)
+    --> :+ '(1 2 3 4) '(4 5 6)
+    (5 7 9)
+    --> :+ '(1 1 1) '(2 2 2) '(3 3 3)
+    (6 6 6)
+\end{Verbatim}
+
+Of course, it is possible to specify invariant arguments to the function that is applied to each element of the list:
+
+\begin{Verbatim}
+    --> :+ 5 '(5) '(1 2 3 4 5)
+    (11 12 13 14 15)
+\end{Verbatim}
+
+An important observation to be made is that it is possible to apply a function to a list of lists by stacking the comma operator multiple times also abusing the invariant arguments to write a function that forms tuples from the elements in a two-dimensional matrix:
+
+\begin{Verbatim}
+    --> def mat '((4 3) (3 4))
+    [[4 3]
+     [3 4]]
+    --> ::cons 5 mat
+    (((5 4) (5 3)) ((5 3) (5 4)))
+\end{Verbatim}
+
+The colon operator may not be general enough to be suitable for all uses. For example, it may be desirable to create a \textit{pervasive function} - a function which automatically applies itself to all the scalar values in a list. The built-in functions such as \verb|+|, \verb|-| or \verb|ln| are pervasive by default, but for example the \verb|reverse| function is not:
+
+\begin{Verbatim}
+    --> reverse '(("hi" "hello") ("kamila" "lisp"))
+    (("kamila" "lisp") ("hi" "hello"))
+\end{Verbatim}
+
+Since strings are generally considered scalar values by KamilaLisp (however, this is not the case in other array programming languages such as APL), applying it \textit{on depth zero} yields the following results:
+
+\begin{Verbatim}
+    --> reverse%[0] '(("KamilaLisp" "is") "fun!")
+    (("psiLalimaK" "si") "!nuf")
+\end{Verbatim}
+
+The function \verb|reverse| was ran on every object of rank zero of the list. If it is desirable reverse vectors (lists of scalars), the \verb|reverse| function should be applied \textit{on depth one}:
+
+\begin{Verbatim}
+    --> reverse%[1] '((1 2) 3 4)
+    ((2 1) 3 4)
+\end{Verbatim}
+
+To give another example, to reverse the rows of a list of matrices, the function should be applied \textit{on depth two}:
+
+\begin{Verbatim}
+    --> reverse%[2] '(((1 2) (3 4)) ((5 6) (7 8)))
+    ((2 1) (4 3))
+\end{Verbatim}
+
+Of course, since the depth operator is a \textit{generalisation} of the colon operator (mapping), it is possible to use it to map a function over a list of lists. In this case, the depth specifier must be negative:
+
+\begin{Verbatim}
+    --> writeln%[-1] '("Hello" "world!")
+\end{Verbatim}
+
+The smaller negative number, the more times the map function is applied:
+
+\begin{Verbatim}
+    --> cons%[-2] mat 5
+    (((4 5) (3 5)) ((3 5) (4 5)))
+    --> ::cons mat 5
+    (((4 5) (3 5)) ((3 5) (4 5)))
+\end{Verbatim}
+
+An important thing to note is that the depth operator subtly differs from the colon operator in the variadic case. The colon operator will determine the shape of the result ad-hoc, regardless of argument order:
+
+\begin{Verbatim}
+    --> ::cons mat 5
+    (((4 5) (3 5)) ((3 5) (4 5)))
+    --> ::cons 5 mat
+    (((5 4) (5 3)) ((5 3) (5 4)))
+\end{Verbatim}
+
+The depth operator, however, will always infer the shape from its first argument, potentially leading to unexpected results:
+
+\begin{Verbatim}
+    --> cons%[-2] mat 5
+    (((4 5) (3 5)) ((3 5) (4 5)))
+    --> cons%[-2] 5 mat
+    [[5 4]]
+\end{Verbatim}
+
+This behaviour significantly differs from the behaviour of the depth operator in other languages, such as APL\footnote{https://aplwiki.com/wiki/Depth\_(operator)}, where the depth operator is restricted to only two arguments, making it feasible to try dynamically determining the shape of the result. In KamilaLisp the shape is inferred from the first argument, since the operator's complexity would grow by a large magnitude as a result of it being a generalisation to an arbitrary amount of arguments. Additionally, the complex inferring rule in APL-like languages is not very useful in practice and leads to some design shortcomings.
+
+To explore this topic further, it is necessary to demonstrate that the KamilaLisp depth operator accepts multiple depth values. For example, the following program will apply the function to objects of rank one extracted from the first array, and the objects obtained by descending once into the second array:
+
+\begin{Verbatim}
+    --> defun f (x y) (str:format "{?x}, {?y}")
+    (λ x y . (str:format "{?x}, {?y}"))
+    --> f%[1 -1] '((1 2) (3 4)) '(6 5 (4 3) 2 1)
+    ("(1 2), 6" "(3 4), 5")
+\end{Verbatim}
+
+Notice that the depth operator makes an attempt to salvage the situation arising due to the fact that the lists are of different sizes by trimming the longer list to the size of the shorter one (which is not done by APL). To make a more fair comparison with APL, consider the following program instead:
+
+\begin{Verbatim}
+    --> f%[-2 0] '((1 2) 3) '((1 2) 3)
+    (("1, 1" "2, 2") "3, 3")
+\end{Verbatim}
+
+Since the depth operator simply extracts the objects of the specified rank from the arguments, it does not pay attention to the shape of other arguments, so scalars for the second argument to f can be extracted also in this case:
+
+\begin{Verbatim}
+    --> f%[-2 0] '((1 2) 3) '(1 2 3)
+    (("1, 1" "2, 2") "3, 3")
+\end{Verbatim}
+
+Since APL determines the shape in a more "clever" (also way slower and more convoluted) way, this behaviour can not be achieved:
+
+\begin{Verbatim}
+        ((1 2) 3) ({⍺⍵} ⍥ ¯2 0) (1 2) 3
+┌─────────┬───┐
+│┌───┬───┐│3 3│
+││1 1│2 2││   │
+│└───┴───┘│   │
+└─────────┴───┘
+        ((1 2) 3) ({⍺⍵} ⍥ ¯2 0) 1 2 3
+LENGTH ERROR
+        ((1 2)3)({⍺ ⍵} ⍥ ¯2 0)1 2 3
+                ∧
+\end{Verbatim}
+
+Finally, the depths list can be defined as a result of an expression:
+
+\begin{Verbatim}
+    --> f%[[tie + -] 1] '((1 2) (3 4)) '(6 5 (4 3) 2 1)
+    ("(1 2), 6" "(3 4), 5")
 \end{Verbatim}
