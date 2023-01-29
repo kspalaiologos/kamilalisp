@@ -1,7 +1,6 @@
 package palaiologos.kamilalisp.runtime.meta;
 
 import com.google.common.collect.Streams;
-import org.apache.commons.lang3.tuple.Pair;
 import palaiologos.kamilalisp.atom.*;
 
 import java.lang.management.GarbageCollectorMXBean;
@@ -19,10 +18,10 @@ public class Cmpx extends PrimitiveFunction implements SpecialForm {
     private long getGC() {
         long garbageCollectionTime = 0;
 
-        for(GarbageCollectorMXBean gc : ManagementFactory.getGarbageCollectorMXBeans()) {
+        for (GarbageCollectorMXBean gc : ManagementFactory.getGarbageCollectorMXBeans()) {
             long time = gc.getCollectionTime();
 
-            if(time >= 0) {
+            if (time >= 0) {
                 garbageCollectionTime += time;
             }
         }

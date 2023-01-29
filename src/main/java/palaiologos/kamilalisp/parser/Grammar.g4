@@ -14,6 +14,7 @@ form: form_rem (('@'|'∘') form_rem)*
 
 form_rem: literal
         | form_rem '$' sqlist
+        | form_rem '%' sqlist
         | bind
         | any_list
         | reader_macro
@@ -55,7 +56,7 @@ parallel_map
     ;
 
 over
-    : ('^' | '⍨') form_rem
+    : '^' form_rem
     ;
 
 tack
@@ -99,8 +100,6 @@ COMPLEX: (FLOAT | LONG) 'J' (FLOAT | LONG);
 
 FLOAT
     : '-'? [0-9]+ FLOAT_TAIL
-    | '-'? 'Infinity'
-    | '-'? 'NaN'
     ;
 
 fragment
@@ -133,10 +132,10 @@ NIL : 'nil' | '⍬';
 // Normally I'd have made a rule with NOTID and inverted it in a set.
 
 fragment
-NOTID: ~('∘' | '⍬' | '⍨' | '@' | '$' | '^' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | '&') ;
+NOTID: ~('∘' | '⍬' | '⍨' | '@' | '$' | '%' | '^' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | '&') ;
 
 fragment
-NOTID_START: ~('∘' | '⍬' | '⍨' | '#' | '^' | '$' | '\\' | '\'' | '@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | ':' | '&' | '0'..'9') ;
+NOTID_START: ~('∘' | '⍬' | '⍨' | '#' | '^' | '%' |'$' | '\\' | '\'' | '@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | ':' | '&' | '0'..'9') ;
 
 NAME: NOTID_START NOTID* ;
 

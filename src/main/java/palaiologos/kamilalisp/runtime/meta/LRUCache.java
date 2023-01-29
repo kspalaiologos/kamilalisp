@@ -4,26 +4,11 @@ import java.util.HashMap;
 import java.util.Objects;
 
 class LRUCache<K, V> {
-    static class Node<T, U> {
-        Node<T, U> previous;
-        Node<T, U> next;
-        final T key;
-        final U value;
-
-        public Node(Node<T, U> previous, Node<T, U> next, T key, U value) {
-            this.previous = previous;
-            this.next = next;
-            this.key = key;
-            this.value = value;
-        }
-    }
-
     private final HashMap<K, Node<K, V>> cache;
+    private final int maxSize;
     private Node<K, V> leastRecentlyUsed;
     private Node<K, V> mostRecentlyUsed;
-    private final int maxSize;
     private int currentSize;
-
     public LRUCache(int maxSize) {
         this.maxSize = maxSize;
         this.currentSize = 0;
@@ -92,6 +77,20 @@ class LRUCache<K, V> {
                 leastRecentlyUsed = myNode;
             }
             currentSize++;
+        }
+    }
+
+    static class Node<T, U> {
+        final T key;
+        final U value;
+        Node<T, U> previous;
+        Node<T, U> next;
+
+        public Node(Node<T, U> previous, Node<T, U> next, T key, U value) {
+            this.previous = previous;
+            this.next = next;
+            this.key = key;
+            this.value = value;
         }
     }
 }

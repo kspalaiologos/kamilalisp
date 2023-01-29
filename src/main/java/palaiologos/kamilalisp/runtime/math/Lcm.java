@@ -8,11 +8,6 @@ import palaiologos.kamilalisp.error.ArrayError;
 import java.util.List;
 
 public class Lcm extends PrimitiveFunction implements Lambda {
-    @Override
-    protected String name() {
-        return "lcm";
-    }
-
     private static Atom min2(Environment e, Atom a, Atom b) {
         a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
         b.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
@@ -40,6 +35,11 @@ public class Lcm extends PrimitiveFunction implements Lambda {
             else
                 return new Atom(result);
         }
+    }
+
+    @Override
+    protected String name() {
+        return "lcm";
     }
 
     @Override

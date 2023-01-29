@@ -5,11 +5,17 @@ import palaiologos.kamilalisp.atom.*;
 
 import java.util.List;
 
-public class Over implements Lambda {
+public class Over implements SpecialForm, ReactiveFunction {
     private final Atom form;
 
     private final int l;
     private final int c;
+
+    public Over(Atom form, int line, int col) {
+        this.form = form;
+        this.l = line;
+        this.c = col;
+    }
 
     @Override
     public int line() {
@@ -21,16 +27,35 @@ public class Over implements Lambda {
         return c;
     }
 
-    public Over(Atom form, int line, int col) {
-        this.form = form;
-        this.l = line;
-        this.c = col;
-    }
-
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         Callable lambda = Evaluation.evaluate(env, form).getCallable();
-        return Evaluation.evaluate(env, lambda, Lists.reverse(args));
+        return new Atom(new Lambda() {
+            @Override
+            public String stringify() {
+                return Over.this.stringify();
+            }
+
+            @Override
+            public String frameString() {
+                return Over.this.frameString();
+            }
+
+            @Override
+            public Atom apply(Environment env, List<Atom> args) {
+                return Evaluation.evaluate(env, lambda, Lists.reverse(args));
+            }
+
+            @Override
+            public int line() {
+                return Over.this.line();
+            }
+
+            @Override
+            public int column() {
+                return Over.this.column();
+            }
+        });
     }
 
     @Override

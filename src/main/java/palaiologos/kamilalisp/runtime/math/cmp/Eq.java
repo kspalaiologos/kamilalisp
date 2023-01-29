@@ -9,11 +9,6 @@ import java.util.List;
 public class Eq extends PrimitiveFunction implements Lambda {
     private static final String name = "=";
 
-    @Override
-    protected String name() {
-        return name;
-    }
-
     private static Atom cmp2(Environment e, Atom a, Atom b) {
         if (a.getType() == Type.REAL && b.getType() == Type.REAL) {
             return new Atom(a.getReal().compareTo(b.getReal()) == 0);
@@ -38,6 +33,11 @@ public class Eq extends PrimitiveFunction implements Lambda {
         } else {
             throw new UnsupportedOperationException(name + " not defined for: " + a.getType() + " and " + b.getType());
         }
+    }
+
+    @Override
+    protected String name() {
+        return name;
     }
 
     @Override

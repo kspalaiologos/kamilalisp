@@ -8,12 +8,11 @@ import palaiologos.kamilalisp.error.TypeError;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 public class DateTimeDifference extends PrimitiveFunction implements Lambda {
     private static Atom f(Atom a, Atom b) {
-        if(a.isUserdata(DateTime.class) && b.isUserdata(DateTime.class)) {
+        if (a.isUserdata(DateTime.class) && b.isUserdata(DateTime.class)) {
             LocalDateTime v = a.getUserdata(DateTime.class).getValue();
             LocalDateTime x = b.getUserdata(DateTime.class).getValue();
             v = v.minusYears(x.getYear());
@@ -24,7 +23,7 @@ public class DateTimeDifference extends PrimitiveFunction implements Lambda {
             v = v.minusSeconds(x.getSecond());
             v = v.minusNanos(x.getNano());
             return new Atom(new DateTime(v));
-        } else if(a.isUserdata(DateTime.class) && b.isUserdata(Time.class)) {
+        } else if (a.isUserdata(DateTime.class) && b.isUserdata(Time.class)) {
             LocalDateTime v = a.getUserdata(DateTime.class).getValue();
             Duration x = b.getUserdata(Time.class).getValue();
             v = v.minusHours(x.toHoursPart());
@@ -32,7 +31,7 @@ public class DateTimeDifference extends PrimitiveFunction implements Lambda {
             v = v.minusSeconds(x.toSecondsPart());
             v = v.minusNanos(x.toNanosPart());
             return new Atom(new DateTime(v));
-        } else if(a.isUserdata(Time.class) && b.isUserdata(DateTime.class)) {
+        } else if (a.isUserdata(Time.class) && b.isUserdata(DateTime.class)) {
             Duration v = a.getUserdata(Time.class).getValue();
             LocalDateTime x = b.getUserdata(DateTime.class).getValue();
             LocalDateTime z = LocalDateTime.of(0, 1, 1, v.toHoursPart(), v.toMinutesPart(), v.toSecondsPart(), v.toNanosPart());
@@ -42,7 +41,7 @@ public class DateTimeDifference extends PrimitiveFunction implements Lambda {
             z = z.minusSeconds(x.getSecond());
             z = z.minusNanos(x.getNano());
             return new Atom(new DateTime(z));
-        } else if(a.isUserdata(Time.class) && b.isUserdata(Time.class)) {
+        } else if (a.isUserdata(Time.class) && b.isUserdata(Time.class)) {
             Duration v = b.getUserdata(Time.class).getValue();
             Duration x = a.getUserdata(Time.class).getValue();
             v = v.minusHours(x.toHoursPart());

@@ -9,24 +9,6 @@ import java.util.List;
 public class CodeAtom extends Atom {
     public int line, col;
 
-    public int getLine() {
-        return line;
-    }
-
-    public int getCol() {
-        return col;
-    }
-
-    public CodeAtom setLine(int l) {
-        line = l;
-        return this;
-    }
-
-    public CodeAtom setCol(int c) {
-        col = c;
-        return this;
-    }
-
     public CodeAtom() {
         super();
     }
@@ -57,5 +39,23 @@ public class CodeAtom extends Atom {
 
     public CodeAtom(BigInteger data) {
         super(data);
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public CodeAtom setLine(int l) {
+        line = l;
+        return this;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public CodeAtom setCol(int c) {
+        col = c;
+        return this;
     }
 }

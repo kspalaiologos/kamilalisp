@@ -1,6 +1,9 @@
 package palaiologos.kamilalisp.runtime.string;
 
-import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.atom.Atom;
+import palaiologos.kamilalisp.atom.Environment;
+import palaiologos.kamilalisp.atom.Lambda;
+import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -10,7 +13,7 @@ public class Ucs extends PrimitiveFunction implements Lambda {
     public Atom apply(Environment env, List<Atom> args) {
         assertArity(args, 1);
         Atom arg = args.get(0);
-        switch(arg.getType()) {
+        switch (arg.getType()) {
             case LIST:
                 StringBuilder sb = new StringBuilder();
                 for (Atom a : arg.getList()) {

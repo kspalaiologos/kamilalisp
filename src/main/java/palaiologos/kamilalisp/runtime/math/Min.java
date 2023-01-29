@@ -7,11 +7,6 @@ import palaiologos.kamilalisp.error.ArrayError;
 import java.util.List;
 
 public class Min extends PrimitiveFunction implements Lambda {
-    @Override
-    protected String name() {
-        return "min";
-    }
-
     private static Atom min2(Environment e, Atom a, Atom b) {
         if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
             return new Atom(Streams.zip(a.getList().stream(), b.getList().stream(), (x, y) -> min2(e, x, y)).toList());
@@ -30,6 +25,11 @@ public class Min extends PrimitiveFunction implements Lambda {
         } else {
             throw new UnsupportedOperationException("min not defined for: " + a.getType() + " and " + b.getType());
         }
+    }
+
+    @Override
+    protected String name() {
+        return "min";
     }
 
     @Override

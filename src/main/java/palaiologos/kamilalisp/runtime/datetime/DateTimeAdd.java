@@ -5,17 +5,14 @@ import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 import palaiologos.kamilalisp.error.TypeError;
-import palaiologos.kamilalisp.runtime.math.Plus;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
 import java.util.List;
 
 public class DateTimeAdd extends PrimitiveFunction implements Lambda {
     private static Atom f(Atom a, Atom b) {
-        if(a.isUserdata(DateTime.class) && b.isUserdata(DateTime.class)) {
+        if (a.isUserdata(DateTime.class) && b.isUserdata(DateTime.class)) {
             LocalDateTime v = a.getUserdata(DateTime.class).getValue();
             LocalDateTime x = b.getUserdata(DateTime.class).getValue();
             v = v.plusYears(x.getYear());
@@ -26,7 +23,7 @@ public class DateTimeAdd extends PrimitiveFunction implements Lambda {
             v = v.plusSeconds(x.getSecond());
             v = v.plusNanos(x.getNano());
             return new Atom(new DateTime(v));
-        } else if(a.isUserdata(DateTime.class) && b.isUserdata(Time.class)) {
+        } else if (a.isUserdata(DateTime.class) && b.isUserdata(Time.class)) {
             LocalDateTime v = a.getUserdata(DateTime.class).getValue();
             Duration x = b.getUserdata(Time.class).getValue();
             v = v.plusHours(x.toHoursPart());
@@ -34,7 +31,7 @@ public class DateTimeAdd extends PrimitiveFunction implements Lambda {
             v = v.plusSeconds(x.toSecondsPart());
             v = v.plusNanos(x.toNanosPart());
             return new Atom(new DateTime(v));
-        } else if(a.isUserdata(Time.class) && b.isUserdata(DateTime.class)) {
+        } else if (a.isUserdata(Time.class) && b.isUserdata(DateTime.class)) {
             LocalDateTime v = b.getUserdata(DateTime.class).getValue();
             Duration x = a.getUserdata(Time.class).getValue();
             v = v.plusHours(x.toHoursPart());
@@ -42,7 +39,7 @@ public class DateTimeAdd extends PrimitiveFunction implements Lambda {
             v = v.plusSeconds(x.toSecondsPart());
             v = v.plusNanos(x.toNanosPart());
             return new Atom(new DateTime(v));
-        } else if(a.isUserdata(Time.class) && b.isUserdata(Time.class)) {
+        } else if (a.isUserdata(Time.class) && b.isUserdata(Time.class)) {
             Duration v = b.getUserdata(Time.class).getValue();
             Duration x = a.getUserdata(Time.class).getValue();
             v = v.plusHours(x.toHoursPart());

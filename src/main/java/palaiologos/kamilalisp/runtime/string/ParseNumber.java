@@ -6,14 +6,14 @@ import palaiologos.kamilalisp.error.TypeError;
 import java.util.List;
 
 public class ParseNumber extends PrimitiveFunction implements Lambda {
-    protected String name() {
-        return "parse-number";
-    }
-
     private static Atom parse(Atom a) {
         a.assertTypes(Type.STRING);
         String str = a.getString();
         return Parser.parseNumber(str);
+    }
+
+    protected String name() {
+        return "parse-number";
     }
 
     @Override

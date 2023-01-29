@@ -2,10 +2,8 @@ package palaiologos.kamilalisp.runtime.meta;
 
 import palaiologos.kamilalisp.atom.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class Memo extends PrimitiveFunction implements Lambda {
     @Override

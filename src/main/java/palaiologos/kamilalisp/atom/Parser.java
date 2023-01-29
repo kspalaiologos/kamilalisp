@@ -10,20 +10,6 @@ import palaiologos.kamilalisp.parser.GrammarParser;
 import java.util.List;
 
 public class Parser {
-    static class ThrowingErrorListener extends BaseErrorListener {
-        private final int lineNumberOffset;
-
-        public ThrowingErrorListener(int lineNumberOffset) {
-            this.lineNumberOffset = lineNumberOffset;
-        }
-
-        @Override
-        public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e)
-                throws ParseCancellationException {
-            throw new ParseCancellationException("line " + lineNumberOffset + line + ":" + charPositionInLine + " " + msg);
-        }
-    }
-
     public static Atom parseNumber(String input) {
         GrammarLexer lex = new GrammarLexer(CharStreams.fromString(input));
         lex.removeErrorListeners();
@@ -52,5 +38,19 @@ public class Parser {
 
     public static List<Atom> parse(String input) {
         return parse(0, input);
+    }
+
+    static class ThrowingErrorListener extends BaseErrorListener {
+        private final int lineNumberOffset;
+
+        public ThrowingErrorListener(int lineNumberOffset) {
+            this.lineNumberOffset = lineNumberOffset;
+        }
+
+        @Override
+        public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e)
+                throws ParseCancellationException {
+            throw new ParseCancellationException("line " + lineNumberOffset + line + ":" + charPositionInLine + " " + msg);
+        }
     }
 }

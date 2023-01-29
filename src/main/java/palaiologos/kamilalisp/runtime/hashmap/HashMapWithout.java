@@ -10,9 +10,9 @@ import java.util.List;
 public class HashMapWithout extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.size() != 3)
+        if (args.size() != 3)
             throw new RuntimeException("hashmap:without expects 2 arguments.");
-        if(!args.get(0).isUserdata(HashMapUserData.class) || !args.get(1).isUserdata(HashMapUserData.class))
+        if (!args.get(0).isUserdata(HashMapUserData.class) || !args.get(1).isUserdata(HashMapUserData.class))
             throw new RuntimeException("hashmap:without expects a hashmap as an argument.");
         HashMapUserData data = args.get(0).getUserdata(HashMapUserData.class);
         HashMapUserData data2 = args.get(1).getUserdata(HashMapUserData.class);

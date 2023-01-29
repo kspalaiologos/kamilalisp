@@ -1,7 +1,6 @@
 package palaiologos.kamilalisp.runtime;
 
 import palaiologos.kamilalisp.atom.*;
-import palaiologos.kamilalisp.error.TypeError;
 
 import java.util.List;
 

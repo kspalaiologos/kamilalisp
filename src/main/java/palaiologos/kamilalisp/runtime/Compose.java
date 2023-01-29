@@ -10,6 +10,12 @@ public class Compose implements SpecialForm, ReactiveFunction {
     private final int l;
     private final int c;
 
+    public Compose(List<Atom> atoms, int l, int c) {
+        this.atoms = atoms;
+        this.l = l;
+        this.c = c;
+    }
+
     @Override
     public int line() {
         return l;
@@ -18,12 +24,6 @@ public class Compose implements SpecialForm, ReactiveFunction {
     @Override
     public int column() {
         return c;
-    }
-
-    public Compose(List<Atom> atoms, int l, int c) {
-        this.atoms = atoms;
-        this.l = l;
-        this.c = c;
     }
 
     @Override

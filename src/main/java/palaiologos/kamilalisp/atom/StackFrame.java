@@ -7,17 +7,6 @@ import java.io.StringWriter;
 import java.util.Stack;
 
 public class StackFrame {
-    public static class StackFrameEntry {
-        public String frameString;
-        public long line, col;
-
-        public StackFrameEntry(String frameString, long line, long col) {
-            this.frameString = frameString;
-            this.line = line;
-            this.col = col;
-        }
-    }
-
     private static final ThreadLocal<Stack<StackFrameEntry>> stack = ThreadLocal.withInitial(Stack::new);
     private static final ThreadLocal<Stack<Dfn.DfnClass>> lambdaStack = ThreadLocal.withInitial(Stack::new);
 
@@ -92,5 +81,16 @@ public class StackFrame {
 
     public static int depth() {
         return stack.get().size();
+    }
+
+    public static class StackFrameEntry {
+        public String frameString;
+        public long line, col;
+
+        public StackFrameEntry(String frameString, long line, long col) {
+            this.frameString = frameString;
+            this.line = line;
+            this.col = col;
+        }
     }
 }

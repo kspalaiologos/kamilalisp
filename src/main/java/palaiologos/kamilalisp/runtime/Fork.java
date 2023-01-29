@@ -13,6 +13,13 @@ public class Fork implements SpecialForm, ReactiveFunction {
     private final int l;
     private final int c;
 
+    public Fork(Atom reductor, List<Atom> reductees, int l, int c) {
+        this.reductor = reductor;
+        this.reductees = reductees;
+        this.l = l;
+        this.c = c;
+    }
+
     @Override
     public int line() {
         return l;
@@ -21,13 +28,6 @@ public class Fork implements SpecialForm, ReactiveFunction {
     @Override
     public int column() {
         return c;
-    }
-
-    public Fork(Atom reductor, List<Atom> reductees, int l, int c) {
-        this.reductor = reductor;
-        this.reductees = reductees;
-        this.l = l;
-        this.c = c;
     }
 
     @Override

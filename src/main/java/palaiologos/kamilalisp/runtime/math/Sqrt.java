@@ -10,11 +10,6 @@ import palaiologos.kamilalisp.atom.PrimitiveFunction;
 import java.util.List;
 
 public class Sqrt extends PrimitiveFunction implements Lambda {
-    @Override
-    protected String name() {
-        return "sqrt";
-    }
-
     private static Atom sqrt(Environment e, Atom a) {
         switch (a.getType()) {
             case LIST:
@@ -27,6 +22,11 @@ public class Sqrt extends PrimitiveFunction implements Lambda {
             default:
                 throw new UnsupportedOperationException("sqrt not defined for: " + a.getType());
         }
+    }
+
+    @Override
+    protected String name() {
+        return "sqrt";
     }
 
     @Override

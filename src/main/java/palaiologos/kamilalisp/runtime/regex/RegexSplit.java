@@ -1,15 +1,12 @@
 package palaiologos.kamilalisp.runtime.regex;
 
-import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.atom.Atom;
+import palaiologos.kamilalisp.atom.Environment;
+import palaiologos.kamilalisp.atom.Lambda;
+import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
-import java.util.regex.MatchResult;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.IntStream;
 
 public class RegexSplit extends PrimitiveFunction implements Lambda {
     @Override

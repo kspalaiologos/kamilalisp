@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import palaiologos.kamilalisp.atom.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Rotate extends PrimitiveFunction implements Lambda {
     @Override
@@ -13,7 +12,7 @@ public class Rotate extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("Expected two arguments to `rotate'.");
         }
 
-        if(args.get(1).getType() == Type.LIST) {
+        if (args.get(1).getType() == Type.LIST) {
             int n = args.get(0).getInteger().intValueExact();
             List<Atom> list = args.get(1).getList();
 
@@ -39,7 +38,7 @@ public class Rotate extends PrimitiveFunction implements Lambda {
                 result.addAll(front);
                 return new Atom(result);
             }
-        } else if(args.get(1).getType() == Type.STRING) {
+        } else if (args.get(1).getType() == Type.STRING) {
             int n = args.get(0).getInteger().intValueExact();
             String str = args.get(1).getString();
 

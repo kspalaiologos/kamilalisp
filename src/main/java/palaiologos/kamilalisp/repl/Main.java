@@ -25,7 +25,7 @@ public class Main {
     private static Environment defaultRegistry;
 
     public static boolean isBuiltin(String name) {
-        if(defaultRegistry == null) {
+        if (defaultRegistry == null) {
             defaultRegistry = new Environment();
             FunctionRegistry.registerDefault(defaultRegistry);
         }
@@ -90,9 +90,9 @@ public class Main {
                     List<Atom> data;
                     try {
                         String cc;
-                        if(code.startsWith("?")) {
+                        if (code.startsWith("?")) {
                             cc = code.substring(1);
-                        } else if(code.startsWith("(") && code.endsWith(")")) {
+                        } else if (code.startsWith("(") && code.endsWith(")")) {
                             cc = code;
                         } else {
                             cc = "(" + code + "\n)";
@@ -107,7 +107,7 @@ public class Main {
                             System.err.println(s);
                             throw new InterruptionError();
                         });
-                        if(a.equals(Atom.NULL))
+                        if (a.equals(Atom.NULL))
                             continue;
                         System.out.println(a.toDisplayString());
                     }

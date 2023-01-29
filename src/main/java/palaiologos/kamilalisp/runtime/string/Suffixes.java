@@ -9,11 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Suffixes extends PrimitiveFunction implements Lambda {
-    @Override
-    protected String name() {
-        return "suffixes";
-    }
-
     private static Atom ln(Environment e, Atom a) {
         switch (a.getType()) {
             case LIST: {
@@ -35,6 +30,11 @@ public class Suffixes extends PrimitiveFunction implements Lambda {
             default:
                 throw new UnsupportedOperationException("suffixes not defined for: " + a.getType());
         }
+    }
+
+    @Override
+    protected String name() {
+        return "suffixes";
     }
 
     @Override

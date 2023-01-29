@@ -10,7 +10,7 @@ import java.util.List;
 public class Group extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.size() != 1) {
+        if (args.size() != 1) {
             throw new RuntimeException("Wrong number of arguments to list:group - expected 1, got " + args.size());
         }
 
@@ -20,9 +20,9 @@ public class Group extends PrimitiveFunction implements Lambda {
 
         // Use groupingBy.
         HashMap<Atom, List<Atom>> counts = new HashMap<>();
-        for(int i = 0; i < data.size(); i++) {
+        for (int i = 0; i < data.size(); i++) {
             Atom key = data.get(i);
-            if(counts.containsKey(key)) {
+            if (counts.containsKey(key)) {
                 counts.get(key).add(new Atom(BigInteger.valueOf(i)));
             } else {
                 List<Atom> list = new ArrayList<>();

@@ -1,21 +1,13 @@
 package palaiologos.kamilalisp.runtime.math;
 
-import ch.obermuhlner.math.big.BigComplexMath;
-import ch.obermuhlner.math.big.BigDecimalMath;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public class Re extends PrimitiveFunction implements Lambda {
-    @Override
-    protected String name() {
-        return "re";
-    }
-
     private static Atom ln(Environment e, Atom a) {
         switch (a.getType()) {
             case LIST:
@@ -28,6 +20,11 @@ public class Re extends PrimitiveFunction implements Lambda {
             default:
                 throw new UnsupportedOperationException("re not defined for: " + a.getType());
         }
+    }
+
+    @Override
+    protected String name() {
+        return "re";
     }
 
     @Override

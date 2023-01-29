@@ -12,6 +12,12 @@ public class Quote implements SpecialForm, ReactiveFunction {
     private final int l;
     private final int c;
 
+    public Quote(Atom form, int l, int c) {
+        this.form = form;
+        this.l = l;
+        this.c = c;
+    }
+
     @Override
     public int line() {
         return l;
@@ -20,12 +26,6 @@ public class Quote implements SpecialForm, ReactiveFunction {
     @Override
     public int column() {
         return c;
-    }
-
-    public Quote(Atom form, int l, int c) {
-        this.form = form;
-        this.l = l;
-        this.c = c;
     }
 
     @Override

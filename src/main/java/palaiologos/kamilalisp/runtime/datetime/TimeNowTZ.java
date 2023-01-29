@@ -11,11 +11,11 @@ import java.util.List;
 public class TimeNowTZ extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.size() == 0) {
+        if (args.size() == 0) {
             // Local time
             LocalDateTime now = LocalDateTime.now();
             return new Atom(new Time(Duration.ofHours(now.getHour()).plusMinutes(now.getMinute()).plusSeconds(now.getSecond()).plusNanos(now.getNano())));
-        } else if(args.size() == 1) {
+        } else if (args.size() == 1) {
             // Time in string timezone id.
             args.get(0).assertTypes(Type.STRING);
             String tz = args.get(0).getString();

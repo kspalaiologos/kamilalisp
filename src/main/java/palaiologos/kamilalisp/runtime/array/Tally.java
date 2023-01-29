@@ -1,7 +1,6 @@
 package palaiologos.kamilalisp.runtime.array;
 
 import palaiologos.kamilalisp.atom.*;
-import palaiologos.kamilalisp.error.TypeError;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -9,11 +8,6 @@ import java.util.stream.Collectors;
 
 public class Tally extends PrimitiveFunction implements Lambda {
     private static final String name = "tally";
-
-    @Override
-    protected String name() {
-        return name;
-    }
 
     private static Atom tally(Atom a) {
         if (a.getType() == Type.LIST) {
@@ -23,6 +17,11 @@ public class Tally extends PrimitiveFunction implements Lambda {
         } else {
             return new Atom(BigInteger.ZERO);
         }
+    }
+
+    @Override
+    protected String name() {
+        return name;
     }
 
     @Override

@@ -15,7 +15,7 @@ public class Bernoulli extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.size() == 1)
+        if (args.size() == 1)
             return bernoulli(env, args.get(0));
         else
             return new Atom(args.stream().map(x -> bernoulli(env, x)).toList());

@@ -10,6 +10,7 @@ public class PollardRho {
     private final static BigInteger ONE = new BigInteger("1");
     private final static BigInteger TWO = new BigInteger("2");
     private final static SecureRandom random = new SecureRandom();
+    private List<BigInteger> factors = new ArrayList<>();
 
     private static BigInteger rho(BigInteger N) {
         BigInteger divisor;
@@ -28,8 +29,6 @@ public class PollardRho {
 
         return divisor;
     }
-
-    private List<BigInteger> factors = new ArrayList<>();
 
     public void factor(BigInteger N) {
         if (N.compareTo(ONE) == 0) return;

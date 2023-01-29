@@ -1,6 +1,9 @@
 package palaiologos.kamilalisp.runtime.regex;
 
-import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.atom.Atom;
+import palaiologos.kamilalisp.atom.Environment;
+import palaiologos.kamilalisp.atom.Lambda;
+import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
 import java.util.List;
 import java.util.regex.Matcher;

@@ -12,15 +12,15 @@ import java.util.List;
 public class DateTimeFrom extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.size() == 1) {
+        if (args.size() == 1) {
             long timestamp = args.get(0).getInteger().longValueExact();
             return new Atom(new DateTime(LocalDateTime.ofEpochSecond(timestamp, 0, ZoneOffset.UTC)));
-        } else if(args.size() == 3) {
+        } else if (args.size() == 3) {
             int year = args.get(0).getInteger().intValueExact();
             int month = args.get(1).getInteger().intValueExact();
             int day = args.get(2).getInteger().intValueExact();
             return new Atom(new DateTime(LocalDateTime.of(year, month, day, 0, 0)));
-        } else if(args.size() == 6) {
+        } else if (args.size() == 6) {
             int year = args.get(0).getInteger().intValueExact();
             int month = args.get(1).getInteger().intValueExact();
             int day = args.get(2).getInteger().intValueExact();
@@ -28,7 +28,7 @@ public class DateTimeFrom extends PrimitiveFunction implements Lambda {
             int minute = args.get(4).getInteger().intValueExact();
             int second = args.get(5).getInteger().intValueExact();
             return new Atom(new DateTime(LocalDateTime.of(year, month, day, hour, minute, second)));
-        } else if(args.size() == 7) {
+        } else if (args.size() == 7) {
             int year = args.get(0).getInteger().intValueExact();
             int month = args.get(1).getInteger().intValueExact();
             int day = args.get(2).getInteger().intValueExact();

@@ -12,58 +12,58 @@ public class Match extends PrimitiveFunction implements SpecialForm {
         return "match";
     }
 
-    private boolean isIdInPattern(Atom a){
-        if(a.getType() != Type.LIST)
+    private boolean isIdInPattern(Atom a) {
+        if (a.getType() != Type.LIST)
             return false;
-        if(a.getList().size() != 1)
+        if (a.getList().size() != 1)
             return false;
-        if(a.getList().get(0).getType() != Type.CALLABLE)
+        if (a.getList().get(0).getType() != Type.CALLABLE)
             return false;
         return a.getList().get(0).getCallable() instanceof Quote;
     }
 
     private Identifier getIdFromPattern(Atom a) {
         Callable c = a.getList().get(0).getCallable();
-        return ((Quote) c).apply(null, null).getIdentifier();
+        return c.apply(null, null).getIdentifier();
     }
 
     private boolean match(Atom a, Atom pat, Environment env) {
         // Check if pat is a quoted variable.
-        if(isIdInPattern(pat)) {
+        if (isIdInPattern(pat)) {
             Identifier id = getIdFromPattern(pat);
             env.set(Identifier.of(id), a);
             return true;
         }
 
         // Check if pat is a list.
-        if(pat.getType() == Type.LIST) {
+        if (pat.getType() == Type.LIST) {
             // Ok. Try to match the lists together.
             // Notice that the pattern list can end with an identifier
             // that ends with three dots "..." - this means that the identifier
             // will be bound to the rest of the list.
-            if(a.getType() != Type.LIST)
+            if (a.getType() != Type.LIST)
                 return false;
 
             List<Atom> patList = pat.getList();
             List<Atom> aList = a.getList();
             int len = Math.max(patList.size(), aList.size());
-            for(int i = 0; i < len; i++) {
-                if(patList.size() < i + 1)
+            for (int i = 0; i < len; i++) {
+                if (patList.size() < i + 1)
                     return false;
                 Atom patternAtom = patList.get(i);
-                if(isIdInPattern(patternAtom)) {
+                if (isIdInPattern(patternAtom)) {
                     Identifier id = getIdFromPattern(patternAtom);
                     String s = Identifier.of(id);
-                    if(s.endsWith("...")) {
+                    if (s.endsWith("...")) {
                         // This is the last element of the pattern list.
                         // Bind the identifier to the rest of the list.
                         env.set(s.substring(0, s.length() - 3), new Atom(aList.subList(i, aList.size())));
                         return true;
                     }
                 }
-                if(aList.size() < i + 1)
+                if (aList.size() < i + 1)
                     return false;
-                if(!match(aList.get(i), patList.get(i), env))
+                if (!match(aList.get(i), patList.get(i), env))
                     return false;
             }
             return true;
@@ -110,10 +110,10 @@ public class Match extends PrimitiveFunction implements SpecialForm {
             List<Atom> clauseList = clause.getList();
             Atom pattern = null, condition = null, result = null;
 
-            if(clauseList.size() == 2) {
+            if (clauseList.size() == 2) {
                 pattern = clauseList.get(0);
                 result = clauseList.get(1);
-            } else if(clauseList.size() == 3) {
+            } else if (clauseList.size() == 3) {
                 pattern = clauseList.get(0);
                 condition = clauseList.get(1);
                 result = clauseList.get(2);
@@ -123,8 +123,8 @@ public class Match extends PrimitiveFunction implements SpecialForm {
 
             // Check if matchedAtom is like pattern.
             Environment newEnv = new Environment(env);
-            if(match(matchedAtom, pattern, newEnv)) {
-                if(condition == null || Evaluation.evaluate(newEnv, condition).coerceBool()) {
+            if (match(matchedAtom, pattern, newEnv)) {
+                if (condition == null || Evaluation.evaluate(newEnv, condition).coerceBool()) {
                     return Evaluation.evaluate(newEnv, result);
                 }
             }

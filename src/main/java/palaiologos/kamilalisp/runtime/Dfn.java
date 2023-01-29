@@ -7,76 +7,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Dfn extends PrimitiveFunction implements SpecialForm {
-    public class DfnClass implements Lambda {
-        List<Identifier> bindings;
-        boolean wantsVararg;
-        Atom code;
-        Environment env;
-        int f_line, f_col;
-
-        public DfnClass(List<Identifier> bindings, boolean wantsVararg, Atom code, Environment env, int f_line, int f_col) {
-            this.bindings = bindings;
-            this.wantsVararg = wantsVararg;
-            this.code = code;
-            this.env = env;
-            this.f_line = f_line;
-            this.f_col = f_col;
-        }
-
-        @Override
-        public String stringify() {
-            return "(λ " + bindings.stream().map(Identifier::of).collect(Collectors.joining(" ")) + " . " + code.toString() + ")";
-        }
-
-        @Override
-        public String frameString() {
-            return "(λ " + bindings.stream().map(Identifier::of).collect(Collectors.joining(" ")) + " . " + code.shortString() + ")";
-        }
-
-        @Override
-        public Atom apply(Environment throwaway, List<Atom> args) {
-            Environment descendantEnv = new Environment(env);
-            StackFrame.pushLambda(this);
-            while(true) {
-                if (!wantsVararg) {
-                    assertArity(args, bindings.size());
-                    for (int i = 0; i < bindings.size(); i++)
-                        descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
-                } else {
-                    if (args.size() < bindings.size() - 1)
-                        throw new TypeError("Expected at least " + (bindings.size() - 1) + " arguments to `" + frameString() + "'.");
-                    for (int i = 0; i < bindings.size() - 1; i++)
-                        descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
-                    descendantEnv.set(Identifier.of(bindings.get(bindings.size() - 1)), new Atom(args.subList(bindings.size() - 1, args.size())));
-                }
-                Atom a = Evaluation.evaluate(descendantEnv, code);
-                if (a.getType() == Type.LIST && !a.getList().isEmpty() && a.getList().get(0).getType() == Type.CALLABLE && a.getList().get(0).getCallable() instanceof Self.SelfThunk) {
-                    Self.SelfThunk selfThunk = (Self.SelfThunk) a.getList().get(0).getCallable();
-                    if (selfThunk.index() == StackFrame.currentLambdaIdx()) {
-                        args = selfThunk.args();
-                    } else {
-                        a = selfThunk.apply(descendantEnv, List.of());
-                        StackFrame.popLambda();
-                        return a;
-                    }
-                } else {
-                    StackFrame.popLambda();
-                    return a;
-                }
-            }
-        }
-
-        @Override
-        public int line() {
-            return f_line;
-        }
-
-        @Override
-        public int column() {
-            return f_col;
-        }
-    }
-
     @Override
     protected String name() {
         return "λ";
@@ -115,5 +45,74 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
         final int f_line = line, f_col = col;
 
         return new CodeAtom(new DfnClass(bindings, wantsVararg, code, env, f_line, f_col)).setCol(col).setLine(line);
+    }
+
+    public class DfnClass implements Lambda {
+        List<Identifier> bindings;
+        boolean wantsVararg;
+        Atom code;
+        Environment env;
+        int f_line, f_col;
+
+        public DfnClass(List<Identifier> bindings, boolean wantsVararg, Atom code, Environment env, int f_line, int f_col) {
+            this.bindings = bindings;
+            this.wantsVararg = wantsVararg;
+            this.code = code;
+            this.env = env;
+            this.f_line = f_line;
+            this.f_col = f_col;
+        }
+
+        @Override
+        public String stringify() {
+            return "(λ " + bindings.stream().map(Identifier::of).collect(Collectors.joining(" ")) + " . " + code.toString() + ")";
+        }
+
+        @Override
+        public String frameString() {
+            return "(λ " + bindings.stream().map(Identifier::of).collect(Collectors.joining(" ")) + " . " + code.shortString() + ")";
+        }
+
+        @Override
+        public Atom apply(Environment throwaway, List<Atom> args) {
+            Environment descendantEnv = new Environment(env);
+            StackFrame.pushLambda(this);
+            while (true) {
+                if (!wantsVararg) {
+                    assertArity(args, bindings.size());
+                    for (int i = 0; i < bindings.size(); i++)
+                        descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
+                } else {
+                    if (args.size() < bindings.size() - 1)
+                        throw new TypeError("Expected at least " + (bindings.size() - 1) + " arguments to `" + frameString() + "'.");
+                    for (int i = 0; i < bindings.size() - 1; i++)
+                        descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
+                    descendantEnv.set(Identifier.of(bindings.get(bindings.size() - 1)), new Atom(args.subList(bindings.size() - 1, args.size())));
+                }
+                Atom a = Evaluation.evaluate(descendantEnv, code);
+                if (a.getType() == Type.LIST && !a.getList().isEmpty() && a.getList().get(0).getType() == Type.CALLABLE && a.getList().get(0).getCallable() instanceof Self.SelfThunk selfThunk) {
+                    if (selfThunk.index() == StackFrame.currentLambdaIdx()) {
+                        args = selfThunk.args();
+                    } else {
+                        a = selfThunk.apply(descendantEnv, List.of());
+                        StackFrame.popLambda();
+                        return a;
+                    }
+                } else {
+                    StackFrame.popLambda();
+                    return a;
+                }
+            }
+        }
+
+        @Override
+        public int line() {
+            return f_line;
+        }
+
+        @Override
+        public int column() {
+            return f_col;
+        }
     }
 }

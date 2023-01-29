@@ -2,7 +2,6 @@ package palaiologos.kamilalisp.runtime.math;
 
 import ch.obermuhlner.math.big.BigComplex;
 import ch.obermuhlner.math.big.BigComplexMath;
-import ch.obermuhlner.math.big.BigDecimalMath;
 import com.google.common.collect.Streams;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.ArrayError;

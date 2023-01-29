@@ -12,6 +12,12 @@ public class Tack implements Lambda {
     private final int l;
     private final int c;
 
+    public Tack(int[] indices, int l, int c) {
+        this.indices = indices;
+        this.l = l;
+        this.c = c;
+    }
+
     @Override
     public int line() {
         return l;
@@ -20,12 +26,6 @@ public class Tack implements Lambda {
     @Override
     public int column() {
         return c;
-    }
-
-    public Tack(int[] indices, int l, int c) {
-        this.indices = indices;
-        this.l = l;
-        this.c = c;
     }
 
     @Override

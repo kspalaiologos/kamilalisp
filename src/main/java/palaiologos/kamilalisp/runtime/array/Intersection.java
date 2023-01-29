@@ -17,7 +17,7 @@ public class Intersection extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.size() > 0) {
+        if (args.size() > 0) {
             HashSet<Atom> set = new HashSet<>(args.get(0).getList());
             for (int i = 1; i < args.size(); i++)
                 set.retainAll(args.get(i).getList());

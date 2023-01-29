@@ -12,16 +12,14 @@ import java.math.MathContext;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Atom implements Comparable<Atom> {
-    @Nonnull
-    private Object data;
-    private Type type;
-
     public static Atom NULL = new Atom();
     public static Atom TRUE = new Atom(true);
     public static Atom FALSE = new Atom(false);
+    @Nonnull
+    private Object data;
+    private Type type;
 
     public Atom() {
         this.data = List.of();
@@ -134,7 +132,7 @@ public class Atom implements Comparable<Atom> {
         if (getType() != Type.USERDATA)
             throw new TypeError("Cannot get userdata from non-userdata atom " + typeString());
 
-        if(!type.isInstance(data))
+        if (!type.isInstance(data))
             throw new TypeError("Cannot get desired userdata from atom of type " + ((Userdata) data).typeName());
 
         return type.cast(data);
@@ -164,7 +162,7 @@ public class Atom implements Comparable<Atom> {
     }
 
     public List<Atom> getList() {
-        if(getType() == Type.STRING) {
+        if (getType() == Type.STRING) {
             return ((String) data).chars().mapToObj(c -> new Atom(String.valueOf((char) c))).collect(Collectors.toList());
         }
 

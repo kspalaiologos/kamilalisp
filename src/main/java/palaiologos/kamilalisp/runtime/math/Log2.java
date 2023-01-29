@@ -12,11 +12,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class Log2 extends PrimitiveFunction implements Lambda {
-    @Override
-    protected String name() {
-        return "log2";
-    }
-
     private static Atom ln(Environment e, Atom a) {
         switch (a.getType()) {
             case LIST:
@@ -32,6 +27,11 @@ public class Log2 extends PrimitiveFunction implements Lambda {
             default:
                 throw new UnsupportedOperationException("log2 not defined for: " + a.getType());
         }
+    }
+
+    @Override
+    protected String name() {
+        return "log2";
     }
 
     @Override

@@ -6,17 +6,17 @@ import palaiologos.kamilalisp.atom.*;
 import java.util.List;
 
 public class Or extends PrimitiveFunction implements Lambda {
-    @Override
-    protected String name() {
-        return "or";
-    }
-
     private static Atom min2(Environment e, Atom a, Atom b) {
         if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
             return new Atom(Streams.zip(a.getList().stream(), b.getList().stream(), (x, y) -> min2(e, x, y)).toList());
         } else {
             return new Atom(a.coerceBool() || b.coerceBool());
         }
+    }
+
+    @Override
+    protected String name() {
+        return "or";
     }
 
     @Override

@@ -13,7 +13,7 @@ import java.util.List;
 
 public class DateTimeToList extends PrimitiveFunction implements Lambda {
     private static Atom f(Atom a) {
-        if(a.isUserdata(DateTime.class)) {
+        if (a.isUserdata(DateTime.class)) {
             LocalDateTime d = a.getUserdata(DateTime.class).getValue();
             return new Atom(List.of(
                     new Atom(BigInteger.valueOf(d.getYear())),
@@ -24,7 +24,7 @@ public class DateTimeToList extends PrimitiveFunction implements Lambda {
                     new Atom(BigInteger.valueOf(d.getSecond())),
                     new Atom(BigInteger.valueOf(d.getNano()))
             ));
-        } else if(a.isUserdata(Time.class)) {
+        } else if (a.isUserdata(Time.class)) {
             Duration d = a.getUserdata(Time.class).getValue();
             return new Atom(List.of(
                     new Atom(BigInteger.valueOf(d.toHoursPart())),
@@ -39,7 +39,7 @@ public class DateTimeToList extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.size() == 1)
+        if (args.size() == 1)
             return f(args.get(0));
         else
             return new Atom(args.stream().map(DateTimeToList::f).toList());

@@ -6,7 +6,8 @@ import java.math.BigInteger;
 import java.util.List;
 
 public class PrimeNo extends PrimitiveFunction implements Lambda {
-    private static BigInteger pitabScaled = BigInteger.valueOf(10000 * PiTab.ptab.length);
+    private static final BigInteger pitabScaled = BigInteger.valueOf(10000 * PiTab.ptab.length);
+
     public static Atom primeNo(Atom a) {
         if (a.getType() == Type.LIST) {
             return new Atom(a.getList().stream().map(PrimeNo::primeNo).toList());

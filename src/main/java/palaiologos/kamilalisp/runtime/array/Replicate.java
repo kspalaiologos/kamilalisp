@@ -8,11 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Replicate extends PrimitiveFunction implements Lambda {
-    @Override
-    protected String name() {
-        return "replicate";
-    }
-
     private static Atom replicate(List<Atom> l1, List<Atom> l2) {
         ArrayList<Atom> result = new ArrayList<>();
 
@@ -51,6 +46,47 @@ public class Replicate extends PrimitiveFunction implements Lambda {
             result.append(String.valueOf(s2.charAt(i)).repeat(Math.max(0, a1.getInteger().intValue())));
         }
         return new Atom(result.toString());
+    }
+
+    @Override
+    protected String name() {
+        return "replicate";
+    }
+
+    @Override
+    public Atom apply(Environment env, List<Atom> args) {
+        assertArity(args, 2);
+        if (args.get(0).getType() == Type.LIST && args.get(1).getType() == Type.LIST) {
+            List<Atom> list1 = args.get(0).getList();
+            List<Atom> list2 = args.get(1).getList();
+            return replicate(list1, list2);
+        } else if (args.get(0).getType() == Type.LIST && args.get(1).getType() == Type.STRING) {
+            List<Atom> s1 = args.get(0).getList();
+            String s2 = args.get(1).getString();
+            return replicate(s1, s2);
+        } else if (args.get(0).getType() == Type.INTEGER && args.get(1).getType() == Type.LIST) {
+            List<Atom> list = args.get(1).getList();
+            int n = args.get(0).getInteger().intValue();
+            if (n < 0)
+                throw new RuntimeException("replicate: negative count.");
+            if (list.size() == 0)
+                return Atom.NULL;
+            return new Atom(new ReplicateListFacade(list, n));
+        } else if (args.get(0).getType() == Type.INTEGER && args.get(1).getType() == Type.STRING) {
+            String s = args.get(1).getString();
+            int n = args.get(0).getInteger().intValue();
+            if (n < 0)
+                throw new RuntimeException("replicate: negative count.");
+            return new Atom(s.repeat(n));
+        } else if (args.get(0).getType() == Type.INTEGER) {
+            Atom a = args.get(1);
+            int n = args.get(0).getInteger().intValue();
+            if (n < 0)
+                throw new RuntimeException("replicate: negative count.");
+            return new Atom(new ReplicateListFacadeSingleton(a, n));
+        } else {
+            throw new RuntimeException("replicate: invalid arguments.");
+        }
     }
 
     static class ReplicateListFacade extends AbstractList<Atom> {
@@ -94,42 +130,6 @@ public class Replicate extends PrimitiveFunction implements Lambda {
         @Override
         public int size() {
             return len;
-        }
-    }
-
-    @Override
-    public Atom apply(Environment env, List<Atom> args) {
-        assertArity(args, 2);
-        if (args.get(0).getType() == Type.LIST && args.get(1).getType() == Type.LIST) {
-            List<Atom> list1 = args.get(0).getList();
-            List<Atom> list2 = args.get(1).getList();
-            return replicate(list1, list2);
-        } else if (args.get(0).getType() == Type.LIST && args.get(1).getType() == Type.STRING) {
-            List<Atom> s1 = args.get(0).getList();
-            String s2 = args.get(1).getString();
-            return replicate(s1, s2);
-        } else if(args.get(0).getType() == Type.INTEGER && args.get(1).getType() == Type.LIST) {
-            List<Atom> list = args.get(1).getList();
-            int n = args.get(0).getInteger().intValue();
-            if(n < 0)
-                throw new RuntimeException("replicate: negative count.");
-            if(list.size() == 0)
-                return Atom.NULL;
-            return new Atom(new ReplicateListFacade(list, n));
-        } else if(args.get(0).getType() == Type.INTEGER && args.get(1).getType() == Type.STRING) {
-            String s = args.get(1).getString();
-            int n = args.get(0).getInteger().intValue();
-            if(n < 0)
-                throw new RuntimeException("replicate: negative count.");
-            return new Atom(s.repeat(n));
-        } else if(args.get(0).getType() == Type.INTEGER) {
-            Atom a = args.get(1);
-            int n = args.get(0).getInteger().intValue();
-            if(n < 0)
-                throw new RuntimeException("replicate: negative count.");
-            return new Atom(new ReplicateListFacadeSingleton(a, n));
-        } else {
-            throw new RuntimeException("replicate: invalid arguments.");
         }
     }
 }

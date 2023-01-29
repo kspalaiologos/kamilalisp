@@ -41,7 +41,7 @@ public class Evaluation {
             case IDENTIFIER:
                 if (env.has(Identifier.of(atom.getIdentifier()))) {
                     Atom a = env.get(Identifier.of(atom.getIdentifier()));
-                    if(a != null && a.getType() == Type.LIST && !a.getList().isEmpty() && a.getList().get(0).getType() == Type.CALLABLE && a.getList().get(0).getCallable() instanceof ReactiveFunction) {
+                    if (a != null && a.getType() == Type.LIST && !a.getList().isEmpty() && a.getList().get(0).getType() == Type.CALLABLE && a.getList().get(0).getCallable() instanceof ReactiveFunction) {
                         Callable rf = a.getList().get(0).getCallable();
                         return rf.apply(env, List.of());
                     }
@@ -94,13 +94,12 @@ public class Evaluation {
             case IDENTIFIER:
                 if (env.has(Identifier.of(atom.getIdentifier()))) {
                     Atom a = env.get(Identifier.of(atom.getIdentifier()));
-                    if(a != null && a.getType() == Type.LIST && !a.getList().isEmpty() && a.getList().get(0).getType() == Type.CALLABLE && a.getList().get(0).getCallable() instanceof ReactiveFunction) {
+                    if (a != null && a.getType() == Type.LIST && !a.getList().isEmpty() && a.getList().get(0).getType() == Type.CALLABLE && a.getList().get(0).getCallable() instanceof ReactiveFunction) {
                         Callable rf = a.getList().get(0).getCallable();
                         return evaluate(env, rf, List.of());
                     }
                     return a;
-                }
-                else
+                } else
                     return atom;
         }
 

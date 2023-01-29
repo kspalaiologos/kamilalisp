@@ -1,28 +1,24 @@
 package palaiologos.kamilalisp.runtime.math;
 
 import ch.obermuhlner.math.big.BigComplex;
-import com.google.common.primitives.Chars;
-import org.apache.commons.lang3.StringUtils;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.TypeError;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Random extends PrimitiveFunction implements Lambda {
-    private static java.util.Random rng = new java.util.Random();
+    private static final java.util.Random rng = new java.util.Random();
 
     private static Atom shuffle(Atom a) {
         a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX);
-        if(a.getType() == Type.INTEGER) {
+        if (a.getType() == Type.INTEGER) {
             // Random BigInteger in range [0, a).
             BigInteger n = a.getInteger();
             return new Atom(new BigInteger(n.bitLength(), rng).mod(n));
-        } else if(a.getType() == Type.REAL) {
+        } else if (a.getType() == Type.REAL) {
             // Random double in range [0, a).
             BigDecimal n = a.getReal();
             return new Atom(n.multiply(BigDecimal.valueOf(rng.nextDouble())));

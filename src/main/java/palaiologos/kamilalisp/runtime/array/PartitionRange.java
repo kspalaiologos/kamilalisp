@@ -25,22 +25,22 @@ public class PartitionRange extends PrimitiveFunction implements Lambda {
             }
         }
 
-        if(leadingZeroes > list.size())
+        if (leadingZeroes > list.size())
             return Atom.NULL;
 
-        for(int i = leadingZeroes; i < pattern.size(); i++) {
-            if(pattern.get(i).getInteger().intValueExact() >= 1) {
+        for (int i = leadingZeroes; i < pattern.size(); i++) {
+            if (pattern.get(i).getInteger().intValueExact() >= 1) {
                 int n = pattern.get(i).getInteger().intValueExact();
-                while(n != 1) {
+                while (n != 1) {
                     n--;
                     result.add(Atom.NULL.getList());
                 }
                 result.add(new ArrayList<>());
-                if(list.size() > i) {
+                if (list.size() > i) {
                     result.get(result.size() - 1).add(list.get(i));
                 }
-            } else if(pattern.get(i).getInteger().intValueExact() == 0) {
-                if(list.size() > i) {
+            } else if (pattern.get(i).getInteger().intValueExact() == 0) {
+                if (list.size() > i) {
                     result.get(result.size() - 1).add(list.get(i));
                 }
             } else {

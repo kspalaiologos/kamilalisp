@@ -11,6 +11,12 @@ public class Self extends PrimitiveFunction implements Lambda {
     private final int c;
     private final int index;
 
+    public Self(int index, int l, int c) {
+        this.index = index;
+        this.l = l;
+        this.c = c;
+    }
+
     @Override
     public int line() {
         return l;
@@ -19,6 +25,19 @@ public class Self extends PrimitiveFunction implements Lambda {
     @Override
     public int column() {
         return c;
+    }
+
+    @Override
+    public Atom apply(Environment env, List<Atom> args) {
+        if (isDeBruijnAllowed(index))
+            return new Atom(new SelfThunk(index, args));
+        else
+            throw new RuntimeException("&" + index + " is not allowed here");
+    }
+
+    @Override
+    protected String name() {
+        return "&" + index + "/syn";
     }
 
     record SelfThunk(int index, List<Atom> args) implements ReactiveFunction, SpecialForm {
@@ -47,24 +66,5 @@ public class Self extends PrimitiveFunction implements Lambda {
         public int column() {
             return 0;
         }
-    }
-
-    public Self(int index, int l, int c) {
-        this.index = index;
-        this.l = l;
-        this.c = c;
-    }
-
-    @Override
-    public Atom apply(Environment env, List<Atom> args) {
-        if(isDeBruijnAllowed(index))
-            return new Atom(new SelfThunk(index, args));
-        else
-            throw new RuntimeException("&" + index + " is not allowed here");
-    }
-
-    @Override
-    protected String name() {
-        return "&" + index + "/syn";
     }
 }

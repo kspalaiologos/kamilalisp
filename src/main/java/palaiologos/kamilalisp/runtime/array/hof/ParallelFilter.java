@@ -4,7 +4,6 @@ import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.InterruptionError;
 
 import java.util.List;
-import java.util.function.Function;
 
 public class ParallelFilter extends PrimitiveFunction implements Lambda {
     @Override

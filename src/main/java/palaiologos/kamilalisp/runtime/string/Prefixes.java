@@ -1,22 +1,14 @@
 package palaiologos.kamilalisp.runtime.string;
 
-import ch.obermuhlner.math.big.BigComplexMath;
-import ch.obermuhlner.math.big.BigDecimalMath;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Prefixes extends PrimitiveFunction implements Lambda {
-    @Override
-    protected String name() {
-        return "prefixes";
-    }
-
     private static Atom ln(Environment e, Atom a) {
         switch (a.getType()) {
             case LIST: {
@@ -38,6 +30,11 @@ public class Prefixes extends PrimitiveFunction implements Lambda {
             default:
                 throw new UnsupportedOperationException("prefixes not defined for: " + a.getType());
         }
+    }
+
+    @Override
+    protected String name() {
+        return "prefixes";
     }
 
     @Override

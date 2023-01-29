@@ -6,7 +6,6 @@ import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.CodeAtom;
 import palaiologos.kamilalisp.atom.Identifier;
 import palaiologos.kamilalisp.runtime.*;
-import palaiologos.kamilalisp.runtime.Self;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -62,11 +61,18 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
     public Atom visitForm_rem(GrammarParser.Form_remContext ctx) {
         if (ctx.children.size() == 1) {
             return visit(ctx.children.get(0));
-        } else {
+        } else if (ctx.getRuleIndex() == 1) {
+            // Indexing
             Atom head = new CodeAtom(new Index(visit(ctx.form_rem()), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
             List<Atom> tail = normalListFromSquare(ctx.sqlist());
             return new Atom(Stream.concat(Stream.of(head), tail.stream()).toList());
+        } else if (ctx.getRuleIndex() == 2) {
+            // Depth
+            Atom hd = new CodeAtom(new Depth(visit(ctx.form_rem()), normalListFromSquare(ctx.sqlist()), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+            return hd;
         }
+
+        throw new RuntimeException("Internal error.");
     }
 
     @Override

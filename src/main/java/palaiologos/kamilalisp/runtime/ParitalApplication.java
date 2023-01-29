@@ -10,6 +10,12 @@ public class ParitalApplication implements SpecialForm, ReactiveFunction {
     private final int l;
     private final int c;
 
+    public ParitalApplication(Atom bindingData, int l, int c) {
+        this.bindData = bindingData;
+        this.l = l;
+        this.c = c;
+    }
+
     @Override
     public int line() {
         return l;
@@ -20,12 +26,37 @@ public class ParitalApplication implements SpecialForm, ReactiveFunction {
         return c;
     }
 
+    @Override
+    public Atom apply(Environment env, List<Atom> args) {
+        // 1: Replace placeholders.
+        List<Atom> data = new ArrayList<>(bindData.getList());
+        int varSlots = 0;
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).getType() != Type.IDENTIFIER || !Identifier.of(data.get(i).getIdentifier()).equals("_"))
+                data.set(i, new Atom(new Quote(Evaluation.evaluate(env, data.get(i)), l, c)));
+            else
+                varSlots++;
+        }
+        return new Atom(new PartiallyAppliedThunk(varSlots, data));
+    }
+
+    @Override
+    public String stringify() {
+        return "$" + bindData.toString();
+    }
+
+    @Override
+    public String frameString() {
+        return "$/syn";
+    }
+
     public class PartiallyAppliedThunk implements Lambda {
         private final List<Atom> data;
         private final int varSlots;
 
         public PartiallyAppliedThunk(int varSlots, List<Atom> data) {
-            this.data = data; this.varSlots = varSlots;
+            this.data = data;
+            this.varSlots = varSlots;
         }
 
         @Override
@@ -66,35 +97,5 @@ public class ParitalApplication implements SpecialForm, ReactiveFunction {
         public int column() {
             return ParitalApplication.this.column();
         }
-    }
-
-    public ParitalApplication(Atom bindingData, int l, int c) {
-        this.bindData = bindingData;
-        this.l = l;
-        this.c = c;
-    }
-
-    @Override
-    public Atom apply(Environment env, List<Atom> args) {
-        // 1: Replace placeholders.
-        List<Atom> data = new ArrayList<>(bindData.getList());
-        int varSlots = 0;
-        for(int i = 0; i < data.size(); i++) {
-            if (data.get(i).getType() != Type.IDENTIFIER || !Identifier.of(data.get(i).getIdentifier()).equals("_"))
-                data.set(i, new Atom(new Quote(Evaluation.evaluate(env, data.get(i)), l, c)));
-            else
-                varSlots++;
-        }
-        return new Atom(new PartiallyAppliedThunk(varSlots, data));
-    }
-
-    @Override
-    public String stringify() {
-        return "$" + bindData.toString();
-    }
-
-    @Override
-    public String frameString() {
-        return "$/syn";
     }
 }

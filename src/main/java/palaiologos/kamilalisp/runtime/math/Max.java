@@ -7,11 +7,6 @@ import palaiologos.kamilalisp.error.ArrayError;
 import java.util.List;
 
 public class Max extends PrimitiveFunction implements Lambda {
-    @Override
-    protected String name() {
-        return "max";
-    }
-
     private static Atom max2(Environment e, Atom a, Atom b) {
         if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
             return new Atom(Streams.zip(a.getList().stream(), b.getList().stream(), (x, y) -> max2(e, x, y)).toList());
@@ -30,6 +25,11 @@ public class Max extends PrimitiveFunction implements Lambda {
         } else {
             throw new UnsupportedOperationException("max not defined for: " + a.getType() + " and " + b.getType());
         }
+    }
+
+    @Override
+    protected String name() {
+        return "max";
     }
 
     @Override

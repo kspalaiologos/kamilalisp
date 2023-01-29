@@ -27,7 +27,8 @@ public class LetSeq extends PrimitiveFunction implements SpecialForm {
                             env.set(name, lambda);
                             continue;
                         }
-                        case "○←": case "def": {
+                        case "○←":
+                        case "def": {
                             List<Atom> declaration = arg.getList();
                             if (declaration.get(1).getType() != Type.IDENTIFIER) {
                                 throw new RuntimeException("Expected identifier in `def' declaration in `let-seq'.");

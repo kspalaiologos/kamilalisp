@@ -10,11 +10,6 @@ import java.math.RoundingMode;
 import java.util.List;
 
 public class Gcd extends PrimitiveFunction implements Lambda {
-    @Override
-    protected String name() {
-        return "gcd";
-    }
-
     private static BigComplex gaussianRem(Environment env, BigComplex a, BigComplex b) {
         BigComplex prod = a.multiply(b.conjugate());
         BigDecimal p = prod.re.divide(b.absSquare(env.getMathContext()), env.getMathContext());
@@ -88,6 +83,11 @@ public class Gcd extends PrimitiveFunction implements Lambda {
             else
                 return new Atom(result);
         }
+    }
+
+    @Override
+    protected String name() {
+        return "gcd";
     }
 
     @Override

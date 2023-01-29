@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime.string;
 
-import org.apache.commons.text.similarity.LevenshteinDistance;
 import palaiologos.kamilalisp.atom.*;
 
 import java.math.BigDecimal;

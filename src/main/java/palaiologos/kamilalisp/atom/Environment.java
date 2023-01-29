@@ -20,6 +20,12 @@ public class Environment {
         this.parent = parent;
     }
 
+    public static Environment defaultEnvironment() {
+        Environment env = new Environment();
+        FunctionRegistry.registerDefault(env);
+        return env;
+    }
+
     public void set(String key, Atom value) {
         data.put(key, value);
     }
@@ -47,12 +53,6 @@ public class Environment {
 
     public boolean has(String key) {
         return data.containsKey(key) || (parent != null && parent.has(key));
-    }
-
-    public static Environment defaultEnvironment() {
-        Environment env = new Environment();
-        FunctionRegistry.registerDefault(env);
-        return env;
     }
 
     public boolean isToplevel() {

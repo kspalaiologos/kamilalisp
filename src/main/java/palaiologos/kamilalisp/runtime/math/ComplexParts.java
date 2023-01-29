@@ -9,11 +9,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class ComplexParts extends PrimitiveFunction implements Lambda {
-    @Override
-    protected String name() {
-        return "complex-parts";
-    }
-
     private static Atom makeTuple(BigDecimal a, BigDecimal b) {
         return new Atom(List.of(new Atom(a), new Atom(b)));
     }
@@ -30,6 +25,11 @@ public class ComplexParts extends PrimitiveFunction implements Lambda {
             default:
                 throw new UnsupportedOperationException("complex-parts not defined for: " + a.getType());
         }
+    }
+
+    @Override
+    protected String name() {
+        return "complex-parts";
     }
 
     @Override
