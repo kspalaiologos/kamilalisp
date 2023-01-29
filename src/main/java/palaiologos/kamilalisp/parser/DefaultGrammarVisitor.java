@@ -61,12 +61,12 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
     public Atom visitForm_rem(GrammarParser.Form_remContext ctx) {
         if (ctx.children.size() == 1) {
             return visit(ctx.children.get(0));
-        } else if (ctx.getRuleIndex() == 1) {
+        } else if (ctx.DOLLAR() != null) {
             // Indexing
             Atom head = new CodeAtom(new Index(visit(ctx.form_rem()), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
             List<Atom> tail = normalListFromSquare(ctx.sqlist());
             return new Atom(Stream.concat(Stream.of(head), tail.stream()).toList());
-        } else if (ctx.getRuleIndex() == 2) {
+        } else if (ctx.PERCENT() != null) {
             // Depth
             Atom hd = new CodeAtom(new Depth(visit(ctx.form_rem()), normalListFromSquare(ctx.sqlist()), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
             return hd;

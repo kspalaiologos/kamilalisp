@@ -13,8 +13,8 @@ form: form_rem (('@'|'∘') form_rem)*
     ;
 
 form_rem: literal
-        | form_rem '$' sqlist
-        | form_rem '%' sqlist
+        | form_rem DOLLAR sqlist
+        | form_rem PERCENT sqlist
         | bind
         | any_list
         | reader_macro
@@ -52,7 +52,7 @@ map
     ;
 
 parallel_map
-    : '$:' form_rem
+    : DOLLAR ':' form_rem
     ;
 
 over
@@ -65,7 +65,7 @@ tack
     ;
 
 bind
-    : '$' list_
+    : DOLLAR list_
     ;
 
 literal
@@ -76,9 +76,9 @@ literal
     ;
 
 string_: STRING;
-hex_: '$'? HEX ;
-bin_: '$'? BIN ;
-long_: '$'? LONG ;
+hex_: DOLLAR? HEX ;
+bin_: DOLLAR? BIN ;
+long_: DOLLAR? LONG ;
 number
     : COMPLEX
     | hex_
@@ -130,6 +130,9 @@ NIL : 'nil' | '⍬';
 // Note: This all is required only because ANTLR is garbage
 // and can't inline rules on it's own.
 // Normally I'd have made a rule with NOTID and inverted it in a set.
+
+DOLLAR: '$' ;
+PERCENT: '%' ;
 
 fragment
 NOTID: ~('∘' | '⍬' | '⍨' | '@' | '$' | '%' | '^' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | '&') ;
