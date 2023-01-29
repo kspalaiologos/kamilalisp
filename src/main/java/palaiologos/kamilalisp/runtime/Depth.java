@@ -3,10 +3,12 @@ package palaiologos.kamilalisp.runtime;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
 import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.runtime.array.Rank;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -76,11 +78,50 @@ public class Depth implements SpecialForm, ReactiveFunction {
 
                 List<Integer> depth = Streams.stream(Iterables.cycle(data)).limit(args.size()).map(a -> a.getInteger().intValueExact()).toList();
 
-                return applyDepth(env, lambda, args, depth);
+                if(args.size() == 1) {
+                    // Easy case: we have only the shape list.
+                    int d = depth.get(0);
+                    Atom a = args.get(0);
+                    if(a.getType() != Type.LIST) {
+                        return new Atom(List.of(Evaluation.evaluate(env, lambda, List.of(a))));
+                    }
+
+                    if(d < 0) {
+                        return map1(env, lambda, a, -d);
+                    } else {
+                        return map_pos1(env, lambda, a, d);
+                    }
+                } else {
+                    // Hard case: we have the shape list and the auxiliary lists.
+                    return null;
+                }
             }
 
-            private Atom applyDepth(Environment env, Callable lambda, List<Atom> args, List<Integer> depth) {
-                return null;
+            private Atom map_pos1(Environment e, Callable c, Atom data, int d) {
+                int actualRank = Math.abs(Rank.computeRank(data));
+                if(d >= actualRank)
+                    return Evaluation.evaluate(e, c, List.of(data));
+                else {
+                    return new Atom((List<Atom>)
+                            data.getList().stream().map(x -> map_pos1(e, c, x, d))
+                                    .collect(Collectors.toCollection(ArrayList::new)));
+                }
+            }
+
+            private Atom map1(Environment e, Callable c, Atom data, int d) {
+                if(d == 1) {
+                    if (data.getType() != Type.LIST)
+                        return Evaluation.evaluate(e, c, List.of(data));
+                    return new Atom((List<Atom>)
+                            data.getList().stream().map(x -> Evaluation.evaluate(e, c, List.of(x)))
+                                    .collect(Collectors.toCollection(ArrayList::new)));
+                } else {
+                    if (data.getType() != Type.LIST)
+                        return Evaluation.evaluate(e, c, List.of(data));
+                    return new Atom((List<Atom>)
+                            data.getList().stream().map(x -> map1(e, c, x, d - 1))
+                                    .collect(Collectors.toCollection(ArrayList::new)));
+                }
             }
 
             @Override
