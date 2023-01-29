@@ -56,8 +56,8 @@ public class Map implements SpecialForm, ReactiveFunction {
                                     .collect(Collectors.toCollection(ArrayList::new)));
                 } else {
                     // zipWith
-                    return new Atom(IntStream.range(0, args.stream().filter(x -> x.getType() == Type.LIST).map(x -> x.getList().size()).min(Integer::compareTo).orElse(1))
-                            .mapToObj(index -> Evaluation.evaluate(env, lambda, args.stream().map(x -> x.getType() == Type.LIST ? x.getList().get(index) : x)
+                    return new Atom(IntStream.range(0, args.stream().filter(x -> x.getType() == Type.LIST).map(x -> x.getList().size()).filter(x -> x != 1).min(Integer::compareTo).orElse(1))
+                            .mapToObj(index -> Evaluation.evaluate(env, lambda, args.stream().map(x -> x.getType() == Type.LIST ? (x.getList().size() != 1 ? x.getList().get(index) : x.getList().get(0)) : x)
                                     .collect(Collectors.toCollection(ArrayList::new)))).toList());
                 }
             }

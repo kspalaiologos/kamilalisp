@@ -76,6 +76,10 @@ public class Depth implements SpecialForm, ReactiveFunction {
 
                 List<Integer> depth = Streams.stream(Iterables.cycle(data)).limit(args.size()).map(a -> a.getInteger().intValueExact()).toList();
 
+                return applyDepth(env, lambda, args, depth);
+            }
+
+            private Atom applyDepth(Environment env, Callable lambda, List<Atom> args, List<Integer> depth) {
                 return null;
             }
 
