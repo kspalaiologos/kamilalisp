@@ -48,7 +48,7 @@ public class Index implements SpecialForm {
 
     @Override
     public String frameString() {
-        return "?$[?]/syn";
+        return "$[]/syn";
     }
 
     @Override
