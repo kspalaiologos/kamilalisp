@@ -50,6 +50,8 @@ public class ParallelMap implements SpecialForm, ReactiveFunction {
                     return Atom.NULL;
                 if (args.size() == 1) {
                     // map
+                    if(args.get(0).getType() != Type.LIST)
+                        return Evaluation.evaluate(env, lambda, args);
                     return new Atom((List<Atom>)
                             args.get(0).getList().stream().parallel().map(x -> Evaluation.safeEvaluate(env, lambda, List.of(x), s -> {
                                 System.err.println(s);
@@ -57,7 +59,7 @@ public class ParallelMap implements SpecialForm, ReactiveFunction {
                             })).collect(Collectors.toCollection(ArrayList::new)));
                 } else {
                     // zipWith
-                    return new Atom(IntStream.range(0, args.stream().map(x -> x.getList().size()).min(Integer::compareTo).get()).parallel()
+                    return new Atom(IntStream.range(0, args.stream().filter(x -> x.getType() == Type.LIST).map(x -> x.getList().size()).min(Integer::compareTo).orElse(1)).parallel()
                             .mapToObj(index -> Evaluation.safeEvaluate(env, lambda, args.stream().map(x -> x.getType() == Type.LIST ? x.getList().get(index) : x).collect(Collectors.toList()), s -> {
                                 System.err.println(s);
                                 throw new InterruptionError();
