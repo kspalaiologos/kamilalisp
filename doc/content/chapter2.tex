@@ -589,6 +589,24 @@ It is also possible to define many concept using folds, such as \verb|map| or \v
     (1 2 3 4)
 \end{Verbatim}
 
+Perhaps more surprisingly, it is also possible to join two lists using \verb|foldr|:
+
+\begin{Verbatim}
+    --> defun my-append (l1 l2) (foldr cons l2 l1)
+    (λ l1 l2 . (foldr cons l2 l1))
+    --> my-append (range 1 5) (range 6 10)
+    (1 2 3 4 5 6 7 8 9)
+\end{Verbatim}
+
+This is due to the fact that \verb|foldr| accepts an identity element, which in this function is the second list, and the list being folded as the first list - so in reality, what happens is:
+
+\begin{Verbatim}
+    my-append (range 1 5) (range 6 10)
+    = foldr cons (range 6 10) (range 1 5)
+    = cons 1 (cons 2 (cons 3 (cons 4 (cons 5 (range 6 10)))))
+    = (1 2 3 4 5 6 7 8 9)
+\end{Verbatim}
+
 \section{Searching and partitioning}
 
 \section{Sorting and permutations}
