@@ -428,7 +428,7 @@ The relation between \verb|filter| and \verb|map| (the colon operator) can be ob
     (4 5)
 \end{Verbatim}
 
-\verb|filter| allows for an elegant yet inefficient implementation\footnote{Compared to the prime number-related primitive functions supplied by KamilaLisp} of a prime sieve. The sieve of Eratosthenes is an algorithm for finding all prime numbers up to a given limit. It works by iteratively marking the multiples of each prime number as composite. To implement this in KamilaLisp, it is needed to use recursion and two lists of numbers: one for the primes that have been already found, and one for the numbers that have not been classified yet.
+\verb|filter| allows for an elegant yet inefficient implementation\footnote{Compared to the prime number-related primitive functions already supplied by KamilaLisp} of a prime sieve. The sieve of Eratosthenes is an algorithm for finding all prime numbers up to a given limit. It works by iteratively marking the multiples of each prime number as composite. To implement this in KamilaLisp, it is needed to use recursion and two lists of numbers: one for the primes that have been already found, and one for the numbers that have not been classified yet.
 
 Firstly, define the iteration step function that takes the prime and unclassified lists in a pair, adds the first element from the unclassified list to the prime list and removes all its multiples from the unclassified list:
 
