@@ -1,5 +1,5 @@
 
-\chapter{Data structures}
+\chapter{Elementary data structures}
 
 This chapter will go through the most common data structures and how they are implemented in KamilaLisp. Many data structures in KamilaLisp are defined in terms of each other - for instance, all the functions that generally operate on sets can also be used on lists, since sets constitute a special case of lists. This chapter will also describe elementary array programming in KamilaLisp, which is usually the preferred by many programmers way to solve complex problems quickly.
 
@@ -287,7 +287,30 @@ The functor returned by \verb|:| has the same arity as the function it is applie
     (6 6 6)
 \end{Verbatim}
 
-Of course, it is possible to specify \textit{invariant arguments} to the function - the invariant arguments are constant arguments that are always supplied to the function being mapped, while other arguments over which \verb|map| can iterate are changing:
+To present an example, the colon operator would be helpful in implementing a function to test whether its arguments are monotonically increasing or decreasing. The notation $x \le y \le z$ does not quite translate to KamilaLisp:
+
+\begin{Verbatim}
+    --> < 1 2 3
+    TypeError thrown in thread 9225652:
+        2 arguments expected in application.
+    at entity <  1:1
+    at < primitive function
+\end{Verbatim}
+
+A function \verb|monotonic| can be defined to test whether a list of numbers is monotonically increasing or decreasing, based on the comparison function it takes argument:
+
+\begin{Verbatim}
+    --> defun monotonic (fn list) (same '(1) (unique (:fn list (cdr list))))
+    (λ fn list . (same '(1) (unique (:fn list (cdr list)))))
+    --> monotonic < '(1 2 3)
+    1
+    --> monotonic < '(1 4 3)
+    0
+\end{Verbatim}
+
+This particular example uses slightly inefficient logic (takes all unique elements of the mapping and checks if the resultant list is a singleton list\footnote{A list containing only one element} of \verb|1|), while a more efficient implementation would use a higher order function to test whether all the elements of the resultant list are \verb|1|, but this topic will be covered later on in the book.
+
+Coming back to \verb|map|, it is possible to specify \textit{invariant arguments} to the function - the invariant arguments are constant arguments that are always supplied to the function being mapped, while other arguments over which \verb|map| can iterate are changing:
 
 \begin{Verbatim}
     --> :+ 5 '(5) '(1 2 3 4 5)
@@ -486,6 +509,85 @@ defun sieve (n) (reverse@car@converge (
 \end{Verbatim}
 
 \section{Folding and scanning}
+
+\textit{Folds} and \textit{scans} are higher-order functions that analyze a recursive data structure (usually a tree or list, however this section will focus only on folding lists) and through use of a given aggregation functor, combine the results of recursively processing its constituent parts, building up a return value. The difference between folds and scans is that the former return only the final result, while the latter return a list of intermediate results.
+
+To demonstrate the simplest example of a fold, the sum of a list could be computed by folding it with the \verb|+| function. Of course, the order of operation in this particular case does not matter since addition is commutative, however it is common to distinguish \textit{left-associative folds} and \textit{right-associative folds}. Imagine folding a list as inserting a dyadic function between its elements:
+
+\begin{Verbatim}
+    fold - (1 2 3 4 5) = 1 - 2 - 3 - 4 - 5
+\end{Verbatim}
+
+The sum can be parenthesised in two ways: as \verb |(((1 - 2) - 3) - 4) - 5| or \verb|1 - (2 - (3 - (4 - 5)))|, thus former is a left-associative fold, while the latter is a right-associative fold.
+
+Additionally, a question arises how should folds handle empty and singleton lists. Folds, in general case, return the identity element of the aggregation functor when the list is empty. When presented with a singleton list, the fold applies the function to the identity element and the only element of the list. Obviously, it is not possible to just query the identity element of the aggregating function, which is why the identity element of it is usually passed as an argument to fold. Sometimes it is desirable to fold a list with a function that does not have an identity element, in which case folding a list with a single element returns it and folding an empty list results in an error.
+
+Of course, all of these variants of folding have their own names in KamilaLisp:
+
+\begin{itemize}
+    \item \verb|foldl| is a left-associative fold that takes an identity element and preprends it to the input list.
+    \item \verb|foldr| is a right-associative fold that takes an identity element and preprends it to the input list.
+    \item \verb|foldl1| is a left-associative fold that does not take an identity element and errors on empty lists.
+    \item \verb|foldr1| is a right-associative fold that does not take an identity element and errors on empty lists.
+\end{itemize}
+
+A sum from $1$ to $n$ can be naively computed using folds as follows:
+
+\begin{Verbatim}
+    --> foldl + 0 (range 1 100)
+    5050
+\end{Verbatim}
+
+The direction of the fold does not matter here. However, if presented with a non-associative functor, the direction of the fold matters. Consider the following example:
+
+\begin{Verbatim}
+    --> foldl - 0 (range 1 100)
+    -4950
+    --> foldr - 0 (range 1 100)
+    50
+\end{Verbatim}
+
+The first example essentially computes $((0 - 1) - 2) - \dots$, while the second example computes $0 - (1 - (2 - \dots))$.
+
+The aggregating function is always a dyadic function. Depending on the direction of the fold, its arguments may be reversed. For example, in left-associative folds, the first argument is the accumulator and the second argument is the current element of the list. In right-associative folds, the first argument is the current element of the list and the second argument is the accumulator.
+
+Folds make it possible to implement many familiar functions in a more elegant manner. Consider the arithmetic mean example introduced in the first chapter of the book:
+
+\begin{Verbatim}
+    --> defun sum (l) (if (same l '()) 0 (+ (car l) (sum (cdr l))))
+    (λ l . (if (same l '()) 0 (+ (car l) (sum (cdr l)))))
+    --> def mean [/ sum tally]
+    [/ sum tally]
+\end{Verbatim}
+
+The \verb|mean| function can be rewritten as follows\footnote{In a very similar way to APL - compare \verb|[/ $(foldl1 +) tally]| and \verb|+/÷≢|.}:
+
+\begin{Verbatim}
+    --> def mean [/ $(foldl1 +) tally]
+    [/ foldl + 0 tally]
+\end{Verbatim}
+
+Folds, in a way, transcend the concept of tail recursion. A tail-recursive \verb|foldl| function can be implemented in the following way:
+
+\begin{Verbatim}
+    --> defun my-foldl (f z l) (if (same l '()) z (&0 f (f z (car l)) (cdr l)))
+    (λ f z l . (if (same l 'nil) z (&0 f (f z (car l)) (cdr l))))
+    --> my-foldl - 0 (range 1 100)
+    -4950
+\end{Verbatim}
+
+It is also possible to define many concept using folds, such as \verb|map| or \verb|filter|:
+
+\begin{Verbatim}
+    --> defun my-map (f l) (foldr (lambda (x y) (cons (f x) y)) 'nil l)
+    (λ f l . (foldr (lambda (x y) (cons (f x) y)) 'nil l))
+    --> my-map $(+ 1) (range 1 10)
+    (2 3 4 5 6 7 8 9 10)
+    --> defun my-filter (f l) (foldr (lambda (x y) (if (f x) (cons x y) y)) 'nil l)
+    (λ f l . (foldr (lambda (x y) (if (f x) (cons x y) y)) 'nil l))
+    --> my-filter $(> 5) (range 1 10)
+    (1 2 3 4)
+\end{Verbatim}
 
 \section{Searching and partitioning}
 
