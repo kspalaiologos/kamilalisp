@@ -59,6 +59,10 @@ public class FunctionRegistry {
         env.setp("str:format", new Atom(new Format()));
         env.setp("⍫∊", new Atom(new Format()));
         env.setp("str:lines", new Atom(new Lines()));
+        env.setp("str:implode", new Atom(new Implode()));
+        env.setp("str:explode", new Atom(new Explode()));
+        env.setp("⍫∨", new Atom(new Implode()));
+        env.setp("⍫∧", new Atom(new Explode()));
         env.setp("to-string", new Atom(new ToString()));
         env.setp("⍫←", new Atom(new ToString()));
         env.setp("filter", new Atom(new Filter()));
