@@ -220,7 +220,7 @@ Another closely related functionality related to indexing is searching. The \ver
 
 \section{Rank}
 
-KamilaLisp lists can have \textit{rank}, which is a measure of their nesting, usually interpreted in the context of how many dimensions they could have. For example, a doubly nested list can be interpreted as a matrix:
+KamilaLisp lists have \textit{rank}, which is a measure of their nesting, usually interpreted in the context of how many dimensions they could have. For example, a doubly nested list can be interpreted as a matrix:
 
 \begin{Verbatim}
     --> ?'((1 2) (3 4))
@@ -412,11 +412,29 @@ Finally, the depths list can be defined as a result of an expression:
     ("(1 2), 6" "(3 4), 5")
 \end{Verbatim}
 
-\section{Folding, scanning and filtering}
+A function similar to list mapping is \verb|filter|. It takes a predicate and a list and returns a list of elements for which the predicate returned a truthy value.
+
+\begin{Verbatim}
+    --> filter (lambda x (> x 3)) '(1 2 3 4 5)
+    (4 5)
+\end{Verbatim}
+
+The relation between \verb|filter| and \verb|map| (the colon operator) can be observed by re-implementing one in terms of the other in the following way:
+
+\begin{Verbatim}
+    --> defun my-filter (pred lst) (replicate (= 1 (:pred lst)) lst)
+    (λ pred lst . (replicate (= 1 (:pred lst)) lst))
+    --> my-filter (lambda x (> x 3)) '(1 2 3 4 5)
+    (4 5)
+\end{Verbatim}
+
+\section{Folding and scanning}
 
 \section{Searching and partitioning}
 
 \section{Sorting and permutations}
+
+\section{Pattern matching}
 
 \section{Sets}
 
