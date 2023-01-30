@@ -56,7 +56,6 @@
 	  \vspace{8mm plus .5fill}
 	  {\Huge\textbf{\@title}\par}
 	  \vspace{8mm plus .1fill}
-	  {\large\bf \MakeUppercase{\@docDesc} \par}
 	  \vspace{2cm plus 1.5fill}
 	  \vspace{1cm plus 1fill}
 	  {\large \@date\par}
@@ -76,9 +75,6 @@
   \global\let\date\relax
   \global\let\and\relax
 }
-
-\def\docDesc#1{\gdef\@docDesc{#1}}
-\def\@docDesc{???\ClassError{doc}{Missing description.}\@ehc}
 
 \renewenvironment{abstract}{
   \titlepage
