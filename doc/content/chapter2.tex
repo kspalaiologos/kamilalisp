@@ -428,6 +428,63 @@ The relation between \verb|filter| and \verb|map| (the colon operator) can be ob
     (4 5)
 \end{Verbatim}
 
+\verb|filter| allows for an elegant yet inefficient implementation\footnote{Compared to the prime number-related primitive functions supplied by KamilaLisp} of a prime sieve. The sieve of Eratosthenes is an algorithm for finding all prime numbers up to a given limit. It works by iteratively marking the multiples of each prime number as composite. To implement this in KamilaLisp, it is needed to use recursion and two lists of numbers: one for the primes that have been already found, and one for the numbers that have not been classified yet.
+
+Firstly, define the iteration step function that takes the prime and unclassified lists in a pair, adds the first element from the unclassified list to the prime list and removes all its multiples from the unclassified list:
+
+\begin{Verbatim}
+    --> defun step data (let-seq (
+        (def primes (car data))
+        (def cands (car@cdr data))
+        (case (same cands 'nil) (tie primes 'nil))
+        (def current (car cands))
+        (tie (cons current primes) (filter $(mod _ current) (cdr cands)))))
+\end{Verbatim}
+
+This example of \verb|let-seq| used the construct \verb|case|, which is a special form of \verb|if| that may be used only in \verb|let-seq|. If the condition that directly follows \verb|case| is true, then the further execution of the \verb|let-seq|'s body is stopped and the value of the expression that follows the condition is returned. This is especially useful for terminating the computation when a special case is encountered. Using \verb|while|, the iteration step function can be applied a finite amount of times to the initial pair of lists:
+
+\begin{Verbatim}
+    --> while (tie 'nil (range 2 50)) 1 step
+    ((2) (3 5 7 9 11 13 15 17 19 21 23 25 27 29 31 33 35 37 39 41 43 45 47 49))
+    --> while (tie 'nil (range 2 50)) 5 step
+    ((11 7 5 3 2) (13 17 19 23 29 31 37 41 43 47))
+    --> while (tie 'nil (range 2 50)) 10 step
+    ((29 23 19 17 13 11 7 5 3 2) (31 37 41 43 47))
+    --> while (tie 'nil (range 2 50)) 15 step
+    ((47 43 41 37 31 29 23 19 17 13 11 7 5 3 2) nil)
+    --> while (tie 'nil (range 2 50)) 20 step
+    ((47 43 41 37 31 29 23 19 17 13 11 7 5 3 2) nil)
+\end{Verbatim}
+
+Since the step function \textit{converges} to a value (eventually yields a value $t$ such that $f(t) = t$), the \verb|converge| function can be used to implement most of the sieve's logic now:
+
+\begin{Verbatim}
+    --> converge step (tie 'nil (range 2 100))
+    ((97 89 83 79 73 71 67 61 59 53 47 43 41 37 31 29 23 19 17 13 11 7 5 3 2) nil)
+\end{Verbatim}
+
+To provide a final result, it is necessary to extract and reverse the prime list from the pair and wrap the invocation in a function:
+
+\begin{Verbatim}
+    --> defun sieve (n) (reverse@car@converge step (tie 'nil (range 2 n)))
+    (λ n . (reverse@car@converge step (tie 'nil (range 2 n))))
+    --> sieve 20
+    (2 3 5 7 11 13 17 19)
+\end{Verbatim}
+
+Ultimately, the function can be rewritten as follows to make it more concise and self-contained:
+
+\begin{Verbatim}
+defun sieve (n) (reverse@car@converge (
+        lambda x (let-seq (
+            (def primes (car x))
+            (def cands (car@cdr x))
+            (case (same cands 'nil) (tie primes 'nil))
+            (def current (car cands))
+            (tie (cons current primes) (filter $(mod _ current) (cdr cands)))))
+    ) (tie 'nil (range 2 n)))
+\end{Verbatim}
+
 \section{Folding and scanning}
 
 \section{Searching and partitioning}
