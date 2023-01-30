@@ -1,11 +1,13 @@
 
-\chapter{List processing}
+\chapter{Data structures}
+
+This chapter will go through the most common data structures and how they are implemented in KamilaLisp. Many data structures in KamilaLisp are defined in terms of each other - for instance, all the functions that generally operate on sets can also be used on lists, since sets constitute a special case of lists. This chapter will also describe elementary array programming in KamilaLisp, which is usually the preferred by many programmers way to solve complex problems quickly.
+
+\section{Basic list operations}
 
 Lists are one of the most important data structures used in functional programming and every major programming language provides means of finite sequence storage. KamilaLisp is no different and a special emphasis is put on list and array processing, the basic building block of dataflow programming.
 
 As mentioned before, every list besides the empty list contains a \textit{head} (the first element, \verb|car|) and a \textit{tail} (the last element, \verb|cdr|). The tail of a list is always another list, even if it is empty. The empty list literal is introduced in the code as \verb|'nil| or \verb|'()|. 
-
-\section{Basic list operations}
 
 Using \verb|car| and \verb|cdr| it is possible to define a basic, non-tail recursive function that yields the length of a list:
 
@@ -216,6 +218,40 @@ Another closely related functionality related to indexing is searching. The \ver
     -1
 \end{Verbatim}
 
+\section{Rank}
+
+KamilaLisp lists can have \textit{rank}, which is a measure of their nesting, usually interpreted in the context of how many dimensions they could have. For example, a doubly nested list can be interpreted as a matrix:
+
+\begin{Verbatim}
+    --> ?'((1 2) (3 4))
+    [[1 2]
+     [3 4]]
+\end{Verbatim}
+
+Since a matrix usually has two axes, matrices (lists of lists of scalars) have rank 2. A vector is a list of scalar values, so it has rank 1. A scalar value has rank 0. The rank of an object can be computed using the \verb|rank| function:
+
+\begin{Verbatim}
+    --> rank '((1 2) (3 4))
+    2
+    --> rank '(1 2 3 4)
+    1
+    --> rank 0
+    0
+\end{Verbatim}
+
+One interesting thing to consider are \textit{ragged list}. A \textit{ragged list} is defined as a list, whose elements have different ranks. For example, the following list is a ragged list:
+
+\begin{Verbatim}
+    --> ?'((1 2) (3 4) 5)
+\end{Verbatim}
+
+Since the first and second elements of it have ranks 1 (vectors; lists of scalars), the last element has rank 0 (a scalar). The rank of a ragged list is computed as if the maximum of ranks of a list was considered and the result is negated:
+
+\begin{Verbatim}
+    --> rank '((1 2) (3 4) 5)
+    -2
+\end{Verbatim}
+
 \section{Elementary higher order functions}
 
 KamilaLisp provides a wide range of higher order functions for manipulating lists. Many them can be defined using recursion, however almost all of them are guaranteed to terminate, while recursion in general case does not. The use of list processing functions that constitute the core of array programming is highly encouraged over recursion, because they tend to be more concise, easier to understand and less error prone.
@@ -251,7 +287,7 @@ The functor returned by \verb|:| has the same arity as the function it is applie
     (6 6 6)
 \end{Verbatim}
 
-Of course, it is possible to specify invariant arguments to the function that is applied to each element of the list:
+Of course, it is possible to specify \textit{invariant arguments} to the function - the invariant arguments are constant arguments that are always supplied to the function being mapped, while other arguments over which \verb|map| can iterate are changing:
 
 \begin{Verbatim}
     --> :+ 5 '(5) '(1 2 3 4 5)
@@ -375,3 +411,15 @@ Finally, the depths list can be defined as a result of an expression:
     --> f%[[tie + -] 1] '((1 2) (3 4)) '(6 5 (4 3) 2 1)
     ("(1 2), 6" "(3 4), 5")
 \end{Verbatim}
+
+\section{Folding, scanning and filtering}
+
+\section{Searching and partitioning}
+
+\section{Sorting and permutations}
+
+\section{Sets}
+
+\section{Hashmaps}
+
+\section{Using glyphs}

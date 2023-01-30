@@ -23,7 +23,8 @@ public class Evaluation {
                 }
                 Atom head = evaluate(env, atom.getList().get(0));
                 if (head.getType() != Type.CALLABLE) {
-                    throw new TypeError("Cannot call non-callable atom in evaluation of list with head " + head.toDisplayString());
+                    // Replace LF in matrix stringification...
+                    throw new TypeError("Cannot call non-callable atom in evaluation of list with head " + head.toDisplayString().replace('\n', ' '));
                 }
                 Callable c = head.getCallable();
                 Atom result;
@@ -70,7 +71,7 @@ public class Evaluation {
                     }
                     Atom head = evaluate(env, atom.getList().get(0));
                     if (head.getType() != Type.CALLABLE) {
-                        throw new TypeError("Cannot call non-callable atom in evaluation of list with head " + head.toDisplayString());
+                        throw new TypeError("Cannot call non-callable atom in evaluation of list with head " + head.toDisplayString().replace('\n', ' '));
                     }
                     Callable c = head.getCallable();
                     Atom result;
