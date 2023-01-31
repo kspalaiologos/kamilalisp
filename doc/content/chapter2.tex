@@ -695,8 +695,9 @@ The \verb|find| function simply finds occurences of something in a string or lis
 Finally, the starting and ending comment symbols are put together into a single list as follows:
 
 \begin{Verbatim}
-    --> (defun comment (chars str) (:or (find str chars) (rotate -1 (reverse (find (reverse str) chars)))))
-    (λ chars str . (:or (find str chars) (rotate -1 (reverse (find (reverse str) chars)))))
+    --> (defun comment (chars str) (:or
+    ...     (find str chars)
+    ...     (rotate -1 (reverse (find (reverse str) chars)))))
     --> comment "/*" "This /* is */ an example"
     (0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0)
 \end{Verbatim}
