@@ -634,7 +634,7 @@ Scans, especially in APL, are extensively used to implement certain kinds of pro
     ("h" "he" "hel" "hell" "hello" "hello!")
 \end{Verbatim}
 
-The \verb|prefixes| functionality (which in KamilaLisp source code is implemented using methods isomorphic to a scan) can be also used to implement other, seemingly unrelated tools in mathematics. Consider the \textit{Levi-Civita} symbol defined by the following explicit expression:
+The \verb|prefixes| functionality (which in KamilaLisp source code is implemented using methods isomorphic to a scan) can be also used to implement other, seemingly unrelated tools in mathematics. Consider the \textit{Levi-Civita} symbol, extensively used in linear algebra, defined by the following explicit expression:
 
 $$
 {\displaystyle \varepsilon _{a_{1}a_{2}a_{3}\ldots a_{n}}=\prod _{1\leq i<j\leq n}\operatorname {sgn}(a_{j}-a_{i})}
@@ -721,6 +721,104 @@ Finally, to accomplish the same underlining behaviour, one could use the followi
     This /* is */ an example
          ¯¯¯¯¯¯¯¯
 \end{Verbatim}
+
+\section{Products and two-dimensional convolution}
+
+KamilaLisp supports two kinds of products known from mathematics: the inner (generalisation of \textit{dot}) product and the outer (\textit{cartesian}) product. The outer product of two lists is a list of all possible pairs of elements from the two lists:
+
+\begin{Verbatim}
+    --> [outer-product #0 #0] (range 1 4)
+    [[1 1]
+     [1 2]
+     [1 3]
+     [2 1]
+     [2 2]
+     [2 3]
+     [3 1]
+     [3 2]
+     [3 3]]
+\end{Verbatim}
+
+The dot product of two vectors is defined mathematically as follows:
+
+$$
+{\displaystyle x \cdot y = \sum_{i=1}^{n}x_{i}y_{i}}
+$$
+
+Inner product spaces generalize Euclidean vector spaces, in which the inner product is the dot product or scalar product of Cartesian coordinates. consider the following example of implementing the dot product using the \verb|inner-product| function:
+
+\begin{Verbatim}
+    --> inner-product + * '(1 2 3) '(4 5 6)
+    32
+\end{Verbatim}
+
+The first argument to \verb|inner-product| is the summation operation, while the second argument is the multiplication operation. The third and further arguments are the two vectors to be multiplied. If only two arguments are provided, the \verb|inner-product| function yields a function that performs the operation on arbitrarily many vectors.
+
+To descend into technicalities, the \verb|inner-product| function may be reimplemented using the \verb|foldl1| function and \verb|:| operator:
+
+\begin{Verbatim}
+    --> defun my-dot (f g ...xs) (foldl1 f (lift :g ...xs))
+\end{Verbatim}
+
+This implementation uses the \verb|lift| function, which takes a list of arguments to be passed into a function and applies it to them. The equivalence between \verb|lift| and usual function application is demonstrated as \verb|lift f '(a1 a2 a3...) <=> f a1 a2 a3...|.
+
+Following the previously recalled definition of the inner product in terms of \verb|foldl1| and \verb|map|, it is directly stated that the inner product of two \textit{empty} vectors is going to raise an error (instead of returning the identity element of \verb|f|).
+
+The inner product is particularly useful in the context of convolution. Throughout this section, it will be chiefly assumed that the convolution is two-dimensional. A step of convolution of two matrices $\mathbf{I}$ and $\mathbf{K}$ is illustrated as follows:
+
+\begin{center}
+\begin{tikzpicture}[mmat/.style={matrix of math nodes,column sep=-\pgflinewidth/2,
+    row sep=-\pgflinewidth/2,cells={nodes={draw,inner sep=3pt,thin}},draw=#1,thick,inner sep=0pt},
+    mmat/.default=black,
+    node distance=0.3em]
+  \matrix[mmat](mat1){
+          0 & 1 & 1 & 1 & 0 & 0 & 0 \\ 
+          0 & 0 & 1 & 1 & 1 & 0 & 0 \\ 
+          0 & 0 & 0 & 1 & 1 & 1 & 0 \\ 
+          0 & 0 & 0 & 1 & 1 & 0 & 0 \\ 
+          0 & 0 & 1 & 1 & 0 & 0 & 0 \\ 
+          0 & 1 & 1 & 0 & 0 & 0 & 0 \\ 
+          0 & 1 & 0 & 0 & 0 & 0 & 0 \\ 
+          };
+  \def\myarray{{1,0,1},{0,1,0},{1,0,1}}       
+  \foreach \X in {0,1,2}
+  {\foreach \Y in {0,1,2}
+   {\pgfmathsetmacro{\myentry}{{\myarray}[\Y][\X]}
+   \path (mat1-\the\numexpr\Y+1\relax-\the\numexpr\X+4\relax.south east)
+   node[anchor=south east,blue,scale=0.3,inner sep=1.2pt]{$\times\myentry$};
+   }}         
+  \node[fit=(mat1-1-4)(mat1-3-6),inner sep=0pt,draw,red,thick,name path=fit](f1){};      
+  \node[right=of mat1] (mul) {$*$};      
+  \matrix[mmat=blue,fill=blue!20,right=of mul,name path=mat2](mat2){    
+      1 & 0 & 1 \\ 
+      0 & 1 & 0 \\ 
+      1 & 0 & 1 \\ };
+  \node[right=of mat2] (eq) {$=$};       
+  \matrix[mmat,right=of eq](mat3){    
+      1 & 4 & 3 & |[draw=green,thick,fill=green!20,alias=4]|4 & 1 \\ 
+      1 & 2 & 4 & 3 & 3 \\ 
+      1 & 2 & 3 & 4 & 1 \\ 
+      1 & 3 & 3 & 1 & 1 \\ 
+      3 & 3 & 1 & 1 & 0 \\ 
+  };
+  \foreach \Anchor in {south west,north west,south east,north east}
+  {\path[name path=test] (f1.\Anchor) -- (mat2.\Anchor);
+  \draw[blue,densely dotted,name intersections={of=test and fit,total=\t}]
+  \ifnum\t>0 (intersection-\t) -- (mat2.\Anchor) \else
+   (f1.\Anchor) -- (mat2.\Anchor)\fi;
+  \path[name path=test2]  (4.\Anchor) -- (mat2.\Anchor);  
+  \draw[green,densely dotted,name intersections={of=test2 and mat2,total=\tt}] 
+  \ifnum\tt>0 (intersection-1) -- (4.\Anchor) \else
+     (mat2.\Anchor) --  (4.\Anchor)\fi;
+     }
+  \path (mat1.south) node[below] {$\mathbf{I}$}
+   (mat2|-mat1.south) node[below] {$\mathbf{K}$}
+   (mat3|-mat1.south) node[below] {$\mathbf{I}*\mathbf{K}$};
+  \begin{scope}[on background layer]
+   \fill[red!20] (f1.north west) rectangle (f1.south east);
+  \end{scope}
+\end{tikzpicture}
+\end{center}
 
 \section{Searching and partitioning}
 

@@ -51,3 +51,5 @@ doc/**/*.aux
 doc/*.toc
 doc/*.log
 doc/*.out
+doc/*.fls
+doc/*.fdb_latexmk
