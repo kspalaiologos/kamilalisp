@@ -29,7 +29,12 @@ public class Find extends PrimitiveFunction implements Lambda {
                 indices.add(index);
                 index = a.getString().indexOf(b.getString(), index+1);
             }
-            return new Atom(iotaUnderbar(indices));
+            List<Atom> result = iotaUnderbar(indices);
+            // Pad to length of a.
+            for (int i = result.size(); i < a.getString().length(); i++) {
+                result.add(Atom.FALSE);
+            }
+            return new Atom(result);
         } else if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
             List<Atom> l1 = a.getList();
             List<Atom> l2 = b.getList();
@@ -40,7 +45,12 @@ public class Find extends PrimitiveFunction implements Lambda {
                 l1 = l1.subList(index+1, l1.size());
                 index = Collections.indexOfSubList(l1, l2);
             }
-            return new Atom(iotaUnderbar(indices));
+            List<Atom> result = iotaUnderbar(indices);
+            // Pad to length of a.
+            for (int i = result.size(); i < l1.size(); i++) {
+                result.add(Atom.FALSE);
+            }
+            return new Atom(result);
         } else {
             throw new RuntimeException("find takes two strings or two lists.");
         }
