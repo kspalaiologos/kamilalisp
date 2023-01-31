@@ -2,12 +2,14 @@ package palaiologos.kamilalisp.runtime.math;
 
 import ch.obermuhlner.math.big.BigComplex;
 import ch.obermuhlner.math.big.BigComplexMath;
+import ch.obermuhlner.math.big.BigDecimalMath;
 import com.google.common.collect.Streams;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.ArrayError;
 import palaiologos.kamilalisp.error.TypeError;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,8 @@ public class DoubleStar extends PrimitiveFunction implements Lambda {
         } else if (a.getType() == Type.COMPLEX && b.getType() == Type.REAL) {
             return new Atom(BigComplexMath.pow(a.getComplex(), b.getReal(), e.getMathContext()));
         } else if (a.getType() == Type.INTEGER && b.getType() == Type.INTEGER) {
+            if(b.getInteger().compareTo(BigInteger.ZERO) < 0)
+                return new Atom(BigDecimalMath.pow(a.getReal(), b.getReal(), e.getMathContext()));
             return new Atom(a.getInteger().pow(b.getInteger().intValue()));
         } else if (a.getType() == Type.INTEGER && b.getType() == Type.REAL) {
             return new Atom(BigComplexMath.pow(a.getComplex(), b.getComplex(), e.getMathContext()));
