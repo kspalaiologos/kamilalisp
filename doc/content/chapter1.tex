@@ -141,11 +141,11 @@ Since functions are first-class in KamilaLisp, it is now also possible to return
 When writing complex functions, it is of particular interest to keep the partial results obtained during the execution of the function. This can be achieved by cascading the \textit{let} construct, or using the \textit{let-seq} construct. The following examples implement a function that raises its first argument to the eigth power\footnote{Many reimplementations of common built-in functions mentioned in the book that are present in KamilaLisp are rather suboptimal and demonstrated only for the sake of completeness. The programmer is urged to use the optimised predefined routines when possible instead.}:
 
 \begin{Verbatim}
-    --> defun p8 x (let-seq (
+    --> defun p8 x (let-seq
     ...   (def y (* x x))
     ...   (def z (* y y))
-    ...   (* z z)))
-    (λ x . (let-seq ((def y (* x x)) (def z (* y y)) (* z z))))
+    ...   (* z z))
+    (λ x . (let-seq (def y (* x x)) (def z (* y y)) (* z z)))
     --> p8 4
     65536
     --> defun p8 x (let ((y (* x x))) (let ((z (* y y))) (* z z)))
@@ -228,10 +228,10 @@ The following function implements the \textit{factorial} function in a recursive
 Since KamilaLisp supports arbitrary precision integers, the factorial function can be applied to arbitrarily large numbers. However, at some point, this function will \textit{overflow its call stack}, meaning that the number of recursive calls will exceed the maximum call stack size. This is a common problem in recursive functions, and it can be solved by using the \textit{tail recursion} technique. Tail recursion is a special case of recursion, where the recursive call is the last expression in the function body. In this case, the stack frame of the current function can be reused for the recursive call, which means that the stack will not grow indefinitely. To make use of this technique, the factorial function needs to be altered so that the recursive call is the last expression in the function body:
 
 \begin{Verbatim}
-    --> defun factorial (n) (let-seq (
+    --> defun factorial (n) (let-seq 
     ...   (defun f' (n acc) (if (= n 0) acc (f' (- n 1) (* n acc))))
-    ...   (f' n 1)))
-    (λ n . (let-seq ((defun f' (n acc) (if (= n 0) acc (f' (- n 1) (* n acc)))) (f' n 1))))
+    ...   (f' n 1))
+    (λ n . (let-seq (defun f' (n acc) (if (= n 0) acc (f' (- n 1) (* n acc))) (f' n 1))))
     --> factorial 5
     120
 \end{Verbatim}
@@ -239,10 +239,10 @@ Since KamilaLisp supports arbitrary precision integers, the factorial function c
 The factorial function defines a helper function that has an accumulator argument, which is used to store the intermediate results of the computation. The helper function is called recursively, and the accumulator argument is updated with the result of the multiplication. The \textit{let-seq} construct is used to define the helper function, so that it is not visible outside the factorial function. There is one more step to make this function tail-recursive: redefine the self-referential call to the helper function:
 
 \begin{Verbatim}
-    --> defun factorial (n) (let-seq (
+    --> defun factorial (n) (let-seq
     ...   (defun f' (n acc) (if (= n 0) acc (&0 (- n 1) (* n acc))))
-    ...   (f' n 1)))
-    (λ n . (let-seq ((defun f' (n acc) (if (= n 0) acc (&0 (- n 1) (* n acc)))) (f' n 1))))
+    ...   (f' n 1))
+    (λ n . (let-seq (defun f' (n acc) (if (= n 0) acc (&0 (- n 1) (* n acc))) (f' n 1))))
     --> factorial 5
     120
 \end{Verbatim}
@@ -284,9 +284,9 @@ Once again, the problem is that the stack will overflow when the power function 
 After transforming the function to use an accumulator:
 
 \begin{Verbatim}
-    --> defun power (x n) (let-seq (
+    --> defun power (x n) (let-seq
     ...   (defun f' (x n acc) (if (= n 0) acc (f' x (- n 1) (* x acc))))
-    ...   (f' x n 1)))
+    ...   (f' x n 1))
 \end{Verbatim}
 
 When this implementation of the power function is applied to the same arguments as before, the following trace is produced:
@@ -517,9 +517,9 @@ The KamilaLisp implementation of this concept is slightly more involved, requiri
 The $\mu$-recursive \textit{minimization} operator is less demanding to implement. Intuitively, minimisation seeks, beginning the search from 0 and proceeding upwards, the smallest argument that causes the function to return zero; if there is no such argument, of if one encounters an argument for which f is not defined, then the search never terminates, and is not defined for the argument.
 
 \begin{Verbatim}
-    --> defun mu-min f (lambda ...xs (let-seq (
+    --> defun mu-min f (lambda ...xs (let-seq
     ...    (defun mu-min-iter i (if (lift f ...xs) (&0 (S i)) i))
-    ...    (mu-min-iter 0))))
+    ...    (mu-min-iter 0)))
 \end{Verbatim}
 
 \section{Iteration}

@@ -9,9 +9,8 @@ public class LetSeq extends PrimitiveFunction implements SpecialForm {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        List<Atom> bindings = args.get(0).getList();
         Atom lastValue = Atom.NULL;
-        for (Atom arg : bindings) {
+        for (Atom arg : args) {
             if (arg.getType() == Type.LIST && !arg.getList().isEmpty()) {
                 if (arg.getList().get(0).getType() == Type.IDENTIFIER) {
                     switch (Identifier.of(arg.getList().get(0).getIdentifier())) {

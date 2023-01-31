@@ -456,12 +456,12 @@ The relation between \verb|filter| and \verb|map| (the colon operator) can be ob
 Firstly, define the iteration step function that takes the prime and unclassified lists in a pair, adds the first element from the unclassified list to the prime list and removes all its multiples from the unclassified list:
 
 \begin{Verbatim}
-    --> defun step data (let-seq (
+    --> defun step data (let-seq
         (def primes (car data))
         (def cands (car@cdr data))
         (case (same cands 'nil) (tie primes 'nil))
         (def current (car cands))
-        (tie (cons current primes) (filter $(mod _ current) (cdr cands)))))
+        (tie (cons current primes) (filter $(mod _ current) (cdr cands))))
 \end{Verbatim}
 
 This example of \verb|let-seq| used the construct \verb|case|, which is a special form of \verb|if| that may be used only in \verb|let-seq|. If the condition that directly follows \verb|case| is true, then the further execution of the \verb|let-seq|'s body is stopped and the value of the expression that follows the condition is returned. This is especially useful for terminating the computation when a special case is encountered. Using \verb|while|, the iteration step function can be applied a finite amount of times to the initial pair of lists:
@@ -499,12 +499,12 @@ Ultimately, the function can be rewritten as follows to make it more concise and
 
 \begin{Verbatim}
 defun sieve (n) (reverse@car@converge (
-        lambda x (let-seq (
+        lambda x (let-seq
             (def primes (car x))
             (def cands (car@cdr x))
             (case (same cands 'nil) (tie primes 'nil))
             (def current (car cands))
-            (tie (cons current primes) (filter $(mod _ current) (cdr cands)))))
+            (tie (cons current primes) (filter $(mod _ current) (cdr cands))))
     ) (tie 'nil (range 2 n)))
 \end{Verbatim}
 
