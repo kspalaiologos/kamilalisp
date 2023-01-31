@@ -666,11 +666,59 @@ To verify the code, generate a 2x2 Levi Civita symbol matrix:
      [-1 0]]
 \end{Verbatim}
 
-Another fascinating algorithm to implement using folds and scans is detecting spans of C-style comments. Consider the following C language declaration and underline the commented out parts:
+Another fascinating algorithm to implement using folds and scans is detecting spans of non-nested C-style comments. Consider the following C language declaration and underline the commented out parts:
 
 \begin{Verbatim}
-    int x /* accumulator */ = 0; /* Required to store the amount of /*'s in the code. */
-          ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯      ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+    int x /* accumulator */ = 0 /* Store the amount of comments in the code. */ ;
+          ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯     ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+\end{Verbatim}
+
+Consider a function called \verb|comments| with arguments \verb|chars| and \verb|str|, we find the closing comments as follows:
+
+\begin{Verbatim}
+    rotate -1 (reverse (find (reverse str) chars))
+\end{Verbatim}
+
+While opening comments are done without any further problems:
+
+\begin{Verbatim}
+    find str chars
+\end{Verbatim}
+
+The \verb|find| function simply finds occurences of something in a string or list and returns a bit mask vector with the starting positions as follows:
+
+\begin{Verbatim}
+    --> find "an angry aardvark." "a"
+    (1 0 0 1 0 0 0 0 0 1 1 0 0 0 1 0 0 0)
+\end{Verbatim}
+
+Finally, the starting and ending comment symbols are put together into a single list as follows:
+
+\begin{Verbatim}
+    --> (defun comment (chars str) (:or (find str chars) (rotate -1 (reverse (find (reverse str) chars)))))
+    (λ chars str . (:or (find str chars) (rotate -1 (reverse (find (reverse str) chars)))))
+    --> comment "/*" "This /* is */ an example"
+    (0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0)
+\end{Verbatim}
+
+The final ingredient is connecting together stripes of is \verb|scanr1 /=| as follows:
+
+\begin{Verbatim}
+    --> defun comment (chars str) \rotate 1 \scanr1 /= \:or
+    ...    (find str chars)
+    ...    \rotate -1 \reverse@find (reverse str) chars
+    --> comment "/*" "This /* is */ an example"
+    (0 0 0 0 0 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0)
+\end{Verbatim}
+
+Finally, to accomplish the same underlining behaviour, one could use the following function:
+
+\begin{Verbatim}
+    --> defun display s (let-seq (def r " -"$[comment "/*" s]) (writeln s) r)
+    (λ s . (let-seq (def r " ¯"$[comment "/*" s]) (writeln s) r))
+    --> display "This /* is */ an example"
+    This /* is */ an example
+         ¯¯¯¯¯¯¯¯
 \end{Verbatim}
 
 \section{Searching and partitioning}
