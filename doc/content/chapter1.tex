@@ -25,7 +25,7 @@ It consists of two declarations. The first declaration binds the identifier a to
 
 The question mark is a sign for the KamilaLisp interpreter not to evaluate the entire input as an expression, but rather, to query the value of what it refers to.
 
-Every list besides the empty list (usually written as \verb|`()'| or alternatively \verb|nil|) has a \textit{head} defined as the first element of it. When a Lisp program is evaluated, the \textit{head} of the current list is assumed to be a callable value, while the rest of the list (also called the \textit{tail}) is assumed to be a list of arguments.
+Every list besides the empty list (usually written as \verb|()| or alternatively \verb|nil|) has a \textit{head} defined as the first element of it. When a Lisp program is evaluated, the \textit{head} of the current list is assumed to be a callable value, while the rest of the list (also called the \textit{tail}) is assumed to be a list of arguments.
 
 Because the list of arguments to a function (the \textit{tail}) is evaluated before its applied to the \textit{head}, a perceptive reader could point out a potential issue - \textit{How to introduce list literals in the code}? This question is indeed well-founded, since the list literal would be evaluated in order to pass it parameter to some callable object, hence the tail of the literal would be applied to its head, thus behaving undesirably and almost certainly raising an error. Every Lisp dialect addresses this issue in the same way using the quoting mechanism. Simply put, the quote prevents a list from being evaluated. To observe this behaviour, introduce two more functions called \verb|car| and \verb|cdr| to obtain respectively the \textit{head} and \textit{tail} of a list:
 
@@ -36,7 +36,7 @@ Because the list of arguments to a function (the \textit{tail}) is evaluated bef
     (2 3)
 \end{Verbatim}
 
-This may alert the observant reader once again - \textit{What if I want to create a list out of a set of expressions}? This question is once again well founded - because the quote stops something from being evaluated, then surely the expressions inside of it will stay untouched too. The answer is simple - use the \verb|tie| function as follows:
+This may alert the observant reader once again - \textit{What if I want to create a list out of a set of expressions}? This question is once again very relevant - because the quote stops a form from being evaluated, then surely the expressions inside of it will stay untouched too. The answer is simple - use the \verb|tie| function as follows:
 
 \begin{Verbatim}
     --> tie 1 2 3
@@ -68,7 +68,7 @@ However, it is not possible to shadow pre-defined variables and functions in the
         at def primitive function
 \end{Verbatim}
 
-To fully exercise lexical scoping, the language needs to provide a way of binding names inside a specific block of code (unlike \textit{def} which binds names in the global scope). This can be accomplished in a variety of ways, the most straight-forward one being the \textit{let} construct. The \textit{let} construct binds a list of name/value pairs, and evaluates the body of the construct in the context of the newly created environment. The syntax of the \textit{let} construct is demonstrated by the following example:
+To fully exercise lexical scoping, the language needs to provide a way of binding names inside a specific block of code (unlike \textit{def} which binds names in the global scope). This can be accomplished in a variety of ways, the most straight-forward one being the \textit{let} construct. The \textit{let} construct binds a list of name/value pairs and evaluates the body of the construct in the context of the newly created environment. The syntax of the \textit{let} construct is demonstrated by the following example:
 
 \begin{Verbatim}
     --> def a 5
@@ -83,35 +83,35 @@ To fully exercise lexical scoping, the language needs to provide a way of bindin
 
 \section{Functions and lambda expressions}
 
-Functions are the core component of KamilaLisp. They are first-class objects, which means that they can be passed as arguments to other functions, returned from functions, and assigned to variables. The syntax of a function declaration is as follows:
+Functions are the core component of KamilaLisp. They are first-class objects, which means that they can be passed argument to other functions, returned from functions and bound to names. The syntax of a function declaration is as follows:
 
 \begin{Verbatim}
     --> defun square (x) (* x x)
     (λ x . (* x x))
 \end{Verbatim}
 
-The function that has just been declared is called \verb|square|, and it takes one argument called \verb|x|. The body of the function is the expression \verb|(* x x)|. The function returns the value of their expression, which is simply the square of the argument. Notice that when defining a monadic function, a pair of parentheses can be omitted for brevity:
+The function that has just been declared is called \verb|square| and it takes one argument called \verb|x|. The body of the function is the expression \verb|* x x|. The function returns the value of its expression in an environment where its arguments are bounded, which in this particular scenario is naturally the square of the argument. Notice that when defining a monadic function, a pair of parentheses around its only argument's name can be omitted for brevity:
 
 \begin{Verbatim}
     --> defun square x (* x x)
     (λ x . (* x x))
 \end{Verbatim}
 
-Since \verb|square| is now bound in the global scope, it can be applied to an argument. The code below binds the result of application of the number 5 to the function \verb|square| to the variable \verb|a|:
+Since \verb|square| is now bound in the global scope, it can be applied to an argument. The code below binds the name \verb|a| to the result of application of the number 5 to the function \verb|square|:
 
 \begin{Verbatim}
     --> def a (square 5)
     25
 \end{Verbatim}
 
-Functions do not need to be named. They can be introduced in the code \textit{anonymously} using the \textit{lambda} construct, which opens up many new possibilities. For example, the declaration of the function \verb|square| can be rewritten as follows:
+Functions do not need to be named. They can be introduced in the code \textit{anonymously} using the \textit{lambda} construct, which opens up many new possibilities for structuring code. For example, the declaration of the function \verb|square| can be rewritten as follows:
 
 \begin{Verbatim}
     --> def square (lambda x (* x x))
     (λ x . (* x x))
 \end{Verbatim}
 
-Furthermore, multivariate lambda expressions could serve as a replacement for the \textit{let} construct:
+Furthermore, multivariate lambda expressions could serve as a substitute for the \textit{let} construct:
 
 \begin{Verbatim}
     --> let ((a 10) (b 15)) (+ a b)
@@ -120,7 +120,7 @@ Furthermore, multivariate lambda expressions could serve as a replacement for th
     25
 \end{Verbatim}
 
-Since functions are first-class in KamilaLisp, it is now also possible to return them from functions and take them as arguments. The following example demonstrates these programming techniques using the \textit{lambda} construct:
+Since functions are first-class in KamilaLisp, it is also possible to return them from functions and take them as arguments. The following example demonstrates these programming techniques using the \textit{lambda} construct:
 
 \begin{Verbatim}
     --> ; Returns a function that adds a given number to its argument.
@@ -138,7 +138,7 @@ Since functions are first-class in KamilaLisp, it is now also possible to return
     The value of f(x) for x=4.5 is 20.25
 \end{Verbatim}
 
-When writing complex functions, it is of particular interest to keep the partial results obtained during the execution of the function. This can be achieved by cascading the \textit{let} construct, or using the \textit{let-seq} construct. The following examples implement a function that raises its first argument to the eigth power\footnote{Many reimplementations of common built-in functions mentioned in the book that are present in KamilaLisp are rather suboptimal and demonstrated only for the sake of completeness. The programmer is urged to use the optimised predefined routines when possible instead.}:
+When implementing complex functions, it is often of particular interest to keep the partial results obtained during the execution of the function. This can be achieved by cascading the \textit{let} construct or using the \textit{let-seq} construct. The following examples implement a function that raises its only argument to the eigth power\footnote{Many reimplementations of common built-in functions mentioned in the book that are present in KamilaLisp are rather suboptimal and demonstrated only for the sake of completeness. The programmer is urged to use the optimised predefined routines when possible instead.}:
 
 \begin{Verbatim}
     --> defun p8 x (let-seq
@@ -158,9 +158,9 @@ When writing complex functions, it is of particular interest to keep the partial
     65536
 \end{Verbatim}
 
-Notice that despite using \verb|def|, \verb|defun|, etc..., the \textit{let-seq} construct does not create any bindings in the global scope - the bindings are local to the block.
+Notice that despite using \verb|def|, \verb|defun|, etc..., the \textit{let-seq} construct does not create any bindings in the global scope - the bindings are always local to the block.
 
-Function calls in KamilaLisp are performed using a \textit{call stack}. The call stack is a data structure inside of the interpreter that keeps track of the functions that are currently being executed. When a function is called, a new \textit{stack frame} is created and pushed onto the stack. When the function returns, the stack frame is popped from the stack - this way, the interpreter knows where to return to after the function yields a value. When an exception happens, the interpreter will present the user with a \textit{stack trace}, which is a list of functions that were executed before the exception was thrown, for example:
+When a function calls is performed in KamilaLisp, the \textit{call stack} is modified in the process. The call stack is a data structure implemented inside of the interpreter that keeps track of the functions that are currently being executed. When a function is called, a new \textit{stack frame} is created and pushed onto the stack. When the function returns, the stack frame is popped from the stack - this way, the interpreter knows where to return to after the function yields a value. When an exception is raised, the interpreter will present the user with a \textit{stack trace}, which is a list of functions that were executed before the exception was raised, for example:
 
 \begin{Verbatim}
     --> defun f x (/ 1 0) ; Oops! Division by zero!
@@ -184,9 +184,9 @@ Function calls in KamilaLisp are performed using a \textit{call stack}. The call
 
 \section{Conditional expressions and comparisons}
 
-The comparison operators in KamilaLisp don't differ significantly from the ones present in other, perhaps more orthodox programming languages (such as C). It is worth noting that equality is checked using the \verb|=| function, inequality is checked for using the \verb|/=| function, while the \verb|<=>| function is the so-called \textit{three way comparison} operator, which returns -1, 0 or 1 respectively if the first argument is less than, equal to, or greater than the second argument.
+The comparison operators in KamilaLisp do not differ significantly from the ones present in other, perhaps more orthodox programming languages (such as C). It is worth noting that scalar\footnote{Operating on scalar values, i.e. not vector, matrix or general tensor values.} equality is checked using the \verb|=| function, inequality is checked for using the \verb|/=| function, while the \verb|<=>| function is the so-called \textit{three way comparison} operator\footnote{Also called the \textit{spaceship} operator.}, which returns -1, 0 or 1 respectively if the first argument is less than, equal to, or greater than the second argument.
 
-KamilaLisp provides a number of conditional expressions, which are used to control the flow of execution. The most basic one is the \textit{if} construct, which takes three arguments - a condition, an expression to be evaluated if the condition is true, and an expression to be evaluated if the condition is false. The syntax of the \textit{if} construct is demonstrated by the following example:
+KamilaLisp provides a number of conditional expressions which are used to control the flow of execution. The most basic one is the \textit{if} construct which takes three arguments - a condition, an expression to be evaluated if the condition is true, and an expression to be evaluated if the condition is false. The syntax of the \textit{if} construct is demonstrated by the following example:
 
 \begin{Verbatim}
     --> defun my-abs x (if (< x 0) (- x) x)
@@ -199,7 +199,7 @@ KamilaLisp provides a number of conditional expressions, which are used to contr
     0
 \end{Verbatim}
 
-The \textit{if} construct is a special case of the \textit{cond} construct, which takes a list of pairs of conditions and expressions. The first condition that evaluates to true is used to evaluate the corresponding expression. The syntax of the \textit{cond} construct is demonstrated by the following reimplementation of the three-way comparison operator:
+The \textit{if} construct is a special case of the \textit{cond} construct, which takes a list of pairs of conditions and expressions. The first condition that evaluates to a truthy value is used to evaluate the corresponding expression. The syntax of the \textit{cond} construct is demonstrated by the following reimplementation of the three-way comparison operator:
 
 \begin{Verbatim}
     --> defun compare (x y) (cond ((< x y) -1) ((> x y) 1) (0))
@@ -214,7 +214,7 @@ The \textit{if} construct is a special case of the \textit{cond} construct, whic
 
 \section{Recursive functions}
 
-Recursion is a powerful technique extensively used in functional programming. Its role in KamilaLisp is admittedly not as important as in other functional programming languages, since the language provides a number of other often more wieldy techniques for solving the same problems (e.g. using array programming). However, it is still worth mentioning that KamilaLisp provides a number of tools for writing recursive functions.
+Recursion is a powerful technique extensively used in functional programming. Its role in KamilaLisp is admittedly not as extensive as in other functional programming languages, since the language provides a number of other often more wieldy techniques for solving the same problems (e.g. using array programming), however it is still worth mentioning that KamilaLisp provides a number of tools for writing recursive functions.
 
 The following function implements the \textit{factorial} function in a recursive manner:
 
@@ -225,7 +225,7 @@ The following function implements the \textit{factorial} function in a recursive
     120
 \end{Verbatim}
 
-Since KamilaLisp supports arbitrary precision integers, the factorial function can be applied to arbitrarily large numbers. However, at some point, this function will \textit{overflow its call stack}, meaning that the number of recursive calls will exceed the maximum call stack size. This is a common problem in recursive functions, and it can be solved by using the \textit{tail recursion} technique. Tail recursion is a special case of recursion, where the recursive call is the last expression in the function body. In this case, the stack frame of the current function can be reused for the recursive call, which means that the stack will not grow indefinitely. To make use of this technique, the factorial function needs to be altered so that the recursive call is the last expression in the function body:
+Since KamilaLisp supports arbitrary precision numerical computation, the factorial function can be applied to arbitrarily large numbers. However, at some point this function will \textit{overflow its call stack}, meaning that the number of recursive calls will exceed the maximum call stack size. This is a common problem with recursive functions and it can be solved by using \textit{tail recursion}. Tail recursion is a special case of recursion, where the recursive call is the last expression in the function body. In this case, the stack frame of the current function can be reused for the recursive call, hence the stack will cease to grow uncontrollably. To make use of this technique, the factorial function needs to be altered in a way that the recursive call is the last expression in the function body:
 
 \begin{Verbatim}
     --> defun factorial (n) (let-seq 
@@ -236,7 +236,7 @@ Since KamilaLisp supports arbitrary precision integers, the factorial function c
     120
 \end{Verbatim}
 
-The factorial function defines a helper function that has an accumulator argument, which is used to store the intermediate results of the computation. The helper function is called recursively, and the accumulator argument is updated with the result of the multiplication. The \textit{let-seq} construct is used to define the helper function, so that it is not visible outside the factorial function. There is one more step to make this function tail-recursive: redefine the self-referential call to the helper function:
+The factorial function defines a helper function that has an accumulator argument, which is used to store the intermediate results of the computation. The helper function is called recursively and the accumulator argument is updated with the result of the multiplication. The \textit{let-seq} construct is used to define the helper function, so that it is not visible outside the factorial function. There is one more step to make this function tail-recursive: replace the self-referential call in the helper function:
 
 \begin{Verbatim}
     --> defun factorial (n) (let-seq
@@ -247,7 +247,7 @@ The factorial function defines a helper function that has an accumulator argumen
     120
 \end{Verbatim}
 
-The self-referential call was replaced by \verb|&0|, which in simple terms is a reference to the current function. This is a special case of the \verb|&| operator, which is used to refer to functions by nesting level in the source code, akin to de Bruijn indices. The \verb|&0| operator refers to the current function, \verb|&1| refers to the function (anonymous or named) that is the lexical ancestor the current function, and so on. This way, the factorial function no longer errors when applied to large numbers, since the stack does not grow indefinitely:
+The self-referential call was replaced by \verb|&0| which in is a reference to the current function. This is a special case of the \verb|&| operator, which is used to refer to functions by nesting level in the source code, akin to de Bruijn indices. The \verb|&0| operator refers to the current function, \verb|&1| refers to the function (anonymous or named) that is the lexical ancestor the current function, and so on. This way, the factorial function no longer raises an error when applied to large numbers, since the stack does not grow beyond the maximum size:
 
 \begin{Verbatim}
     --> factorial 1000
@@ -258,7 +258,7 @@ The self-referential call was replaced by \verb|&0|, which in simple terms is a 
     000000000000000000000000000000000000000000000000000
 \end{Verbatim}
 
-Another, closely related function to the factorial function that can be implemented using tail recursion is the power function. The following function implements the power function in a simple recursive manner:
+Another closely related function to the factorial function that can be implemented using tail recursion is the power function. The following expression implements the power function in a simple recursive manner:
 
 \begin{Verbatim}
     --> defun power (x n) (if (= n 0) 1 (* x (power x (- n 1))))
@@ -301,7 +301,7 @@ When this implementation of the power function is applied to the same arguments 
     16
 \end{Verbatim}
 
-Notice, that the size of the expression \textit{does not grow}, hence the function could in theory be rewritten as a simple loop with bounded storage space requirements, a concept more familiar from imperative programming languages such as C or C++. The final improvement that needs to be applied is actually telling the interpreter to perform tail call optimisation in this case, using the self-referential call \verb|&0|:
+Notice, that the size of the expression \textit{does not grow}, hence the function could in theory be rewritten as a simple loop with a constant stack usage requirement - a concept more familiar from imperative programming languages such as C or C++. The final improvement that needs to be applied is actually coaxing the interpreter to perform tail call optimisation using the self-referential call \verb|&0|:
 
 \begin{Verbatim}
     --> defun power (x n) ((
@@ -328,7 +328,7 @@ Function composition is a a common core concept in functional programming langua
     6
 \end{Verbatim}
 
-The usefulness of function composition might be hard to appreciate at first. In the end, \verb|f@g x| $\Leftrightarrow$ \verb|f (g x)|, however, the function returned by the \verb|@| operator does not have to be immediately applied - it can be bound to a name and used later. Without the composition operator, it would be necessary to introduce a \textit{lambda} to achieve the same result as \verb|f@g| - that is, \verb|lambda x (f (g x))|. The difference between manually composing two functions to create a new function and using the \verb|@| operator is how they treat arguments. The \verb|@| operator variant of the same expression does not refer to the arguments of the composed functions (and thus does not manually relay an indeterminate amount of them to the innermost function), creating the basic building block for \textit{point-free programming}.
+The usefulness of function composition may be challenging to appreciate at first. In the end, \verb|f@g x| $\Leftrightarrow$ \verb|f (g x)|, however, the function returned by the \verb|@| operator does not have to be immediately applied - it can be bound to a name and used later. Without the composition operator, it would be necessary to introduce a \textit{lambda} to achieve the same result as \verb|f@g| - that is, \verb|lambda x (f (g x))|. The difference between manually composing two functions to create a new function and using the \verb|@| operator is how they treat arguments\footnote{Function composition performed using the \verb|@| operator does not require creating a new stack frame for the lambda function.}. The \verb|@| operator variant of the same expression does not refer to the arguments of the composed functions (and thus does not manually relay an indeterminate amount of them to the innermost function), creating the basic building block for \textit{point-free programming}.
 
 Of course, it is possible to compose arbitrarily many functions by using the \verb|@| operator multiple times. The following example demonstrates the composition of three functions:
 
@@ -343,9 +343,9 @@ Of course, it is possible to compose arbitrarily many functions by using the \ve
     0
 \end{Verbatim}
 
-Another form of function composition notoriously used in the APL family of programming languages is the so-called \textit{fork} (the \mu-recursive composition operator). Generally speaking, it is sometimes of special interest to preprocess the arguments using different functions (\textit{reductees}), and then funnel the results into a single function (\textit{reductor}). For instance, the arithmetic mean is defined as the quotient (\textit{reductor}) of the sum and length of a list (\textit{reductees}), while a palindrome is defined as a string for which the equality (\textit{reductor}) between it and its reverse (\textit{reductees}).
+Another form of function composition notoriously used in the APL family of programming languages is the so-called \textit{fork} (the \mu-recursive composition operator). Generally speaking, it is sometimes of special interest to preprocess the arguments using different functions (\textit{reductees}), and then funnel the results into a single function (\textit{reductor}). For instance, the arithmetic mean is defined as the quotient (\textit{reductor}) of the sum and length of a list (\textit{reductees}), while a palindrome is defined as a string for which the equality (\textit{reductor}) between it and its reverse (\textit{reductees}) holds.
 
-To implement a sum function using a fork, it is necessary to define a function that sums a list beforehand using the \verb|tally| function which returns the length of a list. A non-zero value is considered truthy, hence the following definition of the \textit{sum} function:
+To implement a sum function using a fork, it is necessary to define a function that sums the list beforehand using the \verb|tally| function which returns the length of a list. A non-zero value is considered truthy, hence the following definition of the \textit{sum} function:
 
 \begin{Verbatim}
     --> defun sum (l) (if (tally l) (+ (car l) (sum (cdr l))) 0)
@@ -354,7 +354,7 @@ To implement a sum function using a fork, it is necessary to define a function t
     12
 \end{Verbatim}
 
-There are many alternative ways to implement it. One problem the reader may stumble upon is \verb|= 'nil 'nil| returning \verb|'nil|. This behaviour is reasoned by the fact that equality \textit{vectorises} over lists, meaning that equality is tested element-wise. To determine structural equality, it is advised to use the \verb|same| function. The following example demonstrates this behaviour:
+There are many alternative ways to implement it. One problem the reader may stumble upon is \verb|= 'nil 'nil| returning \verb|'nil|. This behaviour is reasoned by the fact that equality \textit{vectorises} over lists\footnote{A more specific way to phrase it would be to say that \verb|=| is a \textit{pervasive function}.}, meaning that equality is tested element-wise. To determine structural equality, it is advised to use the \verb|same| function. The following example demonstrates this behaviour:
 
 \begin{Verbatim}
     --> = '(1 2 3) '(1 2 4)
@@ -366,6 +366,7 @@ There are many alternative ways to implement it. One problem the reader may stum
 \end{Verbatim}
 
 Hence arguing for a simpler implementation of the \textit{sum} function:
+
 \begin{Verbatim}
     --> defun sum (l) (if (same l '()) 0 (+ (car l) (sum (cdr l))))
     (λ l . (if (same l '()) 0 (+ (car l) (sum (cdr l)))))
@@ -380,7 +381,7 @@ The arithmetic mean function is thusly introduced as follows:
     3.2
 \end{Verbatim}
 
-Of course, it could also be bound to a name without applying the fork instantaneously:
+Naturally, it could also be bound to a name without applying the fork instantaneously:
 
 \begin{Verbatim}
     --> def avg [/ sum tally]
@@ -402,7 +403,7 @@ The lack of argument naming gives the point-free paradigm a reputation of being 
 
 \section{Partial application and \texorpdfstring{$\mu$}{mu}-recursive functions}
 
-Most functional programming languages, such as OCaml and Haskell automatically \textit{curry} functions by default, that is, allow applying functions to fewer arguments than they are defined to take. This is a useful feature, because it allows for the creation of new functions by binding some of the arguments of a function to a value. This mechanism is called \textit{partial application}. KamilaLisp supports partial application of functions but it does not happen by default, since unlike OCaml and Haskell, KamilaLisp supports variadic functions. Recall the following example given earlier in the book:
+Many functional programming languages such as OCaml and Haskell automatically \textit{curry} functions by default, that is, allow applying functions to fewer arguments than they are defined to take. This is a useful feature, since it allows for the creation of new functions by binding some of the arguments of a function to a value. This mechanism is called \textit{partial application}. KamilaLisp supports partial application of functions but it does not happen by default, as unlike OCaml and Haskell, KamilaLisp supports variadic functions. Recall the following example given earlier in the book:
 
 \begin{Verbatim}
     --> ; Returns a function that adds a given number to its argument.
@@ -426,7 +427,7 @@ Using partial application, the example can be rewritten as follows:
     11
 \end{Verbatim}
 
-Partial application is particularly useful in conjunction with various kinds of function composition, as it allows for the vast majority of functions that are defined in terms of other functions to be defined in a point-free manner. Another example would be a function that returns the remainder of a number when divided by two.
+Partial application is particularly useful in conjunction with various kinds of function composition, as it allows for the vast majority of functions that are defined in terms of other functions to be defined in a point-free manner. Another valuable example would be a function that returns the remainder of a number when divided by two.
 
 \begin{Verbatim}
     --> defun mod-2 (n) (mod n 2)
@@ -459,16 +460,16 @@ Another, perhaps more elegant solution is to use partial application placeholder
     0
 \end{Verbatim}
 
-This way, the \verb|_| placeholder indicates that the first argument given to the resulting function should be put in its place. The placeholder can be used multiple times and it is required that all placeholder slots are filled when applying the already partially applied function.
+This way, the \verb|_| placeholder indicates that the first argument given to the resulting function should be applied in its place. The placeholder can be used multiple times and it is required that all placeholder slots are filled when applying the already partially applied function.
 
-Variadic functions were briefly mentioned earlier in the book. Simply speaking, they are functions that take an arbitrary number of arguments. \verb|+| is a good example of a variadic function, since when applied to more than two arguments, it just sums everything:
+Variadic functions are functions that take an arbitrary number of arguments. \verb|+| is a good example of a variadic function, since when applied to more than two arguments it just sums all of them:
 
 \begin{Verbatim}
     --> + 1 2 3 4 5
     15
 \end{Verbatim}
 
-It is possible to define custom variadic functions in KamilaLisp using special argument syntax. To recall, \verb|lambda (x y) (code)| takes two arguments - \textit{x} and \textit{y}. This function can be made variadic by prepending the \textit{last argument} with an ellipsis - \verb|lambda (x ...xs) (code)|. The last argument is bound to a list of all the remaining arguments. This has an interesting property: while the aforementioned function takes \textit{at least} one argument (because \verb|...xs| can be empty), it can be modified to take any amount of arguments, even zero - \verb|lambda ...xs (code)|. To demonstrate this behaviour, the following function will obtain the arithmetic average of all its arguments, but will refuse to be called with zero arguments:
+It is possible to define custom variadic functions in KamilaLisp using special argument syntax. To recall, \verb|lambda (x y) (code)| takes two arguments - \textit{x} and \textit{y}. This function can be made variadic by prepending the \textit{last argument} with an ellipsis - \verb|lambda (x ...xs) (code)|. The last argument will be bound to a list of all the remaining arguments. This has an interesting property: while the aforementioned function takes \textit{at least} one argument (because \verb|...xs| can be empty), it can be modified to take any amount of arguments, even zero - \verb|lambda ...xs (code)|. To demonstrate this behaviour, the following function will obtain the arithmetic average of all its arguments, but will refuse to be called with zero arguments:
 
 \begin{Verbatim}
     --> defun avg (x ...xs) (/ (+ x (sum ...xs)) (+ 1 (tally ...xs)))
@@ -543,7 +544,7 @@ Recall the power function and its previously discussed, tail-recursive definitio
     (λ x n . ((λ (x n acc) (if (= n 0) acc (&0/syn x (- n 1) (* x acc)))) x n 1))
 \end{Verbatim}
 
-Since tail recursion is essentially equivalent to iteration, the power function can be implemented as an iteration of order $n-1$ of the multiplication function \verb|*| with the initial value $x$:
+Since tail recursion is essentially equivalent to iteration, the power function may be implemented as an iteration of order $n-1$ of the multiplication function \verb|*| with the initial value $x$:
 
 \begin{Verbatim}
     --> defun power (x n) (while x (- n 1) $(* x))
@@ -571,14 +572,16 @@ Providing a formal proof of the Collatz conjecture is beyond the scope of this b
     (λ n . (if (= n 1) 1 (&0 (collatz n))))
 \end{Verbatim}
 
-After testing the functions for a few small numbers (say, $n < 1000$), it is clear that the conjecture holds for them. To rewrite this tail-recursive function using iteration, it is required to use the alternate definition of \verb|while|. The second argument to \verb|while| can be an integer as demonstrated previously, however, it can also be a function that returns a boolean value. The iteration will continue as long as the function returns true. The new function \verb|collatz-whl| will iterate the \verb|collatz| function until $n$ reaches 1:
+After testing the functions for a few small numbers (say, $n < 1000$), it is clear that the conjecture holds for them. To rewrite this tail-recursive function using iteration, it is required to use the alternate definition of \verb|while|. The second argument to \verb|while| can be an integer as demonstrated previously, however it can also be a function that returns a boolean value. The iteration will continue as long as the function returns a truthy value. The new function \verb|collatz-whl| will iterate the \verb|collatz| function until $n$ reaches 1:
 
 \begin{Verbatim}
     --> defun collatz-whl (n) (while n $(/= 1) collatz)
     (λ n . (while n $(/= 1) collatz))
 \end{Verbatim}
 
-Another possible way to use \verb|while| is to omit the predicate argument and return a two element list of whether to continue iteration (true/false) and the new value, however this approach is not demonstrated due to its lack of utility. It might be of particular interest to determine the number of iterations and the numbers that have been reached in the process. This can be done using the \verb|partial-while| function which, as the name suggests, iterates a function and yields a list of partial results that have been obtained before the final result:
+Another way to use \verb|while| is to omit the predicate argument and return a two element list of whether to continue iteration (true/false - yes/no) and the new value, however this approach is not demonstrated due to its lack of utility.
+
+It might be of particular interest to determine the number of iterations and the numbers that have been reached in the process. This can be done using the \verb|partial-while| function which, as the name suggests, iterates a function and yields a list of partial results that have been obtained before the final result:
 
 \begin{Verbatim}
     --> defun collatz-list (n) (partial-while n $(/= 1) collatz)
@@ -587,7 +590,7 @@ Another possible way to use \verb|while| is to omit the predicate argument and r
     (46 23 70 35 106 53 160 80 40 20 10 5 16 8 4 2 1)
 \end{Verbatim}
 
-Another valuable comparison to be made between recursion, tail recursion and iteration is the implementation of fibonacci numbers. Despite being implemented in KamilaLisp already as the function \verb|fib|, consider the following reimplementation:
+Another valuable comparison to be made between recursion, tail recursion and iteration is the implementation of Fibonacci numbers. Despite being implemented in KamilaLisp already as the function \verb|fib|, consider the following reimplementation:
 
 \begin{Verbatim}
     --> defun fibr (n) (if (< n 2) n (+ (fibr (- n 1)) (fibr (- n 2))))
@@ -610,7 +613,7 @@ To derive a tail-recursive form of this function, it is necessary to use two acc
 
 The iterative version of this function trivially follows, however, let's \textbf{assume} that it is \textit{not possible} to implement the iterative or tail-recursive version of this function - so the only implementation available a slow function that overflows the stack often. While in practice this is not the case, it is a good exercise to consider different ways in which the naive fibonacci function be improved.
 
-Notice that the fibonacci function is considerably expensive to compute, yet it takes just a number and returns just a number, so it is a good candidate for memoization. The memoization function \verb|memo| takes a function and returns a memoized version of it. The memoized version of the function will store the results of previous calls and return them if the same arguments are passed to the function again. This is a very useful technique to improve the performance of functions that are expensive to compute and are called with the same arguments repeatedly via a technique akin to dynamic tabulation of a function. The memoized version of the fibonacci function is, to no surprise, created as follows:
+Notice that the fibonacci function is rather expensive to compute, yet it takes just a number and returns just a number, so it is a good candidate for memoization. The memoization function \verb|memo| takes a function and returns a memoized version of it. The memoized version of the function will store the results of previous calls and return them if the same arguments are passed to the function again. This is a very useful technique to improve the performance of functions that are expensive to compute and are called with the same arguments repeatedly via a technique akin to dynamic tabulation of a function. The memoized version of the fibonacci function is, to no surprise, created as follows:
 
 \begin{Verbatim}
     --> def fibr (memo fibr)
@@ -626,7 +629,7 @@ Notice that the fibonacci function is considerably expensive to compute, yet it 
     -->
 \end{Verbatim}
 
-The memoized version still has some problems (e.g. it will still overflow the stack if the cache is not big enough) but it is a good improvement over the original version. The built-in function \verb|fib| in KamilaLisp uses the Binet formula to compute the fibonacci numbers, which is a much faster method than the naive recursive approach.
+The memoized version still has some issues (e.g. it will still overflow the stack if the cache is not big enough) but it is a good improvement over the original version. The built-in function \verb|fib| in KamilaLisp uses the Binet formula to compute the Fibonacci numbers, which is a much faster method than the naive recursive approach.
 
 One nuisance that needs to be pointed out is that in functions and lambda expressions, names are updated ad-hoc and usually looked up when needed to allow the programmer to utilise some interesting concepts such as mutual recursion. This has a few consequences, for instance:
 
@@ -639,13 +642,13 @@ One nuisance that needs to be pointed out is that in functions and lambda expres
     10
 \end{Verbatim}
 
-Another much more serious consequence is that the memoized version of the fibonacci function will not quite work as expected if it is defined under a different name (e.g. as \verb|def fibm (memo fibr)|). The function \verb|fibm| will quickly return the result of \verb|fibm 10| if this value was explicitly asked for before, but not for \verb|fibm 11| - because the underlying function, \verb|fibr|, is still recursing and the memoized version of it is simply not being used.
+Another, more serious consequence is that the memoized version of the Fibonacci function will not quite work as expected if it is defined under a different name (e.g. as \verb|def fibm (memo fibr)|). The function \verb|fibm| will quickly return the result of \verb|fibm 10| if this value was explicitly asked for before, but not for \verb|fibm 11| - because the underlying function, \verb|fibr|, is still recursing and the memoized version of it is simply not being used.
 
 \section{Exceptions}
 
-Exceptions are the main error handling mechanism in KamilaLisp, unlike in Haskell/Rust (which usually make use of optional types) or OCaml (which supplies exceptions alongside optional types). Exceptions usually propagate the stack and exhibit worse performance characteristics in the exceptional case, but they are much easier to use and are more familiar to programmers coming from other languages. Additionally, they exhibit better performance in the non-exceptional case.
+Exceptions are the main error handling mechanism in KamilaLisp, unlike in Haskell/Rust (which usually make use of optional types) or OCaml (which supplies exceptions alongside optional types). Exceptions usually unwind the call stack and exhibit worse performance characteristics in the exceptional case, but they are much easier to use and are more familiar to programmers coming from other languages. Additionally, they exhibit better performance in the non-exceptional case.
 
-Using the \verb|raise| function, the arithmetic average function could be rewritten to throw an exception if the list is empty:
+Using the \verb|raise| function, the arithmetic average function could be rewritten to raise an exception if the list is empty:
 
 \begin{Verbatim}
     --> defun avg (l) (if (same l 'nil) (raise "empty list") (/ (sum l) (tally l)))
@@ -663,7 +666,7 @@ Using the \verb|raise| function, the arithmetic average function could be rewrit
     at raise primitive function
 \end{Verbatim}
 
-The exception thrown by \verb|avg| and other kinds of exceptions (e.g. the one thrown by \verb|/ 1 0|) can be caught using the \verb|try-catch| function. For instance, it can be employed to return the length of the error message instead of the average in the exceptional case, since the \verb|error| variable is bound in the catch block supplying the error handler with the exception's message:
+The exception raised by \verb|avg| and other kinds of exceptions (e.g. the one raised by \verb|/ 1 0|) can be caught using the \verb|try-catch| function. For instance, it can be employed to return the length of the error message instead of the average in the exceptional case, since the \verb|error| variable is bound in the catch block supplying the error handler with the exception's message:
 
 \begin{Verbatim}
     --> try-catch (avg '()) (tally error)

@@ -702,7 +702,7 @@ Finally, the starting and ending comment symbols are put together into a single 
     (0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0)
 \end{Verbatim}
 
-The final ingredient is connecting together stripes of is \verb|scanr1 /=| as follows:
+The final ingredient is connecting together bits and pieces of the problem is an application of \verb|scanr1 /=| as follows:
 
 \begin{Verbatim}
     --> defun comment (chars str) \rotate 1 \scanr1 /= \:or
