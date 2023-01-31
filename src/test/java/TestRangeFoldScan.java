@@ -2,6 +2,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -9,6 +10,14 @@ import static org.junit.jupiter.api.parallel.ExecutionMode.CONCURRENT;
 
 @Execution(CONCURRENT)
 class TestRangeFoldScan {
+    @Test
+    void testRecurSum() {
+        assertEquals(Common.runCode(
+                "(defun sum (l) (if (same l '()) 0 (+ (car l) (sum (cdr l)))))" +
+                        "(sum (range 5))"
+        ).getInteger(), BigInteger.valueOf(10));
+    }
+
     @Test
     void testBasic() {
         // Range from 1 to 5:
