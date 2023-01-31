@@ -115,11 +115,17 @@ public class FunctionRegistry {
         env.setp("not-same", new Atom(new NotSame()));
         env.setp("≡", new Atom(new Same()));
         env.setp("≢", new Atom(new NotSame()));
+        env.setp("same-elements", new Atom(new SameElements()));
+        env.setp("not-same-elements", new Atom(new NotSameElements()));
+        env.setp("⍉≡", new Atom(new SameElements()));
+        env.setp("⍉≢", new Atom(new NotSameElements()));
         env.setp("grade-up", new Atom(new GradeUp()));
         env.setp("grade-down", new Atom(new GradeDown()));
         env.setp("⍋", new Atom(new GradeUp()));
         env.setp("⍒", new Atom(new GradeDown()));
         env.setp("cons", new Atom(new Cons()));
+        env.setp("pmat", new Atom(new Pmat()));
+        env.setp("⍉↩⍳", new Atom(new Pmat()));
         env.setp("⍟", new Atom(new Cons()));
         env.setp("flatten", new Atom(new Flatten()));
         env.setp("∊", new Atom(new Flatten()));
@@ -184,6 +190,10 @@ public class FunctionRegistry {
         env.setp("drop-while", new Atom(new DropWhile()));
         env.setp("⍣↑", new Atom(new TakeWhile()));
         env.setp("⍣↓", new Atom(new DropWhile()));
+        env.setp("⍷", new Atom(new Find()));
+        env.setp("find", new Atom(new Find()));
+        env.setp("⍸", new Atom(new Where()));
+        env.setp("where", new Atom(new Where()));
 
         env.setp("prime:factors", new Atom(new PrimeFactors()));
         env.setp("prime:is?", new Atom(new IsPrime()));
