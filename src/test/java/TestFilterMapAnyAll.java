@@ -1,11 +1,21 @@
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 
+import java.math.BigDecimal;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.parallel.ExecutionMode.CONCURRENT;
 
 @Execution(CONCURRENT)
 class TestFilterMapAnyAll {
+    @Test
+    void testMyFilter() {
+        assertEquals(Common.runCode("""
+                (defun my-filter (pred lst) (replicate (= 1 (:pred lst)) lst))
+                (same '(4 5) (my-filter (lambda x (> x 3)) '(1 2 3 4 5)))
+        """).getReal(), new BigDecimal("1"));
+    }
+
     @Test
     void testFilter() {
         assertEquals(Common.runCode("(filter (lambda _ \\mod _ 2) \\range 0 10)"), Common.runCode("#0 '(1 3 5 7 9)"));
