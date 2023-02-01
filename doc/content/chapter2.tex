@@ -881,7 +881,14 @@ Finally, test the convolution on a simple example:
      [6.93 7.59 7.59]]
 \end{Verbatim}
 
+To implement convolution on RGBA images, it is necessary to split the color value into the separate channels. This can be accomplished using the \verb|bit:unpack| function. Merging RGBA values together into a single integer is done using the \verb|bit:pack| function:
 
+\begin{Verbatim}
+    --> bit:unpack 37126378 '(0 8) '(8 16) '(16 24) '(24 32)
+    (234 128 54 2)
+    --> bit:pack '(0 8 234) '(8 16 128) '(16 24 54) '(24 32 2)
+    37126378
+\end{Verbatim}
 
 \section{Searching and partitioning}
 

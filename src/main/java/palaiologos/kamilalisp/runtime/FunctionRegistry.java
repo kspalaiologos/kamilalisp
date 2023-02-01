@@ -264,6 +264,7 @@ public class FunctionRegistry {
         env.setp("bit:not", new Atom(new BitNot()));
         env.setp("bit:popcount", new Atom(new BitPopcount()));
         env.setp("bit:unpack", new Atom(new BitUnpack()));
+        env.setp("bit:pack", new Atom(new BitPack()));
         env.setp("⌶∧", new Atom(new BitAnd()));
         env.setp("⌶∨", new Atom(new BitOr()));
         env.setp("⌶≠", new Atom(new BitXor()));
@@ -271,6 +272,7 @@ public class FunctionRegistry {
         env.setp("⌶¬", new Atom(new BitNot()));
         env.setp("⌶⍏", new Atom(new BitPopcount()));
         env.setp("⌶↓", new Atom(new BitUnpack()));
+        env.setp("⌶↑", new Atom(new BitPack()));
         env.setp("fib", new Atom(new Fib()));
         env.setp("ceil", new Atom(new Ceil()));
         env.setp("⌈", new Atom(new Ceil()));
