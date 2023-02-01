@@ -823,7 +823,7 @@ The inner product is particularly useful in the context of convolution. Througho
 Notice that if one wanted to compute the value of the first cell of the matrix, this process would be complicated by the fact that the input matrix does not contain adequate data on the border. This difficulty is often called in the \textit{free boundary problem}. Throughout this section, it will be assumed that the data in the matrix is padded using the reflected boundary condition, which mirrors the data on the border. First, consider the following function \verb|cell| that given a matrix, yields a function to query the value of a cell at a given position accounting for the reflected boundary condition:
 
 \begin{Verbatim}
-    --> defun cell (mat) (
+        defun cell (mat) (
           if (/= (rank mat) 2)
           (raise "Expected a matrix.")
           (lambda (x y) (let-seq
@@ -839,6 +839,47 @@ Notice that if one wanted to compute the value of the first cell of the matrix, 
               ((and (>= x w) (< y h)) mat$[#0 y]$[- (- (* 2 w) 1) x])
               ((and (>= x w) (>= y h)) mat$[- (- (* 2 h) 1) y]$[- (- (* 2 w) 1) x])
               (mat$[#0 y]$[#0 x])))))
+\end{Verbatim}
+
+The usages of the identity function \verb|#0| stem from the fact that the indexing construct evaluates its argument if it is not a simple numeric list.
+
+Define the function to compute the value of a two-dimensional convolution at a given position in the result matrix:
+
+\begin{Verbatim}
+    defun convolve-step (cell-mat kern x y) (let-seq
+      (def kern-h (tally kern))
+      (def kern-w (tally (car kern)))
+      (case (/= kern-h kern-w)
+        (raise "Expected a square kernel."))
+      (case (or (/= (mod kern-h 2) 1) (/= (mod kern-w 2) 1))
+        (raise "Expected an odd-sized kernel."))
+      (def kern-c (- (floor (/ kern-w 2)) 1))
+      (def conv-range (outer-product
+        (range (- x kern-c) (- (+ x kern-w) kern-c))
+        (range (- y kern-c) (- (+ y kern-h) kern-c))))
+      (def conv-mat (:$(lift cell-mat) conv-range))
+      (foldl + 0 (* (flatten conv-mat) (flatten kern))))
+\end{Verbatim}
+
+Now, define the \verb|convolution-2d| function that takes argument the input matrix and the kernel matrix and yields the convolution of the two matrices:
+
+\begin{Verbatim}
+    defun convolve (mat kern) (let-seq
+      (def cell-mat (cell mat))
+      (map-idx (lambda (y row) (
+        map-idx (lambda (x _e) (
+            convolve-step cell-mat kern x y)) row)) mat))
+\end{Verbatim}
+
+Finally, test the convolution on a simple example:
+
+\begin{Verbatim}
+    --> def mat '((1 2 3) (4 5 6) (7 8 9))
+    --> def kern '((0.11 0.11 0.11) (0.11 0.11 0.11) (0.11 0.11 0.11))
+    --> convolve mat kern
+    [[4.95 5.61 5.61]
+     [6.93 7.59 7.59]
+     [6.93 7.59 7.59]]
 \end{Verbatim}
 
 \section{Searching and partitioning}
