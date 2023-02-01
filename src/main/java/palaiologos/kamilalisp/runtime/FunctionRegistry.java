@@ -3,11 +3,14 @@ package palaiologos.kamilalisp.runtime;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.runtime.IO.GetFile;
+import palaiologos.kamilalisp.runtime.IO.PutFile;
 import palaiologos.kamilalisp.runtime.IO.Writeln;
 import palaiologos.kamilalisp.runtime.array.*;
 import palaiologos.kamilalisp.runtime.array.hof.*;
 import palaiologos.kamilalisp.runtime.datetime.*;
 import palaiologos.kamilalisp.runtime.hashmap.*;
+import palaiologos.kamilalisp.runtime.image.LoadImage;
+import palaiologos.kamilalisp.runtime.image.WriteImage;
 import palaiologos.kamilalisp.runtime.math.*;
 import palaiologos.kamilalisp.runtime.math.bit.*;
 import palaiologos.kamilalisp.runtime.math.cmp.*;
@@ -142,6 +145,8 @@ public class FunctionRegistry {
         env.setp("⍠", new Atom(new Append()));
         env.setp("get-file", new Atom(new GetFile()));
         env.setp("⍫⊢", new Atom(new GetFile()));
+        env.setp("put-file", new Atom(new PutFile()));
+        env.setp("⍫⊣", new Atom(new PutFile()));
         env.setp("try-catch", new Atom(new TryCatch()));
         env.setp("‼", new Atom(new TryCatch()));
         env.setp("raise", new Atom(new Raise()));
@@ -194,6 +199,11 @@ public class FunctionRegistry {
         env.setp("find", new Atom(new Find()));
         env.setp("⍸", new Atom(new Where()));
         env.setp("where", new Atom(new Where()));
+
+        env.setp("img:write", new Atom(new WriteImage()));
+        env.setp("img:read", new Atom(new LoadImage()));
+        env.setp("≣⊣", new Atom(new WriteImage()));
+        env.setp("≣⊢", new Atom(new LoadImage()));
 
         env.setp("prime:factors", new Atom(new PrimeFactors()));
         env.setp("prime:is?", new Atom(new IsPrime()));
