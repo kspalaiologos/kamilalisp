@@ -74,6 +74,8 @@ public class FunctionRegistry {
         env.setp("⍭¨", new Atom(new FilterIdx()));
         env.setp("map-idx", new Atom(new MapIdx()));
         env.setp("parallel-map-idx", new Atom(new ParallelMapIdx()));
+        env.setp("⍠¨", new Atom(new MapIdx()));
+        env.setp("⍠∵", new Atom(new ParallelMapIdx()));
         env.setp("parallel-filter", new Atom(new ParallelFilter()));
         env.setp("⍭∵", new Atom(new ParallelFilter()));
         env.setp("∨?", new Atom(new Any()));
@@ -200,6 +202,8 @@ public class FunctionRegistry {
         env.setp("find", new Atom(new Find()));
         env.setp("⍸", new Atom(new Where()));
         env.setp("where", new Atom(new Where()));
+        env.setp("powerset", new Atom(new Powerset()));
+        env.setp("⍉⍉", new Atom(new Powerset()));
 
         env.setp("img:write", new Atom(new WriteImage()));
         env.setp("img:read", new Atom(new LoadImage()));
