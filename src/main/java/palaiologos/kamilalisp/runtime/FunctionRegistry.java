@@ -73,6 +73,7 @@ public class FunctionRegistry {
         env.setp("filter-idx", new Atom(new FilterIdx()));
         env.setp("⍭¨", new Atom(new FilterIdx()));
         env.setp("map-idx", new Atom(new MapIdx()));
+        env.setp("parallel-map-idx", new Atom(new ParallelMapIdx()));
         env.setp("parallel-filter", new Atom(new ParallelFilter()));
         env.setp("⍭∵", new Atom(new ParallelFilter()));
         env.setp("∨?", new Atom(new Any()));

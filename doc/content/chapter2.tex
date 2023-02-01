@@ -852,7 +852,7 @@ Define the function to compute the value of a two-dimensional convolution at a g
         \raise "Expected a square kernel.")
       (case (or (/= (mod kern-h 2) 1) (/= (mod kern-w 2) 1))
         \raise "Expected an odd-sized kernel.")
-      (def kern-c \- (floor (/ kern-w 2)) 1)
+      (def kern-c \floor (/ kern-w 2))
       (def conv-range \outer-product
         (range (- x kern-c) \- (+ x kern-w) kern-c)
         (range (- y kern-c) \- (+ y kern-h) kern-c))
@@ -860,13 +860,13 @@ Define the function to compute the value of a two-dimensional convolution at a g
       \foldl + 0 \* (flatten conv-mat) \flatten kern
 \end{Verbatim}
 
-Now, define the \verb|convolution-2d| function that takes argument the input matrix and the kernel matrix and yields the convolution of the two matrices:
+Now, define the \verb|convolution-2d| function that takes argument the input matrix and the kernel matrix and yields the convolution of the two matrices using the \verb|parallel-map-idx| function which behaves comparably to \verb|$:| (the parallel variant of \verb|:|), except it also passes the index in the list to the function:
 
 \begin{Verbatim}
     defun convolve (mat kern) \let-seq
       (def cell-mat (cell mat))
-      \map-idx (lambda (y row)
-        \map-idx (lambda (x _e)
+      \parallel-map-idx (lambda (y row)
+        \parallel-map-idx (lambda (x _e)
           \convolve-step cell-mat kern x y) row) mat
 \end{Verbatim}
 
@@ -893,7 +893,7 @@ To implement convolution on RGBA images, it is necessary to split the color valu
 Define a function that takes RGB image data (two-dimensional integer matrix), splits the color channels and applies a convolution kernel to each channel, then fuses the results together.
 
 \begin{Verbatim}
-    defun convolve-rgb (img kern) (
+    defun convolve-rgb (img kern) (let-seq
       ; Extract the R, G and B channels of the image data.
       (def r \$($(^/ 255)@bit:unpack _ '(0 8))%[0] img)
       (def g \$($(^/ 255)@bit:unpack _ '(8 16))%[0] img)
@@ -934,7 +934,7 @@ Since the convolution code has become more complex, it should be saved to a file
         \raise "Expected a square kernel.")
       (case (or (/= (mod kern-h 2) 1) (/= (mod kern-w 2) 1))
         \raise "Expected an odd-sized kernel.")
-      (def kern-c \- (floor (/ kern-w 2)) 1)
+      (def kern-c \floor (/ kern-w 2))
       (def conv-range \outer-product
         (range (- x kern-c) \- (+ x kern-w) kern-c)
         (range (- y kern-c) \- (+ y kern-h) kern-c))
@@ -943,12 +943,85 @@ Since the convolution code has become more complex, it should be saved to a file
 
     (defun public:convolve (mat kern) \let-seq
       (def cell-mat (cell mat))
-      \map-idx (lambda (y row)
-        \map-idx (lambda (x _e)
+      \parallel-map-idx (lambda (y row)
+        \parallel-map-idx (lambda (x _e)
           \convolve-step cell-mat kern x y) row) mat)
     
+    (defun public:convolve-rgb (img kern) (let-seq
+      ; Extract the R, G and B channels of the image data.
+      (def r \$($(^/ 255)@bit:unpack _ '(0 8))%[0] img)
+      (def g \$($(^/ 255)@bit:unpack _ '(8 16))%[0] img)
+      (def b \$($(^/ 255)@bit:unpack _ '(16 24))%[0] img)
+      ; Convolve each channel and convert back to integer values.
+      (defun quantize x (cond ((< x 0) 0) ((> x 1) 255) ((round@* x 255))))
+      (def r \quantize%[0] \public:convolve r kern)
+      (def g \quantize%[0] \public:convolve g kern)
+      (def b \quantize%[0] \public:convolve b kern)
+      ; Merge the channels back together.
+      ((lambda (r g b)
+        (bit:pack (tie 0 8 r) (tie 8 16 g) (tie 16 24 b) (tie 24 32 255)))%[0] r g b)))
+
     "OK"
 \end{Verbatim}
+
+Finally, test the box blur on an image. Consider the following \textit{original}, 256x256 RGB image:
+
+\begin{figure}[h]
+    \caption{lena-256.png}
+    \centering
+    \includegraphics[width=0.25\textwidth]{figures/lena-256.jpg}
+\end{figure}
+
+Decrease numerical precision to speed up the computation:
+
+\begin{Verbatim}
+    --> import "convolution.lisp"
+    OK
+    --> let ((fr 10)) (img:write "lena-blurry.png" (convolve-rgb
+    ...     (img:read "lena-256.jpg")
+    ...     (* (/ 9) '((1 1 1) (1 1 1) (1 1 1)))))
+    lena-blurry.png
+\end{Verbatim}
+
+\begin{figure}[h]
+    \caption{lena-blurry.png}
+    \centering
+    \includegraphics[width=0.25\textwidth]{figures/lena-blurry.png}
+\end{figure}
+
+Another interesting operation to check is the Gaussian blur:
+
+\begin{Verbatim}
+    --> import "convolution.lisp"
+    OK
+    --> let ((fr 10)) (img:write "lena-gauss.png" (convolve-rgb
+    ...     (img:read "lena-256.jpg")
+    ...     (* (/ 16) '((1 2 1) (2 4 2) (1 2 1)))))
+    lena-gauss.png
+\end{Verbatim}
+
+\begin{figure}[h]
+    \caption{lena-gauss.png}
+    \centering
+    \includegraphics[width=0.25\textwidth]{figures/lena-gauss.png}
+\end{figure}
+
+Finally, the edge detection kernel:
+
+\begin{Verbatim}
+    --> import "convolution.lisp"
+    OK
+    --> let ((fr 10)) (img:write "lena-edge.png" (convolve-rgb
+    ...     (img:read "lena-256.jpg")
+    ...     '((-1 -1 -1) (-1 8 -1) (-1 -1 -1))))
+    lena-edge.png
+\end{Verbatim}
+
+\begin{figure}[h]
+    \caption{lena-edge.png}
+    \centering
+    \includegraphics[width=0.25\textwidth]{figures/lena-edge.png}
+\end{figure}
 
 \section{Searching and partitioning}
 

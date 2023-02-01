@@ -24,7 +24,7 @@ public class Import extends PrimitiveFunction implements Lambda {
             Atom result = Evaluation.evaluate(childEnv, data.get(data.size() - 1));
             for (String key : childEnv.keys())
                 if (!env.has(key) && key.startsWith("public:"))
-                    env.set(key.substring(6), childEnv.get(key));
+                    env.set(key.substring(7), childEnv.get(key));
             return result;
         } catch (IOException e) {
             throw new RuntimeException(e);
