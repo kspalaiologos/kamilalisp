@@ -1,11 +1,11 @@
 
 \chapter{Elementary data structures}
 
-This chapter will go through the most common data structures and how they are implemented in KamilaLisp. Many data structures in KamilaLisp are defined in terms of each other - for instance, all the functions that generally operate on sets can also be used on lists, since sets constitute a special case of lists. This chapter will also describe elementary array programming in KamilaLisp, which is usually the preferred by many programmers way to solve complex problems quickly.
+This chapter will describe in detail the most common data structures and their implementations in KamilaLisp. Many data structures in KamilaLisp are defined in terms of each other - for instance, all the functions that generally operate on sets can also be used on lists, since sets constitute a special case of lists. This chapter will also describe elementary array programming in KamilaLisp, which is usually the preferred by many programmers way to solve complex problems quickly.
 
 \section{Basic list operations}
 
-Lists are one of the most important data structures used in functional programming and every major programming language provides means of finite sequence storage. KamilaLisp is no different and a special emphasis is put on list and array processing, the basic building block of dataflow programming.
+Lists are one of the most important data structures used in functional programming. Every major programming language provides means of finite sequence storage and KamilaLisp is no different. A special emphasis is put on list and array processing, the basic building block of dataflow programming.
 
 As mentioned before, every list besides the empty list contains a \textit{head} (the first element, \verb|car|) and a \textit{tail} (the last element, \verb|cdr|). The tail of a list is always another list, even if it is empty. The empty list literal is introduced in the code as \verb|'nil| or \verb|'()|. 
 
@@ -162,7 +162,7 @@ KamilaLisp also provides a few functions for altering the \textit{order} of elem
     psiLalimaK
 \end{Verbatim}
 
-The \verb|rotate| function, as the name suggests, takes a list and a number and returns a list where the elements are rotated by the number:
+The \verb|rotate| function, as the name suggests, takes a list and a number and returns a list where the elements are rotated by the number of slots:
 
 \begin{Verbatim}
     --> rotate 2 '(1 2 3 4 5)
@@ -186,7 +186,7 @@ Finally, the \verb|list:shuffle| function will take a list and return a list wit
 
 \section{Sorting, searching and indexing}
 
-KamilaLisp uses a special syntax for indexing into lists. The syntax is as follows:
+KamilaLisp defines a special syntax for indexing into lists. The syntax is as follows:
 
 \begin{Verbatim}
     --> def x '(1 5 2 3 4)
@@ -202,7 +202,7 @@ This syntax is very confusing when demonstrated in isolation. First, indexing re
     (5 3 4)
 \end{Verbatim}
 
-The indexing function loops over the list it has received and returns respectively the first, third and fourth items of a list, all packed together into a single array. This is a very powerful feature, as it allows for a very concise syntax for extracting elements from a list, applying permutations and even sorting, as demonstrated later in the book. Of course, indexing can also be done using an expression:
+The indexing function loops over the list it has received and returns respectively the first, third and fourth items of a list, all tied together into a single array. This is a very powerful feature, as it allows for a very concise syntax for extracting elements from a list, applying permutations and even sorting, as demonstrated later in the book. Of course, indexing can also be done using an expression:
 
 \begin{Verbatim}
     --> ?x$[random 5]
@@ -239,13 +239,13 @@ Since a matrix usually has two axes, matrices (lists of lists of scalars) have r
     0
 \end{Verbatim}
 
-One interesting thing to consider are \textit{ragged list}. A \textit{ragged list} is defined as a list, whose elements have different ranks. For example, the following list is a ragged list:
+One interesting case to consider is a \textit{ragged list} - a list whose elements have different ranks. For example, the following list is a ragged list:
 
 \begin{Verbatim}
     --> ?'((1 2) (3 4) 5)
 \end{Verbatim}
 
-Since the first and second elements of it have ranks 1 (vectors; lists of scalars), the last element has rank 0 (a scalar). The rank of a ragged list is computed as if the maximum of ranks of a list was considered and the result is negated:
+The first and second elements of the list have ranks 1 (vectors; lists of scalars), while the last element has rank 0 (a scalar). The rank of a ragged list is computed as if the maximum of ranks of a list was considered and the result is negated:
 
 \begin{Verbatim}
     --> rank '((1 2) (3 4) 5)
@@ -254,9 +254,9 @@ Since the first and second elements of it have ranks 1 (vectors; lists of scalar
 
 \section{Elementary higher order functions}
 
-KamilaLisp provides a wide range of higher order functions for manipulating lists. Many them can be defined using recursion, however almost all of them are guaranteed to terminate, while recursion in general case does not. The use of list processing functions that constitute the core of array programming is highly encouraged over recursion, because they tend to be more concise, easier to understand and less error prone.
+KamilaLisp provides a wide variety of higher order functions for manipulating lists. Many them can be defined using recursion, however almost all of them are guaranteed to terminate, while recursion in general case does not. The use of list processing functions that constitute the core of array programming is highly encouraged over recursion, because they tend to be more concise, easier to understand and less error prone.
 
-The most used function is a built-in function takes a function and a list and applies the function to each element of the list, returning a list of the results. Define a successor funciton and map it over a list by prepending a single colon before the function name:
+The most used function is a built-in operator takes a function and a list and applies the function to each element of the list, yielding a list of the results. Define a successor function and map it over a list by prepending a single colon before the function name:
 
 \begin{Verbatim}
     --> def s $(+ 1)
@@ -308,7 +308,7 @@ A function \verb|monotonic| can be defined to test whether a list of numbers is 
     0
 \end{Verbatim}
 
-This particular example uses slightly inefficient logic (takes all unique elements of the mapping and checks if the resultant list is a singleton list\footnote{A list containing only one element} of \verb|1|), while a more efficient implementation would use a higher order function to test whether all the elements of the resultant list are \verb|1|, but this topic will be covered later on in the book.
+This particular example uses slightly inefficient logic (takes all unique elements of the mapping and checks if the resultant list is a singleton list\footnote{A list containing only one element} of \verb|1|), while a more efficient implementation would use a higher order function to test whether all the elements of the resultant list are \verb|1|, however this topic will be covered later on in the book.
 
 Coming back to \verb|map|, it is possible to specify \textit{invariant arguments} to the function - the invariant arguments are constant arguments that are always supplied to the function being mapped, while other arguments over which \verb|map| can iterate are changing:
 
@@ -317,7 +317,7 @@ Coming back to \verb|map|, it is possible to specify \textit{invariant arguments
     (11 12 13 14 15)
 \end{Verbatim}
 
-An important observation to be made is that it is possible to apply a function to a list of lists by stacking the comma operator multiple times also abusing the invariant arguments to write a function that forms tuples from the elements in a two-dimensional matrix:
+An important observation to be made is that it is possible to apply a function to a list of lists by stacking the comma operator multiple times also utilising the invariant arguments to write a function that forms tuples from the elements in a two-dimensional matrix:
 
 \begin{Verbatim}
     --> def mat '((4 3) (3 4))
@@ -820,7 +820,7 @@ The inner product is particularly useful in the context of convolution. Througho
 \end{tikzpicture}
 \end{center}
 
-Notice that if one wanted to compute the value of the first cell of the matrix, this process would be complicated by the fact that the input matrix does not contain adequate data on the border. This difficulty is often called in the \textit{free boundary problem}. Throughout this section, it will be assumed that the data in the matrix is padded using the reflected boundary condition, which mirrors the data on the border. First, consider the following function \verb|cell| that given a matrix, yields a function to query the value of a cell at a given position accounting for the reflected boundary condition:
+Notice that if one wanted to compute the value of the first cell of the matrix, this process would be complicated by the fact that the input matrix does not contain adequate data on the border. This difficulty is often called the \textit{free boundary problem}. Throughout this section, it will be assumed that the data in the matrix is padded using the reflected boundary condition, which mirrors the data on the border. First, consider the following function \verb|cell| that given a matrix, yields a function to query the value of a cell at a given position accounting for the reflected boundary condition:
 
 \begin{Verbatim}
         defun cell (mat) \if (/= (rank mat) 2)
