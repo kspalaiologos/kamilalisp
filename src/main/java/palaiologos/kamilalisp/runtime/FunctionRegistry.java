@@ -82,6 +82,8 @@ public class FunctionRegistry {
         env.setp("any", new Atom(new Any()));
         env.setp("all", new Atom(new All()));
         env.setp("none", new Atom(new None()));
+        env.setp("decode", new Atom(new Decode()));
+        env.setp("⊥⍟", new Atom(new Decode()));
         env.setp("count", new Atom(new Count()));
         env.setp("⍴?", new Atom(new Count()));
         env.setp("sort-asc", new Atom(new Sort()));
