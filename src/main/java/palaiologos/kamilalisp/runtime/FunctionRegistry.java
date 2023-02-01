@@ -20,6 +20,7 @@ import palaiologos.kamilalisp.runtime.math.prime.NextPrime;
 import palaiologos.kamilalisp.runtime.math.prime.PrimeFactors;
 import palaiologos.kamilalisp.runtime.math.prime.PrimeNo;
 import palaiologos.kamilalisp.runtime.math.trig.*;
+import palaiologos.kamilalisp.runtime.matrix.Transpose;
 import palaiologos.kamilalisp.runtime.meta.*;
 import palaiologos.kamilalisp.runtime.regex.RegexMatches;
 import palaiologos.kamilalisp.runtime.regex.RegexReplace;
@@ -74,6 +75,8 @@ public class FunctionRegistry {
         env.setp("⍭¨", new Atom(new FilterIdx()));
         env.setp("map-idx", new Atom(new MapIdx()));
         env.setp("parallel-map-idx", new Atom(new ParallelMapIdx()));
+        env.setp("⍠¨", new Atom(new MapIdx()));
+        env.setp("⍠∵", new Atom(new ParallelMapIdx()));
         env.setp("parallel-filter", new Atom(new ParallelFilter()));
         env.setp("⍭∵", new Atom(new ParallelFilter()));
         env.setp("∨?", new Atom(new Any()));
@@ -202,6 +205,8 @@ public class FunctionRegistry {
         env.setp("find", new Atom(new Find()));
         env.setp("⍸", new Atom(new Where()));
         env.setp("where", new Atom(new Where()));
+        env.setp("powerset", new Atom(new Powerset()));
+        env.setp("⍉⍉", new Atom(new Powerset()));
 
         env.setp("img:write", new Atom(new WriteImage()));
         env.setp("img:read", new Atom(new LoadImage()));
@@ -212,9 +217,17 @@ public class FunctionRegistry {
         env.setp("prime:is?", new Atom(new IsPrime()));
         env.setp("prime:next", new Atom(new NextPrime()));
         env.setp("prime:nth", new Atom(new PrimeNo()));
+        env.setp("⋔⌹", new Atom(new PrimeFactors()));
+        env.setp("⋔?", new Atom(new IsPrime()));
+        env.setp("⋔↑", new Atom(new NextPrime()));
+        env.setp("⋔→", new Atom(new PrimeNo()));
+
+        env.setp("matrix:transpose", new Atom(new Transpose()));
+        env.setp("⎕⍉", new Atom(new Transpose()));
 
         env.setp("abs", new Atom(new Abs()));
         env.setp("bernoulli", new Atom(new Bernoulli()));
+        env.setp("binomial", new Atom(new Binomial()));
         env.setp("**", new Atom(new DoubleStar()));
         env.setp("ln", new Atom(new Ln()));
         env.setp("sqrt", new Atom(new Sqrt()));
@@ -313,6 +326,11 @@ public class FunctionRegistry {
         env.setp("list:shuffle", new Atom(new Shuffle()));
         env.setp("random", new Atom(new Random()));
         env.setp("⍰", new Atom(new Random()));
+
+        env.setp("fft", new Atom(new FFT()));
+        env.setp("⊙↖⍠", new Atom(new FFT()));
+        env.setp("ifft", new Atom(new IFFT()));
+        env.setp("⊙↘⍠", new Atom(new IFFT()));
 
         env.setp("bipartition", new Atom(new Bipartition()));
         env.setp("list:partition", new Atom(new PartitionRange()));

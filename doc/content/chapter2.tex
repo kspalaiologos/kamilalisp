@@ -254,7 +254,7 @@ The first and second elements of the list have ranks 1 (vectors; lists of scalar
 
 \section{Elementary higher order functions}
 
-KamilaLisp provides a wide variety of higher order functions for manipulating lists. Many them can be defined using recursion, however almost all of them are guaranteed to terminate, while recursion in general case does not. The use of list processing functions that constitute the core of array programming is highly encouraged over recursion, because they tend to be more concise, easier to understand and less error prone.
+KamilaLisp provides a wide variety of higher order functions for manipulating lists. Many of them can be defined using recursion, however almost all of them are guaranteed to terminate, while recursion in general case does not. The use of list processing functions that constitute the core of array programming is highly encouraged over recursion, because they tend to be more concise, easier to understand and less error prone.
 
 The most used function is a built-in operator takes a function and a list and applies the function to each element of the list, yielding a list of the results. Define a successor function and map it over a list by prepending a single colon before the function name:
 
@@ -297,7 +297,7 @@ To present an example, the colon operator would be helpful in implementing a fun
     at < primitive function
 \end{Verbatim}
 
-A function \verb|monotonic| can be defined to test whether a list of numbers is monotonically increasing or decreasing, based on the comparison function it takes argument:
+A function called \verb|monotonic| can be defined to test whether a list of numbers is monotonically increasing or decreasing\footnote{Monotonically decreasing means that every element of a sequence is smaller than the previous element.}, based on the comparison function it takes argument:
 
 \begin{Verbatim}
     --> defun monotonic (fn list) (same '(1) (unique (:fn list (cdr list))))

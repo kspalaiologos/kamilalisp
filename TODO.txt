@@ -2,7 +2,10 @@
 - File/Terminal I/O functions
 - More string utilities (interpolate, capitalize, etc.)
 - Web server stuff
-- RNG
 - graphics/sound
 - extend regex library
-- depth operator
+- apl encode/decode
+- matrix stuff
+
+book:
+- huffman coding, elias gamma, histograms, fft, ski calculus, matrix algos, Chinese Remainder Theorem?

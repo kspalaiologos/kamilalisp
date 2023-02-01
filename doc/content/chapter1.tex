@@ -160,7 +160,7 @@ When implementing complex functions, it is often of particular interest to keep 
 
 Notice that despite using \verb|def|, \verb|defun|, etc..., the \textit{let-seq} construct does not create any bindings in the global scope - the bindings are always local to the block.
 
-When a function calls is performed in KamilaLisp, the \textit{call stack} is modified in the process. The call stack is a data structure implemented inside of the interpreter that keeps track of the functions that are currently being executed. When a function is called, a new \textit{stack frame} is created and pushed onto the stack. When the function returns, the stack frame is popped from the stack - this way, the interpreter knows where to return to after the function yields a value. When an exception is raised, the interpreter will present the user with a \textit{stack trace}, which is a list of functions that were executed before the exception was raised, for example:
+When a function call is performed in KamilaLisp, the \textit{call stack} is modified in the process. The call stack is a data structure implemented inside of the interpreter that keeps track of the functions that are currently being executed. Application of a lambda function forces creation of a new \textit{stack frame} which is subsequently created and pushed onto the stack. When the function returns, the stack frame is popped from the stack - this way, the interpreter knows where to return to after the function yields a value. When an exception is raised, the interpreter will present the user with a \textit{stack trace}, which is a list of functions that were executed before the exception was raised, for example:
 
 \begin{Verbatim}
     --> defun f x (/ 1 0) ; Oops! Division by zero!
