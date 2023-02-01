@@ -41,7 +41,7 @@ public class WriteImage extends PrimitiveFunction implements Lambda {
         for(int y = 0; y < imageData.size(); y++) {
             List<Atom> row = imageData.get(y);
             for(int x = 0; x < row.size(); x++) {
-                img.setRGB(x, y, row.get(x).getInteger().intValueExact());
+                img.setRGB(x, y, (int) row.get(x).getInteger().longValueExact());
             }
         }
         try {

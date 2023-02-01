@@ -823,21 +823,21 @@ The inner product is particularly useful in the context of convolution. Througho
 Notice that if one wanted to compute the value of the first cell of the matrix, this process would be complicated by the fact that the input matrix does not contain adequate data on the border. This difficulty is often called the \textit{free boundary problem}. Throughout this section, it will be assumed that the data in the matrix is padded using the reflected boundary condition, which mirrors the data on the border. First, consider the following function \verb|cell| that given a matrix, yields a function to query the value of a cell at a given position accounting for the reflected boundary condition:
 
 \begin{Verbatim}
-        defun cell (mat) \if (/= (rank mat) 2)
-          (raise "Expected a matrix.")
-          \lambda (x y) \let-seq
-            (def h (tally mat))
-            (def w (tally (car mat)))
-            \cond
-              ((and (< x 0) (< y 0)) mat$[- (+ y 1)]$[- (+ x 1)])
-              ((and (< x 0) (< y h)) mat$[#0 y]$[- (+ x 1)])
-              ((and (< x 0) (>= y h)) mat$[- (- (* 2 h) 1) y]$[- (+ x 1)])
-              ((and (< x w) (< y 0)) mat$[- (+ y 1)]$[#0 x])
-              ((and (< x w) (>= y h)) mat$[- (- (* 2 h) 1) y]$[#0 x])
-              ((and (>= x w) (< y 0)) mat$[- (+ y 1)]$[- (- (* 2 w) 1) x])
-              ((and (>= x w) (< y h)) mat$[#0 y]$[- (- (* 2 w) 1) x])
-              ((and (>= x w) (>= y h)) mat$[- (- (* 2 h) 1) y]$[- (- (* 2 w) 1) x])
-              \mat$[#0 y]$[#0 x]
+    defun cell (mat) \if (/= (rank mat) 2)
+      (raise "Expected a matrix.")
+      \lambda (x y) \let-seq
+        (def h (tally mat))
+        (def w (tally (car mat)))
+        \cond
+          ((and (< x 0) (< y 0)) mat$[- (+ y 1)]$[- (+ x 1)])
+          ((and (< x 0) (< y h)) mat$[#0 y]$[- (+ x 1)])
+          ((and (< x 0) (>= y h)) mat$[- (- (* 2 h) 1) y]$[- (+ x 1)])
+          ((and (< x w) (< y 0)) mat$[- (+ y 1)]$[#0 x])
+          ((and (< x w) (>= y h)) mat$[- (- (* 2 h) 1) y]$[#0 x])
+          ((and (>= x w) (< y 0)) mat$[- (+ y 1)]$[- (- (* 2 w) 1) x])
+          ((and (>= x w) (< y h)) mat$[#0 y]$[- (- (* 2 w) 1) x])
+          ((and (>= x w) (>= y h)) mat$[- (- (* 2 h) 1) y]$[- (- (* 2 w) 1) x])
+          \mat$[#0 y]$[#0 x]
 \end{Verbatim}
 
 The usages of the identity function \verb|#0| stem from the fact that the indexing construct evaluates its argument if it is not a simple numeric list.
