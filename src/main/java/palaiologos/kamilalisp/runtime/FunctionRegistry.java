@@ -20,6 +20,7 @@ import palaiologos.kamilalisp.runtime.math.prime.NextPrime;
 import palaiologos.kamilalisp.runtime.math.prime.PrimeFactors;
 import palaiologos.kamilalisp.runtime.math.prime.PrimeNo;
 import palaiologos.kamilalisp.runtime.math.trig.*;
+import palaiologos.kamilalisp.runtime.matrix.Transpose;
 import palaiologos.kamilalisp.runtime.meta.*;
 import palaiologos.kamilalisp.runtime.regex.RegexMatches;
 import palaiologos.kamilalisp.runtime.regex.RegexReplace;
@@ -214,9 +215,17 @@ public class FunctionRegistry {
         env.setp("prime:is?", new Atom(new IsPrime()));
         env.setp("prime:next", new Atom(new NextPrime()));
         env.setp("prime:nth", new Atom(new PrimeNo()));
+        env.setp("⋔⌹", new Atom(new PrimeFactors()));
+        env.setp("⋔?", new Atom(new IsPrime()));
+        env.setp("⋔↑", new Atom(new NextPrime()));
+        env.setp("⋔→", new Atom(new PrimeNo()));
+
+        env.setp("matrix:transpose", new Atom(new Transpose()));
+        env.setp("⎕⍉", new Atom(new Transpose()));
 
         env.setp("abs", new Atom(new Abs()));
         env.setp("bernoulli", new Atom(new Bernoulli()));
+        env.setp("binomial", new Atom(new Binomial()));
         env.setp("**", new Atom(new DoubleStar()));
         env.setp("ln", new Atom(new Ln()));
         env.setp("sqrt", new Atom(new Sqrt()));
