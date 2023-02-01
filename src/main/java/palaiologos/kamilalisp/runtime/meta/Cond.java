@@ -15,7 +15,6 @@ public class Cond extends PrimitiveFunction implements SpecialForm {
             } else if (a.getList().size() == 1) {
                 return Evaluation.evaluate(env, a.getList().get(0));
             } else {
-
                 throw new RuntimeException("Invalid cond clause");
             }
         }

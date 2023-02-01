@@ -890,6 +890,66 @@ To implement convolution on RGBA images, it is necessary to split the color valu
     37126378
 \end{Verbatim}
 
+Define a function that takes RGB image data (two-dimensional integer matrix), splits the color channels and applies a convolution kernel to each channel, then fuses the results together.
+
+\begin{Verbatim}
+    defun convolve-rgb (img kern) (
+      ; Extract the R, G and B channels of the image data.
+      (def r \$($(^/ 255)@bit:unpack _ '(0 8))%[0] img)
+      (def g \$($(^/ 255)@bit:unpack _ '(8 16))%[0] img)
+      (def b \$($(^/ 255)@bit:unpack _ '(16 24))%[0] img)
+      ; Convolve each channel and convert back to integer values.
+      (defun quantize x (cond ((< x 0) 0) ((> x 1) 255) ((round@* x 255))))
+      (def r \quantize%[0] \convolve r kern)
+      (def g \quantize%[0] \convolve g kern)
+      (def b \quantize%[0] \convolve b kern)
+      ; Merge the channels back together.
+      ((lambda (r g b)
+        (bit:pack (tie 0 8 r) (tie 8 16 g) (tie 16 24 b)))%[0] r g b))
+\end{Verbatim}
+
+Since the convolution code has become more complex, it should be saved to a file now and imported as a library. Declare public symbols that should be visible in the global scope using the \verb|public:| prefix:
+
+\begin{Verbatim}
+    (defun cell (mat) \if (/= (rank mat) 2)
+      (raise "Expected a matrix.")
+      \lambda (x y) \let-seq
+        (def h (tally mat))
+        (def w (tally (car mat)))
+        \cond
+          ((and (< x 0) (< y 0)) mat$[- (+ y 1)]$[- (+ x 1)])
+          ((and (< x 0) (< y h)) mat$[#0 y]$[- (+ x 1)])
+          ((and (< x 0) (>= y h)) mat$[- (- (* 2 h) 1) y]$[- (+ x 1)])
+          ((and (< x w) (< y 0)) mat$[- (+ y 1)]$[#0 x])
+          ((and (< x w) (>= y h)) mat$[- (- (* 2 h) 1) y]$[#0 x])
+          ((and (>= x w) (< y 0)) mat$[- (+ y 1)]$[- (- (* 2 w) 1) x])
+          ((and (>= x w) (< y h)) mat$[#0 y]$[- (- (* 2 w) 1) x])
+          ((and (>= x w) (>= y h)) mat$[- (- (* 2 h) 1) y]$[- (- (* 2 w) 1) x])
+          \mat$[#0 y]$[#0 x])
+    
+    (defun convolve-step (cell-mat kern x y) \let-seq
+      (def kern-h \tally kern)
+      (def kern-w \tally (car kern))
+      (case (/= kern-h kern-w)
+        \raise "Expected a square kernel.")
+      (case (or (/= (mod kern-h 2) 1) (/= (mod kern-w 2) 1))
+        \raise "Expected an odd-sized kernel.")
+      (def kern-c \- (floor (/ kern-w 2)) 1)
+      (def conv-range \outer-product
+        (range (- x kern-c) \- (+ x kern-w) kern-c)
+        (range (- y kern-c) \- (+ y kern-h) kern-c))
+      (def conv-mat \:$(lift cell-mat) conv-range)
+      \foldl + 0 \* (flatten conv-mat) \flatten kern)
+
+    (defun public:convolve (mat kern) \let-seq
+      (def cell-mat (cell mat))
+      \map-idx (lambda (y row)
+        \map-idx (lambda (x _e)
+          \convolve-step cell-mat kern x y) row) mat)
+    
+    "OK"
+\end{Verbatim}
+
 \section{Searching and partitioning}
 
 \section{Sorting and permutations}
