@@ -518,7 +518,7 @@ To demonstrate the simplest example of a fold, the sum of a list could be comput
     fold - (1 2 3 4 5) = 1 - 2 - 3 - 4 - 5
 \end{Verbatim}
 
-The sum can be parenthesised in two ways: as \verb |(((1 - 2) - 3) - 4) - 5| or \verb|1 - (2 - (3 - (4 - 5)))|, thus former is a left-associative fold, while the latter is a right-associative fold.
+The sum can be parenthesised in two ways: as $(((1 - 2) - 3) - 4) - 5$ or $1 - (2 - (3 - (4 - 5)))$, thus former is a left-associative fold, while the latter is a right-associative fold.
 
 Additionally, a question arises how should folds handle empty and singleton lists. Folds, in general case, return the identity element of the aggregation functor when the list is empty. When presented with a singleton list, the fold applies the function to the identity element and the only element of the list. Obviously, it is not possible to just query the identity element of the aggregating function, which is why the identity element of it is usually passed as an argument to fold. Sometimes it is desirable to fold a list with a function that does not have an identity element, in which case folding a list with a single element returns it and folding an empty list results in an error.
 
@@ -867,7 +867,7 @@ Now, define the \verb|convolution-2d| function that takes argument the input mat
       (def cell-mat (cell mat))
       \map-idx (lambda (y row)
         \map-idx (lambda (x _e)
-            \convolve-step cell-mat kern x y) row) mat
+          \convolve-step cell-mat kern x y) row) mat
 \end{Verbatim}
 
 Finally, test the convolution on a simple example:
@@ -880,6 +880,8 @@ Finally, test the convolution on a simple example:
      [6.93 7.59 7.59]
      [6.93 7.59 7.59]]
 \end{Verbatim}
+
+
 
 \section{Searching and partitioning}
 

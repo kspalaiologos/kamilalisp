@@ -231,7 +231,6 @@ Since KamilaLisp supports arbitrary precision numerical computation, the factori
     --> defun factorial (n) (let-seq 
     ...   (defun f' (n acc) (if (= n 0) acc (f' (- n 1) (* n acc))))
     ...   (f' n 1))
-    (λ n . (let-seq (defun f' (n acc) (if (= n 0) acc (f' (- n 1) (* n acc))) (f' n 1))))
     --> factorial 5
     120
 \end{Verbatim}
@@ -242,7 +241,6 @@ The factorial function defines a helper function that has an accumulator argumen
     --> defun factorial (n) (let-seq
     ...   (defun f' (n acc) (if (= n 0) acc (&0 (- n 1) (* n acc))))
     ...   (f' n 1))
-    (λ n . (let-seq (defun f' (n acc) (if (= n 0) acc (&0 (- n 1) (* n acc))) (f' n 1))))
     --> factorial 5
     120
 \end{Verbatim}
@@ -285,7 +283,10 @@ After transforming the function to use an accumulator:
 
 \begin{Verbatim}
     --> defun power (x n) (let-seq
-    ...   (defun f' (x n acc) (if (= n 0) acc (f' x (- n 1) (* x acc))))
+    ...   (defun f' (x n acc) (if
+    ...       (= n 0)
+    ...       acc
+    ...       (f' x (- n 1) (* x acc))))
     ...   (f' x n 1))
 \end{Verbatim}
 
@@ -305,8 +306,9 @@ Notice, that the size of the expression \textit{does not grow}, hence the functi
 
 \begin{Verbatim}
     --> defun power (x n) ((
-    ...    lambda (x n acc) (if (= n 0) acc (&0 x (- n 1) (* x acc)))) x n 1)
-    (λ x n . ((λ (x n acc) (if (= n 0) acc (&0/syn x (- n 1) (* x acc)))) x n 1))
+    ...    lambda (x n acc) (
+    ...        if (= n 0) acc
+    ...            (&0 x (- n 1) (* x acc)))) x n 1)
     --> power 2 4
     16
 \end{Verbatim}
@@ -480,7 +482,7 @@ It is possible to define custom variadic functions in KamilaLisp using special a
     5
     --> avg
     TypeError thrown in thread 15eb5ee5:
-            Expected at least 1 arguments to `(λ x ...xs . (/ (+ x (sum ...xs)) ...))'.
+            Expected at least 1 arguments to `(λ x ...xs . (/ (+ x ...) ...))'.
         at entity avg  1:1
         at (λ x ...xs . (/ (+ x (sum ...xs)) ...))  1:11
 \end{Verbatim}
