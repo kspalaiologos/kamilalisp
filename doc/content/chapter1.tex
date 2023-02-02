@@ -138,7 +138,7 @@ Since functions are first-class in KamilaLisp, it is also possible to return the
     The value of f(x) for x=4.5 is 20.25
 \end{Verbatim}
 
-When implementing complex functions, it is often of particular interest to keep the partial results obtained during the execution of the function. This can be achieved by cascading the \textit{let} construct or using the \textit{let-seq} construct. The following examples implement a function that raises its only argument to the eigth power\footnote{Many reimplementations of common built-in functions mentioned in the book that are present in KamilaLisp are rather suboptimal and demonstrated only for the sake of completeness. The programmer is urged to use the optimised predefined routines when possible instead.}:
+When implementing complex functions, it is often of particular interest to keep the partial results obtained during the execution of the function. This can be achieved by cascading the \textit{let} construct or using the \textit{let-seq} construct. The following examples implement a function that raises its only argument to the eighth power\footnote{Many reimplementations of common built-in functions mentioned in the book that are present in KamilaLisp are rather suboptimal and demonstrated only for the sake of completeness. The programmer is urged to use the optimised predefined routines when possible instead.}:
 
 \begin{Verbatim}
     --> defun p8 x (let-seq
@@ -245,7 +245,7 @@ The factorial function defines a helper function that has an accumulator argumen
     120
 \end{Verbatim}
 
-The self-referential call was replaced by \verb|&0| which in is a reference to the current function. This is a special case of the \verb|&| operator, which is used to refer to functions by nesting level in the source code, akin to de Bruijn indices. The \verb|&0| operator refers to the current function, \verb|&1| refers to the function (anonymous or named) that is the lexical ancestor the current function, and so on. This way, the factorial function no longer raises an error when applied to large numbers, since the stack does not grow beyond the maximum size:
+The self-referential call was replaced by \verb|&0| which is a reference to the current function. This is a special case of the \verb|&| operator, which is used to refer to functions by nesting level in the source code, akin to de Bruijn indices. The \verb|&0| operator refers to the current function, \verb|&1| refers to the function (anonymous or named) that is the lexical ancestor the current function, and so on. This way, the factorial function no longer raises an error when applied to large numbers, since the stack does not grow beyond the maximum size:
 
 \begin{Verbatim}
     --> factorial 1000
