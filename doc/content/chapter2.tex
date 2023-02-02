@@ -905,7 +905,11 @@ Define a function that takes RGB image data (two-dimensional integer matrix), sp
       (def b \quantize%[0] \convolve b kern)
       ; Merge the channels back together.
       ((lambda (r g b)
-        (bit:pack (tie 0 8 r) (tie 8 16 g) (tie 16 24 b)))%[0] r g b))
+        (bit:pack
+          (tie 0 8 r)
+          (tie 8 16 g)
+          (tie 16 24 b)
+          (tie 24 32 255)))%[0] r g b))
 \end{Verbatim}
 
 Since the convolution code has become more complex, it should be saved to a file now and imported as a library. Declare public symbols that should be visible in the global scope using the \verb|public:| prefix:
@@ -959,7 +963,11 @@ Since the convolution code has become more complex, it should be saved to a file
       (def b \quantize%[0] \public:convolve b kern)
       ; Merge the channels back together.
       ((lambda (r g b)
-        (bit:pack (tie 0 8 r) (tie 8 16 g) (tie 16 24 b) (tie 24 32 255)))%[0] r g b)))
+        (bit:pack
+          (tie 0 8 r)
+          (tie 8 16 g)
+          (tie 16 24 b)
+          (tie 24 32 255)))%[0] r g b)))
 
     "OK"
 \end{Verbatim}
