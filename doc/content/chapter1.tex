@@ -633,7 +633,7 @@ Notice that the fibonacci function is rather expensive to compute, yet it takes 
 
 The memoized version still has some issues (e.g. it will still overflow the stack if the cache is not big enough) but it is a good improvement over the original version. The built-in function \verb|fib| in KamilaLisp uses the Binet formula to compute the Fibonacci numbers, which is a much faster method than the naive recursive approach.
 
-One nuisance that needs to be pointed out is that in functions and lambda expressions, names are updated ad-hoc and usually looked up when needed to allow the programmer to utilise some interesting concepts such as mutual recursion. This has a few consequences, for instance:
+One nuance that needs to be pointed out is that in functions and lambda expressions, names are updated ad-hoc and usually looked up when needed to allow the programmer to utilise some interesting concepts such as mutual recursion. This has a few consequences, for instance:
 
 \begin{Verbatim}
     --> defun f (x) (+ x a)
