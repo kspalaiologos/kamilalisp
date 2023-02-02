@@ -728,15 +728,7 @@ KamilaLisp supports two kinds of products known from mathematics: the inner (gen
 
 \begin{Verbatim}
     --> [outer-product #0 #0] (range 1 4)
-    [[1 1]
-     [1 2]
-     [1 3]
-     [2 1]
-     [2 2]
-     [2 3]
-     [3 1]
-     [3 2]
-     [3 3]]
+    (((1 1) (1 2) (1 3)) ((2 1) (2 2) (2 3)) ((3 1) (3 2) (3 3)))
 \end{Verbatim}
 
 The dot product of two vectors is defined mathematically as follows:
@@ -753,16 +745,6 @@ Inner product spaces generalize Euclidean vector spaces, in which the inner prod
 \end{Verbatim}
 
 The first argument to \verb|inner-product| is the summation operation, while the second argument is the multiplication operation. The third and further arguments are the two vectors to be multiplied. If only two arguments are provided, the \verb|inner-product| function yields a function that performs the operation on arbitrarily many vectors.
-
-To descend into technicalities, the \verb|inner-product| function may be reimplemented using the \verb|foldl1| function and \verb|:| operator:
-
-\begin{Verbatim}
-    --> defun my-dot (f g ...xs) (foldl1 f (lift :g ...xs))
-\end{Verbatim}
-
-This implementation uses the \verb|lift| function, which takes a list of arguments to be passed into a function and applies it to them. The equivalence between \verb|lift| and usual function application is demonstrated as \verb|lift f '(a1 a2 a3...) <=> f a1 a2 a3...|.
-
-Following the previously recalled definition of the inner product in terms of \verb|foldl1| and \verb|map|, it is directly stated that the inner product of two \textit{empty} vectors is going to raise an error (instead of returning the identity element of \verb|f|).
 
 The inner product is particularly useful in the context of convolution. Throughout this section, it will be chiefly assumed that the convolution is two-dimensional. A step of convolution of two matrices $\mathbf{I}$ and $\mathbf{K}$ is illustrated as follows:
 
@@ -853,7 +835,7 @@ Define the function to compute the value of a two-dimensional convolution at a g
       (case (or (/= (mod kern-h 2) 1) (/= (mod kern-w 2) 1))
         \raise "Expected an odd-sized kernel.")
       (def kern-c \floor (/ kern-w 2))
-      (def conv-range \outer-product
+      (def conv-range \flatten@outer-product
         (range (- x kern-c) \- (+ x kern-w) kern-c)
         (range (- y kern-c) \- (+ y kern-h) kern-c))
       (def conv-mat \:$(lift cell-mat) conv-range)
@@ -939,7 +921,7 @@ Since the convolution code has become more complex, it should be saved to a file
       (case (or (/= (mod kern-h 2) 1) (/= (mod kern-w 2) 1))
         \raise "Expected an odd-sized kernel.")
       (def kern-c \floor (/ kern-w 2))
-      (def conv-range \outer-product
+      (def conv-range \flatten@outer-product
         (range (- x kern-c) \- (+ x kern-w) kern-c)
         (range (- y kern-c) \- (+ y kern-h) kern-c))
       (def conv-mat \:$(lift cell-mat) conv-range)
