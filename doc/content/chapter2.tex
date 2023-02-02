@@ -254,7 +254,7 @@ The first and second elements of the list have ranks 1 (vectors; lists of scalar
 
 \section{Elementary higher order functions}
 
-KamilaLisp provides a wide variety of higher order functions for manipulating lists. Many of them can be defined using recursion, however almost all of them are guaranteed to terminate, while recursion in general case does not. The use of list processing functions that constitute the core of array programming is highly encouraged over recursion, because they tend to be more concise, easier to understand and less error prone.
+KamilaLisp provides a wide variety of higher order functions for manipulating lists. Many of them can be defined using recursion, however almost all of them are guaranteed to terminate, while recursion in its general case does not. The use of list processing functions that constitute the core of array programming is highly encouraged over recursion, because they tend to be more concise, easier to understand and less error prone.
 
 The most used function is a built-in operator takes a function and a list and applies the function to each element of the list, yielding a list of the results. Define a successor function and map it over a list by prepending a single colon before the function name:
 
@@ -265,7 +265,7 @@ The most used function is a built-in operator takes a function and a list and ap
     (2 3 4 5 6)
 \end{Verbatim}
 
-The \verb|map| function (which is the more familiar name of this construct, predominantly called that in Haskell and OCaml) has a few nuissances that are worth mentioning. First, it is possible to apply it to a non-list argument and an empty list:
+The \verb|map| function (which is the more familiar name of this construct, predominantly called that in Haskell and OCaml) has a few nuisances that are worth mentioning. First, it is possible to apply it to a non-list argument and an empty list:
 
 \begin{Verbatim}
     --> :s 5
@@ -649,7 +649,7 @@ A KamilaLisp implementation can be written as follows:
     ...         (** -1 (foldl + 0 ([flatten@< #0 prefixes] x))))
 \end{Verbatim}
 
-A good way to simplify this code is to use the \textit{backslash partitioning}. In essence, a pair of parentheses can sometimes be replaced with a single backslash in place of the opening parenthesis. The interpreter will replace the backslash with an open partenthesis of the type corresponding to the outer parenthesis and automatically double the next closing parenthesis of the same type that it encounters. To demonstrate, consider this version of the original code:
+A good way to simplify this code is to use the \textit{backslash partitioning}. In essence, a pair of parentheses can sometimes be replaced with a single backslash in place of the opening parenthesis. The interpreter will replace the backslash with an open parenthesis of the type corresponding to the outer parenthesis and automatically double the next closing parenthesis of the same type that it encounters. To demonstrate, consider this version of the original code:
 
 \begin{Verbatim}
     --> defun levi-civita x \
@@ -666,7 +666,7 @@ To verify the code, generate a 2x2 Levi Civita symbol matrix:
      [-1 0]]
 \end{Verbatim}
 
-Another fascinating algorithm to implement using folds and scans is detecting spans of non-nested C-style comments. Consider the following C language declaration and underline the commented out parts:
+Another fascinating algorithm to implement using folds and scans is detecting spans of non-nested C-style comments. Consider the following C language declaration with the commented out parts underlined:
 
 \begin{Verbatim}
     int x /* accumulator */ = 0 /* Store the amount of comments in the code. */ ;
