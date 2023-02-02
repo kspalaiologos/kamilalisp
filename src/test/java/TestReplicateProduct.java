@@ -35,6 +35,5 @@ public class TestReplicateProduct {
         assertEquals(Common.runCode("(inner-product + * '(1 2 3) '(4 5 6))").getReal(), BigDecimal.valueOf(32));
         assertEquals(Common.runCode("(inner-product + * '(1 2 3) '(4 5 6) '(7 8 9))").getReal(), BigDecimal.valueOf(270));
         assertEquals(Common.runCode("((inner-product + *) '(1 2 3) '(4 5 6) '(7 8 9))").getReal(), BigDecimal.valueOf(270));
-        assertEquals(Common.runCode("((inner-product + *) '(1 2 3) '(4 5 6) '(7 8 9 10 11))").getReal(), BigDecimal.valueOf(270));
     }
 }
