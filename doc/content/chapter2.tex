@@ -974,13 +974,13 @@ Since the convolution code has become more complex, it should be saved to a file
 
 Finally, test the box blur on an image. Consider the following \textit{original}, 256x256 RGB image:
 
-\begin{figure}[h]
+\begin{figure}[h!]
     \caption{peppers.jpg}
     \centering
     \includegraphics[width=0.25\textwidth]{figures/peppers.jpg}
 \end{figure}
 
-Decrease numerical precision to speed up the computation:
+Decrease numerical precision to speed up the computation. Create a 3x3 box blur kernel and apply it to the image:
 
 \begin{Verbatim}
     --> import "convolution.lisp"
@@ -991,13 +991,7 @@ Decrease numerical precision to speed up the computation:
     peppers-blurry.jpg
 \end{Verbatim}
 
-\begin{figure}[h]
-    \caption{peppers-blurry.jpg}
-    \centering
-    \includegraphics[width=0.25\textwidth]{figures/peppers-blurry.jpg}
-\end{figure}
-
-Another interesting operation to check is the Gaussian blur:
+Other interesting operations to check are the Gaussian blur and edge detection:
 
 \begin{Verbatim}
     --> import "convolution.lisp"
@@ -1006,29 +1000,26 @@ Another interesting operation to check is the Gaussian blur:
     ...     (img:read "peppers.jpg")
     ...     (* (/ 16) '((1 2 1) (2 4 2) (1 2 1)))))
     peppers-gauss.jpg
-\end{Verbatim}
-
-\begin{figure}[h]
-    \caption{peppers-gauss.jpg}
-    \centering
-    \includegraphics[width=0.25\textwidth]{figures/peppers-gauss.jpg}
-\end{figure}
-
-Finally, the edge detection kernel:
-
-\begin{Verbatim}
-    --> import "convolution.lisp"
-    OK
     --> let ((fr 10)) (img:write "peppers-edge.jpg" (convolve-rgb
     ...     (img:read "peppers.jpg")
     ...     '((-1 -1 -1) (-1 8 -1) (-1 -1 -1))))
     peppers-edge.jpg
 \end{Verbatim}
 
-\begin{figure}[h]
-    \caption{peppers-edge.jpg}
+\begin{figure}[H]
     \centering
-    \includegraphics[width=0.25\textwidth]{figures/peppers-edge.jpg}
+    \begin{subfigure}{0.25\textwidth}
+        \caption{peppers-blurry.jpg}
+        \includegraphics[width=\textwidth]{figures/peppers-blurry.jpg}
+    \end{subfigure}
+    \begin{subfigure}{0.25\textwidth}
+        \caption{peppers-gauss.jpg}
+        \includegraphics[width=\textwidth]{figures/peppers-gauss.jpg}
+    \end{subfigure}
+    \begin{subfigure}{0.25\textwidth}
+        \caption{peppers-edge.jpg}
+        \includegraphics[width=\textwidth]{figures/peppers-edge.jpg}
+    \end{subfigure}
 \end{figure}
 
 \section{Searching and partitioning}
@@ -1036,9 +1027,5 @@ Finally, the edge detection kernel:
 \section{Sorting and permutations}
 
 \section{Pattern matching}
-
-\section{Sets}
-
-\section{Hashmaps}
 
 \section{Using glyphs}
