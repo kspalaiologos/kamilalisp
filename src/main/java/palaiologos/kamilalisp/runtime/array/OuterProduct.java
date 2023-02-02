@@ -26,7 +26,7 @@ public class OuterProduct extends PrimitiveFunction implements Lambda {
 
     public static Atom op2(Callable fn, Environment env, Atom a, Atom b) {
         if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
-            return new Atom(op((x, y) -> fn.apply(env, List.of(x, y)), a.getList(), b.getList()).stream().map(Atom::new).toList());
+            return new Atom(op((x, y) -> fn.apply(env, List.of(x, y)), a.getList(), b.getList()).stream().map(x -> x.size() == 1 ? x.get(0) : new Atom(x)).toList());
         } else if (a.getType() == Type.STRING && b.getType() == Type.STRING) {
             return new Atom(op(
                     (x, y) -> fn.apply(env, List.of(new Atom(String.valueOf(x)), new Atom(String.valueOf(y)))),
@@ -34,9 +34,9 @@ public class OuterProduct extends PrimitiveFunction implements Lambda {
                     b.getString().chars().mapToObj(x -> (char) x).toList()
             ).stream().map(x -> new Atom(x.stream().map(Object::toString).collect(Collectors.joining()))).toList());
         } else if (a.getType() == Type.LIST && b.getType() != Type.LIST) {
-            return new Atom(op((x, y) -> fn.apply(env, List.of(x, y)), a.getList(), List.of(b)).stream().map(Atom::new).toList());
+            return new Atom(op((x, y) -> fn.apply(env, List.of(x, y)), a.getList(), List.of(b)).stream().map(x -> x.size() == 1 ? x.get(0) : new Atom(x)).toList());
         } else if (a.getType() != Type.LIST && b.getType() == Type.LIST) {
-            return new Atom(op((x, y) -> fn.apply(env, List.of(x, y)), List.of(a), b.getList()).stream().map(Atom::new).toList());
+            return new Atom(op((x, y) -> fn.apply(env, List.of(x, y)), List.of(a), b.getList()).stream().map(x -> x.size() == 1 ? x.get(0) : new Atom(x)).toList());
         } else {
             return new Atom(List.of(a, b));
         }

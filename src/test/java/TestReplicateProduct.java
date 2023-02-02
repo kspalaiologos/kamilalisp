@@ -26,7 +26,7 @@ public class TestReplicateProduct {
         assertEquals(Common.runCode("(outer-product 1 2)"), Common.runCode("(tie 1 2)"));
         assertEquals(Common.runCode("(outer-product 1.0 2.0)"), Common.runCode("(tie 1.0 2.0)"));
         assertEquals(Common.runCode("(outer-product '() '())"), Common.runCode("(tie)"));
-        assertEquals(Common.runCode("(outer-product '(1 2 3) '(4 5 6))"), Common.runCode("(tie (tie 1 4) (tie 1 5) (tie 1 6) (tie 2 4) (tie 2 5) (tie 2 6) (tie 3 4) (tie 3 5) (tie 3 6))"));
+        assertEquals(Common.runCode("(outer-product '(1 2 3) '(4 5 6))"), Common.runCode("#0 '(((1 4) (1 5) (1 6)) ((2 4) (2 5) (2 6)) ((3 4) (3 5) (3 6)))"));
     }
 
     @Test
