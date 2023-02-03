@@ -10,7 +10,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class OuterProduct extends PrimitiveFunction implements Lambda {
-    private static Tie tie = new Tie();
+    private static final Tie tie = new Tie();
 
     static <T, R> List<List<R>> op(BiFunction<T, T, R> f, List<T> a, List<T> b) {
         List<List<R>> results = new ArrayList<>();

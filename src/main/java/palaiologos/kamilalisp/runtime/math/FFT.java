@@ -24,8 +24,8 @@ public class FFT extends PrimitiveFunction implements Lambda {
         int n = real.length;
         if (n != imag.length)
             throw new IllegalArgumentException("Mismatched lengths");
-        if (n == 0)
-            return;
+        if (n == 0) {
+        }
         else if ((n & (n - 1)) == 0)  // Is power of 2
             transformRadix2(mc, real, imag);
         else  // More complicated algorithm for arbitrary sizes

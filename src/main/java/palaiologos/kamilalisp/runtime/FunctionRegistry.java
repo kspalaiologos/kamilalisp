@@ -5,6 +5,7 @@ import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.runtime.IO.*;
 import palaiologos.kamilalisp.runtime.array.*;
 import palaiologos.kamilalisp.runtime.array.hof.*;
+import palaiologos.kamilalisp.runtime.array.sais.SacaSais;
 import palaiologos.kamilalisp.runtime.datetime.*;
 import palaiologos.kamilalisp.runtime.hashmap.*;
 import palaiologos.kamilalisp.runtime.image.LoadImage;
@@ -230,6 +231,8 @@ public class FunctionRegistry {
         env.setp("⍫⎕⊢", new Atom(new GetFileBuffer()));
         env.setp("io:put-file-buffer", new Atom(new PutFileBuffer()));
         env.setp("⍫⎕⊣", new Atom(new PutFileBuffer()));
+
+        env.setp("saca:sais", new Atom(new SacaSais()));
 
         env.setp("matrix:transpose", new Atom(new Transpose()));
         env.setp("⎕⍉", new Atom(new Transpose()));

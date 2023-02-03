@@ -1,7 +1,6 @@
 package palaiologos.kamilalisp.runtime.array;
 
 import ch.obermuhlner.math.big.BigComplex;
-import ch.obermuhlner.math.big.BigComplexMath;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import palaiologos.kamilalisp.atom.*;
@@ -10,8 +9,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static palaiologos.kamilalisp.atom.Type.*;
 

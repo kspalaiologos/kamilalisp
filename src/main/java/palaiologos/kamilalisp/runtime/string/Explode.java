@@ -25,7 +25,7 @@ public class Explode extends PrimitiveFunction implements Lambda {
         public int size() {
             return string.length();
         }
-    };
+    }
 
     @Override
     protected String name() {
