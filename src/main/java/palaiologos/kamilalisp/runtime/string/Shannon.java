@@ -34,6 +34,18 @@ public class Shannon extends PrimitiveFunction implements Lambda {
             int[] data = args.get(0).getList().stream().mapToInt(x -> x.getInteger().intValueExact()).toArray();
             int len = data.length;
 
+            int min = Integer.MAX_VALUE;
+            for (int i = 0; i < len; i++) {
+                if (data[i] < min)
+                    min = data[i];
+            }
+
+            if(min < 0) {
+                for (int i = 0; i < len; i++) {
+                    data[i] += Math.abs(min);
+                }
+            }
+
             int max = 0;
             for (int i = 0; i < len; i++) {
                 if (data[i] > max)
