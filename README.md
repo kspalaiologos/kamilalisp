@@ -53,6 +53,27 @@ List operations and point-free programming:
 ; 1=⍴∪(⊢+⌽)⍳10000
 ```
 
+Command-line tools:
+```
+% cat script.lisp
+(○← a \⍫⎕⊢ \⍎ args)
+(↕ (= (⍴ a) 0) (○⊢
+    (↑⍫ \⍫∊ "Shannon Entropy: 0")
+    (→⋄ 0)) '())
+(○← b \:[,⍧ ⍎ $(+ 1)∘⍴∘⍎∘⍕] \⌸ a)
+(○← b b$[⍋ \⍎%[1] b])
+(○← c \ln \⌿.← max \:⍎∘:⍕ b)
+(○← b \:⍎∘:⍕
+    \:(λ x (,⍧ (⍎ x) \⌊ \* 30 \ / (ln \⍎ \⍕ x) c)) b)
+(○← d \⍭ $(⌿← ∨ 0)
+    \⌽∘⎕⍉ \:(λ x (↑ 30 \⍉↩ x '(1))) b)
+(:↑⍫∘:(λ x " ⎕"$[#0 x]) d)
+(↑⍫ \⍫∊ "Shannon Entropy: {shannon-entropy a}")
+% java -jar target/kamilalisp-0.2.jar script.lisp LICENSE
+[ histogram omitted ... ]
+Shannon Entropy: 4.57328272673034
+```
+
 ## License
 
 KamilaLisp is distributed under the GNU General Public License v3. See [LICENSE](https://github.com/kspalaiologos/kamilalisp/v0.2/main/LICENSE) for details.
