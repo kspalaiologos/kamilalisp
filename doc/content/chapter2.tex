@@ -1012,6 +1012,39 @@ Other interesting operations to check are the Gaussian blur and edge detection:
     \end{subfigure}
 \end{figure}
 
+To cover a different, related topic, consider the problem of matrix multiplication\footnote{In APL and other programming languages, it is possible to compute the dot product, perform matrix or tensor multiplication using the same construct - \verb|+.×|.}. Generally speaking, matrix multiplication involves a series of dot products between the rows of the first matrix and the columns of the second matrix. For example, consider the following two matrices:
+
+\begin{Verbatim}
+    --> def A '((1 3 2 0) (2 1 0 1) (4 0 0 2))
+    [[1 3 2 0]
+     [2 1 0 1]
+     [4 0 0 2]]
+    --> def B '((4 1) (0 3) (0 2) (2 0))
+    [[4 1]
+     [0 3]
+     [0 2]
+     [2 0]]
+\end{Verbatim}
+
+Start by transposing the second matrix and taking the outer product with \verb|*|:
+
+\begin{Verbatim}
+    --> def B* (matrix:transpose B)
+    [[4 0 0 2]
+     [1 3 2 0]]
+    --> def C (outer-product * A B*)
+    (((4 0 0 0) (1 9 4 0)) ((8 0 0 2) (2 3 0 0)) ((16 0 0 4) (4 0 0 0)))
+\end{Verbatim}
+
+The only thing left is to sum each simple vector of the result, which is done as follows:
+
+\begin{Verbatim}
+    --> def D ($(foldl + 0)%[1] C)
+    [[ 4 14]
+     [10  5]
+     [20  4]]
+\end{Verbatim}
+
 \section{Searching and partitioning}
 
 \section{Sorting and permutations}
