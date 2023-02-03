@@ -1012,7 +1012,7 @@ Other interesting operations to check are the Gaussian blur and edge detection:
     \end{subfigure}
 \end{figure}
 
-To cover a different, related topic, consider the problem of matrix multiplication\footnote{In APL and other programming languages, it is possible to compute the dot product, perform matrix or tensor multiplication using the same construct - \verb|+.×|.}. Generally speaking, matrix multiplication involves a series of dot products between the rows of the first matrix and the columns of the second matrix. For example, consider the following two matrices:
+To cover a different yet related topic, consider the problem of matrix multiplication\footnote{In APL and other programming languages, it is possible to compute the dot product, perform matrix or tensor multiplication using the same construct - \verb|+.×|.}. Generally speaking, matrix multiplication involves a series of dot products between the rows of the first matrix and the columns of the second matrix. For example, consider the following two matrices:
 
 \begin{Verbatim}
     --> def A '((1 3 2 0) (2 1 0 1) (4 0 0 2))
@@ -1046,6 +1046,43 @@ The only thing left is to sum each simple vector of the result, which is done as
 \end{Verbatim}
 
 \section{Searching and partitioning}
+
+Searching KamilaLisp lists is usually done using linear search. Linear search can be performed in two ways - using the \verb|index-of| function and the \verb|find| functions. The former returns the index of the first element that satisfies the predicate, while the latter returns the mask vector of all elements that satisfy the predicate. Both of these functions were previously considered, however, consider these two cases regardless:
+
+\begin{Verbatim}
+    --> index-of 3 '(1 2 3 4)
+    2
+    --> find "banana" "ana"
+    (0 1 0 1 0 0)
+\end{Verbatim}
+
+Linear search to no surprise can also be performed using \verb|filter|. Consider the following function that finds prime numbers in a unsorted list of arbitrary numbers:
+
+\begin{Verbatim}
+    --> def l \:random \cycle 10 '(10)
+    (6 5 9 2 3 3 1 3 6 9)
+    --> filter prime:is? l
+    (5 2 3 3 3)
+\end{Verbatim}
+
+Lists can be partitioned using \verb|list:bipartition| and \verb|list:partition|. The first function behaves alike to the list partitioning facilities in OCaml. Consider the following function which partitions a list of numbers into two lists - one containing all odd numbers and the other containing all even numbers:
+
+\begin{Verbatim}
+    --> def l \:random \cycle 10 '(10)
+    (6 4 2 8 1 8 1 3 4 3)
+    --> def even? $(^mod 2)
+    $['^mod, '2]
+    --> list:bipartition even? l
+    ((1 1 3 3) (6 4 2 8 8 4))
+\end{Verbatim}
+
+The \verb|list:partition| function is a bit more sophisticated - the lists are broken at the first occurrence of 1, continued through a span of zeroes and then broken again at the next occurrence of 1. Consider the following example:
+
+\begin{Verbatim}
+    --> list:partition '(0 0 1 0 0 1 0 0) (range 1 9)
+    [[3 4 5]
+     [6 7 8]]
+\end{Verbatim}
 
 \section{Sorting and permutations}
 

@@ -332,7 +332,7 @@ public class FunctionRegistry {
         env.setp("ifft", new Atom(new IFFT()));
         env.setp("⊙↘⍠", new Atom(new IFFT()));
 
-        env.setp("bipartition", new Atom(new Bipartition()));
+        env.setp("list:bipartition", new Atom(new Bipartition()));
         env.setp("list:partition", new Atom(new PartitionRange()));
         env.setp("⍡", new Atom(new PartitionRange()));
 
