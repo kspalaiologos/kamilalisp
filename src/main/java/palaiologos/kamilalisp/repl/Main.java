@@ -19,6 +19,7 @@ import palaiologos.kamilalisp.runtime.FunctionRegistry;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -40,8 +41,9 @@ public class Main {
         System.out.println();
     }
 
-    public static void evalScript(Environment env, String source) throws IOException {
+    public static void evalScript(Environment env, String source, String[] args) throws IOException {
         List<Atom> data = Parser.parse(Files.readString(Path.of(source)));
+        env.setp("args", new Atom(Arrays.stream(args).skip(1).map(Atom::new).toList()));
         try {
             for (Atom atom : data) {
                 Evaluation.safeEvaluate(env, atom, (x, t) -> {
@@ -55,11 +57,11 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
-        if (args.length == 1) {
-            evalScript(Environment.defaultEnvironment(), args[0]);
+        if (args.length >= 1) {
+            evalScript(Environment.defaultEnvironment(), args[0], args);
             return;
-        } else if (args.length != 0)
-            throw new IllegalArgumentException("Please pass no arguments to start a REPL, or pass a single argument with the KamilaLisp script file.");
+        }
+
         banner();
         Environment env = Environment.defaultEnvironment();
         DefaultParser parser = new DefaultParser();
