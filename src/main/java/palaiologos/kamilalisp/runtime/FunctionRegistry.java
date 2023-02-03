@@ -20,6 +20,7 @@ import palaiologos.kamilalisp.runtime.math.prime.NextPrime;
 import palaiologos.kamilalisp.runtime.math.prime.PrimeFactors;
 import palaiologos.kamilalisp.runtime.math.prime.PrimeNo;
 import palaiologos.kamilalisp.runtime.math.trig.*;
+import palaiologos.kamilalisp.runtime.matrix.LUDecomposition;
 import palaiologos.kamilalisp.runtime.matrix.Transpose;
 import palaiologos.kamilalisp.runtime.meta.*;
 import palaiologos.kamilalisp.runtime.regex.RegexMatches;
@@ -31,7 +32,7 @@ import java.math.BigDecimal;
 
 public class FunctionRegistry {
     public static void registerDefault(Environment env) {
-        env.setp("fr", new Atom(new BigDecimal(200)));
+        env.setp("fr", new Atom(new BigDecimal(100)));
         env.setp("lambda", new Atom(new Dfn()));
         env.setp("λ", new Atom(new Dfn()));
         env.setp("def", new Atom(new GlobalBinding()));
@@ -335,6 +336,8 @@ public class FunctionRegistry {
         env.setp("list:bipartition", new Atom(new Bipartition()));
         env.setp("list:partition", new Atom(new PartitionRange()));
         env.setp("⍡", new Atom(new PartitionRange()));
+
+        env.setp("matrix:LU", new Atom(new LUDecomposition()));
 
         env.setp("⌹⇔⍡", new Atom(new Windows()));
         env.setp("list:windows", new Atom(new Windows()));
