@@ -7,11 +7,11 @@ import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
 import java.util.List;
 
-public class Writeln extends PrimitiveFunction implements Lambda {
+public class Write extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         for (Atom arg : args) {
-            System.out.println(arg.toDisplayString());
+            System.out.print(arg.toDisplayString());
         }
 
         if (args.size() == 1)
@@ -22,6 +22,6 @@ public class Writeln extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "io:writeln";
+        return "io:write";
     }
 }

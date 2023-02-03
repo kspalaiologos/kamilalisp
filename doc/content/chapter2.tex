@@ -358,7 +358,7 @@ To give another example, to reverse the rows of a list of matrices, the function
 Of course, since the depth operator is a \textit{generalisation} of the colon operator (mapping), it is possible to use it to map a function over a list of lists. In this case, the depth specifier must be negative:
 
 \begin{Verbatim}
-    --> writeln%[-1] '("Hello" "world!")
+    --> io:writeln%[-1] '("Hello" "world!")
 \end{Verbatim}
 
 The smaller negative number, the more times the map function is applied:
@@ -715,8 +715,8 @@ The final ingredient is connecting together bits and pieces of the problem is an
 Finally, to accomplish the same underlining behaviour, one could use the following function:
 
 \begin{Verbatim}
-    --> defun display s (let-seq (def r " -"$[comment "/*" s]) (writeln s) r)
-    (λ s . (let-seq (def r " ¯"$[comment "/*" s]) (writeln s) r))
+    --> defun display s (let-seq (def r " -"$[comment "/*" s]) (io:writeln s) r)
+    (λ s . (let-seq (def r " ¯"$[comment "/*" s]) (io:writeln s) r))
     --> display "This /* is */ an example"
     This /* is */ an example
          ¯¯¯¯¯¯¯¯

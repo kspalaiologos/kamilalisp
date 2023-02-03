@@ -3,14 +3,17 @@ package palaiologos.kamilalisp.runtime.IO;
 import palaiologos.kamilalisp.atom.*;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class GetFile extends PrimitiveFunction implements Lambda {
+public class GetFileBuffer extends PrimitiveFunction implements Lambda {
     @Override
     protected String name() {
-        return "io:get-file";
+        return "io:get-file-buffer";
     }
 
     @Override
@@ -20,7 +23,11 @@ public class GetFile extends PrimitiveFunction implements Lambda {
         arg.assertTypes(Type.STRING);
         String fileName = arg.getString();
         try {
-            return new Atom(Files.readString(Path.of(fileName)));
+            byte[] data = Files.readAllBytes(Path.of(fileName));
+            List<Atom> a = new ArrayList<>(data.length);
+            for (byte b : data)
+                a.add(new Atom(BigInteger.valueOf(b)));
+            return new Atom(a);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

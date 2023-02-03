@@ -7,21 +7,16 @@ import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
 import java.util.List;
 
-public class Writeln extends PrimitiveFunction implements Lambda {
+public class Readln extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        for (Atom arg : args) {
-            System.out.println(arg.toDisplayString());
-        }
-
-        if (args.size() == 1)
-            return args.get(0);
-        else
-            return new Atom(args);
+        // Read line from standard input.
+        String line = System.console().readLine();
+        return new Atom(line);
     }
 
     @Override
     protected String name() {
-        return "io:writeln";
+        return "io:readln";
     }
 }

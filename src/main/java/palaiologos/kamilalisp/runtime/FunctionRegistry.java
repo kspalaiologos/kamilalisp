@@ -2,9 +2,7 @@ package palaiologos.kamilalisp.runtime;
 
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
-import palaiologos.kamilalisp.runtime.IO.GetFile;
-import palaiologos.kamilalisp.runtime.IO.PutFile;
-import palaiologos.kamilalisp.runtime.IO.Writeln;
+import palaiologos.kamilalisp.runtime.IO.*;
 import palaiologos.kamilalisp.runtime.array.*;
 import palaiologos.kamilalisp.runtime.array.hof.*;
 import palaiologos.kamilalisp.runtime.datetime.*;
@@ -151,16 +149,10 @@ public class FunctionRegistry {
         env.setp("list:group", new Atom(new Group()));
         env.setp("⌸", new Atom(new Group()));
         env.setp("⍠", new Atom(new Append()));
-        env.setp("get-file", new Atom(new GetFile()));
-        env.setp("⍫⊢", new Atom(new GetFile()));
-        env.setp("put-file", new Atom(new PutFile()));
-        env.setp("⍫⊣", new Atom(new PutFile()));
         env.setp("try-catch", new Atom(new TryCatch()));
         env.setp("‼", new Atom(new TryCatch()));
         env.setp("raise", new Atom(new Raise()));
         env.setp("↑‼", new Atom(new Raise()));
-        env.setp("writeln", new Atom(new Writeln()));
-        env.setp("↑⍫", new Atom(new Writeln()));
         env.setp("let-seq", new Atom(new LetSeq()));
         env.setp("○⊢¨", new Atom(new LetSeq()));
         env.setp("while", new Atom(new While()));
@@ -223,6 +215,21 @@ public class FunctionRegistry {
         env.setp("⋔?", new Atom(new IsPrime()));
         env.setp("⋔↑", new Atom(new NextPrime()));
         env.setp("⋔→", new Atom(new PrimeNo()));
+
+        env.setp("io:writeln", new Atom(new Writeln()));
+        env.setp("↑⍫", new Atom(new Writeln()));
+        env.setp("io:readln", new Atom(new Readln()));
+        env.setp("↓⍫", new Atom(new Readln()));
+        env.setp("io:write", new Atom(new Write()));
+        env.setp("↗⍫", new Atom(new Write()));
+        env.setp("io:get-file", new Atom(new GetFile()));
+        env.setp("⍫⊢", new Atom(new GetFile()));
+        env.setp("io:put-file", new Atom(new PutFile()));
+        env.setp("⍫⊣", new Atom(new PutFile()));
+        env.setp("io:get-file-buffer", new Atom(new GetFileBuffer()));
+        env.setp("⍫⎕⊢", new Atom(new GetFileBuffer()));
+        env.setp("io:put-file-buffer", new Atom(new PutFileBuffer()));
+        env.setp("⍫⎕⊣", new Atom(new PutFileBuffer()));
 
         env.setp("matrix:transpose", new Atom(new Transpose()));
         env.setp("⎕⍉", new Atom(new Transpose()));

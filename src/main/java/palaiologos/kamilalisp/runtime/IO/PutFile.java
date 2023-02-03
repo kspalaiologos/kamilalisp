@@ -10,7 +10,7 @@ import java.util.List;
 public class PutFile extends PrimitiveFunction implements Lambda {
     @Override
     protected String name() {
-        return "put-file";
+        return "io:put-file";
     }
 
     @Override
