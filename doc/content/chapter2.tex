@@ -746,6 +746,14 @@ Inner product spaces generalize Euclidean vector spaces, in which the inner prod
 
 The first argument to \verb|inner-product| is the summation operation, while the second argument is the multiplication operation. The third and further arguments are the two vectors to be multiplied. If only two arguments are provided, the \verb|inner-product| function yields a function that performs the operation on arbitrarily many vectors.
 
+To descend into technicalities, the \verb|inner-product| function may be reimplemented using the \verb|foldl1| function and \verb|:| operator:
+
+\begin{Verbatim}
+    --> defun my-dot (f g ...xs) (foldl1 f (lift :g ...xs))
+\end{Verbatim}
+
+This implementation uses the \verb|lift| function, which takes a list of arguments to be passed into a function and applies it to them. The equivalence between \verb|lift| and usual function application is demonstrated as \verb|lift f '(a1 a2 a3...) <=> f a1 a2 a3...|.
+
 The inner product is particularly useful in the context of convolution. Throughout this section, it will be chiefly assumed that the convolution is two-dimensional. A step of convolution of two matrices $\mathbf{I}$ and $\mathbf{K}$ is illustrated as follows:
 
 \begin{center}
