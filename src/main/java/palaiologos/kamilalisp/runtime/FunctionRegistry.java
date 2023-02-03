@@ -21,6 +21,7 @@ import palaiologos.kamilalisp.runtime.math.prime.PrimeFactors;
 import palaiologos.kamilalisp.runtime.math.prime.PrimeNo;
 import palaiologos.kamilalisp.runtime.math.trig.*;
 import palaiologos.kamilalisp.runtime.matrix.LUDecomposition;
+import palaiologos.kamilalisp.runtime.matrix.Trace;
 import palaiologos.kamilalisp.runtime.matrix.Transpose;
 import palaiologos.kamilalisp.runtime.meta.*;
 import palaiologos.kamilalisp.runtime.regex.RegexMatches;
@@ -227,6 +228,8 @@ public class FunctionRegistry {
         env.setp("⎕⍉", new Atom(new Transpose()));
         env.setp("matrix:LU", new Atom(new LUDecomposition()));
         env.setp("⎕↙↗", new Atom(new LUDecomposition()));
+        env.setp("matrix:trace", new Atom(new Trace()));
+        env.setp("⎕∑", new Atom(new Trace()));
 
         env.setp("abs", new Atom(new Abs()));
         env.setp("bernoulli", new Atom(new Bernoulli()));
