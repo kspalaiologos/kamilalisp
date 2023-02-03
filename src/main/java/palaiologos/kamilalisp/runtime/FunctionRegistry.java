@@ -219,6 +219,9 @@ public class FunctionRegistry {
         env.setp("⋔↑", new Atom(new NextPrime()));
         env.setp("⋔→", new Atom(new PrimeNo()));
 
+        env.setp("exit", new Atom(new Exit()));
+        env.setp("→⋄", new Atom(new Exit()));
+
         env.setp("io:writeln", new Atom(new Writeln()));
         env.setp("↑⍫", new Atom(new Writeln()));
         env.setp("io:readln", new Atom(new Readln()));

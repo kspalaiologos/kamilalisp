@@ -18,7 +18,6 @@ public class Group extends PrimitiveFunction implements Lambda {
         args.get(0).assertTypes(Type.LIST);
         data = args.get(0).getList();
 
-        // Use groupingBy.
         HashMap<Atom, List<Atom>> counts = new HashMap<>();
         for (int i = 0; i < data.size(); i++) {
             Atom key = data.get(i);

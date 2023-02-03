@@ -16,20 +16,43 @@ public class Shannon extends PrimitiveFunction implements Lambda {
         if (args.size() != 1)
             throw new RuntimeException("shannon-entropy expects one argument.");
 
-        args.get(0).assertTypes(Type.STRING);
+        if(args.get(0).getType() == Type.STRING) {
+            String str = args.get(0).getString();
+            int len = str.length();
+            int[] freq = new int[256];
+            for (int i = 0; i < len; i++) {
+                freq[str.charAt(i)]++;
+            }
+            double entropy = 0.0;
+            for (int i = 0; i < 256; i++) {
+                double p = ((double) freq[i]) / len;
+                if (p > 0)
+                    entropy -= p * (Math.log(p) / Math.log(2));
+            }
+            return new Atom(BigDecimal.valueOf(entropy));
+        } else {
+            int[] data = args.get(0).getList().stream().mapToInt(x -> x.getInteger().intValueExact()).toArray();
+            int len = data.length;
 
-        String str = args.get(0).getString();
-        int len = str.length();
-        double[] freq = new double[256];
-        for (int i = 0; i < len; i++) {
-            freq[str.charAt(i)]++;
+            int max = 0;
+            for (int i = 0; i < len; i++) {
+                if (data[i] > max)
+                    max = data[i];
+            }
+
+            int[] freq = new int[max + 1];
+            for (int i = 0; i < len; i++) {
+                freq[data[i]]++;
+            }
+
+            double entropy = 0.0;
+            for (int i = 0; i < max + 1; i++) {
+                double p = ((double) freq[i]) / len;
+                if (p > 0)
+                    entropy -= p * (Math.log(p) / Math.log(2));
+            }
+
+            return new Atom(BigDecimal.valueOf(entropy));
         }
-        double entropy = 0.0;
-        for (int i = 0; i < 256; i++) {
-            double p = freq[i] / len;
-            if (p > 0)
-                entropy -= p * (Math.log(p) / Math.log(2));
-        }
-        return new Atom(BigDecimal.valueOf(entropy));
     }
 }
