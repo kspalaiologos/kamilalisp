@@ -99,6 +99,8 @@ public class FunctionRegistry {
         env.setp("none", new Atom(new None()));
         env.setp("decode", new Atom(new Decode()));
         env.setp("⊥⍟", new Atom(new Decode()));
+        env.setp("encode", new Atom(new Encode()));
+        env.setp("⊤⍟", new Atom(new Encode()));
         env.setp("count", new Atom(new Count()));
         env.setp("⍴?", new Atom(new Count()));
         env.setp("sort-asc", new Atom(new Sort()));
@@ -213,6 +215,17 @@ public class FunctionRegistry {
         env.setp("where", new Atom(new Where()));
         env.setp("powerset", new Atom(new Powerset()));
         env.setp("⍉⍉", new Atom(new Powerset()));
+
+        env.setp("empty?", new Atom(new IsNil()));
+        env.setp("⍠⍉?", new Atom(new IsNil()));
+
+        env.setp("starts-with", new Atom(new StartsWith()));
+        env.setp("⍠⊂←", new Atom(new StartsWith()));
+
+        env.setp("insert", new Atom(new Insert()));
+        env.setp("insert-all", new Atom(new InsertAll()));
+        env.setp("⍠⊣", new Atom(new Insert()));
+        env.setp("⍠⊣∵", new Atom(new InsertAll()));
 
         env.setp("img:write", new Atom(new WriteImage()));
         env.setp("img:read", new Atom(new LoadImage()));
@@ -365,6 +378,7 @@ public class FunctionRegistry {
         env.setp("⊙↘⍠", new Atom(new IFFT()));
 
         env.setp("list:bipartition", new Atom(new Bipartition()));
+        env.setp("⍡¨", new Atom(new Bipartition()));
         env.setp("list:partition", new Atom(new PartitionRange()));
         env.setp("⍡", new Atom(new PartitionRange()));
 

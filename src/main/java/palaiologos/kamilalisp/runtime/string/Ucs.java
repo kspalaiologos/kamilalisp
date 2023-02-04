@@ -17,7 +17,12 @@ public class Ucs extends PrimitiveFunction implements Lambda {
             case LIST:
                 StringBuilder sb = new StringBuilder();
                 for (Atom a : arg.getList()) {
-                    sb.appendCodePoint(a.getInteger().intValue());
+                    if(a.getInteger().intValue() < 0) {
+                        // 255 + x
+                        sb.appendCodePoint(255 + a.getInteger().intValue() + 1);
+                    } else {
+                        sb.appendCodePoint(a.getInteger().intValue());
+                    }
                 }
                 return new Atom(sb.toString());
             case STRING:
