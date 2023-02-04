@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime.array;
+package palaiologos.kamilalisp.runtime.array.carcdr;
 
 import palaiologos.kamilalisp.atom.*;
 
@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Car extends PrimitiveFunction implements Lambda {
+    public static Car INSTANCE = new Car();
+
     private static Atom car(Atom a) {
         if (a.getType() == Type.LIST) {
             return a.getList().get(0);

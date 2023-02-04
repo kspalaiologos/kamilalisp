@@ -21,6 +21,17 @@ class TestCarCdr {
     }
 
     @Test
+    void testCaar() {
+        assertEquals(Common.runCode(
+                "(caar '((2 3) 4))"
+        ).getReal(), new BigDecimal("2"));
+
+        assertEquals(Common.runCode(
+                "(foldl1 + (caar '((2 3) 4) '((3 4) 5)))"
+        ).getReal(), new BigDecimal("5"));
+    }
+
+    @Test
     void testNil() {
         assertThrows(IndexOutOfBoundsException.class, () -> Common.runCode("(car '())"));
 

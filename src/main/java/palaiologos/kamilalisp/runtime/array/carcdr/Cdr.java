@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime.array;
+package palaiologos.kamilalisp.runtime.array.carcdr;
 
 import palaiologos.kamilalisp.atom.*;
 
@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Cdr extends PrimitiveFunction implements Lambda {
+    public static Cdr INSTANCE = new Cdr();
+
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if (args.isEmpty()) {
