@@ -23,7 +23,7 @@
         (def mi \⍎∘⍸∘:⍠⊂← (,⍧ s) (⍎ htab))
         (def nd (⍠ d \,⍧ (⍎⍕ htab)$[#0 mi]))
         (def ns (↓ (⍴ (⍎ htab)$[#0 mi]) s))
-        (↕ (= 0 \⍴ ns) nd \unhuf ns nd)
+        (↕ (= 0 \⍴ ns) nd \&0 ns nd)
     ))
     (unhuf (↑ (⍎ b) \∊∘:(λ x \⌽∘↑ 8 \⌽∘⊤⍟ 2 (+ 128 x)) \⍎∘⍕⍕ b) '⍬)
 ))
