@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Dfn extends PrimitiveFunction implements SpecialForm {
+    public static final Dfn INSTANCE = new Dfn();
+
     @Override
     protected String name() {
         return "λ";

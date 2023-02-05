@@ -37,6 +37,17 @@ public class Environment {
         data.put(key, value);
     }
 
+    public void setp(String key, String altkey, Atom value) {
+        if (data.containsKey(key)) {
+            throw new RuntimeException("Redefinition of built-in function " + key + ".");
+        }
+        if (data.containsKey(altkey)) {
+            throw new RuntimeException("Redefinition of built-in function " + altkey + ".");
+        }
+        data.put(key, value);
+        data.put(altkey, value);
+    }
+
     public Atom get(String key) {
         if (data.containsKey(key)) {
             return data.get(key);

@@ -10,8 +10,6 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class OuterProduct extends PrimitiveFunction implements Lambda {
-    private static final Tie tie = new Tie();
-
     static <T, R> List<List<R>> op(BiFunction<T, T, R> f, List<T> a, List<T> b) {
         List<List<R>> results = new ArrayList<>();
         for (T x : a) {
@@ -55,7 +53,7 @@ public class OuterProduct extends PrimitiveFunction implements Lambda {
 
             return args.stream().skip(1).reduce((x, y) -> op2(args.get(0).getCallable(), env, x, y)).get();
         } else {
-            return args.stream().reduce((x, y) -> op2(tie, env, x, y)).get();
+            return args.stream().reduce((x, y) -> op2(Tie.INSTANCE, env, x, y)).get();
         }
     }
 

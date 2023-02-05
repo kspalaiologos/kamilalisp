@@ -34,7 +34,7 @@ public class Range extends PrimitiveFunction implements Lambda {
         return "range";
     }
 
-    class RangeList extends AbstractList<Atom> {
+    static class RangeList extends AbstractList<Atom> {
         private final BigInteger begin;
         private final BigInteger end;
         boolean sign;

@@ -23,7 +23,7 @@ public class LetSeq extends PrimitiveFunction implements SpecialForm {
                             String name = Identifier.of(declaration.get(1).getIdentifier());
                             Atom lambdaArgs = declaration.get(2);
                             Atom lambdaValue = declaration.get(3);
-                            Atom lambda = Evaluation.evaluate(newEnv, Defun.dfn, List.of(lambdaArgs, lambdaValue));
+                            Atom lambda = Evaluation.evaluate(newEnv, Dfn.INSTANCE, List.of(lambdaArgs, lambdaValue));
                             newEnv.set(name, lambda);
                             continue;
                         }

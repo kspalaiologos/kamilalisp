@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Tally extends PrimitiveFunction implements Lambda {
-    private static final String name = "tally";
-
     private static Atom tally(Atom a) {
         if (a.getType() == Type.LIST) {
             return new Atom(BigInteger.valueOf(a.getList().size()));
@@ -21,7 +19,7 @@ public class Tally extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return name;
+        return "tally";
     }
 
     @Override
