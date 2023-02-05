@@ -185,6 +185,8 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
         <profile>
             <id>native</id>
 
