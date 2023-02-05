@@ -215,6 +215,8 @@ public class FunctionRegistry {
         env.setp("where", new Atom(new Where()));
         env.setp("powerset", new Atom(new Powerset()));
         env.setp("⍉⍉", new Atom(new Powerset()));
+        env.setp("discard", new Atom(new Discard()));
+        env.setp("∅←", new Atom(new Discard()));
 
         env.setp("empty?", new Atom(new IsNil()));
         env.setp("⍠⍉?", new Atom(new IsNil()));

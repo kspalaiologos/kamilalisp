@@ -1,8 +1,9 @@
-package palaiologos.kamilalisp.runtime;
+package palaiologos.kamilalisp.runtime.meta;
 
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.repl.Main;
 
+import javax.naming.Binding;
 import java.util.List;
 
 public class GlobalBinding extends PrimitiveFunction implements SpecialForm {
@@ -19,13 +20,9 @@ public class GlobalBinding extends PrimitiveFunction implements SpecialForm {
 
         assertArity(args, 2);
 
-        if (Main.isBuiltin(Identifier.of(args.get(0).getIdentifier()))) {
-            throw new RuntimeException("def can not shadow or redefine built-in bindings.");
-        }
-
-        Identifier name = args.get(0).getIdentifier();
+        Atom name = args.get(0);
         Atom value = Evaluation.evaluate(env, args.get(1));
-        env.set(Identifier.of(name), value);
+        BindingHelper.bindingPatternMatch(env, name, value, true);
         return value;
     }
 }
