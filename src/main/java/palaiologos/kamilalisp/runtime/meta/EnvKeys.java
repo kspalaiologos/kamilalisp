@@ -12,7 +12,7 @@ public class EnvKeys extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if (!args.isEmpty()) {
-            throw new RuntimeException("Expected no arguments to `env-keys'.");
+            throw new RuntimeException("Expected no arguments to `meta:env-keys'.");
         }
 
         return new Atom(env.keys().stream().map(Atom::new).collect(Collectors.toList()));
@@ -20,6 +20,6 @@ public class EnvKeys extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "env-keys";
+        return "meta:env-keys";
     }
 }
