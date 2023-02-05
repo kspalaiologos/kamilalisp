@@ -1,5 +1,7 @@
 package palaiologos.kamilalisp.atom;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import palaiologos.kamilalisp.runtime.FunctionRegistry;
 
 import java.math.MathContext;
@@ -9,6 +11,7 @@ import java.util.Set;
 public class Environment {
     private final HashMap<String, Atom> data;
     private final Environment parent;
+    public static BiMap<String, String> aliases = HashBiMap.create();
 
     public Environment() {
         data = new HashMap<>();
@@ -30,14 +33,14 @@ public class Environment {
         data.put(key, value);
     }
 
-    public void setp(String key, Atom value) {
+    public void setPrimitive(String key, Atom value) {
         if (data.containsKey(key)) {
             throw new RuntimeException("Redefinition of built-in function " + key + ".");
         }
         data.put(key, value);
     }
 
-    public void setp(String key, String altkey, Atom value) {
+    public void setPrimitive(String key, String altkey, Atom value) {
         if (data.containsKey(key)) {
             throw new RuntimeException("Redefinition of built-in function " + key + ".");
         }
@@ -46,6 +49,7 @@ public class Environment {
         }
         data.put(key, value);
         data.put(altkey, value);
+        aliases.putIfAbsent(key, altkey);
     }
 
     public Atom get(String key) {

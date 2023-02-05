@@ -1,6 +1,7 @@
 package palaiologos.kamilalisp.runtime.meta;
 
 import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.repl.Main;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,7 +17,7 @@ public class Import extends PrimitiveFunction implements Lambda {
             arg.assertTypes(Type.STRING);
             String fileName = arg.getString();
             String code = Files.readString(Path.of(fileName));
-            Environment childEnv = Environment.defaultEnvironment();
+            Environment childEnv = new Environment(Main.defaultRegistry);
             List<Atom> data = Parser.parse(code);
             for (int i = 0; i < data.size() - 1; i++) {
                 Evaluation.evaluate(childEnv, data.get(i));

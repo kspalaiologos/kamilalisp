@@ -21,17 +21,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 public class Main {
-    private static Environment defaultRegistry;
+    public static Environment defaultRegistry = Environment.defaultEnvironment();
 
     public static boolean isBuiltin(String name) {
-        if (defaultRegistry == null) {
-            defaultRegistry = new Environment();
-            FunctionRegistry.registerDefault(defaultRegistry);
-        }
-
         return defaultRegistry.keys().contains(name);
     }
 
@@ -43,7 +37,7 @@ public class Main {
 
     public static void evalScript(Environment env, String source, String[] args) throws IOException {
         List<Atom> data = Parser.parse(Files.readString(Path.of(source)));
-        env.setp("args", new Atom(Arrays.stream(args).skip(1).map(Atom::new).toList()));
+        env.setPrimitive("args", new Atom(Arrays.stream(args).skip(1).map(Atom::new).toList()));
         try {
             for (Atom atom : data) {
                 Evaluation.safeEvaluate(env, atom, (x, t) -> {
@@ -58,12 +52,12 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         if (args.length >= 1) {
-            evalScript(Environment.defaultEnvironment(), args[0], args);
+            evalScript(new Environment(defaultRegistry), args[0], args);
             return;
         }
 
         banner();
-        Environment env = Environment.defaultEnvironment();
+        Environment env = new Environment(defaultRegistry);
         DefaultParser parser = new DefaultParser();
         parser.setEofOnUnclosedBracket(DefaultParser.Bracket.ROUND, DefaultParser.Bracket.SQUARE);
         parser.setEscapeChars(new char[]{});

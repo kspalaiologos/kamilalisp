@@ -42,7 +42,7 @@ public class Tack implements Lambda {
         if (indices.length == 1) {
             return "#" + indices[0];
         } else {
-            return "#" + indices[0] + "." + indices[1];
+            return indices[0] + "##" + indices[1];
         }
     }
 

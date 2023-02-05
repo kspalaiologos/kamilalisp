@@ -40,7 +40,7 @@ public class Parser {
         return parse(0, input);
     }
 
-    static class ThrowingErrorListener extends BaseErrorListener {
+    public static class ThrowingErrorListener extends BaseErrorListener {
         private final int lineNumberOffset;
 
         public ThrowingErrorListener(int lineNumberOffset) {
