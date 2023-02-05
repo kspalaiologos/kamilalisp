@@ -4,7 +4,6 @@
 - Web server stuff
 - graphics/sound
 - extend regex library
-- apl encode/decode
 - matrix stuff
 
 book:
