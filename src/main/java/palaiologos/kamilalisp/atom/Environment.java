@@ -71,7 +71,7 @@ public class Environment {
     }
 
     public boolean isToplevel() {
-        return parent == null;
+        return parent == null || parent.parent == null;
     }
 
     public MathContext getMathContext() {
