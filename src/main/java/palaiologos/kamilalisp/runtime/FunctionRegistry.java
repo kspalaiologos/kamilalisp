@@ -66,7 +66,7 @@ public class FunctionRegistry {
         env.setp("parallel-filter", "⍭∵", new Atom(new ParallelFilter()));
         env.setp("any", "∨?", new Atom(new Any()));
         env.setp("all", "∧?", new Atom(new All()));
-        env.setp("none?", "∅?", new Atom(new None()));
+        env.setp("none", "∅?", new Atom(new None()));
         env.setp("decode", "⊥⍟", new Atom(new Decode()));
         env.setp("encode", "⊤⍟", new Atom(new Encode()));
         env.setp("count", "⍴?", new Atom(new Count()));
