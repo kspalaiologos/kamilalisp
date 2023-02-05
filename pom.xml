@@ -185,4 +185,35 @@
             </plugin>
         </plugins>
     </build>
+        <profile>
+            <id>native</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <version>0.9.12</version>
+                        <extensions>true</extensions>
+                        <executions>
+                            <execution>
+                                <id>build-native</id>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <fallback>false</fallback>
+                            <mainClass>palaiologos.kamilalisp.repl.Main</mainClass>
+                            <buildArgs>
+                                <arg>--gc=G1 -H:+StaticExecutableWithDynamicLibC --verbose -H:ReflectionConfigurationFiles=classes/META-INF/native-image/reflection-config.json</arg>
+                            </buildArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
