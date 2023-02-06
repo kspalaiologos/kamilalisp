@@ -150,6 +150,8 @@ public class FunctionRegistry {
         env.setPrimitive("str:implode-on", "⍫∨¨", new Atom(new ImplodeOn()));
         env.setPrimitive("str:explode", "⍫∧", new Atom(new Explode()));
         env.setPrimitive("to-string", "⍫←", new Atom(new ToString()));
+        env.setPrimitive("str:escape", new Atom(new Escape()));
+        env.setPrimitive("str:unescape", new Atom(new Unescape()));
 
         env.setPrimitive("io:writeln", "↑⍫", new Atom(new Writeln()));
         env.setPrimitive("io:readln", "↓⍫", new Atom(new Readln()));
