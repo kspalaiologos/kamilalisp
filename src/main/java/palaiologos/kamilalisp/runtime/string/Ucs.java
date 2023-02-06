@@ -6,6 +6,9 @@ import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Ucs extends PrimitiveFunction implements Lambda {
@@ -15,18 +18,16 @@ public class Ucs extends PrimitiveFunction implements Lambda {
         Atom arg = args.get(0);
         switch (arg.getType()) {
             case LIST:
-                StringBuilder sb = new StringBuilder();
-                for (Atom a : arg.getList()) {
-                    if(a.getInteger().intValue() < 0) {
-                        // 255 + x
-                        sb.appendCodePoint(255 + a.getInteger().intValue() + 1);
-                    } else {
-                        sb.appendCodePoint(a.getInteger().intValue());
-                    }
-                }
-                return new Atom(sb.toString());
+                byte[] data = new byte[arg.getList().size()];
+                for(int i = 0; i < arg.getList().size(); i++)
+                    data[i] = arg.getList().get(i).getInteger().byteValueExact();
+                return new Atom(new String(data, StandardCharsets.UTF_8));
             case STRING:
-                return new Atom(arg.getString().codePoints().mapToObj(x -> new Atom(BigInteger.valueOf(x))).toList());
+                byte[] data2 = arg.getString().getBytes(StandardCharsets.UTF_8);
+                List<Atom> list = new ArrayList<>(data2.length);
+                for(byte b : data2)
+                    list.add(new Atom(BigInteger.valueOf(b)));
+                return new Atom(list);
             default:
                 throw new UnsupportedOperationException("ucs not defined for: " + arg.getType());
         }
