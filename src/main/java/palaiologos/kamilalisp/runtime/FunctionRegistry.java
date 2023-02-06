@@ -30,6 +30,7 @@ import palaiologos.kamilalisp.runtime.regex.RegexMatches;
 import palaiologos.kamilalisp.runtime.regex.RegexReplace;
 import palaiologos.kamilalisp.runtime.regex.RegexSplit;
 import palaiologos.kamilalisp.runtime.string.*;
+import palaiologos.kamilalisp.runtime.xml.XmlParse;
 
 import java.math.BigDecimal;
 
@@ -253,6 +254,8 @@ public class FunctionRegistry {
         env.setPrimitive("regex:matches?", "⍫⊖∊?", new Atom(new RegexMatches()));
         env.setPrimitive("regex:replace", "⍫⊖⍆", new Atom(new RegexReplace()));
         env.setPrimitive("regex:split", "⍫⊖⍭", new Atom(new RegexSplit()));
+
+        env.setPrimitive("xml:parse", new Atom(new XmlParse()));
 
         env.setPrimitive("date:from", new Atom(new DateTimeFrom()));
         env.setPrimitive("time:from", new Atom(new TimeFrom()));
