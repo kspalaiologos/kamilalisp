@@ -15,6 +15,7 @@ form: form_rem (('@'|'∘') form_rem)*
 form_rem: literal
         | form_rem DOLLAR sqlist
         | form_rem PERCENT sqlist
+        | form_rem DOT (number | symbol)
         | bind
         | any_list
         | reader_macro
@@ -133,14 +134,15 @@ NIL : 'nil' | '⍬';
 
 DOLLAR: '$' ;
 PERCENT: '%' ;
+DOT: '.' ;
 
 fragment
-NOTID: ~('∘' | '⍬' | '⍨' | '@' | '$' | '%' | '^' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | '&') ;
+NOTID: ~('∘' | '⍬' | '⍨' | '.' | '@' | '$' | '%' | '^' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | '&') ;
 
 fragment
-NOTID_START: ~('∘' | '⍬' | '⍨' | '#' | '^' | '%' |'$' | '\\' | '\'' | '@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | ':' | '&' | '0'..'9') ;
+NOTID_START: ~('∘' | '.' | '⍬' | '⍨' | '#' | '^' | '%' |'$' | '\\' | '\'' | '@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | ':' | '&' | '0'..'9') ;
 
-NAME: NOTID_START NOTID* ;
+NAME: '...'? NOTID_START NOTID* ;
 
 // Discard
 //--------------------------------------------------------------------

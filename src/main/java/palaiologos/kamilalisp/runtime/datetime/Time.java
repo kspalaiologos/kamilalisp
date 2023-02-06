@@ -1,7 +1,7 @@
 package palaiologos.kamilalisp.runtime.datetime;
 
 import com.google.common.collect.ImmutableMap;
-import palaiologos.kamilalisp.atom.Callable;
+import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Userdata;
 
 import java.time.Duration;
@@ -18,8 +18,8 @@ public class Time implements Userdata {
     }
 
     @Override
-    public ImmutableMap<String, Callable> getMethods() {
-        return ImmutableMap.of();
+    public Atom field(Object key) {
+        throw new UnsupportedOperationException("Time does not support field access");
     }
 
     @Override

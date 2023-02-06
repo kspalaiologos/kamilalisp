@@ -35,7 +35,7 @@ public class Windows extends PrimitiveFunction implements Lambda {
                 }
                 return new Atom(windows);
             } else {
-                throw new TypeError("list:windows can only be applied to lists or strings");
+                throw new TypeError("windows can only be applied to lists or strings");
             }
         } else if (args.size() == 3) {
             int windowSize = args.get(0).getInteger().intValueExact();
@@ -64,15 +64,15 @@ public class Windows extends PrimitiveFunction implements Lambda {
                 }
                 return new Atom(windows);
             } else {
-                throw new TypeError("list:windows can only be applied to lists or strings");
+                throw new TypeError("windows can only be applied to lists or strings");
             }
         } else {
-            throw new TypeError("list:windows takes 2 or 3 arguments");
+            throw new TypeError("windows takes 2 or 3 arguments");
         }
     }
 
     @Override
     protected String name() {
-        return "list:windows";
+        return "windows";
     }
 }

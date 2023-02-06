@@ -490,4 +490,47 @@ public class Atom implements Comparable<Atom> {
             return getType().ordinal() - a.getType().ordinal();
         }
     }
+
+    public Atom dot(Object index) {
+        if (getType() == Type.STRING) {
+            if (index instanceof Integer) {
+                return new Atom(String.valueOf(getString().charAt((Integer) index)));
+            } else {
+                throw new TypeError("Expected integer index.");
+            }
+        } else if (getType() == Type.LIST) {
+            if (index instanceof Integer) {
+                return getList().get((Integer) index);
+            } else if(index instanceof String) {
+                switch((String) index) {
+                    case "size" -> {
+                        return new Atom(BigInteger.valueOf(getList().size()));
+                    }
+                    case "isEmpty" -> {
+                        return getList().isEmpty() ? TRUE : FALSE;
+                    }
+                    case "toString" -> {
+                        return new Atom(getList().toString());
+                    }
+                    case "car" -> {
+                        if(getList().isEmpty())
+                            throw new TypeError("Cannot get car of empty list.");
+                        return getList().get(0);
+                    }
+                    case "cdr" -> {
+                        if(getList().isEmpty())
+                            return Atom.NULL;
+                        return new Atom(getList().subList(1, getList().size()));
+                    }
+                    default -> throw new TypeError("Unknown list method: " + index);
+                }
+            } else {
+                throw new TypeError("Expected integer index.");
+            }
+        } else if (getType() == Type.USERDATA) {
+            return getUserdata().field(index);
+        } else {
+            throw new TypeError("Expected string or list.");
+        }
+    }
 }

@@ -58,4 +58,14 @@ public class CodeAtom extends Atom {
         col = c;
         return this;
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

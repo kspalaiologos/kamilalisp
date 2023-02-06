@@ -54,13 +54,6 @@ public class FunctionRegistry {
         env.setPrimitive("lift", "⍏", new Atom(new Lift()));
         env.setPrimitive("tie", ",⍧", new Atom(new Tie()));
         env.setPrimitive("if", "↕", new Atom(new If()));
-        env.setPrimitive("str:format", "⍫∊", new Atom(new Format()));
-        env.setPrimitive("str:lines", new Atom(new Lines()));
-        env.setPrimitive("str:implode", "⍫∨", new Atom(new Implode()));
-        env.setPrimitive("str:lexer", "⍫∦", new Atom(new Lexer()));
-        env.setPrimitive("str:implode-on", "⍫∨¨", new Atom(new ImplodeOn()));
-        env.setPrimitive("str:explode", "⍫∧", new Atom(new Explode()));
-        env.setPrimitive("to-string", "⍫←", new Atom(new ToString()));
         env.setPrimitive("filter", "⍭", new Atom(new Filter()));
         env.setPrimitive("filter-idx", "⍭¨", new Atom(new FilterIdx()));
         env.setPrimitive("map-idx", "⍠¨", new Atom(new MapIdx()));
@@ -104,7 +97,7 @@ public class FunctionRegistry {
         env.setPrimitive("cmpx", new Atom(new Cmpx()));
         env.setPrimitive("import", "○←⍫", new Atom(new Import()));
         env.setPrimitive("append", "⍠", new Atom(new Append()));
-        env.setPrimitive("list:group", "⌸", new Atom(new Group()));
+        env.setPrimitive("group", "⌸", new Atom(new Group()));
         env.setPrimitive("try-catch", "‼", new Atom(new TryCatch()));
         env.setPrimitive("raise", "↑‼", new Atom(new Raise()));
         env.setPrimitive("let-seq", "○⊢¨", new Atom(new LetSeq()));
@@ -136,13 +129,29 @@ public class FunctionRegistry {
         env.setPrimitive("starts-with", "⍠⊂←", new Atom(new StartsWith()));
         env.setPrimitive("insert", "⍠⊣", new Atom(new Insert()));
         env.setPrimitive("insert-all", "⍠⊣∵", new Atom(new InsertAll()));
+        env.setPrimitive("exit", "→⋄", new Atom(new Exit()));
+        env.setPrimitive("shuffle", "⍠⍰", new Atom(new Shuffle()));
+        env.setPrimitive("bipartition", "⍡¨", new Atom(new Bipartition()));
+        env.setPrimitive("partition", "⍡", new Atom(new PartitionRange()));
+        env.setPrimitive("windows", "⌹⇔⍡", new Atom(new Windows()));
+
         env.setPrimitive("img:write", "≣⊣", new Atom(new WriteImage()));
         env.setPrimitive("img:read", "≣⊢", new Atom(new LoadImage()));
+
         env.setPrimitive("prime:factors", "⋔⌹", new Atom(new PrimeFactors()));
         env.setPrimitive("prime:is?", "⋔?", new Atom(new IsPrime()));
         env.setPrimitive("prime:next", "⋔↑", new Atom(new NextPrime()));
         env.setPrimitive("prime:nth", "⋔→", new Atom(new PrimeNo()));
-        env.setPrimitive("exit", "→⋄", new Atom(new Exit()));
+
+        env.setPrimitive("str:format", "⍫∊", new Atom(new Format()));
+        env.setPrimitive("str:lines", new Atom(new Lines()));
+        env.setPrimitive("str:implode", "⍫∨", new Atom(new Implode()));
+        env.setPrimitive("str:lexer", "⍫∦", new Atom(new Lexer()));
+        env.setPrimitive("str:implode-on", "⍫∨¨", new Atom(new ImplodeOn()));
+        env.setPrimitive("str:explode", "⍫∧", new Atom(new Explode()));
+        env.setPrimitive("to-string", "⍫←", new Atom(new ToString()));
+        env.setPrimitive("str:escape", new Atom(new Escape()));
+        env.setPrimitive("str:unescape", new Atom(new Unescape()));
 
         env.setPrimitive("io:writeln", "↑⍫", new Atom(new Writeln()));
         env.setPrimitive("io:readln", "↓⍫", new Atom(new Readln()));
@@ -159,6 +168,15 @@ public class FunctionRegistry {
         env.setPrimitive("matrix:transpose", "⎕⍉", new Atom(new Transpose()));
         env.setPrimitive("matrix:LU", "⎕↙↗", new Atom(new LUDecomposition()));
         env.setPrimitive("matrix:trace", "⎕∑", new Atom(new Trace()));
+
+        env.setPrimitive("bit:and", "⌶∧", new Atom(new BitAnd()));
+        env.setPrimitive("bit:or", "⌶∨", new Atom(new BitOr()));
+        env.setPrimitive("bit:xor", "⌶≠", new Atom(new BitXor()));
+        env.setPrimitive("bit:nand", "⌶¬∧", new Atom(new BitNand()));
+        env.setPrimitive("bit:not", "⌶¬", new Atom(new BitNot()));
+        env.setPrimitive("bit:popcount", "⌶⍏", new Atom(new BitPopcount()));
+        env.setPrimitive("bit:unpack", "⌶↓", new Atom(new BitUnpack()));
+        env.setPrimitive("bit:pack", "⌶↑", new Atom(new BitPack()));
 
         env.setPrimitive("abs", new Atom(new Abs()));
         env.setPrimitive("bernoulli", new Atom(new Bernoulli()));
@@ -203,14 +221,6 @@ public class FunctionRegistry {
         env.setPrimitive("lcm", new Atom(new Lcm()));
         env.setPrimitive("gamma", "Γ", new Atom(new Gamma()));
         env.setPrimitive("not", "¬", new Atom(new Not()));
-        env.setPrimitive("bit:and", "⌶∧", new Atom(new BitAnd()));
-        env.setPrimitive("bit:or", "⌶∨", new Atom(new BitOr()));
-        env.setPrimitive("bit:xor", "⌶≠", new Atom(new BitXor()));
-        env.setPrimitive("bit:nand", "⌶¬∧", new Atom(new BitNand()));
-        env.setPrimitive("bit:not", "⌶¬", new Atom(new BitNot()));
-        env.setPrimitive("bit:popcount", "⌶⍏", new Atom(new BitPopcount()));
-        env.setPrimitive("bit:unpack", "⌶↓", new Atom(new BitUnpack()));
-        env.setPrimitive("bit:pack", "⌶↑", new Atom(new BitPack()));
         env.setPrimitive("fib", new Atom(new Fib()));
         env.setPrimitive("ceil", "⌈", new Atom(new Ceil()));
         env.setPrimitive("floor", "⌊", new Atom(new Floor()));
@@ -235,13 +245,9 @@ public class FunctionRegistry {
         env.setPrimitive("<=>", "⇔", new Atom(new Spaceship()));
         env.setPrimitive("ucs", new Atom(new Ucs()));
         env.setPrimitive("match", "→", new Atom(new Match()));
-        env.setPrimitive("list:shuffle", "⍠⍰", new Atom(new Shuffle()));
         env.setPrimitive("random", "⍰", new Atom(new Random()));
         env.setPrimitive("fft", "⊙↖⍠", new Atom(new FFT()));
         env.setPrimitive("ifft", "⊙↘⍠", new Atom(new IFFT()));
-        env.setPrimitive("list:bipartition", "⍡¨", new Atom(new Bipartition()));
-        env.setPrimitive("list:partition", "⍡", new Atom(new PartitionRange()));
-        env.setPrimitive("list:windows", "⌹⇔⍡", new Atom(new Windows()));
 
         env.setPrimitive("regex:matches?", "⍫⊖∊?", new Atom(new RegexMatches()));
         env.setPrimitive("regex:replace", "⍫⊖⍆", new Atom(new RegexReplace()));

@@ -53,6 +53,6 @@ public class PartitionRange extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "list:partition-range";
+        return "partition-range";
     }
 }
