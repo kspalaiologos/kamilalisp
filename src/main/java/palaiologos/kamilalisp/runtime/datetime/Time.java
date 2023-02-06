@@ -50,4 +50,9 @@ public class Time implements Userdata {
     public boolean coerceBoolean() {
         return true;
     }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
 }

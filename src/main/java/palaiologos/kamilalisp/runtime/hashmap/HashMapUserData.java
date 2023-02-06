@@ -56,4 +56,9 @@ public class HashMapUserData implements Userdata {
     public boolean coerceBoolean() {
         return !value.isEmpty();
     }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
 }

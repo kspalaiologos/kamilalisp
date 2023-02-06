@@ -16,19 +16,20 @@ public class Ucb extends PrimitiveFunction implements Lambda {
         assertArity(args, 1);
         Atom arg = args.get(0);
         switch (arg.getType()) {
-            case LIST:
+            case LIST -> {
                 byte[] data = new byte[arg.getList().size()];
-                for(int i = 0; i < arg.getList().size(); i++)
+                for (int i = 0; i < arg.getList().size(); i++)
                     data[i] = arg.getList().get(i).getInteger().byteValueExact();
                 return new Atom(new String(data, StandardCharsets.UTF_8));
-            case STRING:
+            }
+            case STRING -> {
                 byte[] data2 = arg.getString().getBytes(StandardCharsets.UTF_8);
                 List<Atom> list = new ArrayList<>(data2.length);
-                for(byte b : data2)
+                for (byte b : data2)
                     list.add(new Atom(BigInteger.valueOf(b)));
                 return new Atom(list);
-            default:
-                throw new UnsupportedOperationException("ucb not defined for: " + arg.getType());
+            }
+            default -> throw new UnsupportedOperationException("ucb not defined for: " + arg.getType());
         }
     }
 
