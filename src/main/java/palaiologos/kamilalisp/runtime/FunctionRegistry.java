@@ -244,6 +244,7 @@ public class FunctionRegistry {
         env.setPrimitive("mod", new Atom(new Mod()));
         env.setPrimitive("<=>", "⇔", new Atom(new Spaceship()));
         env.setPrimitive("ucs", new Atom(new Ucs()));
+        env.setPrimitive("ucb", new Atom(new Ucb()));
         env.setPrimitive("match", "→", new Atom(new Match()));
         env.setPrimitive("random", "⍰", new Atom(new Random()));
         env.setPrimitive("fft", "⊙↖⍠", new Atom(new FFT()));

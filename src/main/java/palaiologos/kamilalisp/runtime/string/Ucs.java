@@ -14,20 +14,15 @@ import java.util.List;
 public class Ucs extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
+        // ucs: takes/yields a list of integers.
+        // contrary to ucb which works on byte arrays.
         assertArity(args, 1);
         Atom arg = args.get(0);
         switch (arg.getType()) {
             case LIST:
-                byte[] data = new byte[arg.getList().size()];
-                for(int i = 0; i < arg.getList().size(); i++)
-                    data[i] = arg.getList().get(i).getInteger().byteValueExact();
-                return new Atom(new String(data, StandardCharsets.UTF_8));
+                return new Atom(arg.getList().stream().map(x -> x.getInteger().intValueExact()).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString());
             case STRING:
-                byte[] data2 = arg.getString().getBytes(StandardCharsets.UTF_8);
-                List<Atom> list = new ArrayList<>(data2.length);
-                for(byte b : data2)
-                    list.add(new Atom(BigInteger.valueOf(b)));
-                return new Atom(list);
+                return new Atom(arg.getString().codePoints().mapToObj(x -> new Atom(BigInteger.valueOf(x))).toList());
             default:
                 throw new UnsupportedOperationException("ucs not defined for: " + arg.getType());
         }
