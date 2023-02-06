@@ -15,6 +15,7 @@ form: form_rem (('@'|'∘') form_rem)*
 form_rem: literal
         | form_rem DOLLAR sqlist
         | form_rem PERCENT sqlist
+        | form_rem DOT (number | symbol)
         | bind
         | any_list
         | reader_macro
@@ -133,6 +134,7 @@ NIL : 'nil' | '⍬';
 
 DOLLAR: '$' ;
 PERCENT: '%' ;
+DOT: '.' ;
 
 fragment
 NOTID: ~('∘' | '⍬' | '⍨' | '@' | '$' | '%' | '^' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | '&') ;
