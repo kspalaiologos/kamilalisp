@@ -68,8 +68,13 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
             return new Atom(Stream.concat(Stream.of(head), tail.stream()).toList());
         } else if (ctx.PERCENT() != null) {
             // Depth
-            Atom hd = new CodeAtom(new Depth(visit(ctx.form_rem()), normalListFromSquare(ctx.sqlist()), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
-            return hd;
+            return new CodeAtom(new Depth(visit(ctx.form_rem()), normalListFromSquare(ctx.sqlist()), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+        } else if (ctx.DOT() != null) {
+            if(ctx.number() != null) {
+                return new CodeAtom(new Dot(visit(ctx.form_rem()), new BigDecimal(ctx.number().getText()), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+            } else {
+                return new CodeAtom(new Dot(visit(ctx.form_rem()), ctx.symbol().getText(), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+            }
         }
 
         throw new RuntimeException("Internal error.");

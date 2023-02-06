@@ -3,7 +3,6 @@ package palaiologos.kamilalisp.runtime.hashmap;
 import com.google.common.collect.ImmutableMap;
 import org.pcollections.HashPMap;
 import palaiologos.kamilalisp.atom.Atom;
-import palaiologos.kamilalisp.atom.Callable;
 import palaiologos.kamilalisp.atom.Userdata;
 
 public class HashMapUserData implements Userdata {
@@ -14,8 +13,13 @@ public class HashMapUserData implements Userdata {
     }
 
     @Override
-    public ImmutableMap<String, Callable> getMethods() {
-        return ImmutableMap.of();
+    public Atom field(Object key) {
+        if(key instanceof Integer)
+            return value.get(new Atom(((Integer) key).toString()));
+        else if(key instanceof String)
+            return value.get(new Atom((String) key));
+        else
+            throw new IllegalArgumentException("Key must be either an integer or a string");
     }
 
     @Override

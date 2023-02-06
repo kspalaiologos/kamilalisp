@@ -3,7 +3,7 @@ package palaiologos.kamilalisp.atom;
 import com.google.common.collect.ImmutableMap;
 
 public interface Userdata {
-    ImmutableMap<String, Callable> getMethods();
+    Atom field(Object key);
 
     int compareTo(Userdata other);
 
