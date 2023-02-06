@@ -27,6 +27,6 @@ public class Bipartition extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "list:bipartition";
+        return "bipartition";
     }
 }

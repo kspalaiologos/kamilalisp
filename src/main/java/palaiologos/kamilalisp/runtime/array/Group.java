@@ -11,7 +11,7 @@ public class Group extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if (args.size() != 1) {
-            throw new RuntimeException("Wrong number of arguments to list:group - expected 1, got " + args.size());
+            throw new RuntimeException("Wrong number of arguments to group - expected 1, got " + args.size());
         }
 
         List<Atom> data;
@@ -35,6 +35,6 @@ public class Group extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "list:group";
+        return "group";
     }
 }

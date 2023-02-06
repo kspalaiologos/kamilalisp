@@ -20,14 +20,14 @@ public class Shuffle extends PrimitiveFunction implements Lambda {
         } else {
             List<Character> chars = Chars.asList(a.getString().toCharArray());
             Collections.shuffle(chars);
-            return new Atom(StringUtils.join(chars.stream().toArray()));
+            return new Atom(StringUtils.join(chars.toArray()));
         }
     }
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if (args.isEmpty())
-            throw new TypeError("Expected 1 or more arguments to `list:shuffle'.");
+            throw new TypeError("Expected 1 or more arguments to `shuffle'.");
         if (args.size() == 1)
             return shuffle(args.get(0));
         return new Atom(args.stream().map(Shuffle::shuffle).collect(Collectors.toList()));
@@ -35,6 +35,6 @@ public class Shuffle extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "list:shuffle";
+        return "shuffle";
     }
 }
