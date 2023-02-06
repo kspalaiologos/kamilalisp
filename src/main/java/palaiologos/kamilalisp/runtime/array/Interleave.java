@@ -1,9 +1,6 @@
 package palaiologos.kamilalisp.runtime.array;
 
-import palaiologos.kamilalisp.atom.Atom;
-import palaiologos.kamilalisp.atom.Environment;
-import palaiologos.kamilalisp.atom.Lambda;
-import palaiologos.kamilalisp.atom.PrimitiveFunction;
+import palaiologos.kamilalisp.atom.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +18,9 @@ public class Interleave extends PrimitiveFunction implements Lambda {
             List<Atom> result = new ArrayList<>();
             for (int i = 0; i < len; i++)
                 for (Atom a : args)
-                    if (i < a.getList().size())
+                    if (a.getType() != Type.LIST)
+                        result.add(a);
+                    else if (a.getType() == Type.LIST && i < a.getList().size())
                         result.add(a.getList().get(i));
             return new Atom(result);
         } else {
