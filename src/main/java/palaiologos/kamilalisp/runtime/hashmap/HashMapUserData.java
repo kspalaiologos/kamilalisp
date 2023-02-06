@@ -14,11 +14,17 @@ public class HashMapUserData implements Userdata {
 
     @Override
     public Atom field(Object key) {
-        if(key instanceof Integer)
-            return value.get(new Atom(((Integer) key).toString()));
-        else if(key instanceof String)
-            return value.get(new Atom((String) key));
-        else
+        if(key instanceof Integer) {
+            if (value.containsKey(new Atom(((Integer) key).toString())))
+                return value.get(new Atom(((Integer) key).toString()));
+            else
+                return Atom.NULL;
+        } else if(key instanceof String) {
+            if (value.containsKey(new Atom((String) key)))
+                return value.get(new Atom((String) key));
+            else
+                return Atom.NULL;
+        } else
             throw new IllegalArgumentException("Key must be either an integer or a string");
     }
 

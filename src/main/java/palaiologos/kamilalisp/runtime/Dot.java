@@ -1,9 +1,6 @@
 package palaiologos.kamilalisp.runtime;
 
-import palaiologos.kamilalisp.atom.Atom;
-import palaiologos.kamilalisp.atom.Environment;
-import palaiologos.kamilalisp.atom.ReactiveFunction;
-import palaiologos.kamilalisp.atom.SpecialForm;
+import palaiologos.kamilalisp.atom.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -39,7 +36,8 @@ public class Dot implements ReactiveFunction, SpecialForm {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        return null;
+        Atom objEv = Evaluation.evaluate(env, obj);
+        return objEv.dot(index);
     }
 
     @Override
