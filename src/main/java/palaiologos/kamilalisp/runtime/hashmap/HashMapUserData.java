@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime.hashmap;
 
-import com.google.common.collect.ImmutableMap;
 import org.pcollections.HashPMap;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Userdata;

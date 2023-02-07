@@ -1,6 +1,9 @@
 package palaiologos.kamilalisp.runtime.IO;
 
-import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.atom.Atom;
+import palaiologos.kamilalisp.atom.Environment;
+import palaiologos.kamilalisp.atom.Lambda;
+import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
 import java.io.IOException;
 import java.nio.file.Files;

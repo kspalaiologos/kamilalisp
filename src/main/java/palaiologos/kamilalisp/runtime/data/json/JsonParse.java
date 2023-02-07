@@ -3,17 +3,13 @@ package palaiologos.kamilalisp.runtime.data.json;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.pcollections.HashTreePMap;
 import palaiologos.kamilalisp.atom.*;
-import palaiologos.kamilalisp.parser.*;
-import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
+import palaiologos.kamilalisp.parser.DefaultGrammarVisitor;
+import palaiologos.kamilalisp.parser.JSONLexer;
+import palaiologos.kamilalisp.parser.JSONParser;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class JsonParse extends PrimitiveFunction implements Lambda {
     @Override

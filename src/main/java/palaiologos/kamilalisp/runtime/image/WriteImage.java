@@ -10,8 +10,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.util.AbstractList;
 import java.util.List;
 
 public class WriteImage extends PrimitiveFunction implements Lambda {

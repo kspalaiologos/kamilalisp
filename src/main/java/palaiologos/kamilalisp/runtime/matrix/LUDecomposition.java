@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class LUDecomposition extends PrimitiveFunction implements Lambda {
     private static void realLU(MathContext mc, BigDecimal[][] A, BigDecimal[][] lower, BigDecimal[][] upper) {

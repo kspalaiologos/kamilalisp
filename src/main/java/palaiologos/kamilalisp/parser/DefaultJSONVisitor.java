@@ -1,7 +1,6 @@
 package palaiologos.kamilalisp.parser;
 
 import org.apache.commons.text.StringEscapeUtils;
-import org.pcollections.HashPMap;
 import org.pcollections.HashTreePMap;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Identifier;

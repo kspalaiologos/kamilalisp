@@ -1,12 +1,9 @@
 package palaiologos.kamilalisp.runtime.array.sais;
 
-import org.checkerframework.checker.units.qual.A;
 import palaiologos.kamilalisp.atom.*;
 
 import java.math.BigInteger;
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SacaBwt extends PrimitiveFunction implements Lambda {

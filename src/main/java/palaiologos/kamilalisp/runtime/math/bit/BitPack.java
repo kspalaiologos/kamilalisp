@@ -6,7 +6,6 @@ import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 
 public class BitPack extends PrimitiveFunction implements Lambda {

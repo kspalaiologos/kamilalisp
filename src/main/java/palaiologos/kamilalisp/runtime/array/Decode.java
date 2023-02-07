@@ -10,7 +10,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import static palaiologos.kamilalisp.atom.Type.*;
+import static palaiologos.kamilalisp.atom.Type.LIST;
 
 public class Decode extends PrimitiveFunction implements Lambda {
     @Override

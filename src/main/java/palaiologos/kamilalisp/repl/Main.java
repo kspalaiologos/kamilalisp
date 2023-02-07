@@ -14,7 +14,6 @@ import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Evaluation;
 import palaiologos.kamilalisp.atom.Parser;
 import palaiologos.kamilalisp.error.InterruptionError;
-import palaiologos.kamilalisp.runtime.FunctionRegistry;
 
 import java.io.IOException;
 import java.nio.file.Files;

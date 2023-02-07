@@ -1,12 +1,15 @@
 package palaiologos.kamilalisp.runtime.array;
 
-import com.google.common.primitives.Chars;
-import org.apache.commons.lang3.StringUtils;
-import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.atom.Atom;
+import palaiologos.kamilalisp.atom.Environment;
+import palaiologos.kamilalisp.atom.Lambda;
+import palaiologos.kamilalisp.atom.PrimitiveFunction;
 import palaiologos.kamilalisp.error.TypeError;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Powerset extends PrimitiveFunction implements Lambda {
     public static <T> Set<Set<T>> powerSet(Set<T> originalSet) {

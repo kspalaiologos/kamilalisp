@@ -1,13 +1,12 @@
 package palaiologos.kamilalisp.runtime.matrix;
 
-import com.google.common.primitives.Chars;
-import org.apache.commons.lang3.StringUtils;
-import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.atom.Atom;
+import palaiologos.kamilalisp.atom.Environment;
+import palaiologos.kamilalisp.atom.Lambda;
+import palaiologos.kamilalisp.atom.PrimitiveFunction;
 import palaiologos.kamilalisp.error.TypeError;
 
 import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime.array;
 
-import com.google.common.collect.Lists;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.TypeError;
 

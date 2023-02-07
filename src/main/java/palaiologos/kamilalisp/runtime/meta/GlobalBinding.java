@@ -1,9 +1,7 @@
 package palaiologos.kamilalisp.runtime.meta;
 
 import palaiologos.kamilalisp.atom.*;
-import palaiologos.kamilalisp.repl.Main;
 
-import javax.naming.Binding;
 import java.util.List;
 
 public class GlobalBinding extends PrimitiveFunction implements SpecialForm {

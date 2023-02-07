@@ -4,7 +4,6 @@ import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.TypeError;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class InnerProduct extends PrimitiveFunction implements Lambda {
     private Atom prod2(Environment env, Callable c1, Callable c2, List<Atom> a, List<Atom> b) {

@@ -12,6 +12,8 @@ import palaiologos.kamilalisp.runtime.array.sais.SacaUnbwt;
 import palaiologos.kamilalisp.runtime.data.csv.CsvParse;
 import palaiologos.kamilalisp.runtime.data.csv.CsvWrite;
 import palaiologos.kamilalisp.runtime.data.json.JsonParse;
+import palaiologos.kamilalisp.runtime.data.xml.XmlParse;
+import palaiologos.kamilalisp.runtime.data.xml.XmlWrite;
 import palaiologos.kamilalisp.runtime.datetime.*;
 import palaiologos.kamilalisp.runtime.hashmap.*;
 import palaiologos.kamilalisp.runtime.image.LoadImage;
@@ -33,8 +35,6 @@ import palaiologos.kamilalisp.runtime.regex.RegexMatches;
 import palaiologos.kamilalisp.runtime.regex.RegexReplace;
 import palaiologos.kamilalisp.runtime.regex.RegexSplit;
 import palaiologos.kamilalisp.runtime.string.*;
-import palaiologos.kamilalisp.runtime.data.xml.XmlParse;
-import palaiologos.kamilalisp.runtime.data.xml.XmlWrite;
 
 import java.math.BigDecimal;
 

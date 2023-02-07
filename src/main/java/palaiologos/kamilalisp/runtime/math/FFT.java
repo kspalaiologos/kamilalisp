@@ -1,17 +1,15 @@
 package palaiologos.kamilalisp.runtime.math;
 
 import ch.obermuhlner.math.big.BigComplex;
-import ch.obermuhlner.math.big.BigComplexMath;
 import ch.obermuhlner.math.big.BigDecimalMath;
 import com.google.common.collect.Streams;
-import com.google.common.math.BigIntegerMath;
-import palaiologos.kamilalisp.atom.*;
-import palaiologos.kamilalisp.error.TypeError;
+import palaiologos.kamilalisp.atom.Atom;
+import palaiologos.kamilalisp.atom.Environment;
+import palaiologos.kamilalisp.atom.Lambda;
+import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.MathContext;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

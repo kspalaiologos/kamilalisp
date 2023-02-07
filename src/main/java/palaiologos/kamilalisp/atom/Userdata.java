@@ -1,7 +1,5 @@
 package palaiologos.kamilalisp.atom;
 
-import com.google.common.collect.ImmutableMap;
-
 public interface Userdata {
     Atom field(Object key);
 

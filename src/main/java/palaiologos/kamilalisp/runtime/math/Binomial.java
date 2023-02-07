@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime.math;
 
-import ch.obermuhlner.math.big.BigComplexMath;
 import ch.obermuhlner.math.big.BigDecimalMath;
 import com.google.common.math.BigIntegerMath;
 import palaiologos.kamilalisp.atom.*;
@@ -9,7 +8,6 @@ import palaiologos.kamilalisp.error.TypeError;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Binomial extends PrimitiveFunction implements Lambda {
     @Override
