@@ -56,19 +56,27 @@ List operations and point-free programming:
 Command-line tools:
 ```
 % cat script.lisp
-(○← a \⍫⎕⊢ \⍎ args)
-(↕ (= (⍴ a) 0) (○⊢
-    (↑⍫ \⍫∊ "Shannon Entropy: 0")
-    (→⋄ 0)) '())
-(○← b \:[,⍧ ⍎ $(+ 1)∘⍴∘⍎∘⍕] \⌸ a)
-(○← b b$[⍋ \⍎%[1] b])
-(○← c \ln \⌿.← max \:⍎∘:⍕ b)
-(○← b \:⍎∘:⍕
-    \:(λ x (,⍧ (⍎ x) \⌊ \* 30 \ / (ln \⍎ \⍕ x) c)) b)
-(○← d \⍭ $(⌿← ∨ 0)
-    \⌽∘⎕⍉ \:(λ x (↑ 30 \⍉↩ x '(1))) b)
-(:↑⍫∘:(λ x " ⎕"$[#0 x]) d)
-(↑⍫ \⍫∊ "Shannon Entropy: {shannon-entropy a}")
+(def a \io:get-file-buffer \car args)
+(if (= (tally a) 0)
+    (let-seq
+        (io:writeln \str:format "Shannon Entropy: 0")
+        (exit 0))
+    '())
+(def b
+    \:[tie car $(+ 1)@tally@car@cdr]
+        \list:group a)
+(def b b$[grade-up \car%[1] b])
+(def c \ln \foldl1 max \:car@:cdr b)
+(def b \:car@:cdr
+    \:(lambda x
+        (tie
+            (car x)
+            (floor \* 30 \ / (ln \car \cdr x) c))) b)
+(def d \filter $(foldl or 0)
+    \reverse@matrix:transpose
+        \:(lambda x (take 30 \cycle x '(1))) b)
+(:io:writeln@:(lambda x " ⎕"$[#0 x]) d)
+(io:writeln \str:format "Shannon Entropy: {shannon-entropy a}")
 % java -jar target/kamilalisp-0.2.jar script.lisp LICENSE
 [ histogram omitted ... ]
 Shannon Entropy: 4.57328272673034
