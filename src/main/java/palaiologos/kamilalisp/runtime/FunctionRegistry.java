@@ -32,6 +32,7 @@ import palaiologos.kamilalisp.runtime.matrix.LUDecomposition;
 import palaiologos.kamilalisp.runtime.matrix.Trace;
 import palaiologos.kamilalisp.runtime.matrix.Transpose;
 import palaiologos.kamilalisp.runtime.meta.*;
+import palaiologos.kamilalisp.runtime.net.Wget;
 import palaiologos.kamilalisp.runtime.regex.RegexMatches;
 import palaiologos.kamilalisp.runtime.regex.RegexReplace;
 import palaiologos.kamilalisp.runtime.regex.RegexSplit;
@@ -286,6 +287,8 @@ public class FunctionRegistry {
         env.setPrimitive("time:now-tz", new Atom(new TimeNowTZ()));
         env.setPrimitive("date:parse", new Atom(new DateParse()));
         env.setPrimitive("time:parse", new Atom(new TimeParse()));
+
+        env.setPrimitive("net:wget", new Atom(new Wget()));
 
         env.setPrimitive("hashmap:from-list", "⍔⌿", new Atom(new HashMapFromList()));
         env.setPrimitive("hashmap:as-list", "⍔⍀", new Atom(new HashMapAsList()));
