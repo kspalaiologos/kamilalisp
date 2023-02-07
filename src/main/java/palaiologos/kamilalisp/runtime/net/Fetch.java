@@ -25,6 +25,7 @@ public class Fetch extends PrimitiveFunction implements Lambda {
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod("GET");
                 con.setRequestProperty("User-Agent", "KamilaLisp");
+                con.setRequestProperty("Accept-Charset", "UTF-8");
                 int responseCode = con.getResponseCode();
                 InputStream response = con.getInputStream();
                 byte[] data = response.readAllBytes();
