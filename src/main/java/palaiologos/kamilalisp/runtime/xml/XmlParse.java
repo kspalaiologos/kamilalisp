@@ -86,7 +86,7 @@ public class XmlParse extends PrimitiveFunction implements Lambda {
             InputStream targetStream =
                     CharSource.wrap(xmldata).asByteSource(StandardCharsets.UTF_8).openStream();
             Document dom = db.parse(targetStream);
-            Atom result = new Atom(List.of(new Atom(dom.getDoctype() == null ? "" : dom.getDoctype().toString()), xmlToList(dom.getDocumentElement())));
+            Atom result = xmlToList(dom.getDocumentElement());
             targetStream.close();
             return result;
         } catch (ParserConfigurationException | IOException | SAXException e) {
