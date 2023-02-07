@@ -69,9 +69,7 @@ Command-line tools:
 (def c \ln \foldl1 max \:car@:cdr b)
 (def b \:car@:cdr
     \:(lambda x
-        (tie
-            (car x)
-            (floor \* 30 \ / (ln \car \cdr x) c))) b)
+        (tie (car x) (floor \* 30 \ / (ln \car \cdr x) c))) b)
 (def d \filter $(foldl or 0)
     \reverse@matrix:transpose
         \:(lambda x (take 30 \cycle x '(1))) b)
