@@ -18,13 +18,13 @@ public class JsonParse extends PrimitiveFunction implements Lambda {
         Atom arg = args.get(0);
         String jsondata = null;
 
-        if(arg.getType() == Type.LIST) {
+        if (arg.getType() == Type.LIST) {
             // Assume a buffer.
             byte[] data = new byte[arg.getList().size()];
             for (int i = 0; i < arg.getList().size(); i++)
                 data[i] = arg.getList().get(i).getInteger().byteValueExact();
             jsondata = new String(data, StandardCharsets.UTF_8);
-        } else if(arg.getType() == Type.STRING) {
+        } else if (arg.getType() == Type.STRING) {
             // Assume a string.
             jsondata = arg.getString();
         } else {

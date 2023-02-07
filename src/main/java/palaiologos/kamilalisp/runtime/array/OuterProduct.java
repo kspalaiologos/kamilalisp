@@ -9,7 +9,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class OuterProduct extends PrimitiveFunction implements Lambda {
-    static <T, R> List<List<R>> op(BiFunction<T, T, R> f, List<T> a, List<T> b) {
+    private static <T, R> List<List<R>> op(BiFunction<T, T, R> f, List<T> a, List<T> b) {
         List<List<R>> results = new ArrayList<>();
         for (T x : a) {
             List<R> result = new ArrayList<>();
@@ -21,7 +21,7 @@ public class OuterProduct extends PrimitiveFunction implements Lambda {
         return results;
     }
 
-    public static Atom op2(Callable fn, Environment env, Atom a, Atom b) {
+    private static Atom op2(Callable fn, Environment env, Atom a, Atom b) {
         if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
             return new Atom(op((x, y) -> fn.apply(env, List.of(x, y)), a.getList(), b.getList()).stream().map(x -> x.size() == 1 ? x.get(0) : new Atom(x)).toList());
         } else if (a.getType() == Type.STRING && b.getType() == Type.STRING) {
@@ -45,8 +45,8 @@ public class OuterProduct extends PrimitiveFunction implements Lambda {
             throw new TypeError("outer-product called with too few arguments.");
         }
 
-        if(args.get(0).getType() == Type.CALLABLE) {
-            if(args.size() <= 2) {
+        if (args.get(0).getType() == Type.CALLABLE) {
+            if (args.size() <= 2) {
                 throw new TypeError("outer-product called with too few arguments.");
             }
 

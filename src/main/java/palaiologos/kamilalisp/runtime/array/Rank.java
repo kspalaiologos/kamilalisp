@@ -7,9 +7,9 @@ import java.util.List;
 
 public class Rank extends PrimitiveFunction implements Lambda {
     public static int computeRank(Atom w) {
-        if(w.getType() != Type.LIST)
+        if (w.getType() != Type.LIST)
             return 0;
-        else if(w.getList().stream().map(Atom::getType).allMatch(t -> t != Type.LIST))
+        else if (w.getList().stream().map(Atom::getType).allMatch(t -> t != Type.LIST))
             return 1;
         boolean first = true;
         boolean uneven = false;
@@ -29,7 +29,7 @@ public class Rank extends PrimitiveFunction implements Lambda {
             }
         }
         sub++;
-        return uneven? -sub : sub;
+        return uneven ? -sub : sub;
     }
 
 

@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class XmlParse extends PrimitiveFunction implements Lambda {
-    private Atom xmlToList(Node n) {
+    private static Atom xmlToList(Node n) {
         List<Atom> data = new ArrayList<>();
         data.add(new Atom(n.getNodeName()));
-        if(n.getChildNodes().getLength() > 0 && n.getChildNodes().item(0).getNodeType() == Node.TEXT_NODE) {
+        if (n.getChildNodes().getLength() > 0 && n.getChildNodes().item(0).getNodeType() == Node.TEXT_NODE) {
             data.add(new Atom(n.getChildNodes().item(0).getNodeValue()));
             if (n.getAttributes() != null) {
                 List<Atom> attribs = new ArrayList<>();
@@ -65,13 +65,13 @@ public class XmlParse extends PrimitiveFunction implements Lambda {
         Atom arg = args.get(0);
         String xmldata = null;
 
-        if(arg.getType() == Type.LIST) {
+        if (arg.getType() == Type.LIST) {
             // Assume a buffer.
             byte[] data = new byte[arg.getList().size()];
             for (int i = 0; i < arg.getList().size(); i++)
                 data[i] = arg.getList().get(i).getInteger().byteValueExact();
             xmldata = new String(data, StandardCharsets.UTF_8);
-        } else if(arg.getType() == Type.STRING) {
+        } else if (arg.getType() == Type.STRING) {
             // Assume a string.
             xmldata = arg.getString();
         } else {

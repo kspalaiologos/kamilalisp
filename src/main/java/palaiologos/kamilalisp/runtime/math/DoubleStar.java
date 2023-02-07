@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DoubleStar extends PrimitiveFunction implements Lambda {
-    public static Atom power2(Environment e, Atom a, Atom b) {
+    private static Atom power2(Environment e, Atom a, Atom b) {
         a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
         b.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
         if (a.getType() == Type.COMPLEX && b.getType() == Type.COMPLEX) {
@@ -26,7 +26,7 @@ public class DoubleStar extends PrimitiveFunction implements Lambda {
         } else if (a.getType() == Type.COMPLEX && b.getType() == Type.REAL) {
             return new Atom(BigComplexMath.pow(a.getComplex(), b.getReal(), e.getMathContext()));
         } else if (a.getType() == Type.INTEGER && b.getType() == Type.INTEGER) {
-            if(b.getInteger().compareTo(BigInteger.ZERO) < 0)
+            if (b.getInteger().compareTo(BigInteger.ZERO) < 0)
                 return new Atom(BigDecimalMath.pow(a.getReal(), b.getReal(), e.getMathContext()));
             return new Atom(a.getInteger().pow(b.getInteger().intValue()));
         } else if (a.getType() == Type.INTEGER && b.getType() == Type.REAL) {

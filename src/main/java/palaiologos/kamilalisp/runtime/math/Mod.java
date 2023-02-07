@@ -18,7 +18,7 @@ public class Mod extends PrimitiveFunction implements Lambda {
         return A.add(B.multiply(rho));
     }
 
-    public static Atom quot2(Environment e, Atom a, Atom b) {
+    private static Atom quot2(Environment e, Atom a, Atom b) {
         a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
         b.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
         if (a.getType() == Type.COMPLEX && b.getType() == Type.COMPLEX) {
@@ -54,7 +54,7 @@ public class Mod extends PrimitiveFunction implements Lambda {
         }
     }
 
-    public static Atom quot1(Environment e, Atom a) {
+    private static Atom quot1(Environment e, Atom a) {
         a.assertTypes(Type.REAL, Type.COMPLEX, Type.LIST);
         if (a.getType() == Type.COMPLEX) {
             return new Atom(a.getComplex().abs(e.getMathContext()));
@@ -73,7 +73,7 @@ public class Mod extends PrimitiveFunction implements Lambda {
             return quot1(env, args.get(0));
         } else if (args.size() == 2) {
             return quot2(env, args.get(0), args.get(1));
-        } else if (args.size() == 0) {
+        } else if (args.isEmpty()) {
             throw new TypeError("Expected 1 or more arguments to `mod'.");
         } else {
             return args.stream().reduce((x, y) -> quot2(env, x, y)).get();

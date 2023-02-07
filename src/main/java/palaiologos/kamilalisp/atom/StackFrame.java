@@ -64,15 +64,13 @@ public class StackFrame {
         }
 
         String isDebug = System.getenv("DEBUG");
-        if (isDebug != null && isDebug.equals("true")) {
+        if ("true".equals(isDebug)) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             t.printStackTrace(pw);
             sb.append(sw);
-            return sb.toString();
-        } else {
-            return sb.toString();
         }
+        return sb.toString();
     }
 
     public static void wipe() {
@@ -83,11 +81,12 @@ public class StackFrame {
         return stack.get().size();
     }
 
-    public static class StackFrameEntry {
-        public String frameString;
-        public long line, col;
+    static class StackFrameEntry {
+        String frameString;
+        long line;
+        long col;
 
-        public StackFrameEntry(String frameString, long line, long col) {
+        StackFrameEntry(String frameString, long line, long col) {
             this.frameString = frameString;
             this.line = line;
             this.col = col;

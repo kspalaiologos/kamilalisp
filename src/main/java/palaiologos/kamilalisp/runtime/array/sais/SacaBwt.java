@@ -10,7 +10,7 @@ public class SacaBwt extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         assertArity(args, 1);
-        if(args.get(0).getType() == Type.LIST) {
+        if (args.get(0).getType() == Type.LIST) {
             List<BigInteger> list = args.get(0).getList().stream().map(Atom::getInteger).toList();
             if (list.stream().allMatch(x -> x.compareTo(BigInteger.valueOf(Byte.MIN_VALUE)) >= 0 && x.compareTo(BigInteger.valueOf(Byte.MAX_VALUE)) < 0)) {
                 byte[] data = new byte[list.size()];
@@ -38,7 +38,7 @@ public class SacaBwt extends PrimitiveFunction implements Lambda {
                 }
                 return new Atom(List.of(new Atom(rl), new Atom(BigInteger.valueOf(idx))));
             }
-        } else if(args.get(0).getType() == Type.STRING) {
+        } else if (args.get(0).getType() == Type.STRING) {
             String str = args.get(0).getString();
             int[] sa = new int[str.length()];
             char[] result = new char[str.length()];

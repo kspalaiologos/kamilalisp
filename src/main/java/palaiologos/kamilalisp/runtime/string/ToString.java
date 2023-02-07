@@ -18,7 +18,7 @@ public class ToString extends PrimitiveFunction implements Lambda {
     public Atom apply(Environment env, List<Atom> args) {
         if (args.size() == 1) {
             return new Atom(args.get(0).toString());
-        } else if (args.size() == 0) {
+        } else if (args.isEmpty()) {
             throw new TypeError("Expected 1 or more arguments to `to-string'.");
         } else {
             return new Atom(args.stream().map(Atom::toString).map(Atom::new).toList());

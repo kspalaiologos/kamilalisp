@@ -16,7 +16,7 @@ public class Shannon extends PrimitiveFunction implements Lambda {
         if (args.size() != 1)
             throw new RuntimeException("shannon-entropy expects one argument.");
 
-        if(args.get(0).getType() == Type.STRING) {
+        if (args.get(0).getType() == Type.STRING) {
             String str = args.get(0).getString();
             int len = str.length();
             int[] freq = new int[256];
@@ -40,7 +40,7 @@ public class Shannon extends PrimitiveFunction implements Lambda {
                     min = data[i];
             }
 
-            if(min < 0) {
+            if (min < 0) {
                 for (int i = 0; i < len; i++) {
                     data[i] += Math.abs(min);
                 }

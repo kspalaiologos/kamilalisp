@@ -15,14 +15,14 @@ public class SacaUnbwt extends PrimitiveFunction implements Lambda {
             C[i] = 0;
         }
         for (i = 0; i < n; ++i) {
-            LF[i] = C[(int) (T[i] & 0xff)]++;
+            LF[i] = C[T[i] & 0xff]++;
         }
         for (i = 0, t = 0; i < 256; ++i) {
             t += C[i];
             C[i] = t - C[i];
         }
         for (i = n - 1, t = 0; 0 <= i; --i) {
-            t = LF[t] + C[(int) ((U[i] = T[t]) & 0xff)];
+            t = LF[t] + C[(U[i] = T[t]) & 0xff];
             t += (t < pidx) ? 1 : 0;
         }
         C = null;
@@ -36,14 +36,14 @@ public class SacaUnbwt extends PrimitiveFunction implements Lambda {
             C[i] = 0;
         }
         for (i = 0; i < n; ++i) {
-            LF[i] = C[(int) (T[i] & 0xffff)]++;
+            LF[i] = C[T[i] & 0xffff]++;
         }
         for (i = 0, t = 0; i < 65536; ++i) {
             t += C[i];
             C[i] = t - C[i];
         }
         for (i = n - 1, t = 0; 0 <= i; --i) {
-            t = LF[t] + C[(int) ((U[i] = T[t]) & 0xffff)];
+            t = LF[t] + C[(U[i] = T[t]) & 0xffff];
             t += (t < pidx) ? 1 : 0;
         }
         C = null;

@@ -12,18 +12,18 @@ import palaiologos.kamilalisp.parser.GrammarLexer;
 
 import java.util.regex.Pattern;
 
-public class LispHighlight implements Highlighter {
-    private Environment refGlobEnv = null;
+class LispHighlight implements Highlighter {
+    private Environment refGlobEnv;
 
     public LispHighlight(Environment env) {
         refGlobEnv = env;
     }
 
-    public boolean isKeyword(String s) {
+    private boolean isKeyword(String s) {
         return refGlobEnv.has(s);
     }
 
-    public AttributedStyle getStyleForToken(Token t, boolean isKw, boolean isWs) {
+    private static AttributedStyle getStyleForToken(Token t, boolean isKw, boolean isWs) {
         if (isKw)
             return new AttributedStyle().foreground(AttributedStyle.MAGENTA);
         switch (t.getType()) {
@@ -49,11 +49,11 @@ public class LispHighlight implements Highlighter {
     @Override
     public AttributedString highlight(LineReader lineReader, String s) {
         AttributedStringBuilder b = new AttributedStringBuilder();
-        if (s.length() == 0 || s.trim().length() == 0)
+        if (s.isEmpty() || s.trim().isEmpty())
             return b.toAttributedString();
         GrammarLexer lex = new GrammarLexer(CharStreams.fromString(s));
         lex.getAllTokens().forEach(x -> {
-            b.style(getStyleForToken(x, isKeyword(x.getText()), x.getText().trim().equals("")));
+            b.style(getStyleForToken(x, isKeyword(x.getText()), x.getText().trim().isEmpty()));
             b.append(x.getText());
         });
         return b.toAttributedString();

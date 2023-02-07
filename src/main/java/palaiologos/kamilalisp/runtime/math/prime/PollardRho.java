@@ -5,11 +5,11 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PollardRho {
-    private final static BigInteger ZERO = new BigInteger("0");
-    private final static BigInteger ONE = new BigInteger("1");
-    private final static BigInteger TWO = new BigInteger("2");
-    private final static SecureRandom random = new SecureRandom();
+class PollardRho {
+    private static final BigInteger ZERO = new BigInteger("0");
+    private static final BigInteger ONE = new BigInteger("1");
+    private static final BigInteger TWO = new BigInteger("2");
+    private static final SecureRandom random = new SecureRandom();
     private List<BigInteger> factors = new ArrayList<>();
 
     private static BigInteger rho(BigInteger N) {

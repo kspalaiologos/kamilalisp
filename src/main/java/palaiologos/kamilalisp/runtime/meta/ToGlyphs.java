@@ -17,7 +17,7 @@ public class ToGlyphs extends PrimitiveFunction implements Lambda {
         List<Token> tokens = (List<Token>) lex.getAllTokens();
         StringBuilder sb = new StringBuilder();
         for (Token token : tokens) {
-            if(Environment.aliases.containsKey(token.getText()))
+            if (Environment.aliases.containsKey(token.getText()))
                 sb.append(Environment.aliases.get(token.getText()));
             else
                 sb.append(token.getText());

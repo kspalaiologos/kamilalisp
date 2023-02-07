@@ -10,7 +10,7 @@ import java.util.List;
 public class DateNowTZ extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if (args.size() == 0) {
+        if (args.isEmpty()) {
             // Local time
             return new Atom(new DateTime(LocalDateTime.now()));
         } else if (args.size() == 1) {

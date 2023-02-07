@@ -15,7 +15,7 @@ public class Cdar extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.size() == 1) {
+        if (args.size() == 1) {
             return Cdr.INSTANCE.apply(env, List.of(Car.INSTANCE.apply(env, args)));
         } else {
             return new Atom(args.stream().map(a -> Cdr.INSTANCE.apply(env, List.of(Car.INSTANCE.apply(env, List.of(a))))).toList());

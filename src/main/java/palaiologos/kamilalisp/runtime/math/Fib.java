@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Fib extends PrimitiveFunction implements Lambda {
-    public static Atom fib1(Environment e, Atom a) {
+    private static Atom fib1(Environment e, Atom a) {
         a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
         BigDecimal sqrt5 = new BigDecimal("5").sqrt(e.getMathContext());
         BigDecimal golden1 = BigDecimal.ONE.add(sqrt5).divide(BigDecimal.valueOf(2), e.getMathContext());
@@ -39,7 +39,7 @@ public class Fib extends PrimitiveFunction implements Lambda {
     public Atom apply(Environment env, List<Atom> args) {
         if (args.size() == 1) {
             return fib1(env, args.get(0));
-        } else if (args.size() == 0) {
+        } else if (args.isEmpty()) {
             throw new TypeError("Expected 1 or more arguments to `fib'.");
         } else {
             return new Atom(args.stream().map(x -> fib1(env, x)).toList());

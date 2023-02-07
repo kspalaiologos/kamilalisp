@@ -9,19 +9,19 @@ import palaiologos.kamilalisp.atom.Environment;
 import java.util.List;
 import java.util.Set;
 
-public class LispCompletion implements Completer {
-    private Environment refGlobEnv = null;
+class LispCompletion implements Completer {
+    private Environment refGlobEnv;
 
     public LispCompletion(Environment env) {
         refGlobEnv = env;
     }
 
-    public Set<String> getKeywords() {
+    private Set<String> getKeywords() {
         return refGlobEnv.keys();
     }
 
     @Override
-    public void complete(LineReader reader, final ParsedLine commandLine, final List<Candidate> candidates) {
+    public void complete(LineReader reader, ParsedLine commandLine, List<Candidate> candidates) {
         candidates.addAll(getKeywords().stream().map(Candidate::new).toList());
     }
 }

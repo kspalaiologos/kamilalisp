@@ -54,7 +54,7 @@ public class ParitalApplication implements SpecialForm, ReactiveFunction {
         private final List<Atom> data;
         private final int varSlots;
 
-        public PartiallyAppliedThunk(int varSlots, List<Atom> data) {
+        PartiallyAppliedThunk(int varSlots, List<Atom> data) {
             this.data = data;
             this.varSlots = varSlots;
         }

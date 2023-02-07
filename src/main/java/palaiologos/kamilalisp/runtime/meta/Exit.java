@@ -10,7 +10,7 @@ import java.util.List;
 public class Exit extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.size() == 1) {
+        if (args.size() == 1) {
             int code = args.get(0).getInteger().intValueExact();
             System.exit(code);
         } else {

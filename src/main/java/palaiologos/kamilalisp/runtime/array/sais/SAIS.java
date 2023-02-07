@@ -27,123 +27,6 @@ package palaiologos.kamilalisp.runtime.array.sais;
  */
 
 public class SAIS {
-    private interface BaseArray {
-        int get(int i);
-
-        void set(int i, int val);
-
-        int update(int i, int val);
-    }
-
-    private static class ByteArray implements BaseArray {
-        private byte[] m_A = null;
-        private int m_pos = 0;
-
-        ByteArray(byte[] A, int pos) {
-            m_A = A;
-            m_pos = pos;
-        }
-
-        public int get(int i) {
-            return m_A[m_pos + i] & 0xff;
-        }
-
-        public void set(int i, int val) {
-            m_A[m_pos + i] = (byte) (val & 0xff);
-        }
-
-        public int update(int i, int val) {
-            return m_A[m_pos + i] += val & 0xff;
-        }
-    }
-
-    private static class CharArray implements BaseArray {
-        private char[] m_A = null;
-        private int m_pos = 0;
-
-        CharArray(char[] A, int pos) {
-            m_A = A;
-            m_pos = pos;
-        }
-
-        public int get(int i) {
-            return m_A[m_pos + i] & 0xffff;
-        }
-
-        public void set(int i, int val) {
-            m_A[m_pos + i] = (char) (val & 0xffff);
-        }
-
-        public int update(int i, int val) {
-            return m_A[m_pos + i] += val & 0xffff;
-        }
-    }
-
-    private static class ShortArray implements BaseArray {
-        private short[] m_A = null;
-        private int m_pos = 0;
-
-        ShortArray(short[] A, int pos) {
-            m_A = A;
-            m_pos = pos;
-        }
-
-        public int get(int i) {
-            return m_A[m_pos + i] & 0xffff;
-        }
-
-        public void set(int i, int val) {
-            m_A[m_pos + i] = (short) (val & 0xffff);
-        }
-
-        public int update(int i, int val) {
-            return m_A[m_pos + i] += val & 0xffff;
-        }
-    }
-
-    private static class IntArray implements BaseArray {
-        private int[] m_A = null;
-        private int m_pos = 0;
-
-        IntArray(int[] A, int pos) {
-            m_A = A;
-            m_pos = pos;
-        }
-
-        public int get(int i) {
-            return m_A[m_pos + i];
-        }
-
-        public void set(int i, int val) {
-            m_A[m_pos + i] = val;
-        }
-
-        public int update(int i, int val) {
-            return m_A[m_pos + i] += val;
-        }
-    }
-
-    private static class StringArray implements BaseArray {
-        private String m_A = null;
-        private int m_pos = 0;
-
-        StringArray(String A, int pos) {
-            m_A = A;
-            m_pos = pos;
-        }
-
-        public int get(int i) {
-            return m_A.charAt(m_pos + i) & 0xffff;
-        }
-
-        public void set(int i, int val) {
-        }
-
-        public int update(int i, int val) {
-            return 0;
-        }
-    }
-
     /* find the start or end of each bucket */
     private static void
     getCounts(BaseArray T, BaseArray C, int n, int k) {
@@ -556,7 +439,7 @@ public class SAIS {
             }
             return 0;
         }
-        return SA_IS(new ByteArray(T, 0), SA, 0, n, 256, false);
+        return SA_IS(new ByteArray(T), SA, 0, n, 256, false);
     }
 
     /* char */
@@ -571,7 +454,7 @@ public class SAIS {
             }
             return 0;
         }
-        return SA_IS(new CharArray(T, 0), SA, 0, n, 65536, false);
+        return SA_IS(new CharArray(T), SA, 0, n, 65536, false);
     }
 
     /* short */
@@ -588,7 +471,7 @@ public class SAIS {
             }
             return 0;
         }
-        return SA_IS(new ShortArray(T, 0), SA, 0, n, k, false);
+        return SA_IS(new ShortArray(T), SA, 0, n, k, false);
     }
 
     /* int */
@@ -621,7 +504,7 @@ public class SAIS {
             }
             return 0;
         }
-        return SA_IS(new StringArray(T, 0), SA, 0, n, 65536, false);
+        return SA_IS(new StringArray(T), SA, 0, n, 65536, false);
     }
 
     /**
@@ -641,7 +524,7 @@ public class SAIS {
             }
             return n;
         }
-        pidx = SA_IS(new ByteArray(T, 0), A, 0, n, 256, true);
+        pidx = SA_IS(new ByteArray(T), A, 0, n, 256, true);
         U[0] = T[n - 1];
         for (i = 0; i < pidx; ++i) {
             U[i + 1] = (byte) (A[i] & 0xff);
@@ -666,7 +549,7 @@ public class SAIS {
             }
             return n;
         }
-        pidx = SA_IS(new CharArray(T, 0), A, 0, n, 65536, true);
+        pidx = SA_IS(new CharArray(T), A, 0, n, 65536, true);
         U[0] = T[n - 1];
         for (i = 0; i < pidx; ++i) {
             U[i + 1] = (char) (A[i] & 0xffff);
@@ -692,7 +575,7 @@ public class SAIS {
             }
             return n;
         }
-        pidx = SA_IS(new ShortArray(T, 0), A, 0, n, k, true);
+        pidx = SA_IS(new ShortArray(T), A, 0, n, k, true);
         U[0] = T[n - 1];
         for (i = 0; i < pidx; ++i) {
             U[i + 1] = (short) (A[i] & 0xffff);
@@ -727,5 +610,122 @@ public class SAIS {
             U[i] = A[i];
         }
         return pidx + 1;
+    }
+
+    private interface BaseArray {
+        int get(int i);
+
+        void set(int i, int val);
+
+        int update(int i, int val);
+    }
+
+    private static class ByteArray implements BaseArray {
+        private byte[] m_A;
+        private int m_pos;
+
+        ByteArray(byte[] A) {
+            m_A = A;
+            m_pos = 0;
+        }
+
+        public int get(int i) {
+            return m_A[m_pos + i] & 0xff;
+        }
+
+        public void set(int i, int val) {
+            m_A[m_pos + i] = (byte) (val & 0xff);
+        }
+
+        public int update(int i, int val) {
+            return m_A[m_pos + i] += val & 0xff;
+        }
+    }
+
+    private static class CharArray implements BaseArray {
+        private char[] m_A;
+        private int m_pos;
+
+        CharArray(char[] A) {
+            m_A = A;
+            m_pos = 0;
+        }
+
+        public int get(int i) {
+            return m_A[m_pos + i] & 0xffff;
+        }
+
+        public void set(int i, int val) {
+            m_A[m_pos + i] = (char) (val & 0xffff);
+        }
+
+        public int update(int i, int val) {
+            return m_A[m_pos + i] += val & 0xffff;
+        }
+    }
+
+    private static class ShortArray implements BaseArray {
+        private short[] m_A;
+        private int m_pos;
+
+        ShortArray(short[] A) {
+            m_A = A;
+            m_pos = 0;
+        }
+
+        public int get(int i) {
+            return m_A[m_pos + i] & 0xffff;
+        }
+
+        public void set(int i, int val) {
+            m_A[m_pos + i] = (short) (val & 0xffff);
+        }
+
+        public int update(int i, int val) {
+            return m_A[m_pos + i] += val & 0xffff;
+        }
+    }
+
+    private static class IntArray implements BaseArray {
+        private int[] m_A;
+        private int m_pos;
+
+        IntArray(int[] A, int pos) {
+            m_A = A;
+            m_pos = pos;
+        }
+
+        public int get(int i) {
+            return m_A[m_pos + i];
+        }
+
+        public void set(int i, int val) {
+            m_A[m_pos + i] = val;
+        }
+
+        public int update(int i, int val) {
+            return m_A[m_pos + i] += val;
+        }
+    }
+
+    private static class StringArray implements BaseArray {
+        private String m_A;
+        private int m_pos;
+
+        StringArray(String A) {
+            m_A = A;
+            m_pos = 0;
+        }
+
+        public int get(int i) {
+            return m_A.charAt(m_pos + i) & 0xffff;
+        }
+
+        public void set(int i, int val) {
+        }
+
+        public int update(int i, int val) {
+            return 0;
+        }
     }
 }

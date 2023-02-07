@@ -4,7 +4,7 @@ import org.junit.jupiter.api.parallel.Execution;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.parallel.ExecutionMode.CONCURRENT;
 
-public class TestSKI {
+class TestSKI {
     @Test
     void testSki() {
         String code = """

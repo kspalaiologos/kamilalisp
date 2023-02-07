@@ -5,8 +5,8 @@ import org.apache.commons.text.StringEscapeUtils;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.CodeAtom;
 import palaiologos.kamilalisp.atom.Identifier;
-import palaiologos.kamilalisp.runtime.*;
 import palaiologos.kamilalisp.runtime.Map;
+import palaiologos.kamilalisp.runtime.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -68,7 +68,7 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
             // Depth
             return new CodeAtom(new Depth(visit(ctx.form_rem()), normalListFromSquare(ctx.sqlist()), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
         } else if (ctx.DOT() != null) {
-            if(ctx.number() != null) {
+            if (ctx.number() != null) {
                 return new CodeAtom(new Dot(visit(ctx.form_rem()), new BigDecimal(ctx.number().getText()), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
             } else {
                 return new CodeAtom(new Dot(visit(ctx.form_rem()), ctx.symbol().getText(), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
@@ -92,7 +92,7 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
         return visit(ctx.children.get(0));
     }
 
-    public List<Atom> listFromContent(List<GrammarParser.List_formContext> ctx) {
+    private List<Atom> listFromContent(List<GrammarParser.List_formContext> ctx) {
         List<Atom> list = new ArrayList<>();
         for (int i = 0; i < ctx.size(); i++) {
             if (ctx.get(i).getText().equals("\\")) {
@@ -124,7 +124,7 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
         return new CodeAtom(listFromContent(ctx.list_form())).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
     }
 
-    public Fork forkFromForms(List<GrammarParser.List_formContext> ctx) {
+    private Fork forkFromForms(List<GrammarParser.List_formContext> ctx) {
         Atom reductor = visit(ctx.get(0));
         List<Atom> reductees = new ArrayList<>();
         for (int i = 1; i < ctx.size(); i++) {
@@ -227,21 +227,21 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
 
     @Override
     public Atom visitHex_(GrammarParser.Hex_Context ctx) {
-        if (ctx.getText().startsWith("$"))
+        if (!ctx.getText().isEmpty() && ctx.getText().charAt(0) == '$')
             return new CodeAtom(new BigInteger(ctx.HEX().getText().substring(2), 16)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
         return new CodeAtom(new BigDecimal(new BigInteger(ctx.HEX().getText().substring(2), 16))).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
     }
 
     @Override
     public Atom visitBin_(GrammarParser.Bin_Context ctx) {
-        if (ctx.getText().startsWith("$"))
+        if (!ctx.getText().isEmpty() && ctx.getText().charAt(0) == '$')
             return new CodeAtom(new BigInteger(ctx.BIN().getText().substring(2), 2)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
         return new CodeAtom(new BigDecimal(new BigInteger(ctx.BIN().getText().substring(2), 2))).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
     }
 
     @Override
     public Atom visitLong_(GrammarParser.Long_Context ctx) {
-        if (ctx.getText().startsWith("$"))
+        if (!ctx.getText().isEmpty() && ctx.getText().charAt(0) == '$')
             return new CodeAtom(new BigInteger(ctx.LONG().getText(), 10)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
         return new CodeAtom(new BigDecimal(new BigInteger(ctx.LONG().getText(), 10))).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
     }

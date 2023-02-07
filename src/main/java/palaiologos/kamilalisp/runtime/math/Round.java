@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Round extends PrimitiveFunction implements Lambda {
-    public static Atom sgn1(Environment e, Atom a) {
+    private static Atom sgn1(Environment e, Atom a) {
         a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
         if (a.getType() == Type.COMPLEX) {
             return new Atom(BigComplex.valueOf(
@@ -30,7 +30,7 @@ public class Round extends PrimitiveFunction implements Lambda {
     public Atom apply(Environment env, List<Atom> args) {
         if (args.size() == 1) {
             return sgn1(env, args.get(0));
-        } else if (args.size() == 0) {
+        } else if (args.isEmpty()) {
             throw new TypeError("Expected 1 or more arguments to `round'.");
         } else {
             return new Atom(args.stream().map(x -> sgn1(env, x)).toList());

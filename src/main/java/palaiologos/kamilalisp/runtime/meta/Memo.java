@@ -23,7 +23,7 @@ public class Memo extends PrimitiveFunction implements Lambda {
             else
                 throw new RuntimeException("memo takes an integer as the second argument");
         }
-        final Lambda mfn = (Lambda) arg.getCallable();
+        Lambda mfn = (Lambda) arg.getCallable();
         if (max != -1) {
             int finalMax = max;
             return new Atom(new Lambda() {

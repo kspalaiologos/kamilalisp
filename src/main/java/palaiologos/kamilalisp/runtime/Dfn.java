@@ -34,7 +34,7 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
             if (Identifier.of(bindings.get(i)).startsWith("...") && i != bindings.size() - 1)
                 throw new TypeError("Cannot use a name ends with `...' as a binding.");
 
-        final boolean wantsVararg = bindings.size() > 0 && Identifier.of(bindings.get(bindings.size() - 1)).startsWith("...");
+        boolean wantsVararg = !bindings.isEmpty() && Identifier.of(bindings.get(bindings.size() - 1)).startsWith("...");
 
         Atom code = args.get(1);
 
@@ -44,7 +44,7 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
             line = (((CodeAtom) args.get(0)).getLine());
         }
 
-        final int f_line = line, f_col = col;
+        int f_line = line, f_col = col;
 
         return new CodeAtom(new DfnClass(bindings, wantsVararg, code, env, f_line, f_col)).setCol(col).setLine(line);
     }
@@ -56,7 +56,7 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
         Environment env;
         int f_line, f_col;
 
-        public DfnClass(List<Identifier> bindings, boolean wantsVararg, Atom code, Environment env, int f_line, int f_col) {
+        DfnClass(List<Identifier> bindings, boolean wantsVararg, Atom code, Environment env, int f_line, int f_col) {
             this.bindings = bindings;
             this.wantsVararg = wantsVararg;
             this.code = code;

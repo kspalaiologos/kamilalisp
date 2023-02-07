@@ -6,7 +6,7 @@ import palaiologos.kamilalisp.error.TypeError;
 import java.util.List;
 
 public class InnerProduct extends PrimitiveFunction implements Lambda {
-    private Atom prod2(Environment env, Callable c1, Callable c2, List<Atom> a, List<Atom> b) {
+    private static Atom prod2(Environment env, Callable c1, Callable c2, List<Atom> a, List<Atom> b) {
         int len = Math.min(a.size(), b.size());
         if (len < 2) {
             throw new TypeError("Inner product requires at least two common elements.");
@@ -18,7 +18,7 @@ public class InnerProduct extends PrimitiveFunction implements Lambda {
         return result;
     }
 
-    private Atom prodN(Environment env, Callable c1, Callable c2, List<List<Atom>> a) {
+    private static Atom prodN(Environment env, Callable c1, Callable c2, List<List<Atom>> a) {
         int len = a.stream().map(List::size).min(Integer::compareTo).orElseThrow();
         if (len < 2) {
             throw new TypeError("Inner product requires at least two common elements.");
@@ -26,7 +26,7 @@ public class InnerProduct extends PrimitiveFunction implements Lambda {
 
         Atom result = a.stream().map(l -> l.get(0)).reduce((x, y) -> c2.apply(env, List.of(x, y))).orElseThrow();
         for (int i = 1; i < len; i++) {
-            final int j = i;
+            int j = i;
             result = c1.apply(env, List.of(result, a.stream().map(l -> l.get(j)).reduce((x, y) -> c2.apply(env, List.of(x, y))).orElseThrow()));
         }
         return result;
@@ -65,7 +65,7 @@ public class InnerProduct extends PrimitiveFunction implements Lambda {
         private final Callable c1;
         private final Callable c2;
 
-        public InnerProductWrapper(Callable c1, Callable c2) {
+        InnerProductWrapper(Callable c1, Callable c2) {
             this.c1 = c1;
             this.c2 = c2;
         }

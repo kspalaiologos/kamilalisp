@@ -18,7 +18,7 @@ public class Decode extends PrimitiveFunction implements Lambda {
         assertArity(args, 2);
         Atom left = args.get(0);
         Atom right = args.get(1);
-        if(left.isNumeric() && right.isNumeric()) {
+        if (left.isNumeric() && right.isNumeric()) {
             return right;
         } else {
             List<Atom> leftList = left.getType() == LIST ? left.getList() : List.of(left);
@@ -26,12 +26,12 @@ public class Decode extends PrimitiveFunction implements Lambda {
             int max = Math.max(leftList.size(), rightList.size());
             leftList = new Cycle.CycleListFacade(leftList, max);
             rightList = new Cycle.CycleListFacade(rightList, max);
-            if(leftList.size() == 0 || rightList.size() == 0) {
+            if (leftList.isEmpty() || rightList.isEmpty()) {
                 return Atom.FALSE;
-            } else if(leftList.size() == 1 && rightList.size() == 1) {
+            } else if (leftList.size() == 1 && rightList.size() == 1) {
                 return rightList.get(0);
             } else {
-                if(leftList.stream().allMatch(x -> x.getType() == Type.INTEGER)) {
+                if (leftList.stream().allMatch(x -> x.getType() == Type.INTEGER)) {
                     List<BigInteger> results = new ArrayList<>();
                     results.add(BigInteger.ONE);
                     for (int i = 1; i < leftList.size(); i++) {
@@ -41,16 +41,16 @@ public class Decode extends PrimitiveFunction implements Lambda {
                             results.add(results.get(i - 1).multiply(leftList.get(i).getInteger()));
                     }
                     results = Lists.reverse(results);
-                    if(rightList.stream().allMatch(x -> x.getType() == Type.INTEGER)) {
+                    if (rightList.stream().allMatch(x -> x.getType() == Type.INTEGER)) {
                         return new Atom(Streams.zip(results.stream(), rightList.stream(), (x, y) -> x.multiply(y.getInteger())).reduce(BigInteger.ZERO, BigInteger::add));
-                    } else if(rightList.stream().allMatch(x -> x.getType() == Type.REAL)) {
+                    } else if (rightList.stream().allMatch(x -> x.getType() == Type.REAL)) {
                         return new Atom(Streams.zip(results.stream(), rightList.stream(), (x, y) -> y.getReal().multiply(new BigDecimal(x))).reduce(BigDecimal.ZERO, BigDecimal::add));
-                    } else if(rightList.stream().allMatch(x -> x.getType() == Type.COMPLEX)) {
+                    } else if (rightList.stream().allMatch(x -> x.getType() == Type.COMPLEX)) {
                         return new Atom(Streams.zip(results.stream(), rightList.stream(), (x, y) -> y.getComplex().multiply(BigComplex.valueOf(new BigDecimal(x)))).reduce(BigComplex.ZERO, BigComplex::add));
                     } else {
                         throw new UnsupportedOperationException("decode expects rank 1 numeric vectors.");
                     }
-                } else if(leftList.stream().allMatch(x -> x.getType() == Type.REAL)) {
+                } else if (leftList.stream().allMatch(x -> x.getType() == Type.REAL)) {
                     List<BigDecimal> results = new ArrayList<>();
                     results.add(BigDecimal.ONE);
                     for (int i = 1; i < leftList.size(); i++) {
@@ -60,16 +60,16 @@ public class Decode extends PrimitiveFunction implements Lambda {
                             results.add(results.get(i - 1).multiply(leftList.get(i).getReal()));
                     }
                     results = Lists.reverse(results);
-                    if(rightList.stream().allMatch(x -> x.getType() == Type.INTEGER)) {
+                    if (rightList.stream().allMatch(x -> x.getType() == Type.INTEGER)) {
                         return new Atom(Streams.zip(results.stream(), rightList.stream(), (x, y) -> x.multiply(new BigDecimal(y.getInteger()))).reduce(BigDecimal.ZERO, BigDecimal::add));
-                    } else if(rightList.stream().allMatch(x -> x.getType() == Type.REAL)) {
+                    } else if (rightList.stream().allMatch(x -> x.getType() == Type.REAL)) {
                         return new Atom(Streams.zip(results.stream(), rightList.stream(), (x, y) -> x.multiply(y.getReal())).reduce(BigDecimal.ZERO, BigDecimal::add));
-                    } else if(rightList.stream().allMatch(x -> x.getType() == Type.COMPLEX)) {
+                    } else if (rightList.stream().allMatch(x -> x.getType() == Type.COMPLEX)) {
                         return new Atom(Streams.zip(results.stream(), rightList.stream(), (x, y) -> y.getComplex().multiply(BigComplex.valueOf(x))).reduce(BigComplex.ZERO, BigComplex::add));
                     } else {
                         throw new UnsupportedOperationException("decode expects rank 1 numeric vectors.");
                     }
-                } else if(leftList.stream().allMatch(x -> x.getType() == Type.COMPLEX)) {
+                } else if (leftList.stream().allMatch(x -> x.getType() == Type.COMPLEX)) {
                     List<BigComplex> results = new ArrayList<>();
                     results.add(BigComplex.ONE);
                     for (int i = 1; i < leftList.size(); i++) {

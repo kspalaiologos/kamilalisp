@@ -19,7 +19,7 @@ public class Sech extends PrimitiveFunction implements Lambda {
         return e_z.add(e_neg_z).divide(BigComplex.valueOf(2), mc).reciprocal(mc);
     }
 
-    public static Atom trig1(Environment env, Atom a) {
+    private static Atom trig1(Environment env, Atom a) {
         a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
         if (a.getType() == Type.COMPLEX) {
             return new Atom(imagTrig(a.getComplex(), env.getMathContext()));
@@ -41,7 +41,7 @@ public class Sech extends PrimitiveFunction implements Lambda {
     public Atom apply(Environment env, List<Atom> args) {
         if (args.size() == 1) {
             return trig1(env, args.get(0));
-        } else if (args.size() == 0) {
+        } else if (args.isEmpty()) {
             throw new TypeError("Expected 1 or more arguments to `" + name + "'.");
         } else {
             return new Atom(args.stream().map(x -> trig1(env, x)).toList());

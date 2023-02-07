@@ -45,11 +45,11 @@ public class Map implements SpecialForm, ReactiveFunction {
 
             @Override
             public Atom apply(Environment env, List<Atom> args) {
-                if (args.size() == 0)
+                if (args.isEmpty())
                     return Atom.NULL;
                 if (args.size() == 1) {
                     // map
-                    if(args.get(0).getType() != Type.LIST)
+                    if (args.get(0).getType() != Type.LIST)
                         return new Atom(List.of(Evaluation.evaluate(env, lambda, args)));
                     return new Atom((List<Atom>)
                             args.get(0).getList().stream().map(x -> Evaluation.evaluate(env, lambda, List.of(x)))

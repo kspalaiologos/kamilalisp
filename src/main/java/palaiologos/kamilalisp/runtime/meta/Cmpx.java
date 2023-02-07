@@ -15,7 +15,7 @@ public class Cmpx extends PrimitiveFunction implements SpecialForm {
         return "cmpx";
     }
 
-    private long getGC() {
+    private static long getGC() {
         long garbageCollectionTime = 0;
 
         for (GarbageCollectorMXBean gc : ManagementFactory.getGarbageCollectorMXBeans()) {
@@ -29,7 +29,7 @@ public class Cmpx extends PrimitiveFunction implements SpecialForm {
         return garbageCollectionTime;
     }
 
-    private boolean isSpecial(double d) {
+    private static boolean isSpecial(double d) {
         return Double.isNaN(d) || Double.isInfinite(d);
     }
 
@@ -62,7 +62,7 @@ public class Cmpx extends PrimitiveFunction implements SpecialForm {
         List<Integer> medians = new ArrayList<>();
         List<Integer> stdDevs = new ArrayList<>();
         for (int i = 0; i < args.size(); i++) {
-            Integer cumTime = furtherTimings.get(0).stream().mapToInt(x -> x).sum() + initialTimings.get(i);
+            int cumTime = furtherTimings.get(0).stream().mapToInt(x -> x).sum() + initialTimings.get(i);
             Integer mean = cumTime / (times.get(i) + 1);
             means.add(mean);
 

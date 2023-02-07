@@ -9,6 +9,7 @@ class LRUCache<K, V> {
     private Node<K, V> leastRecentlyUsed;
     private Node<K, V> mostRecentlyUsed;
     private int currentSize;
+
     public LRUCache(int maxSize) {
         this.maxSize = maxSize;
         this.currentSize = 0;
@@ -86,7 +87,7 @@ class LRUCache<K, V> {
         Node<T, U> previous;
         Node<T, U> next;
 
-        public Node(Node<T, U> previous, Node<T, U> next, T key, U value) {
+        Node(Node<T, U> previous, Node<T, U> next, T key, U value) {
             this.previous = previous;
             this.next = next;
             this.key = key;

@@ -20,17 +20,16 @@ public class JsonWrite extends PrimitiveFunction implements Lambda {
                 return a.getReal().toString();
             case IDENTIFIER: {
                 String data = Identifier.of(a.getIdentifier());
-                if(data.equalsIgnoreCase("true") || data.equalsIgnoreCase("false") || data.equalsIgnoreCase("null"))
+                if (data.equalsIgnoreCase("true") || data.equalsIgnoreCase("false") || data.equalsIgnoreCase("null"))
                     return data;
                 else
                     throw new RuntimeException("json:write not defined for literal: " + data);
             }
             case USERDATA: {
                 HashMapUserData data = a.getUserdata(HashMapUserData.class);
-                String s = data.value().entrySet().stream().map(entry -> {
+                return data.value().entrySet().stream().map(entry -> {
                     return "\"" + StringEscapeUtils.escapeJson(entry.getKey().getString()) + "\":" + makeJson(entry.getValue());
                 }).collect(Collectors.joining(",", "{", "}"));
-                return s;
             }
             default:
                 throw new RuntimeException("json:write not defined for: " + a.getType());

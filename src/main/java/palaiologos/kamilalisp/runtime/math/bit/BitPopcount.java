@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BitPopcount extends PrimitiveFunction implements Lambda {
-    public static Atom sgn1(Atom a) {
+    private static Atom sgn1(Atom a) {
         a.assertTypes(Type.INTEGER, Type.LIST);
         if (a.getType() == Type.INTEGER) {
             return new Atom(BigInteger.valueOf(a.getInteger().bitCount()));
@@ -23,7 +23,7 @@ public class BitPopcount extends PrimitiveFunction implements Lambda {
     public Atom apply(Environment env, List<Atom> args) {
         if (args.size() == 1) {
             return sgn1(args.get(0));
-        } else if (args.size() == 0) {
+        } else if (args.isEmpty()) {
             throw new TypeError("Expected 1 or more arguments to `bit:popcount'.");
         } else {
             return new Atom(args.stream().map(BitPopcount::sgn1).toList());

@@ -13,7 +13,7 @@ import java.util.List;
 public class Ucb extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.size() == 1) {
+        if (args.size() == 1) {
             Atom arg = args.get(0);
             switch (arg.getType()) {
                 case LIST -> {
@@ -51,7 +51,7 @@ public class Ucb extends PrimitiveFunction implements Lambda {
                     }
                     default -> throw new UnsupportedOperationException("ucb not defined for: " + arg.getType());
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }

@@ -18,13 +18,13 @@ public class CsvParse extends PrimitiveFunction implements Lambda {
         Atom arg = args.get(0);
         String csvdata = null;
 
-        if(arg.getType() == Type.LIST) {
+        if (arg.getType() == Type.LIST) {
             // Assume a buffer.
             byte[] data = new byte[arg.getList().size()];
             for (int i = 0; i < arg.getList().size(); i++)
                 data[i] = arg.getList().get(i).getInteger().byteValueExact();
             csvdata = new String(data, StandardCharsets.UTF_8);
-        } else if(arg.getType() == Type.STRING) {
+        } else if (arg.getType() == Type.STRING) {
             // Assume a string.
             csvdata = arg.getString();
         } else {
@@ -34,9 +34,9 @@ public class CsvParse extends PrimitiveFunction implements Lambda {
         Reader in = new StringReader(csvdata);
         List<Atom> data = new ArrayList<>();
         try {
-            for(CSVRecord record : CSVFormat.DEFAULT.parse(in)) {
+            for (CSVRecord record : CSVFormat.DEFAULT.parse(in)) {
                 List<Atom> row = new ArrayList<>();
-                for(String field : record) {
+                for (String field : record) {
                     row.add(new Atom(field));
                 }
                 data.add(new Atom(row));

@@ -11,7 +11,7 @@ import java.util.List;
 public class TimeNowTZ extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if (args.size() == 0) {
+        if (args.isEmpty()) {
             // Local time
             LocalDateTime now = LocalDateTime.now();
             return new Atom(new Time(Duration.ofHours(now.getHour()).plusMinutes(now.getMinute()).plusSeconds(now.getSecond()).plusNanos(now.getNano())));

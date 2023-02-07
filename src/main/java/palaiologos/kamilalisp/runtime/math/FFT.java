@@ -18,13 +18,12 @@ public class FFT extends PrimitiveFunction implements Lambda {
      * Computes the discrete Fourier transform (DFT) of the given complex vector, storing the result back into the vector.
      * The vector can have any length. This is a wrapper function.
      */
-    public static void transform(MathContext mc, BigDecimal[] real, BigDecimal[] imag) {
+    private static void transform(MathContext mc, BigDecimal[] real, BigDecimal[] imag) {
         int n = real.length;
         if (n != imag.length)
             throw new IllegalArgumentException("Mismatched lengths");
         if (n == 0) {
-        }
-        else if ((n & (n - 1)) == 0)  // Is power of 2
+        } else if ((n & (n - 1)) == 0)  // Is power of 2
             transformRadix2(mc, real, imag);
         else  // More complicated algorithm for arbitrary sizes
             transformBluestein(mc, real, imag);
@@ -44,7 +43,7 @@ public class FFT extends PrimitiveFunction implements Lambda {
      * Computes the discrete Fourier transform (DFT) of the given complex vector, storing the result back into the vector.
      * The vector's length must be a power of 2. Uses the Cooley-Tukey decimation-in-time radix-2 algorithm.
      */
-    public static void transformRadix2(MathContext mc, BigDecimal[] real, BigDecimal[] imag) {
+    private static void transformRadix2(MathContext mc, BigDecimal[] real, BigDecimal[] imag) {
         // Length variables
         int n = real.length;
         if (n != imag.length)
@@ -100,7 +99,7 @@ public class FFT extends PrimitiveFunction implements Lambda {
      * The vector can have any length. This requires the convolution function, which in turn requires the radix-2 FFT function.
      * Uses Bluestein's chirp z-transform algorithm.
      */
-    public static void transformBluestein(MathContext mc, BigDecimal[] real, BigDecimal[] imag) {
+    private static void transformBluestein(MathContext mc, BigDecimal[] real, BigDecimal[] imag) {
         // Find a power-of-2 convolution length m such that m >= n * 2 + 1
         int n = real.length;
         if (n != imag.length)
@@ -113,7 +112,7 @@ public class FFT extends PrimitiveFunction implements Lambda {
         BigDecimal[] cosTable = new BigDecimal[n];
         BigDecimal[] sinTable = new BigDecimal[n];
         for (int i = 0; i < n; i++) {
-            int j = (int)((long)i * i % (n * 2));  // This is more accurate than j = i * i
+            int j = (int) ((long) i * i % (n * 2));  // This is more accurate than j = i * i
             BigDecimal quot = BigDecimal.valueOf(j).divide(BigDecimal.valueOf(n), mc);
             cosTable[i] = BigDecimalMath.cos(BigDecimalMath.pi(mc).multiply(quot), mc);
             sinTable[i] = BigDecimalMath.sin(BigDecimalMath.pi(mc).multiply(quot), mc);
@@ -148,7 +147,7 @@ public class FFT extends PrimitiveFunction implements Lambda {
 
         // Postprocessing
         for (int i = 0; i < n; i++) {
-            real[i] =  creal[i].multiply(cosTable[i]).add(cimag[i].multiply(sinTable[i]));
+            real[i] = creal[i].multiply(cosTable[i]).add(cimag[i].multiply(sinTable[i]));
             imag[i] = creal[i].negate().multiply(sinTable[i]).add(cimag[i].multiply(cosTable[i]));
         }
     }
@@ -167,8 +166,8 @@ public class FFT extends PrimitiveFunction implements Lambda {
     /*
      * Computes the circular convolution of the given complex vectors. Each vector's length must be the same.
      */
-    public static void convolve(MathContext mc, BigDecimal[] xreal, BigDecimal[] ximag,
-                                BigDecimal[] yreal, BigDecimal[] yimag, BigDecimal[] outreal, BigDecimal[] outimag) {
+    private static void convolve(MathContext mc, BigDecimal[] xreal, BigDecimal[] ximag,
+                                 BigDecimal[] yreal, BigDecimal[] yimag, BigDecimal[] outreal, BigDecimal[] outimag) {
 
         int n = xreal.length;
         if (n != ximag.length || n != yreal.length || n != yimag.length

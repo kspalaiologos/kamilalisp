@@ -38,7 +38,7 @@ public class Format extends PrimitiveFunction implements SpecialForm {
                         throw new TypeError("Expected `}' in format string.");
                     }
                     String code = format.substring(i + 1, j);
-                    List<Atom> parsed = Parser.parse(code.startsWith("?") ? code.substring(1) : ("(" + code + "\n)"));
+                    List<Atom> parsed = Parser.parse(!code.isEmpty() && code.charAt(0) == '?' ? code.substring(1) : ("(" + code + "\n)"));
                     Atom expression = parsed.get(0);
                     Atom result = Evaluation.evaluate(env, expression);
                     sb.append(result.getType() == Type.STRING ? result.getString() : result.toString());

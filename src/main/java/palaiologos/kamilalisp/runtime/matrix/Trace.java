@@ -21,7 +21,7 @@ public class Trace extends PrimitiveFunction implements Lambda {
 
         List<List<Atom>> l1 = a1.getList().stream().map(Atom::getList).toList();
         int diagonalLen = Math.min(l1.size(), l1.get(0).size());
-        if(diagonalLen == 0)
+        if (diagonalLen == 0)
             return new Atom(BigInteger.ZERO);
         return new Atom(l1.stream().limit(diagonalLen).map(x -> x.get(diagonalLen).getComplex()).reduce(BigComplex.ZERO, BigComplex::add));
     }
