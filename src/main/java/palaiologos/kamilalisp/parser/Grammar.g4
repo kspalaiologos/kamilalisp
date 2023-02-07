@@ -13,6 +13,7 @@ form: form_rem (('@'|'∘') form_rem)*
     ;
 
 form_rem: literal
+        | obj
         | form_rem DOLLAR sqlist
         | form_rem PERCENT sqlist
         | form_rem DOT (number | symbol)
@@ -32,6 +33,11 @@ any_list: list_ | sqlist ;
 
 list_: '(' list_form* ')' ;
 sqlist: '[' list_form* ']' ;
+
+obj : '%{' pair (',' pair)* '}'
+    | '%{' '}'
+    ;
+pair : form ARROW form ;
 
 reader_macro
     : quote
@@ -90,7 +96,7 @@ number
 
 nil_: NIL;
 
-symbol: NAME;
+symbol: NAME | ARROW;
 
 // Lexers
 //--------------------------------------------------------------------
@@ -122,6 +128,8 @@ FLOAT_EXP
 fragment
 HEXD: [0-9a-fA-F] ;
 
+ARROW: '=>' ;
+
 HEX: '0' [xX] HEXD+ ;
 BIN: '0' [bB] [10]+ ;
 LONG: '-'? [0-9]+;
@@ -137,10 +145,10 @@ PERCENT: '%' ;
 DOT: '.' ;
 
 fragment
-NOTID: ~('∘' | '⍬' | '⍨' | '.' | '@' | '$' | '%' | '^' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | '&') ;
+NOTID: ~('∘' | '⍬' | '⍨' | '.' | '@' | '$' | '%' | '^' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | '{' | '}' | ';' | '&') ;
 
 fragment
-NOTID_START: ~('∘' | '.' | '⍬' | '⍨' | '#' | '^' | '%' |'$' | '\\' | '\'' | '@' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ';' | ':' | '&' | '0'..'9') ;
+NOTID_START: ~('∘' | '.' | '⍬' | '⍨' | '#' | '^' | '%' |'$' | '\\' | '\'' | '@' | '\r' | '\n' | ' ' | '(' | ')' | '{' | '}' | '[' | ']' | ';' | ':' | '&' | '0'..'9') ;
 
 NAME: '...'? NOTID_START NOTID* ;
 

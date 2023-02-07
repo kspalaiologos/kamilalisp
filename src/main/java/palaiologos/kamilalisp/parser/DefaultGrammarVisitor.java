@@ -6,13 +6,11 @@ import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.CodeAtom;
 import palaiologos.kamilalisp.atom.Identifier;
 import palaiologos.kamilalisp.runtime.*;
+import palaiologos.kamilalisp.runtime.Map;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -78,6 +76,15 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
         }
 
         throw new RuntimeException("Internal error.");
+    }
+
+    @Override
+    public Atom visitObj(GrammarParser.ObjContext ctx) {
+        HashMap<Atom, Atom> data = new HashMap<>();
+        for (int i = 0; i < ctx.pair().size(); i++) {
+            data.put(visit(ctx.pair(i).form(0)), visit(ctx.pair(i).form(1)));
+        }
+        return new CodeAtom(new InlineMap(data, ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
     }
 
     @Override
