@@ -27,7 +27,7 @@ public class CsvWrite extends PrimitiveFunction implements Lambda {
             }
             printer.flush();
             printer.close();
-            return new Atom(sw.toString());
+            return new Atom(sw.toString(), false);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

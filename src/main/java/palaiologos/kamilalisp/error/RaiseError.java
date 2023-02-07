@@ -1,9 +1,7 @@
 package palaiologos.kamilalisp.error;
 
-import palaiologos.kamilalisp.atom.Identifier;
-
 public class RaiseError extends Error {
-    public Identifier id;
+    public String id;
 
     public RaiseError() {
     }
@@ -12,7 +10,7 @@ public class RaiseError extends Error {
         super(message);
     }
 
-    public RaiseError(Identifier id, String message) {
+    public RaiseError(String id, String message) {
         super(message);
         this.id = id;
     }

@@ -21,7 +21,7 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
         // (lambda x (+ x x))
         assertArity(args, 2);
 
-        List<Identifier> bindings;
+        List<String> bindings;
         if (args.get(0).getType() == Type.LIST) {
             bindings = args.get(0).getList().stream().map(Atom::getIdentifier).toList();
         } else if (args.get(0).getType() == Type.IDENTIFIER) {
@@ -31,10 +31,10 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
         }
 
         for (int i = 0; i < bindings.size(); i++)
-            if (Identifier.of(bindings.get(i)).startsWith("...") && i != bindings.size() - 1)
+            if ((bindings.get(i)).startsWith("...") && i != bindings.size() - 1)
                 throw new TypeError("Cannot use a name ends with `...' as a binding.");
 
-        boolean wantsVararg = !bindings.isEmpty() && Identifier.of(bindings.get(bindings.size() - 1)).startsWith("...");
+        boolean wantsVararg = !bindings.isEmpty() && (bindings.get(bindings.size() - 1)).startsWith("...");
 
         Atom code = args.get(1);
 
@@ -50,13 +50,13 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
     }
 
     public class DfnClass implements Lambda {
-        List<Identifier> bindings;
+        List<String> bindings;
         boolean wantsVararg;
         Atom code;
         Environment env;
         int f_line, f_col;
 
-        DfnClass(List<Identifier> bindings, boolean wantsVararg, Atom code, Environment env, int f_line, int f_col) {
+        DfnClass(List<String> bindings, boolean wantsVararg, Atom code, Environment env, int f_line, int f_col) {
             this.bindings = bindings;
             this.wantsVararg = wantsVararg;
             this.code = code;
@@ -67,12 +67,12 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
 
         @Override
         public String stringify() {
-            return "(λ " + bindings.stream().map(Identifier::of).collect(Collectors.joining(" ")) + " . " + code.toString() + ")";
+            return "(λ " + String.join(" ", bindings) + " . " + code.toString() + ")";
         }
 
         @Override
         public String frameString() {
-            return "(λ " + bindings.stream().map(Identifier::of).collect(Collectors.joining(" ")) + " . " + code.shortString() + ")";
+            return "(λ " + String.join(" ", bindings) + " . " + code.shortString() + ")";
         }
 
         @Override
@@ -83,13 +83,13 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
                 if (!wantsVararg) {
                     assertArity(args, bindings.size());
                     for (int i = 0; i < bindings.size(); i++)
-                        descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
+                        descendantEnv.set(bindings.get(i), args.get(i));
                 } else {
                     if (args.size() < bindings.size() - 1)
                         throw new TypeError("Expected at least " + (bindings.size() - 1) + " arguments to `" + frameString() + "'.");
                     for (int i = 0; i < bindings.size() - 1; i++)
-                        descendantEnv.set(Identifier.of(bindings.get(i)), args.get(i));
-                    descendantEnv.set(Identifier.of(bindings.get(bindings.size() - 1)), new Atom(args.subList(bindings.size() - 1, args.size())));
+                        descendantEnv.set(bindings.get(i), args.get(i));
+                    descendantEnv.set(bindings.get(bindings.size() - 1), new Atom(args.subList(bindings.size() - 1, args.size())));
                 }
                 Atom a = Evaluation.evaluate(descendantEnv, code);
                 if (a.getType() == Type.LIST && !a.getList().isEmpty() && a.getList().get(0).getType() == Type.CALLABLE && a.getList().get(0).getCallable() instanceof Self.SelfThunk selfThunk) {

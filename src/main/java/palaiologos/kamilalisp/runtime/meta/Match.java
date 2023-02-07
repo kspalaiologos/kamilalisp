@@ -22,7 +22,7 @@ public class Match extends PrimitiveFunction implements SpecialForm {
         return a.getList().get(0).getCallable() instanceof Quote;
     }
 
-    private static Identifier getIdFromPattern(Atom a) {
+    private static String getIdFromPattern(Atom a) {
         Callable c = a.getList().get(0).getCallable();
         return c.apply(null, null).getIdentifier();
     }
@@ -30,8 +30,8 @@ public class Match extends PrimitiveFunction implements SpecialForm {
     private static boolean match(Atom a, Atom pat, Environment env) {
         // Check if pat is a quoted variable.
         if (isIdInPattern(pat)) {
-            Identifier id = getIdFromPattern(pat);
-            env.set(Identifier.of(id), a);
+            String id = getIdFromPattern(pat);
+            env.set(id, a);
             return true;
         }
 
@@ -52,8 +52,7 @@ public class Match extends PrimitiveFunction implements SpecialForm {
                     return false;
                 Atom patternAtom = patList.get(i);
                 if (isIdInPattern(patternAtom)) {
-                    Identifier id = getIdFromPattern(patternAtom);
-                    String s = Identifier.of(id);
+                    String s = getIdFromPattern(patternAtom);
                     if (s.startsWith("...")) {
                         // This is the last element of the pattern list.
                         // Bind the identifier to the rest of the list.

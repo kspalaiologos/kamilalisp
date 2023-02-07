@@ -4,7 +4,6 @@ import ch.obermuhlner.math.big.BigComplex;
 import org.apache.commons.text.StringEscapeUtils;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.CodeAtom;
-import palaiologos.kamilalisp.atom.Identifier;
 import palaiologos.kamilalisp.runtime.Map;
 import palaiologos.kamilalisp.runtime.*;
 
@@ -222,7 +221,7 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
     @Override
     public Atom visitString_(GrammarParser.String_Context ctx) {
         String msg = ctx.getText().substring(1, ctx.getText().length() - 1);
-        return new CodeAtom(StringEscapeUtils.unescapeJava(msg)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+        return new CodeAtom(StringEscapeUtils.unescapeJava(msg), false).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
     }
 
     @Override
@@ -273,6 +272,6 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
 
     @Override
     public Atom visitSymbol(GrammarParser.SymbolContext ctx) {
-        return new CodeAtom(Identifier.of(ctx.NAME().getText())).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+        return new CodeAtom(ctx.NAME().getText(), true).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
     }
 }

@@ -26,12 +26,22 @@ public class Atom implements Comparable<Atom> {
         this.type = Type.LIST;
     }
 
-    public Atom(String data) {
+    public Atom(@Nonnull String data, boolean isSymbol) {
+        if(isSymbol) {
+            this.type = Type.IDENTIFIER;
+            this.data = data.intern();
+        } else {
+            this.type = Type.STRING;
+            this.data = data;
+        }
+    }
+
+    public Atom(@Nonnull String data) {
         this.data = data;
         this.type = Type.STRING;
     }
 
-    public Atom(BigDecimal data) {
+    public Atom(@Nonnull BigDecimal data) {
         if (data.scale() <= 0 || data.stripTrailingZeros().scale() <= 0) {
             this.data = data.toBigInteger();
             this.type = Type.INTEGER;
@@ -41,17 +51,17 @@ public class Atom implements Comparable<Atom> {
         }
     }
 
-    public Atom(Userdata u) {
+    public Atom(@Nonnull Userdata u) {
         this.data = u;
         this.type = Type.USERDATA;
     }
 
-    public Atom(BigInteger data) {
+    public Atom(@Nonnull BigInteger data) {
         this.data = data;
         this.type = Type.INTEGER;
     }
 
-    public Atom(BigComplex data) {
+    public Atom(@Nonnull BigComplex data) {
         if (!data.isReal()) {
             this.data = data;
             this.type = Type.COMPLEX;
@@ -66,7 +76,7 @@ public class Atom implements Comparable<Atom> {
         }
     }
 
-    public Atom(List<Atom> data) {
+    public Atom(@Nonnull List<Atom> data) {
         this.data = data;
         this.type = Type.LIST;
     }
@@ -76,7 +86,7 @@ public class Atom implements Comparable<Atom> {
         this.type = Type.INTEGER;
     }
 
-    public Atom(Callable data) {
+    public Atom(@Nonnull Callable data) {
         if (data instanceof ReactiveFunction) {
             this.type = Type.LIST;
             Atom contents = new Atom();
@@ -87,11 +97,6 @@ public class Atom implements Comparable<Atom> {
             this.data = data;
             this.type = Type.CALLABLE;
         }
-    }
-
-    public Atom(Identifier data) {
-        this.data = data;
-        this.type = Type.IDENTIFIER;
     }
 
     public Type getType() {
@@ -163,7 +168,7 @@ public class Atom implements Comparable<Atom> {
 
     public List<Atom> getList() {
         if (type == Type.STRING) {
-            return ((String) data).chars().mapToObj(c -> new Atom(String.valueOf((char) c))).collect(Collectors.toList());
+            return ((String) data).chars().mapToObj(c -> new Atom(String.valueOf((char) c), false)).collect(Collectors.toList());
         }
 
         if (type != Type.LIST) {
@@ -191,18 +196,18 @@ public class Atom implements Comparable<Atom> {
 
     public Callable getCallable() {
         if (type != Type.CALLABLE) {
-            throw new TypeError("Cannot get callable object from non-callable atom" + (type == Type.IDENTIFIER ? " (" + Identifier.of(getIdentifier()) + " not bound?)" : ""));
+            throw new TypeError("Cannot get callable object from non-callable atom" + (type == Type.IDENTIFIER ? " (" + getIdentifier() + " not bound?)" : ""));
         }
 
         return (Callable) data;
     }
 
-    public Identifier getIdentifier() {
+    public String getIdentifier() {
         if (type != Type.IDENTIFIER) {
             throw new TypeError("Cannot get identifier from non-identifier atom " + typeString());
         }
 
-        return (Identifier) data;
+        return (String) data;
     }
 
     public BigComplex getComplex() {
@@ -245,7 +250,7 @@ public class Atom implements Comparable<Atom> {
             case CALLABLE:
                 return getCallable().stringify();
             case IDENTIFIER:
-                return Identifier.of(getIdentifier());
+                return getIdentifier();
             case INTEGER:
                 return getInteger().toString();
             case COMPLEX:
@@ -315,7 +320,7 @@ public class Atom implements Comparable<Atom> {
             case CALLABLE:
                 return getCallable().stringify();
             case IDENTIFIER:
-                return Identifier.of(getIdentifier());
+                return getIdentifier();
             case COMPLEX:
                 return getComplex().re.toString() + "J" + getComplex().im.toString();
             case USERDATA:
@@ -346,7 +351,7 @@ public class Atom implements Comparable<Atom> {
             case CALLABLE:
                 return "(sic) " + getCallable().frameString() + ".";
             case IDENTIFIER:
-                return Identifier.of(getIdentifier());
+                return getIdentifier();
             case COMPLEX:
                 return getComplex().re.toString() + "J" + getComplex().im.toString();
             case USERDATA:
@@ -410,7 +415,7 @@ public class Atom implements Comparable<Atom> {
                     return getCallable().equals(other.getCallable());
                 }
                 case IDENTIFIER -> {
-                    return Identifier.of(getIdentifier()).equals(Identifier.of(other.getIdentifier()));
+                    return getIdentifier().equals(other.getIdentifier());
                 }
                 case COMPLEX -> {
                     return getComplex().equals(other.getComplex());
@@ -481,9 +486,9 @@ public class Atom implements Comparable<Atom> {
             }
             return 0;
         } else if (type == Type.IDENTIFIER && a.type == Type.IDENTIFIER) {
-            return Identifier.of(getIdentifier()).compareTo(Identifier.of(a.getIdentifier()));
+            return getIdentifier().compareTo(a.getIdentifier());
         } else if (type == Type.CALLABLE && a.type == Type.CALLABLE) {
-            return Integer.valueOf(getCallable().hashCode()).compareTo(a.getCallable().hashCode());
+            return Integer.compare(getCallable().hashCode(), a.getCallable().hashCode());
         } else if (type == Type.USERDATA && a.type == Type.USERDATA) {
             return getUserdata().compareTo(a.getUserdata());
         } else {
@@ -494,7 +499,7 @@ public class Atom implements Comparable<Atom> {
     public Atom dot(Object index) {
         if (type == Type.STRING) {
             if (index instanceof BigDecimal) {
-                return new Atom(String.valueOf(getString().charAt(((BigDecimal) index).intValue())));
+                return new Atom(String.valueOf(getString().charAt(((BigDecimal) index).intValue())), false);
             } else {
                 throw new TypeError("Expected integer index.");
             }

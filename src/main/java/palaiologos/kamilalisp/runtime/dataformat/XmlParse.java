@@ -18,14 +18,14 @@ import java.util.List;
 public class XmlParse extends PrimitiveFunction implements Lambda {
     private static Atom xmlToList(Node n) {
         List<Atom> data = new ArrayList<>();
-        data.add(new Atom(n.getNodeName()));
+        data.add(new Atom(n.getNodeName(), false));
         if (n.getChildNodes().getLength() > 0 && n.getChildNodes().item(0).getNodeType() == Node.TEXT_NODE) {
-            data.add(new Atom(n.getChildNodes().item(0).getNodeValue()));
+            data.add(new Atom(n.getChildNodes().item(0).getNodeValue(), false));
             if (n.getAttributes() != null) {
                 List<Atom> attribs = new ArrayList<>();
                 for (int i = 0; i < n.getAttributes().getLength(); i++) {
                     Node attr = n.getAttributes().item(i);
-                    attribs.add(new Atom(List.of(new Atom(attr.getNodeName()), new Atom(attr.getNodeValue()))));
+                    attribs.add(new Atom(List.of(new Atom(attr.getNodeName(), false), new Atom(attr.getNodeValue(), false))));
                 }
                 data.add(new Atom(attribs));
             } else {
@@ -38,12 +38,12 @@ public class XmlParse extends PrimitiveFunction implements Lambda {
             }
             data.add(new Atom(children));
         } else {
-            data.add(new Atom(n.getNodeValue() == null ? "" : n.getNodeValue()));
+            data.add(new Atom(n.getNodeValue() == null ? "" : n.getNodeValue(), false));
             if (n.getAttributes() != null) {
                 List<Atom> attribs = new ArrayList<>();
                 for (int i = 0; i < n.getAttributes().getLength(); i++) {
                     Node attr = n.getAttributes().item(i);
-                    attribs.add(new Atom(List.of(new Atom(attr.getNodeName()), new Atom(attr.getNodeValue()))));
+                    attribs.add(new Atom(List.of(new Atom(attr.getNodeName(), false), new Atom(attr.getNodeValue(), false))));
                 }
                 data.add(new Atom(attribs));
             } else {

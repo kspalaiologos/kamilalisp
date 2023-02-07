@@ -13,7 +13,7 @@ public class Raise extends PrimitiveFunction implements Lambda {
             Atom arg = args.get(0);
             if (arg.getType() != Type.STRING)
                 throw new RuntimeException("Expected string in `raise'.");
-            throw new RaiseError(Identifier.of("generic-error"), arg.getString());
+            throw new RaiseError("generic-error", arg.getString());
         } else if (args.size() == 2) {
             Atom id = args.get(0);
             Atom message = args.get(1);

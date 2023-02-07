@@ -19,7 +19,7 @@ public class JsonWrite extends PrimitiveFunction implements Lambda {
             case REAL:
                 return a.getReal().toString();
             case IDENTIFIER: {
-                String data = Identifier.of(a.getIdentifier());
+                String data = a.getIdentifier();
                 if (data.equalsIgnoreCase("true") || data.equalsIgnoreCase("false") || data.equalsIgnoreCase("null"))
                     return data;
                 else

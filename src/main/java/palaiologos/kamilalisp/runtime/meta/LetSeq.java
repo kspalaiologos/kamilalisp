@@ -14,13 +14,13 @@ public class LetSeq extends PrimitiveFunction implements SpecialForm {
         for (Atom arg : args) {
             if (arg.getType() == Type.LIST && !arg.getList().isEmpty()) {
                 if (arg.getList().get(0).getType() == Type.IDENTIFIER) {
-                    switch (Identifier.of(arg.getList().get(0).getIdentifier())) {
+                    switch (arg.getList().get(0).getIdentifier()) {
                         case "⍥←", "defun" -> {
                             List<Atom> declaration = arg.getList();
                             if (declaration.get(1).getType() != Type.IDENTIFIER) {
                                 throw new RuntimeException("Expected identifier in `defun' declaration in `let-seq'.");
                             }
-                            String name = Identifier.of(declaration.get(1).getIdentifier());
+                            String name = declaration.get(1).getIdentifier();
                             Atom lambdaArgs = declaration.get(2);
                             Atom lambdaValue = declaration.get(3);
                             Atom lambda = Evaluation.evaluate(newEnv, Dfn.INSTANCE, List.of(lambdaArgs, lambdaValue));

@@ -13,8 +13,8 @@ public class CodeAtom extends Atom {
     public CodeAtom() {
     }
 
-    public CodeAtom(String data) {
-        super(data);
+    public CodeAtom(String data, boolean isSymbol) {
+        super(data, isSymbol);
     }
 
     public CodeAtom(BigDecimal data) {
@@ -30,10 +30,6 @@ public class CodeAtom extends Atom {
     }
 
     public CodeAtom(Callable data) {
-        super(data);
-    }
-
-    public CodeAtom(Identifier data) {
         super(data);
     }
 

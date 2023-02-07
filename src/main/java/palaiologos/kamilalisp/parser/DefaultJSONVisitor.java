@@ -3,7 +3,6 @@ package palaiologos.kamilalisp.parser;
 import org.apache.commons.text.StringEscapeUtils;
 import org.pcollections.HashTreePMap;
 import palaiologos.kamilalisp.atom.Atom;
-import palaiologos.kamilalisp.atom.Identifier;
 import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
 import java.math.BigDecimal;
@@ -45,9 +44,9 @@ public class DefaultJSONVisitor extends JSONBaseVisitor<Atom> {
                 return new Atom(new BigDecimal(msg));
             }
         }
-        if (ctx.TRUE() != null) return new Atom(Identifier.of("true"));
-        if (ctx.FALSE() != null) return new Atom(Identifier.of("false"));
-        if (ctx.NULL() != null) return new Atom(Identifier.of("null"));
+        if (ctx.TRUE() != null) return new Atom("true", true);
+        if (ctx.FALSE() != null) return new Atom("false", true);
+        if (ctx.NULL() != null) return new Atom("null", true);
 
         throw new RuntimeException("Unknown value: " + ctx.getText());
     }
