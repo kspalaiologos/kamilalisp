@@ -9,6 +9,7 @@ import palaiologos.kamilalisp.runtime.array.hof.*;
 import palaiologos.kamilalisp.runtime.array.sais.SacaBwt;
 import palaiologos.kamilalisp.runtime.array.sais.SacaSais;
 import palaiologos.kamilalisp.runtime.array.sais.SacaUnbwt;
+import palaiologos.kamilalisp.runtime.data.csv.CsvParse;
 import palaiologos.kamilalisp.runtime.datetime.*;
 import palaiologos.kamilalisp.runtime.hashmap.*;
 import palaiologos.kamilalisp.runtime.image.LoadImage;
@@ -30,8 +31,8 @@ import palaiologos.kamilalisp.runtime.regex.RegexMatches;
 import palaiologos.kamilalisp.runtime.regex.RegexReplace;
 import palaiologos.kamilalisp.runtime.regex.RegexSplit;
 import palaiologos.kamilalisp.runtime.string.*;
-import palaiologos.kamilalisp.runtime.xml.XmlParse;
-import palaiologos.kamilalisp.runtime.xml.XmlWrite;
+import palaiologos.kamilalisp.runtime.data.xml.XmlParse;
+import palaiologos.kamilalisp.runtime.data.xml.XmlWrite;
 
 import java.math.BigDecimal;
 
@@ -258,6 +259,8 @@ public class FunctionRegistry {
 
         env.setPrimitive("xml:parse", new Atom(new XmlParse()));
         env.setPrimitive("xml:write", new Atom(new XmlWrite()));
+
+        env.setPrimitive("csv:parse", new Atom(new CsvParse()));
 
         env.setPrimitive("date:from", new Atom(new DateTimeFrom()));
         env.setPrimitive("time:from", new Atom(new TimeFrom()));

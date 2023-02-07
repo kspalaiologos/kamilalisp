@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime.xml;
+package palaiologos.kamilalisp.runtime.data.xml;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

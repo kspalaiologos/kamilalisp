@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime.xml;
+package palaiologos.kamilalisp.runtime.data.xml;
 
 import com.google.common.io.CharSource;
 import org.w3c.dom.Document;
@@ -71,7 +71,6 @@ public class XmlParse extends PrimitiveFunction implements Lambda {
             for (int i = 0; i < arg.getList().size(); i++)
                 data[i] = arg.getList().get(i).getInteger().byteValueExact();
             xmldata = new String(data, StandardCharsets.UTF_8);
-
         } else if(arg.getType() == Type.STRING) {
             // Assume a string.
             xmldata = arg.getString();
