@@ -1,7 +1,11 @@
 package palaiologos.kamilalisp.runtime.data.json;
 
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.pcollections.HashTreePMap;
 import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.parser.*;
 import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
 import java.math.BigDecimal;
@@ -31,7 +35,16 @@ public class JsonParse extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("json:parse not defined for: " + arg.getType());
         }
 
-        return Atom.NULL;
+        JSONLexer lex = new JSONLexer(CharStreams.fromString(jsondata));
+        lex.removeErrorListeners();
+        lex.addErrorListener(new Parser.ThrowingErrorListener(0));
+        CommonTokenStream tokens = new CommonTokenStream(lex);
+        JSONParser parser = new JSONParser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(new Parser.ThrowingErrorListener(0));
+        ParseTree tree = parser.json();
+        DefaultGrammarVisitor visitor = new DefaultGrammarVisitor(0);
+        return visitor.visit(tree);
     }
 
     @Override
