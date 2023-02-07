@@ -5,6 +5,7 @@
 - graphics/sound
 - extend regex library
 - matrix stuff
+- dfn: multiple statements
 
 book:
 - huffman coding, elias gamma, histograms, fft, ski calculus, matrix algos, Chinese Remainder Theorem?

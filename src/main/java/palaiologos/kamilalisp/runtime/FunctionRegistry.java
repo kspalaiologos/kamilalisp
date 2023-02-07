@@ -29,6 +29,7 @@ import palaiologos.kamilalisp.runtime.matrix.Transpose;
 import palaiologos.kamilalisp.runtime.meta.*;
 import palaiologos.kamilalisp.runtime.net.Fetch;
 import palaiologos.kamilalisp.runtime.net.NetClient;
+import palaiologos.kamilalisp.runtime.net.NetServer;
 import palaiologos.kamilalisp.runtime.net.Wget;
 import palaiologos.kamilalisp.runtime.regex.RegexMatches;
 import palaiologos.kamilalisp.runtime.regex.RegexReplace;
@@ -288,6 +289,7 @@ public class FunctionRegistry {
         env.setPrimitive("net:wget", new Atom(new Wget()));
         env.setPrimitive("net:fetch", new Atom(new Fetch()));
         env.setPrimitive("net:client", new Atom(new NetClient()));
+        env.setPrimitive("net:server", new Atom(new NetServer()));
 
         env.setPrimitive("hashmap:from-list", "⍔⌿", new Atom(new HashMapFromList()));
         env.setPrimitive("hashmap:as-list", "⍔⍀", new Atom(new HashMapAsList()));
