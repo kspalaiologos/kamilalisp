@@ -14,6 +14,7 @@ import java.util.List;
 public class NetClient extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
+        assertArity(args, 2);
         String host = args.get(0).getString();
         int port = args.get(1).getInteger().intValueExact();
         try {

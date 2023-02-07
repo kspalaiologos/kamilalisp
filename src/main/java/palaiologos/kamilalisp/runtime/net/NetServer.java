@@ -11,6 +11,7 @@ import java.util.List;
 public class NetServer extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
+        assertArity(args, 2);
         int port = args.get(0).getInteger().intValueExact();
         Callable callable = args.get(1).getCallable();
         try {
