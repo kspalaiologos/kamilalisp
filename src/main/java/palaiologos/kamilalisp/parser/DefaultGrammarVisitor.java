@@ -5,8 +5,8 @@ import org.apache.commons.text.StringEscapeUtils;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.CodeAtom;
 import palaiologos.kamilalisp.atom.Identifier;
-import palaiologos.kamilalisp.runtime.*;
 import palaiologos.kamilalisp.runtime.Map;
+import palaiologos.kamilalisp.runtime.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -68,7 +68,7 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
             // Depth
             return new CodeAtom(new Depth(visit(ctx.form_rem()), normalListFromSquare(ctx.sqlist()), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
         } else if (ctx.DOT() != null) {
-            if(ctx.number() != null) {
+            if (ctx.number() != null) {
                 return new CodeAtom(new Dot(visit(ctx.form_rem()), new BigDecimal(ctx.number().getText()), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
             } else {
                 return new CodeAtom(new Dot(visit(ctx.form_rem()), ctx.symbol().getText(), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);

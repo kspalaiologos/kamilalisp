@@ -45,8 +45,8 @@ public class OuterProduct extends PrimitiveFunction implements Lambda {
             throw new TypeError("outer-product called with too few arguments.");
         }
 
-        if(args.get(0).getType() == Type.CALLABLE) {
-            if(args.size() <= 2) {
+        if (args.get(0).getType() == Type.CALLABLE) {
+            if (args.size() <= 2) {
                 throw new TypeError("outer-product called with too few arguments.");
             }
 

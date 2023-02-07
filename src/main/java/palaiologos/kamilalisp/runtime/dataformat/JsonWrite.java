@@ -20,7 +20,7 @@ public class JsonWrite extends PrimitiveFunction implements Lambda {
                 return a.getReal().toString();
             case IDENTIFIER: {
                 String data = Identifier.of(a.getIdentifier());
-                if(data.equalsIgnoreCase("true") || data.equalsIgnoreCase("false") || data.equalsIgnoreCase("null"))
+                if (data.equalsIgnoreCase("true") || data.equalsIgnoreCase("false") || data.equalsIgnoreCase("null"))
                     return data;
                 else
                     throw new RuntimeException("json:write not defined for literal: " + data);

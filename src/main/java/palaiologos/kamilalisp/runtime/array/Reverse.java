@@ -30,7 +30,7 @@ public class Reverse extends PrimitiveFunction implements Lambda {
                     return l;
                 if (l.getType() == Type.LIST)
                     return new Atom(Lists.reverse(l.getList()));
-                else if(l.getType() == Type.STRING)
+                else if (l.getType() == Type.STRING)
                     return new Atom(new StringBuilder(l.getString()).reverse().toString());
                 else
                     return l;

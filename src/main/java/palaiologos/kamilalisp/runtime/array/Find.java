@@ -24,9 +24,9 @@ public class Find extends PrimitiveFunction implements Lambda {
         if (a.getType() == Type.STRING && b.getType() == Type.STRING) {
             int index = a.getString().indexOf(b.getString());
             List<Integer> indices = new ArrayList<>();
-            while(index >= 0) {
+            while (index >= 0) {
                 indices.add(index);
-                index = a.getString().indexOf(b.getString(), index+1);
+                index = a.getString().indexOf(b.getString(), index + 1);
             }
             List<Atom> result = iotaUnderbar(indices);
             // Pad to length of a.
@@ -39,9 +39,9 @@ public class Find extends PrimitiveFunction implements Lambda {
             List<Atom> l2 = b.getList();
             List<Integer> indices = new ArrayList<>();
             int index = Collections.indexOfSubList(l1, l2);
-            while(index >= 0) {
+            while (index >= 0) {
                 indices.add(index);
-                l1 = l1.subList(index+1, l1.size());
+                l1 = l1.subList(index + 1, l1.size());
                 index = Collections.indexOfSubList(l1, l2);
             }
             List<Atom> result = iotaUnderbar(indices);

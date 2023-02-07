@@ -10,7 +10,7 @@ public class SacaSais extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         assertArity(args, 1);
-        if(args.get(0).getType() == Type.LIST) {
+        if (args.get(0).getType() == Type.LIST) {
             List<BigInteger> list = args.get(0).getList().stream().map(Atom::getInteger).toList();
             if (list.stream().allMatch(x -> x.compareTo(BigInteger.valueOf(Byte.MIN_VALUE)) >= 0 && x.compareTo(BigInteger.valueOf(Byte.MAX_VALUE)) < 0)) {
                 byte[] data = new byte[list.size()];
@@ -42,7 +42,7 @@ public class SacaSais extends PrimitiveFunction implements Lambda {
                 SAIS.suffixsort(data, sa, data.length, max);
                 return new Atom(Arrays.stream(sa).mapToObj(x -> new Atom(BigInteger.valueOf(x))).toList());
             }
-        } else if(args.get(0).getType() == Type.STRING) {
+        } else if (args.get(0).getType() == Type.STRING) {
             String str = args.get(0).getString();
             int[] sa = new int[str.length()];
             SAIS.suffixsort(str, sa, str.length());

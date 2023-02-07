@@ -29,14 +29,14 @@ public class LoadImage extends PrimitiveFunction implements Lambda {
         return new Atom(new AbstractList<>() {
             @Override
             public Atom get(int y) {
-                if(y < 0 || y >= image.getHeight()) {
+                if (y < 0 || y >= image.getHeight()) {
                     throw new IndexOutOfBoundsException();
                 }
 
                 return new Atom(new AbstractList<>() {
                     @Override
                     public Atom get(int x) {
-                        if(x < 0 || x >= image.getWidth()) {
+                        if (x < 0 || x >= image.getWidth()) {
                             throw new IndexOutOfBoundsException();
                         }
 

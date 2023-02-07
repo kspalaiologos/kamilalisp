@@ -28,9 +28,9 @@ public class Index implements SpecialForm {
         indexedAtom.assertTypes(Type.LIST, Type.STRING);
         // Check if every element of args is integer.
         Atom ix;
-        if(args.stream().allMatch(x -> x.getType() == Type.INTEGER)) {
+        if (args.stream().allMatch(x -> x.getType() == Type.INTEGER)) {
             // Treat it as a verbatim list or integer.
-            if(args.size() == 1)
+            if (args.size() == 1)
                 ix = args.get(0);
             else
                 ix = new Atom(args);
@@ -38,7 +38,7 @@ public class Index implements SpecialForm {
             ix = Evaluation.evaluate(env, new Atom(args));
         }
 
-        if(indexedAtom.getType() == Type.LIST) {
+        if (indexedAtom.getType() == Type.LIST) {
             if (ix.getType() == Type.INTEGER) {
                 return indexedAtom.getList().get(ix.getInteger().intValueExact());
             } else if (ix.getType() == Type.REAL) {
@@ -56,14 +56,14 @@ public class Index implements SpecialForm {
             } else {
                 throw new RuntimeException("Can't index with type " + ix.getType());
             }
-        } else if(indexedAtom.getType() == Type.STRING) {
+        } else if (indexedAtom.getType() == Type.STRING) {
             if (ix.getType() == Type.INTEGER) {
                 return new Atom(String.valueOf(indexedAtom.getString().charAt(ix.getInteger().intValueExact())));
             } else if (ix.getType() == Type.REAL) {
                 return new Atom(String.valueOf(indexedAtom.getString().charAt(ix.getReal().intValue())));
             } else if (ix.getType() == Type.LIST) {
                 StringBuilder sb = new StringBuilder();
-                for(Atom a : ix.getList()) {
+                for (Atom a : ix.getList()) {
                     if (a.getType() == Type.INTEGER) {
                         sb.append(indexedAtom.getString().charAt(a.getInteger().intValueExact()));
                     } else if (a.getType() == Type.REAL) {

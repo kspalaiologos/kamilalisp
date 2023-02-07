@@ -23,8 +23,7 @@ public class FFT extends PrimitiveFunction implements Lambda {
         if (n != imag.length)
             throw new IllegalArgumentException("Mismatched lengths");
         if (n == 0) {
-        }
-        else if ((n & (n - 1)) == 0)  // Is power of 2
+        } else if ((n & (n - 1)) == 0)  // Is power of 2
             transformRadix2(mc, real, imag);
         else  // More complicated algorithm for arbitrary sizes
             transformBluestein(mc, real, imag);
@@ -113,7 +112,7 @@ public class FFT extends PrimitiveFunction implements Lambda {
         BigDecimal[] cosTable = new BigDecimal[n];
         BigDecimal[] sinTable = new BigDecimal[n];
         for (int i = 0; i < n; i++) {
-            int j = (int)((long)i * i % (n * 2));  // This is more accurate than j = i * i
+            int j = (int) ((long) i * i % (n * 2));  // This is more accurate than j = i * i
             BigDecimal quot = BigDecimal.valueOf(j).divide(BigDecimal.valueOf(n), mc);
             cosTable[i] = BigDecimalMath.cos(BigDecimalMath.pi(mc).multiply(quot), mc);
             sinTable[i] = BigDecimalMath.sin(BigDecimalMath.pi(mc).multiply(quot), mc);
@@ -148,7 +147,7 @@ public class FFT extends PrimitiveFunction implements Lambda {
 
         // Postprocessing
         for (int i = 0; i < n; i++) {
-            real[i] =  creal[i].multiply(cosTable[i]).add(cimag[i].multiply(sinTable[i]));
+            real[i] = creal[i].multiply(cosTable[i]).add(cimag[i].multiply(sinTable[i]));
             imag[i] = creal[i].negate().multiply(sinTable[i]).add(cimag[i].multiply(cosTable[i]));
         }
     }

@@ -6,9 +6,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class Dot implements ReactiveFunction, SpecialForm {
-    private Object index;
-    private Atom obj;
-    private int line, col;
+    private final Object index;
+    private final Atom obj;
+    private final int line;
+    private final int col;
 
     public Dot(Atom obj, BigDecimal index, int line, int col) {
         this.index = index;

@@ -9,9 +9,9 @@ import java.util.HashMap;
 import java.util.Set;
 
 public class Environment {
+    public static BiMap<String, String> aliases = HashBiMap.create();
     private final HashMap<String, Atom> data;
     private final Environment parent;
-    public static BiMap<String, String> aliases = HashBiMap.create();
 
     public Environment() {
         data = new HashMap<>();

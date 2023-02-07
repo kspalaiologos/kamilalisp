@@ -17,7 +17,7 @@ public class ToASCII extends PrimitiveFunction implements Lambda {
         List<Token> tokens = (List<Token>) lex.getAllTokens();
         StringBuilder sb = new StringBuilder();
         for (Token token : tokens) {
-            if(Environment.aliases.inverse().containsKey(token.getText()))
+            if (Environment.aliases.inverse().containsKey(token.getText()))
                 sb.append(Environment.aliases.inverse().get(token.getText()));
             else
                 sb.append(token.getText());

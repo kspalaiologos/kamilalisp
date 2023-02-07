@@ -9,6 +9,17 @@ import java.util.AbstractList;
 import java.util.List;
 
 public class Explode extends PrimitiveFunction implements Lambda {
+    @Override
+    protected String name() {
+        return "str:explode";
+    }
+
+    @Override
+    public Atom apply(Environment env, List<Atom> args) {
+        assertArity(args, 1);
+        return new Atom(new StringList(args.get(0).getString()));
+    }
+
     static class StringList extends AbstractList<Atom> {
         private final String string;
 
@@ -25,16 +36,5 @@ public class Explode extends PrimitiveFunction implements Lambda {
         public int size() {
             return string.length();
         }
-    }
-
-    @Override
-    protected String name() {
-        return "str:explode";
-    }
-
-    @Override
-    public Atom apply(Environment env, List<Atom> args) {
-        assertArity(args, 1);
-        return new Atom(new StringList(args.get(0).getString()));
     }
 }

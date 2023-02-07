@@ -49,7 +49,7 @@ public class Map implements SpecialForm, ReactiveFunction {
                     return Atom.NULL;
                 if (args.size() == 1) {
                     // map
-                    if(args.get(0).getType() != Type.LIST)
+                    if (args.get(0).getType() != Type.LIST)
                         return new Atom(List.of(Evaluation.evaluate(env, lambda, args)));
                     return new Atom((List<Atom>)
                             args.get(0).getList().stream().map(x -> Evaluation.evaluate(env, lambda, List.of(x)))

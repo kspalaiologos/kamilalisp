@@ -26,7 +26,7 @@ public class DoubleStar extends PrimitiveFunction implements Lambda {
         } else if (a.getType() == Type.COMPLEX && b.getType() == Type.REAL) {
             return new Atom(BigComplexMath.pow(a.getComplex(), b.getReal(), e.getMathContext()));
         } else if (a.getType() == Type.INTEGER && b.getType() == Type.INTEGER) {
-            if(b.getInteger().compareTo(BigInteger.ZERO) < 0)
+            if (b.getInteger().compareTo(BigInteger.ZERO) < 0)
                 return new Atom(BigDecimalMath.pow(a.getReal(), b.getReal(), e.getMathContext()));
             return new Atom(a.getInteger().pow(b.getInteger().intValue()));
         } else if (a.getType() == Type.INTEGER && b.getType() == Type.REAL) {

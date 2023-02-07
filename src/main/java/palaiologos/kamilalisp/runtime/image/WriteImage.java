@@ -21,24 +21,24 @@ public class WriteImage extends PrimitiveFunction implements Lambda {
         String fileFormat = "png";
         int rank;
         List<List<Atom>> imageData;
-        if(args.size() == 3) {
+        if (args.size() == 3) {
             fileFormat = args.get(1).getString();
             rank = Rank.computeRank(args.get(2));
-            if(rank != 2) {
+            if (rank != 2) {
                 throw new RuntimeException("Expected rank 2 argument (RGBA matrix).");
             }
             imageData = args.get(2).getList().stream().map(Atom::getList).toList();
         } else {
             rank = Rank.computeRank(args.get(1));
-            if(rank != 2) {
+            if (rank != 2) {
                 throw new RuntimeException("Expected rank 2 argument (RGBA matrix).");
             }
             imageData = args.get(1).getList().stream().map(Atom::getList).toList();
         }
         BufferedImage img = new BufferedImage(imageData.get(0).size(), imageData.size(), BufferedImage.TYPE_INT_ARGB);
-        for(int y = 0; y < imageData.size(); y++) {
+        for (int y = 0; y < imageData.size(); y++) {
             List<Atom> row = imageData.get(y);
-            for(int x = 0; x < row.size(); x++) {
+            for (int x = 0; x < row.size(); x++) {
                 img.setRGB(x, y, (int) row.get(x).getInteger().longValueExact());
             }
         }

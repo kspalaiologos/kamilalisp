@@ -21,7 +21,7 @@ public class Encode extends PrimitiveFunction implements Lambda {
             encoding.add(new Atom(n.mod(base)));
             n = n.divide(base);
         }
-        if(encoding.isEmpty())
+        if (encoding.isEmpty())
             encoding.add(new Atom(BigInteger.ZERO));
         return new Atom(Lists.reverse(encoding));
     }
