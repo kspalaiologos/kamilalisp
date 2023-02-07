@@ -18,7 +18,7 @@ public class FFT extends PrimitiveFunction implements Lambda {
      * Computes the discrete Fourier transform (DFT) of the given complex vector, storing the result back into the vector.
      * The vector can have any length. This is a wrapper function.
      */
-    public static void transform(MathContext mc, BigDecimal[] real, BigDecimal[] imag) {
+    private static void transform(MathContext mc, BigDecimal[] real, BigDecimal[] imag) {
         int n = real.length;
         if (n != imag.length)
             throw new IllegalArgumentException("Mismatched lengths");
@@ -43,7 +43,7 @@ public class FFT extends PrimitiveFunction implements Lambda {
      * Computes the discrete Fourier transform (DFT) of the given complex vector, storing the result back into the vector.
      * The vector's length must be a power of 2. Uses the Cooley-Tukey decimation-in-time radix-2 algorithm.
      */
-    public static void transformRadix2(MathContext mc, BigDecimal[] real, BigDecimal[] imag) {
+    private static void transformRadix2(MathContext mc, BigDecimal[] real, BigDecimal[] imag) {
         // Length variables
         int n = real.length;
         if (n != imag.length)
@@ -99,7 +99,7 @@ public class FFT extends PrimitiveFunction implements Lambda {
      * The vector can have any length. This requires the convolution function, which in turn requires the radix-2 FFT function.
      * Uses Bluestein's chirp z-transform algorithm.
      */
-    public static void transformBluestein(MathContext mc, BigDecimal[] real, BigDecimal[] imag) {
+    private static void transformBluestein(MathContext mc, BigDecimal[] real, BigDecimal[] imag) {
         // Find a power-of-2 convolution length m such that m >= n * 2 + 1
         int n = real.length;
         if (n != imag.length)
@@ -166,8 +166,8 @@ public class FFT extends PrimitiveFunction implements Lambda {
     /*
      * Computes the circular convolution of the given complex vectors. Each vector's length must be the same.
      */
-    public static void convolve(MathContext mc, BigDecimal[] xreal, BigDecimal[] ximag,
-                                BigDecimal[] yreal, BigDecimal[] yimag, BigDecimal[] outreal, BigDecimal[] outimag) {
+    private static void convolve(MathContext mc, BigDecimal[] xreal, BigDecimal[] ximag,
+                                 BigDecimal[] yreal, BigDecimal[] yimag, BigDecimal[] outreal, BigDecimal[] outimag) {
 
         int n = xreal.length;
         if (n != ximag.length || n != yreal.length || n != yimag.length

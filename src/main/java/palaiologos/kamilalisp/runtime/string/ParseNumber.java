@@ -20,7 +20,7 @@ public class ParseNumber extends PrimitiveFunction implements Lambda {
     public Atom apply(Environment env, List<Atom> args) {
         if (args.size() == 1) {
             return parse(args.get(0));
-        } else if (args.size() == 0) {
+        } else if (args.isEmpty()) {
             throw new TypeError("Expected 1 or more arguments to `parse-number'.");
         } else {
             return new Atom(args.stream().map(ParseNumber::parse).toList());

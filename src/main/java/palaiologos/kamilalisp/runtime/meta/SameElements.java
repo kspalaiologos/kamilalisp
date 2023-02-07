@@ -5,7 +5,7 @@ import palaiologos.kamilalisp.atom.*;
 import java.util.List;
 
 public class SameElements extends PrimitiveFunction implements Lambda {
-    private boolean cmpUnordered(Atom a1, Atom a2) {
+    private static boolean cmpUnordered(Atom a1, Atom a2) {
         if (a1.getType() == Type.LIST && a2.getType() == Type.LIST) {
             List<Atom> l1 = a1.getList();
             List<Atom> l2 = a2.getList();

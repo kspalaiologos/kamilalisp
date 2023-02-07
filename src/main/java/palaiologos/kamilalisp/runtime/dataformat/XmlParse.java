@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class XmlParse extends PrimitiveFunction implements Lambda {
-    private Atom xmlToList(Node n) {
+    private static Atom xmlToList(Node n) {
         List<Atom> data = new ArrayList<>();
         data.add(new Atom(n.getNodeName()));
         if (n.getChildNodes().getLength() > 0 && n.getChildNodes().item(0).getNodeType() == Node.TEXT_NODE) {

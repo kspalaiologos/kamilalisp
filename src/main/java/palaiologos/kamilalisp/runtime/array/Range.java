@@ -39,7 +39,7 @@ public class Range extends PrimitiveFunction implements Lambda {
         private final BigInteger end;
         boolean sign;
 
-        public RangeList(BigInteger begin, BigInteger end) {
+        RangeList(BigInteger begin, BigInteger end) {
             this.begin = begin;
             this.end = end;
             sign = begin.compareTo(end) < 0;

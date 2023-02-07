@@ -15,6 +15,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Fetch extends PrimitiveFunction implements Lambda {
     @Override
@@ -39,8 +40,8 @@ public class Fetch extends PrimitiveFunction implements Lambda {
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod(headers.getOrDefault(new Atom("method"), new Atom("GET")).getString());
                 HashPMap<Atom, Atom> properties = headers.getOrDefault(new Atom("properties"), new Atom(new HashMapUserData(HashTreePMap.empty()))).getUserdata(HashMapUserData.class).value();
-                for (Atom key : properties.keySet()) {
-                    con.setRequestProperty(key.getString(), properties.get(key).getString());
+                for (Map.Entry<Atom, Atom> entry : properties.entrySet()) {
+                    con.setRequestProperty(entry.getKey().getString(), entry.getValue().getString());
                 }
                 List<Atom> body = headers.getOrDefault(new Atom("body"), new Atom(new ArrayList<>())).getList();
                 if (!body.isEmpty()) {

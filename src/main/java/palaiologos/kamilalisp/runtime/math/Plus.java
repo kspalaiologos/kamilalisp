@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Plus extends PrimitiveFunction implements Lambda {
-    public static Atom add2(Atom a, Atom b) {
+    private static Atom add2(Atom a, Atom b) {
         a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
         b.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
         if (a.getType() == Type.COMPLEX && b.getType() == Type.COMPLEX) {
@@ -52,7 +52,7 @@ public class Plus extends PrimitiveFunction implements Lambda {
         }
     }
 
-    public static Atom add1(Atom a) {
+    private static Atom add1(Atom a) {
         a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
         if (a.getType() == Type.COMPLEX) {
             return new Atom(a.getComplex().conjugate());
@@ -71,7 +71,7 @@ public class Plus extends PrimitiveFunction implements Lambda {
             return add1(args.get(0));
         } else if (args.size() == 2) {
             return add2(args.get(0), args.get(1));
-        } else if (args.size() == 0) {
+        } else if (args.isEmpty()) {
             throw new TypeError("Expected 1 or more arguments to `+'.");
         } else {
             return args.stream().reduce(Plus::add2).get();

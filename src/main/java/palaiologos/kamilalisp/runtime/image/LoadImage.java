@@ -33,21 +33,7 @@ public class LoadImage extends PrimitiveFunction implements Lambda {
                     throw new IndexOutOfBoundsException();
                 }
 
-                return new Atom(new AbstractList<>() {
-                    @Override
-                    public Atom get(int x) {
-                        if (x < 0 || x >= image.getWidth()) {
-                            throw new IndexOutOfBoundsException();
-                        }
-
-                        return new Atom(BigInteger.valueOf(Integer.toUnsignedLong(image.getRGB(x, y))));
-                    }
-
-                    @Override
-                    public int size() {
-                        return image.getWidth();
-                    }
-                });
+                return new Atom(new AtomAbstractList(image, y));
             }
 
             @Override
@@ -60,5 +46,29 @@ public class LoadImage extends PrimitiveFunction implements Lambda {
     @Override
     protected String name() {
         return "img:read";
+    }
+
+    private static class AtomAbstractList extends AbstractList<Atom> {
+        private final BufferedImage image;
+        private final int y;
+
+        public AtomAbstractList(BufferedImage image, int y) {
+            this.image = image;
+            this.y = y;
+        }
+
+        @Override
+        public Atom get(int x) {
+            if (x < 0 || x >= image.getWidth()) {
+                throw new IndexOutOfBoundsException();
+            }
+
+            return new Atom(BigInteger.valueOf(Integer.toUnsignedLong(image.getRGB(x, y))));
+        }
+
+        @Override
+        public int size() {
+            return image.getWidth();
+        }
     }
 }

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 public class Powerset extends PrimitiveFunction implements Lambda {
-    public static <T> Set<Set<T>> powerSet(Set<T> originalSet) {
+    private static <T> Set<Set<T>> powerSet(Set<T> originalSet) {
         Set<Set<T>> sets = new HashSet<Set<T>>();
         if (originalSet.isEmpty()) {
             sets.add(new HashSet<T>());

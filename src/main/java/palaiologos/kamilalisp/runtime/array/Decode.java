@@ -26,7 +26,7 @@ public class Decode extends PrimitiveFunction implements Lambda {
             int max = Math.max(leftList.size(), rightList.size());
             leftList = new Cycle.CycleListFacade(leftList, max);
             rightList = new Cycle.CycleListFacade(rightList, max);
-            if (leftList.size() == 0 || rightList.size() == 0) {
+            if (leftList.isEmpty() || rightList.isEmpty()) {
                 return Atom.FALSE;
             } else if (leftList.size() == 1 && rightList.size() == 1) {
                 return rightList.get(0);

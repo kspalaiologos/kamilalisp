@@ -6,7 +6,7 @@ import palaiologos.kamilalisp.repl.Main;
 
 import java.util.List;
 
-public class Common {
+class Common {
     public static Atom runCode(String s) {
         List<Atom> data = Parser.parse(s);
         Environment env = new Environment(Main.defaultRegistry);

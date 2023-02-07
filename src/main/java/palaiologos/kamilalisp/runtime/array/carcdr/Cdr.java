@@ -52,11 +52,11 @@ public class Cdr extends PrimitiveFunction implements Lambda {
         return "cdr";
     }
 
-    class CdrListFacade extends AbstractList<Atom> {
+    static class CdrListFacade extends AbstractList<Atom> {
         private final List<Atom> list;
         private final int cdrOffset;
 
-        public CdrListFacade(List<Atom> list, int cdrOffset) {
+        CdrListFacade(List<Atom> list, int cdrOffset) {
             this.list = list;
             this.cdrOffset = cdrOffset;
         }
@@ -86,7 +86,7 @@ public class Cdr extends PrimitiveFunction implements Lambda {
             return list.remove(index + cdrOffset);
         }
 
-        public List<Atom> cdr() {
+        List<Atom> cdr() {
             if (size() <= 1)
                 return List.of();
             if (cdrOffset <= 16) {

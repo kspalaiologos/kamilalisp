@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class XmlWrite extends PrimitiveFunction implements Lambda {
-    private Element genXmlNode(Document dom, List<Atom> a) {
+    private static Element genXmlNode(Document dom, List<Atom> a) {
         String nodeName = a.get(0).getString();
         Element node = dom.createElement(nodeName);
         String value = a.get(1).getString();

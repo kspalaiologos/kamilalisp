@@ -54,7 +54,7 @@ public class Depth implements SpecialForm, ReactiveFunction {
 
             @Override
             public Atom apply(Environment env, List<Atom> args) {
-                if (args.size() == 0)
+                if (args.isEmpty())
                     return Atom.NULL;
 
                 // Check what in the world is the depths list.
@@ -124,7 +124,7 @@ public class Depth implements SpecialForm, ReactiveFunction {
                 }
             }
 
-            private void mapN(Atom data, int d, List<Atom> dt) {
+            private static void mapN(Atom data, int d, List<Atom> dt) {
                 if (data.getType() != Type.LIST)
                     dt.add(data);
                 else if (d == 1)
@@ -133,7 +133,7 @@ public class Depth implements SpecialForm, ReactiveFunction {
                     data.getList().forEach(x -> mapN(x, d - 1, dt));
             }
 
-            private Atom map_pos1(Environment e, Callable c, Atom data, int d) {
+            private static Atom map_pos1(Environment e, Callable c, Atom data, int d) {
                 int actualRank = Math.abs(Rank.computeRank(data));
                 if (d >= actualRank)
                     return Evaluation.evaluate(e, c, List.of(data));
@@ -144,7 +144,7 @@ public class Depth implements SpecialForm, ReactiveFunction {
                 }
             }
 
-            private Atom map_pos2(Environment e, Callable c, Atom data, int d, List<List<Atom>> aux_pos) {
+            private static Atom map_pos2(Environment e, Callable c, Atom data, int d, List<List<Atom>> aux_pos) {
                 int actualRank = Math.abs(Rank.computeRank(data));
                 if (d >= actualRank)
                     return Evaluation.evaluate(e, c, Streams.concat(Stream.of(data), aux_pos.stream().map(x -> x.size() == 1 ? x.get(0) : x.remove(0))).toList());
@@ -155,7 +155,7 @@ public class Depth implements SpecialForm, ReactiveFunction {
                 }
             }
 
-            private void map_posN(Atom data, int d, List<Atom> target) {
+            private static void map_posN(Atom data, int d, List<Atom> target) {
                 int actualRank = Math.abs(Rank.computeRank(data));
                 if (d >= actualRank)
                     target.add(data);
@@ -164,7 +164,7 @@ public class Depth implements SpecialForm, ReactiveFunction {
                 }
             }
 
-            private Atom map2(Environment e, Callable c, Atom data, int d, List<List<Atom>> aux_pos) {
+            private static Atom map2(Environment e, Callable c, Atom data, int d, List<List<Atom>> aux_pos) {
                 if (data.getType() != Type.LIST)
                     return Evaluation.evaluate(e, c, Streams.concat(Stream.of(data), aux_pos.stream().map(x -> x.size() == 1 ? x.get(0) : x.remove(0))).toList());
                 if (d == 1) {
@@ -178,7 +178,7 @@ public class Depth implements SpecialForm, ReactiveFunction {
                 }
             }
 
-            private Atom map1(Environment e, Callable c, Atom data, int d) {
+            private static Atom map1(Environment e, Callable c, Atom data, int d) {
                 if (data.getType() != Type.LIST)
                     return Evaluation.evaluate(e, c, List.of(data));
                 if (d == 1) {

@@ -13,7 +13,7 @@ public class Environment {
     private final HashMap<String, Atom> data;
     private final Environment parent;
 
-    public Environment() {
+    private Environment() {
         data = new HashMap<>();
         parent = null;
     }

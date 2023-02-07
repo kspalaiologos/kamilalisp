@@ -4,7 +4,7 @@ import palaiologos.kamilalisp.runtime.meta.ConcurrentLRUCache;
 
 import java.util.regex.Pattern;
 
-public class PatternCache {
+class PatternCache {
     private static final int CACHE_SIZE = 1000;
     private static final ConcurrentLRUCache<String, Pattern> cache = new ConcurrentLRUCache<>(CACHE_SIZE);
 

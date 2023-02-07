@@ -56,7 +56,7 @@ public class DateTimeAdd extends PrimitiveFunction implements Lambda {
     public Atom apply(Environment env, List<Atom> args) {
         if (args.size() == 2) {
             return f(args.get(0), args.get(1));
-        } else if (args.size() == 0) {
+        } else if (args.isEmpty()) {
             throw new TypeError("Expected 2 or more arguments to `date:add'.");
         } else {
             return args.stream().reduce(DateTimeAdd::f).get();

@@ -69,7 +69,7 @@ public class Replicate extends PrimitiveFunction implements Lambda {
             int n = args.get(0).getInteger().intValue();
             if (n < 0)
                 throw new RuntimeException("replicate: negative count.");
-            if (list.size() == 0)
+            if (list.isEmpty())
                 return Atom.NULL;
             return new Atom(new ReplicateListFacade(list, n));
         } else if (args.get(0).getType() == Type.INTEGER && args.get(1).getType() == Type.STRING) {
@@ -93,7 +93,7 @@ public class Replicate extends PrimitiveFunction implements Lambda {
         private final List<Atom> list;
         private final int len;
 
-        public ReplicateListFacade(List<Atom> list, int len) {
+        ReplicateListFacade(List<Atom> list, int len) {
             this.list = list;
             this.len = len;
         }
@@ -115,7 +115,7 @@ public class Replicate extends PrimitiveFunction implements Lambda {
         private final Atom a;
         private final int len;
 
-        public ReplicateListFacadeSingleton(Atom a, int len) {
+        ReplicateListFacadeSingleton(Atom a, int len) {
             this.a = a;
             this.len = len;
         }

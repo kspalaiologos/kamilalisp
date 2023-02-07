@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class BitNand extends PrimitiveFunction implements Lambda {
     private static final String name = "bit:nand";
 
-    public static Atom bitop2(Atom a, Atom b) {
+    private static Atom bitop2(Atom a, Atom b) {
         a.assertTypes(Type.INTEGER, Type.LIST);
         b.assertTypes(Type.INTEGER, Type.LIST);
         if (a.getType() == Type.INTEGER && b.getType() == Type.INTEGER) {

@@ -21,7 +21,7 @@ public class Atom implements Comparable<Atom> {
     private Object data;
     private Type type;
 
-    public Atom() {
+    Atom() {
         this.data = List.of();
         this.type = Type.LIST;
     }
@@ -113,15 +113,15 @@ public class Atom implements Comparable<Atom> {
     }
 
     public String getString() {
-        if (getType() != Type.STRING) {
+        if (type != Type.STRING) {
             throw new TypeError("Cannot get string from non-string atom " + typeString());
         }
 
         return (String) data;
     }
 
-    public Userdata getUserdata() {
-        if (getType() != Type.USERDATA) {
+    private Userdata getUserdata() {
+        if (type != Type.USERDATA) {
             throw new TypeError("Cannot get userdata from non-userdata atom " + typeString());
         }
 
@@ -129,7 +129,7 @@ public class Atom implements Comparable<Atom> {
     }
 
     public <T extends Userdata> T getUserdata(Class<T> type) {
-        if (getType() != Type.USERDATA)
+        if (this.type != Type.USERDATA)
             throw new TypeError("Cannot get userdata from non-userdata atom " + typeString());
 
         if (!type.isInstance(data))
@@ -139,7 +139,7 @@ public class Atom implements Comparable<Atom> {
     }
 
     public boolean isUserdata(Class<? extends Userdata> type) {
-        if (getType() != Type.USERDATA)
+        if (this.type != Type.USERDATA)
             return false;
 
         return type.isInstance(data);
@@ -150,11 +150,11 @@ public class Atom implements Comparable<Atom> {
             throw new TypeError("Cannot get integer from non-integer atom " + typeString());
         }
 
-        if (getType() == Type.INTEGER) {
+        if (type == Type.INTEGER) {
             return new BigDecimal((BigInteger) data);
-        } else if (getType() == Type.REAL) {
+        } else if (type == Type.REAL) {
             return (BigDecimal) data;
-        } else if (getType() == Type.COMPLEX) {
+        } else if (type == Type.COMPLEX) {
             return ((BigComplex) data).re;
         } else {
             throw new TypeError("Cannot get integer from non-integer atom " + typeString());
@@ -162,11 +162,11 @@ public class Atom implements Comparable<Atom> {
     }
 
     public List<Atom> getList() {
-        if (getType() == Type.STRING) {
+        if (type == Type.STRING) {
             return ((String) data).chars().mapToObj(c -> new Atom(String.valueOf((char) c))).collect(Collectors.toList());
         }
 
-        if (getType() != Type.LIST) {
+        if (type != Type.LIST) {
             throw new TypeError("Cannot get list from non-list atom " + typeString());
         }
 
@@ -178,11 +178,11 @@ public class Atom implements Comparable<Atom> {
             throw new TypeError("Cannot get integer from non-integer atom " + typeString());
         }
 
-        if (getType() == Type.REAL) {
+        if (type == Type.REAL) {
             return ((BigDecimal) data).toBigInteger();
-        } else if (getType() == Type.COMPLEX) {
+        } else if (type == Type.COMPLEX) {
             return ((BigComplex) data).re.toBigInteger();
-        } else if (getType() == Type.INTEGER) {
+        } else if (type == Type.INTEGER) {
             return (BigInteger) data;
         } else {
             throw new TypeError("Cannot get integer from non-integer atom " + typeString());
@@ -190,15 +190,15 @@ public class Atom implements Comparable<Atom> {
     }
 
     public Callable getCallable() {
-        if (getType() != Type.CALLABLE) {
-            throw new TypeError("Cannot get callable object from non-callable atom" + (getType() == Type.IDENTIFIER ? " (" + Identifier.of(getIdentifier()) + " not bound?)" : ""));
+        if (type != Type.CALLABLE) {
+            throw new TypeError("Cannot get callable object from non-callable atom" + (type == Type.IDENTIFIER ? " (" + Identifier.of(getIdentifier()) + " not bound?)" : ""));
         }
 
         return (Callable) data;
     }
 
     public Identifier getIdentifier() {
-        if (getType() != Type.IDENTIFIER) {
+        if (type != Type.IDENTIFIER) {
             throw new TypeError("Cannot get identifier from non-identifier atom " + typeString());
         }
 
@@ -210,11 +210,11 @@ public class Atom implements Comparable<Atom> {
             throw new TypeError("Cannot get complex from non-complex atom " + typeString());
         }
 
-        if (getType() == Type.COMPLEX) {
+        if (type == Type.COMPLEX) {
             return (BigComplex) data;
-        } else if (getType() == Type.REAL) {
+        } else if (type == Type.REAL) {
             return BigComplex.valueOf(getReal());
-        } else if (getType() == Type.INTEGER) {
+        } else if (type == Type.INTEGER) {
             return BigComplex.valueOf(new BigDecimal(getInteger()));
         } else {
             throw new TypeError("Cannot get complex from non-complex atom " + typeString());
@@ -222,12 +222,12 @@ public class Atom implements Comparable<Atom> {
     }
 
     public boolean isNumeric() {
-        return getType() == Type.REAL || getType() == Type.COMPLEX || getType() == Type.INTEGER;
+        return type == Type.REAL || type == Type.COMPLEX || type == Type.INTEGER;
     }
 
     @Override
     public String toString() {
-        switch (getType()) {
+        switch (type) {
             case STRING:
                 return "\"" + getString() + "\"";
             case REAL:
@@ -237,9 +237,9 @@ public class Atom implements Comparable<Atom> {
             case LIST:
                 if (getList().isEmpty())
                     return "nil";
-                if (getList().get(0).getType() == Type.CALLABLE && getList().get(0).getCallable() instanceof ReactiveFunction)
+                if (getList().get(0).type == Type.CALLABLE && getList().get(0).getCallable() instanceof ReactiveFunction)
                     return getList().get(0).toString();
-                else if (getList().get(0).getType() == Type.CALLABLE && getList().get(0).getCallable() instanceof Index)
+                else if (getList().get(0).type == Type.CALLABLE && getList().get(0).getCallable() instanceof Index)
                     return getList().get(0).toString() + "[" + getList().stream().skip(1).map(Atom::toString).collect(Collectors.joining(" ")) + "]";
                 return "(" + getList().stream().map(Atom::toString).collect(Collectors.joining(" ")) + ")";
             case CALLABLE:
@@ -258,7 +258,7 @@ public class Atom implements Comparable<Atom> {
     }
 
     public String toDisplayString() {
-        switch (getType()) {
+        switch (type) {
             case STRING:
                 return getString();
             case REAL:
@@ -270,11 +270,11 @@ public class Atom implements Comparable<Atom> {
             case LIST:
                 if (getList().isEmpty())
                     return "nil";
-                if (getList().get(0).getType() == Type.CALLABLE && getList().get(0).getCallable() instanceof ReactiveFunction)
+                if (getList().get(0).type == Type.CALLABLE && getList().get(0).getCallable() instanceof ReactiveFunction)
                     return getList().get(0).toString();
-                else if (getList().get(0).getType() == Type.CALLABLE && getList().get(0).getCallable() instanceof Index)
+                else if (getList().get(0).type == Type.CALLABLE && getList().get(0).getCallable() instanceof Index)
                     return getList().get(0).toString() + "$[" + getList().stream().skip(1).map(Atom::toString).collect(Collectors.joining(" ")) + "]";
-                if (getList().stream().allMatch(x -> x.getType().equals(Type.LIST))) {
+                if (getList().stream().allMatch(x -> x.type.equals(Type.LIST))) {
                     int len = getList().get(0).getList().size();
                     if (getList().stream().allMatch(x -> x.getList().size() == len)
                             && getList().stream().allMatch(x -> x.getList().stream().allMatch(Atom::isNumeric))) {
@@ -326,7 +326,7 @@ public class Atom implements Comparable<Atom> {
     }
 
     public String shortString() {
-        switch (getType()) {
+        switch (type) {
             case STRING:
                 return "\"" + getString() + "\"";
             case REAL:
@@ -338,9 +338,9 @@ public class Atom implements Comparable<Atom> {
             case LIST:
                 if (getList().isEmpty())
                     return "nil";
-                if (getList().get(0).getType() == Type.CALLABLE && getList().get(0).getCallable() instanceof ReactiveFunction)
+                if (getList().get(0).type == Type.CALLABLE && getList().get(0).getCallable() instanceof ReactiveFunction)
                     return getList().get(0).shortString();
-                else if (getList().get(0).getType() == Type.CALLABLE && getList().get(0).getCallable() instanceof Index)
+                else if (getList().get(0).type == Type.CALLABLE && getList().get(0).getCallable() instanceof Index)
                     return getList().get(0).shortString() + "[" + getList().stream().skip(1).map(Atom::shortString).collect(Collectors.joining(" ")) + "]";
                 return "(" + getList().stream().limit(2).map(Atom::toString).collect(Collectors.joining(" ")) + (getList().size() > 2 ? " ..." : "") + ")";
             case CALLABLE:
@@ -362,31 +362,31 @@ public class Atom implements Comparable<Atom> {
     public boolean equals(Object obj) {
         if (obj instanceof Atom other) {
             if (isNumeric() && other.isNumeric()) {
-                if (getType() == Type.REAL && other.getType() == Type.REAL)
+                if (type == Type.REAL && other.type == Type.REAL)
                     return getReal().equals(other.getReal());
-                else if (getType() == Type.INTEGER && other.getType() == Type.INTEGER)
+                else if (type == Type.INTEGER && other.type == Type.INTEGER)
                     return getInteger().equals(other.getInteger());
-                else if (getType() == Type.COMPLEX && other.getType() == Type.COMPLEX)
+                else if (type == Type.COMPLEX && other.type == Type.COMPLEX)
                     return getComplex().equals(other.getComplex());
-                else if (getType() == Type.REAL && other.getType() == Type.INTEGER)
+                else if (type == Type.REAL && other.type == Type.INTEGER)
                     return getReal().equals(new BigDecimal(other.getInteger()));
-                else if (getType() == Type.INTEGER && other.getType() == Type.REAL)
+                else if (type == Type.INTEGER && other.type == Type.REAL)
                     return new BigDecimal(getInteger()).equals(other.getReal());
-                else if (getType() == Type.REAL && other.getType() == Type.COMPLEX)
+                else if (type == Type.REAL && other.type == Type.COMPLEX)
                     return other.getComplex().equals(BigComplex.valueOf(getReal()));
-                else if (getType() == Type.COMPLEX && other.getType() == Type.REAL)
+                else if (type == Type.COMPLEX && other.type == Type.REAL)
                     return BigComplex.valueOf(other.getReal()).equals(getComplex());
-                else if (getType() == Type.INTEGER && other.getType() == Type.COMPLEX)
+                else if (type == Type.INTEGER && other.type == Type.COMPLEX)
                     return other.getComplex().equals(BigComplex.valueOf(new BigDecimal(getInteger())));
-                else if (getType() == Type.COMPLEX && other.getType() == Type.INTEGER)
+                else if (type == Type.COMPLEX && other.type == Type.INTEGER)
                     return BigComplex.valueOf(new BigDecimal(other.getInteger())).equals(getComplex());
                 else
                     throw new IllegalStateException();
             }
-            if (getType() != other.getType()) {
+            if (type != other.type) {
                 return false;
             }
-            switch (getType()) {
+            switch (type) {
                 case STRING -> {
                     return getString().equals(other.getString());
                 }
@@ -427,7 +427,7 @@ public class Atom implements Comparable<Atom> {
     }
 
     public boolean coerceBool() {
-        return switch (getType()) {
+        return switch (type) {
             case STRING -> !getString().isEmpty();
             case REAL -> !getReal().equals(BigDecimal.ZERO);
             case LIST -> !getList().isEmpty();
@@ -440,14 +440,14 @@ public class Atom implements Comparable<Atom> {
 
     public void assertTypes(Type... types) {
         for (Type type : types) {
-            if (getType() == type) {
+            if (this.type == type) {
                 return;
             }
         }
         if (types.length == 1) {
-            throw new TypeError("Expected " + types[0] + ", got " + getType());
+            throw new TypeError("Expected " + types[0] + ", got " + type);
         } else {
-            throw new TypeError("Expected one of " + List.of(types) + ", got " + getType());
+            throw new TypeError("Expected one of " + List.of(types) + ", got " + type);
         }
     }
 
@@ -461,13 +461,13 @@ public class Atom implements Comparable<Atom> {
         if (a == null)
             return 1;
 
-        if ((getType() == Type.REAL || getType() == Type.INTEGER) && (a.getType() == Type.REAL || a.getType() == Type.INTEGER)) {
+        if ((type == Type.REAL || type == Type.INTEGER) && (a.type == Type.REAL || a.type == Type.INTEGER)) {
             return getReal().compareTo(a.getReal());
         } else if (isNumeric() && a.isNumeric()) {
             return getComplex().abs(MathContext.DECIMAL128).compareTo(a.getComplex().abs(MathContext.DECIMAL128));
-        } else if (getType() == Type.STRING && a.getType() == Type.STRING) {
+        } else if (type == Type.STRING && a.type == Type.STRING) {
             return getString().compareTo(a.getString());
-        } else if (getType() == Type.LIST && a.getType() == Type.LIST) {
+        } else if (type == Type.LIST && a.type == Type.LIST) {
             List<Atom> l1 = getList();
             List<Atom> l2 = a.getList();
             if (l1.size() != l2.size()) {
@@ -480,31 +480,31 @@ public class Atom implements Comparable<Atom> {
                 }
             }
             return 0;
-        } else if (getType() == Type.IDENTIFIER && a.getType() == Type.IDENTIFIER) {
+        } else if (type == Type.IDENTIFIER && a.type == Type.IDENTIFIER) {
             return Identifier.of(getIdentifier()).compareTo(Identifier.of(a.getIdentifier()));
-        } else if (getType() == Type.CALLABLE && a.getType() == Type.CALLABLE) {
+        } else if (type == Type.CALLABLE && a.type == Type.CALLABLE) {
             return Integer.valueOf(getCallable().hashCode()).compareTo(a.getCallable().hashCode());
-        } else if (getType() == Type.USERDATA && a.getType() == Type.USERDATA) {
+        } else if (type == Type.USERDATA && a.type == Type.USERDATA) {
             return getUserdata().compareTo(a.getUserdata());
         } else {
-            return getType().ordinal() - a.getType().ordinal();
+            return type.ordinal() - a.type.ordinal();
         }
     }
 
     public Atom dot(Object index) {
-        if (getType() == Type.STRING) {
+        if (type == Type.STRING) {
             if (index instanceof BigDecimal) {
                 return new Atom(String.valueOf(getString().charAt(((BigDecimal) index).intValue())));
             } else {
                 throw new TypeError("Expected integer index.");
             }
-        } else if (getType() == Type.LIST) {
+        } else if (type == Type.LIST) {
             if (index instanceof BigDecimal) {
                 return getList().get(((BigDecimal) index).intValue());
             } else {
                 throw new TypeError("Expected integer index.");
             }
-        } else if (getType() == Type.USERDATA) {
+        } else if (type == Type.USERDATA) {
             return getUserdata().field(index);
         } else {
             throw new TypeError("Expected string or list.");

@@ -7,10 +7,10 @@ import java.math.BigInteger;
 import java.util.List;
 
 public class CodeAtom extends Atom {
-    public int line, col;
+    private int line;
+    private int col;
 
     public CodeAtom() {
-        super();
     }
 
     public CodeAtom(String data) {
@@ -59,13 +59,4 @@ public class CodeAtom extends Atom {
         return this;
     }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
 }

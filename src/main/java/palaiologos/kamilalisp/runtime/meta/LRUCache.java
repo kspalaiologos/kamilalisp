@@ -87,7 +87,7 @@ class LRUCache<K, V> {
         Node<T, U> previous;
         Node<T, U> next;
 
-        public Node(Node<T, U> previous, Node<T, U> next, T key, U value) {
+        Node(Node<T, U> previous, Node<T, U> next, T key, U value) {
             this.previous = previous;
             this.next = next;
             this.key = key;

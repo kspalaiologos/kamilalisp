@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.parallel.ExecutionMode.CONCURRENT;
 
-public class TestReplicateProduct {
+class TestReplicateProduct {
     @Test
     void testReplicate() {
         assertEquals(Common.runCode("(replicate 3 1)"), Common.runCode("(tie 1 1 1)"));

@@ -12,7 +12,7 @@ public class Match extends PrimitiveFunction implements SpecialForm {
         return "match";
     }
 
-    private boolean isIdInPattern(Atom a) {
+    private static boolean isIdInPattern(Atom a) {
         if (a.getType() != Type.LIST)
             return false;
         if (a.getList().size() != 1)
@@ -22,12 +22,12 @@ public class Match extends PrimitiveFunction implements SpecialForm {
         return a.getList().get(0).getCallable() instanceof Quote;
     }
 
-    private Identifier getIdFromPattern(Atom a) {
+    private static Identifier getIdFromPattern(Atom a) {
         Callable c = a.getList().get(0).getCallable();
         return c.apply(null, null).getIdentifier();
     }
 
-    private boolean match(Atom a, Atom pat, Environment env) {
+    private static boolean match(Atom a, Atom pat, Environment env) {
         // Check if pat is a quoted variable.
         if (isIdInPattern(pat)) {
             Identifier id = getIdFromPattern(pat);

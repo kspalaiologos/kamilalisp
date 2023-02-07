@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Star extends PrimitiveFunction implements Lambda {
-    public static Atom multiply2(Atom a, Atom b) {
+    private static Atom multiply2(Atom a, Atom b) {
         a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
         b.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
         if (a.getType() == Type.COMPLEX && b.getType() == Type.COMPLEX) {

@@ -8,7 +8,7 @@ import palaiologos.kamilalisp.repl.Main;
 
 import java.util.List;
 
-public class BindingHelper {
+class BindingHelper {
     public static void bindingPatternMatch(Environment destEnv, Atom name, Atom value, boolean noBuiltinShadow) {
         if (name.getType() == Type.IDENTIFIER) {
             if (noBuiltinShadow && Main.isBuiltin(Identifier.of(name.getIdentifier()))) {

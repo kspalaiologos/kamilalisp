@@ -34,7 +34,7 @@ public class Main {
         System.out.println();
     }
 
-    public static void evalScript(Environment env, String source, String[] args) throws IOException {
+    private static void evalScript(Environment env, String source, String[] args) throws IOException {
         List<Atom> data = Parser.parse(Files.readString(Path.of(source)));
         env.setPrimitive("args", new Atom(Arrays.stream(args).skip(1).map(Atom::new).toList()));
         try {
@@ -80,15 +80,15 @@ public class Main {
         try {
             while (true) {
                 String code = r.readLine("--> ");
-                if (code.length() == 0 || code.trim().length() == 0 || code.trim().startsWith(";"))
+                if (code.isEmpty() || code.trim().isEmpty() || !code.trim().isEmpty() && code.trim().charAt(0) == ';')
                     continue;
                 try {
                     List<Atom> data;
                     try {
                         String cc;
-                        if (code.startsWith("?")) {
+                        if (!code.isEmpty() && code.charAt(0) == '?') {
                             cc = code.substring(1);
-                        } else if (code.startsWith("(") && code.endsWith(")")) {
+                        } else if (!code.isEmpty() && code.charAt(0) == '(' && !code.isEmpty() && code.charAt(code.length() - 1) == ')') {
                             cc = code;
                         } else {
                             cc = "(" + code + "\n)";

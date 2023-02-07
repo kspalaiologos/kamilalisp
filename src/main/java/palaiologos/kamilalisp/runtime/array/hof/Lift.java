@@ -27,7 +27,7 @@ public class Lift extends PrimitiveFunction implements Lambda {
     class LiftedFunction implements Lambda {
         private final Callable primitive;
 
-        public LiftedFunction(Callable primitive) {
+        LiftedFunction(Callable primitive) {
             this.primitive = primitive;
         }
 

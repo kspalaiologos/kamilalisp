@@ -6,7 +6,6 @@ public class RaiseError extends Error {
     public Identifier id;
 
     public RaiseError() {
-        super();
     }
 
     public RaiseError(String message) {

@@ -5,7 +5,7 @@ import palaiologos.kamilalisp.atom.Type;
 
 import java.util.List;
 
-public class Prototype {
+class Prototype {
     public static Atom getPrototype(List<Atom> list) {
         Atom prototype;
 

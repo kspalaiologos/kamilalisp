@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Pmat extends PrimitiveFunction implements Lambda {
-    public <E> List<List<E>> generatePerm(List<E> original) {
+    private static <E> List<List<E>> generatePerm(List<E> original) {
         if (original.isEmpty()) {
             List<List<E>> result = new ArrayList<>();
             result.add(new ArrayList<>());
