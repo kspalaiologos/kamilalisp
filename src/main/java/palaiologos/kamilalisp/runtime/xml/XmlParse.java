@@ -19,23 +19,43 @@ public class XmlParse extends PrimitiveFunction implements Lambda {
     private Atom xmlToList(Node n) {
         List<Atom> data = new ArrayList<>();
         data.add(new Atom(n.getNodeName()));
-        data.add(new Atom(n.getNodeValue() == null ? "" : n.getNodeValue()));
-        if(n.getAttributes() != null) {
-            List<Atom> attribs = new ArrayList<>();
-            for (int i = 0; i < n.getAttributes().getLength(); i++) {
-                Node attr = n.getAttributes().item(i);
-                attribs.add(new Atom(List.of(new Atom(attr.getNodeName()), new Atom(attr.getNodeValue()))));
+        if(n.getChildNodes().getLength() > 0 && n.getChildNodes().item(0).getNodeType() == Node.TEXT_NODE) {
+            data.add(new Atom(n.getChildNodes().item(0).getNodeValue()));
+            if (n.getAttributes() != null) {
+                List<Atom> attribs = new ArrayList<>();
+                for (int i = 0; i < n.getAttributes().getLength(); i++) {
+                    Node attr = n.getAttributes().item(i);
+                    attribs.add(new Atom(List.of(new Atom(attr.getNodeName()), new Atom(attr.getNodeValue()))));
+                }
+                data.add(new Atom(attribs));
+            } else {
+                data.add(Atom.NULL);
             }
-            data.add(new Atom(attribs));
+            List<Atom> children = new ArrayList<>();
+            for (int i = 1; i < n.getChildNodes().getLength(); i++) {
+                Node child = n.getChildNodes().item(i);
+                children.add(xmlToList(child));
+            }
+            data.add(new Atom(children));
         } else {
-            data.add(Atom.NULL);
+            data.add(new Atom(n.getNodeValue() == null ? "" : n.getNodeValue()));
+            if (n.getAttributes() != null) {
+                List<Atom> attribs = new ArrayList<>();
+                for (int i = 0; i < n.getAttributes().getLength(); i++) {
+                    Node attr = n.getAttributes().item(i);
+                    attribs.add(new Atom(List.of(new Atom(attr.getNodeName()), new Atom(attr.getNodeValue()))));
+                }
+                data.add(new Atom(attribs));
+            } else {
+                data.add(Atom.NULL);
+            }
+            List<Atom> children = new ArrayList<>();
+            for (int i = 0; i < n.getChildNodes().getLength(); i++) {
+                Node child = n.getChildNodes().item(i);
+                children.add(xmlToList(child));
+            }
+            data.add(new Atom(children));
         }
-        List<Atom> children = new ArrayList<>();
-        for (int i = 0; i < n.getChildNodes().getLength(); i++) {
-            Node child = n.getChildNodes().item(i);
-            children.add(xmlToList(child));
-        }
-        data.add(new Atom(children));
         return new Atom(data);
     }
 
@@ -66,7 +86,7 @@ public class XmlParse extends PrimitiveFunction implements Lambda {
             InputStream targetStream =
                     CharSource.wrap(xmldata).asByteSource(StandardCharsets.UTF_8).openStream();
             Document dom = db.parse(targetStream);
-            Atom result = new Atom(List.of(new Atom(dom.getDoctype() == null ? "" : dom.getDoctype().getName()), xmlToList(dom.getDocumentElement())));
+            Atom result = new Atom(List.of(new Atom(dom.getDoctype() == null ? "" : dom.getDoctype().toString()), xmlToList(dom.getDocumentElement())));
             targetStream.close();
             return result;
         } catch (ParserConfigurationException | IOException | SAXException e) {
