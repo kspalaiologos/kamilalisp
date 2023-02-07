@@ -27,7 +27,7 @@ public class JsonWrite extends PrimitiveFunction implements Lambda {
             }
             case USERDATA: {
                 HashMapUserData data = a.getUserdata(HashMapUserData.class);
-                String s = data.value.entrySet().stream().map(entry -> {
+                String s = data.value().entrySet().stream().map(entry -> {
                     return "\"" + StringEscapeUtils.escapeJson(entry.getKey().getString()) + "\":" + makeJson(entry.getValue());
                 }).collect(Collectors.joining(",", "{", "}"));
                 return s;

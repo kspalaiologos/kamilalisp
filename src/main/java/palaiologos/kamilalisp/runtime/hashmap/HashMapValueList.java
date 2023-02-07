@@ -15,7 +15,7 @@ public class HashMapValueList extends PrimitiveFunction implements Lambda {
         if (!args.get(0).isUserdata(HashMapUserData.class))
             throw new RuntimeException("hashmap:value-list expects a hashmap as an argument.");
         HashMapUserData data = args.get(0).getUserdata(HashMapUserData.class);
-        return new Atom(data.value.values().stream().toList());
+        return new Atom(data.value().values().stream().toList());
     }
 
     @Override

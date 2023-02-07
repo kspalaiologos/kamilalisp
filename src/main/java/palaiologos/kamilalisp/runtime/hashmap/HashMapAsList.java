@@ -15,7 +15,7 @@ public class HashMapAsList extends PrimitiveFunction implements Lambda {
         if (!args.get(0).isUserdata(HashMapUserData.class))
             throw new RuntimeException("hashmap:as-list expects a hashmap as an argument.");
         HashMapUserData data = args.get(0).getUserdata(HashMapUserData.class);
-        List<Atom> list = data.value.entrySet().stream().map(entry -> new Atom(List.of(entry.getKey(), entry.getValue()))).toList();
+        List<Atom> list = data.value().entrySet().stream().map(entry -> new Atom(List.of(entry.getKey(), entry.getValue()))).toList();
         return new Atom(list);
     }
 

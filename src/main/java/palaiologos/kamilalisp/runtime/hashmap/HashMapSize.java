@@ -16,7 +16,7 @@ public class HashMapSize extends PrimitiveFunction implements Lambda {
         if (!args.get(0).isUserdata(HashMapUserData.class))
             throw new RuntimeException("hashmap:size expects a hashmap as an argument.");
         HashMapUserData data = args.get(0).getUserdata(HashMapUserData.class);
-        return new Atom(BigInteger.valueOf(data.value.size()));
+        return new Atom(BigInteger.valueOf(data.value().size()));
     }
 
     @Override

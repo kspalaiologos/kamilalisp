@@ -16,7 +16,7 @@ public class HashMapMerge extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("hashmap:merge expects a hashmap as an argument.");
         HashMapUserData data = args.get(0).getUserdata(HashMapUserData.class);
         HashMapUserData data2 = args.get(1).getUserdata(HashMapUserData.class);
-        return new Atom(new HashMapUserData(data.value.plusAll(data2.value)));
+        return new Atom(new HashMapUserData(data.value().plusAll(data2.value())));
     }
 
     @Override

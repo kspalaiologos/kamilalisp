@@ -16,7 +16,7 @@ public class HashMapWithout extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("hashmap:without expects a hashmap as an argument.");
         HashMapUserData data = args.get(0).getUserdata(HashMapUserData.class);
         HashMapUserData data2 = args.get(1).getUserdata(HashMapUserData.class);
-        return new Atom(new HashMapUserData(data.value.minusAll(data2.value.keySet())));
+        return new Atom(new HashMapUserData(data.value().minusAll(data2.value().keySet())));
     }
 
     @Override

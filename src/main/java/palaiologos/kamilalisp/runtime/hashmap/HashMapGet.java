@@ -16,7 +16,7 @@ public class HashMapGet extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("hashmap:get expects a hashmap as an argument.");
         HashMapUserData data = args.get(0).getUserdata(HashMapUserData.class);
         Atom key = args.get(1);
-        return data.value.getOrDefault(key, Atom.NULL);
+        return data.value().getOrDefault(key, Atom.NULL);
     }
 
     @Override

@@ -4,21 +4,17 @@ import org.pcollections.HashPMap;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Userdata;
 
-public class HashMapUserData implements Userdata {
-    public final HashPMap<Atom, Atom> value;
+import java.math.BigDecimal;
 
-    public HashMapUserData(HashPMap<Atom, Atom> value) {
-        this.value = value;
-    }
-
+public record HashMapUserData(HashPMap<Atom, Atom> value) implements Userdata {
     @Override
     public Atom field(Object key) {
-        if(key instanceof Integer) {
-            if (value.containsKey(new Atom(((Integer) key).toString())))
-                return value.get(new Atom(((Integer) key).toString()));
+        if (key instanceof BigDecimal) {
+            if (value.containsKey(new Atom(key.toString())))
+                return value.get(new Atom(key.toString()));
             else
                 return Atom.NULL;
-        } else if(key instanceof String) {
+        } else if (key instanceof String) {
             if (value.containsKey(new Atom((String) key)))
                 return value.get(new Atom((String) key));
             else
@@ -56,8 +52,4 @@ public class HashMapUserData implements Userdata {
         return !value.isEmpty();
     }
 
-    @Override
-    public int hashCode() {
-        return value.hashCode();
-    }
 }

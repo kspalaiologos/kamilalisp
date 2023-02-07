@@ -15,7 +15,7 @@ public class HashMapKeyList extends PrimitiveFunction implements Lambda {
         if (!args.get(0).isUserdata(HashMapUserData.class))
             throw new RuntimeException("hashmap:key-list expects a hashmap as an argument.");
         HashMapUserData data = args.get(0).getUserdata(HashMapUserData.class);
-        return new Atom(data.value.keySet().stream().toList());
+        return new Atom(data.value().keySet().stream().toList());
     }
 
     @Override

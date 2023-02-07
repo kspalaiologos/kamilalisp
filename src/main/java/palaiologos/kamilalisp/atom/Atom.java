@@ -493,14 +493,14 @@ public class Atom implements Comparable<Atom> {
 
     public Atom dot(Object index) {
         if (getType() == Type.STRING) {
-            if (index instanceof Integer) {
-                return new Atom(String.valueOf(getString().charAt((Integer) index)));
+            if (index instanceof BigDecimal) {
+                return new Atom(String.valueOf(getString().charAt(((BigDecimal) index).intValue())));
             } else {
                 throw new TypeError("Expected integer index.");
             }
         } else if (getType() == Type.LIST) {
-            if (index instanceof Integer) {
-                return getList().get((Integer) index);
+            if (index instanceof BigDecimal) {
+                return getList().get(((BigDecimal) index).intValue());
             } else {
                 throw new TypeError("Expected integer index.");
             }

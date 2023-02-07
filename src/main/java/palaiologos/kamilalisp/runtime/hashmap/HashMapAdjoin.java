@@ -17,7 +17,7 @@ public class HashMapAdjoin extends PrimitiveFunction implements Lambda {
         HashMapUserData data = args.get(0).getUserdata(HashMapUserData.class);
         Atom key = args.get(1);
         Atom value = args.get(2);
-        return new Atom(new HashMapUserData(data.value.plus(key, value)));
+        return new Atom(new HashMapUserData(data.value().plus(key, value)));
     }
 
     @Override

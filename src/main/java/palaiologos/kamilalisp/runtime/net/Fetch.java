@@ -35,10 +35,10 @@ public class Fetch extends PrimitiveFunction implements Lambda {
                 return new Atom(List.of(new Atom(BigInteger.valueOf(responseCode)), new Atom(buffer)));
             } else if(args.size() == 2) {
                 URL url = new URL(args.get(0).getString());
-                HashPMap<Atom, Atom> headers = args.get(1).getUserdata(HashMapUserData.class).value;
+                HashPMap<Atom, Atom> headers = args.get(1).getUserdata(HashMapUserData.class).value();
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod(headers.getOrDefault(new Atom("method"), new Atom("GET")).getString());
-                HashPMap<Atom, Atom> properties = headers.getOrDefault(new Atom("properties"), new Atom(new HashMapUserData(HashTreePMap.empty()))).getUserdata(HashMapUserData.class).value;
+                HashPMap<Atom, Atom> properties = headers.getOrDefault(new Atom("properties"), new Atom(new HashMapUserData(HashTreePMap.empty()))).getUserdata(HashMapUserData.class).value();
                 for (Atom key : properties.keySet()) {
                     con.setRequestProperty(key.getString(), properties.get(key).getString());
                 }
