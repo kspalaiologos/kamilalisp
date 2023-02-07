@@ -9,12 +9,12 @@ import palaiologos.kamilalisp.runtime.array.hof.*;
 import palaiologos.kamilalisp.runtime.array.sais.SacaBwt;
 import palaiologos.kamilalisp.runtime.array.sais.SacaSais;
 import palaiologos.kamilalisp.runtime.array.sais.SacaUnbwt;
-import palaiologos.kamilalisp.runtime.data.csv.CsvParse;
-import palaiologos.kamilalisp.runtime.data.csv.CsvWrite;
-import palaiologos.kamilalisp.runtime.data.json.JsonParse;
-import palaiologos.kamilalisp.runtime.data.json.JsonWrite;
-import palaiologos.kamilalisp.runtime.data.xml.XmlParse;
-import palaiologos.kamilalisp.runtime.data.xml.XmlWrite;
+import palaiologos.kamilalisp.runtime.dataformat.CsvParse;
+import palaiologos.kamilalisp.runtime.dataformat.CsvWrite;
+import palaiologos.kamilalisp.runtime.dataformat.JsonParse;
+import palaiologos.kamilalisp.runtime.dataformat.JsonWrite;
+import palaiologos.kamilalisp.runtime.dataformat.XmlParse;
+import palaiologos.kamilalisp.runtime.dataformat.XmlWrite;
 import palaiologos.kamilalisp.runtime.datetime.*;
 import palaiologos.kamilalisp.runtime.hashmap.*;
 import palaiologos.kamilalisp.runtime.image.LoadImage;
@@ -262,10 +262,8 @@ public class FunctionRegistry {
 
         env.setPrimitive("xml:parse", new Atom(new XmlParse()));
         env.setPrimitive("xml:write", new Atom(new XmlWrite()));
-
         env.setPrimitive("csv:parse", new Atom(new CsvParse()));
         env.setPrimitive("csv:write", new Atom(new CsvWrite()));
-
         env.setPrimitive("json:parse", new Atom(new JsonParse()));
         env.setPrimitive("json:write", new Atom(new JsonWrite()));
 

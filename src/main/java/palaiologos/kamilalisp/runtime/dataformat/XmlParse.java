@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime.data.xml;
+package palaiologos.kamilalisp.runtime.dataformat;
 
 import com.google.common.io.CharSource;
 import org.w3c.dom.Document;

@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime.data.json;
+package palaiologos.kamilalisp.runtime.dataformat;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
