@@ -1,5 +1,9 @@
 grammar JSON;
 
+@header {
+    package palaiologos.kamilalisp.parser;
+}
+
 json
    : value EOF
    ;
