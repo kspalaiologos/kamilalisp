@@ -12,6 +12,7 @@ import palaiologos.kamilalisp.runtime.array.sais.SacaUnbwt;
 import palaiologos.kamilalisp.runtime.data.csv.CsvParse;
 import palaiologos.kamilalisp.runtime.data.csv.CsvWrite;
 import palaiologos.kamilalisp.runtime.data.json.JsonParse;
+import palaiologos.kamilalisp.runtime.data.json.JsonWrite;
 import palaiologos.kamilalisp.runtime.data.xml.XmlParse;
 import palaiologos.kamilalisp.runtime.data.xml.XmlWrite;
 import palaiologos.kamilalisp.runtime.datetime.*;
@@ -266,6 +267,7 @@ public class FunctionRegistry {
         env.setPrimitive("csv:write", new Atom(new CsvWrite()));
 
         env.setPrimitive("json:parse", new Atom(new JsonParse()));
+        env.setPrimitive("json:write", new Atom(new JsonWrite()));
 
         env.setPrimitive("date:from", new Atom(new DateTimeFrom()));
         env.setPrimitive("time:from", new Atom(new TimeFrom()));
