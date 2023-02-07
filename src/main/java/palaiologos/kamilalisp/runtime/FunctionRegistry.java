@@ -286,7 +286,7 @@ public class FunctionRegistry {
         env.setPrimitive("net:wget", new Atom(new Wget()));
         env.setPrimitive("net:fetch", new Atom(new Fetch()));
         env.setPrimitive("net:client", new Atom(new NetClient()));
-        env.setPrimitive("net:server-ssl", new Atom(new NetClientSSL()));
+        env.setPrimitive("net:client-ssl", new Atom(new NetClientSSL()));
         env.setPrimitive("net:server", new Atom(new NetServer()));
         env.setPrimitive("net:server-ssl", new Atom(new NetServerSSL()));
 
