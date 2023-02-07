@@ -53,7 +53,7 @@ List operations and point-free programming:
 ; 1=⍴∪(⊢+⌽)⍳10000
 ```
 
-Command-line tools:
+Display a bar chart of the byte frequency in the file using a logarithmic scale and print Shannon Entropy of a file passed argument:
 ```
 % cat script.lisp
 (def a \io:get-file-buffer \car args)
