@@ -27,6 +27,11 @@ public class NetServerSSL extends PrimitiveFunction implements Lambda {
         try {
             // Kilometer long magic incantations.
             // Advisable to not touch and ignore.
+
+            // TODO: manual, generate keys as follows:
+            // keytool -genkeypair -alias server -keyalg EC \
+            // -sigalg SHA384withECDSA -keysize 256 -keystore servercert.p12 \
+            // -storetype pkcs12 -v -storepass abc123 -validity 10000 -ext san=ip:127.0.0.1
             KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
             InputStream trustStoreStream = new FileInputStream(trustStorePath);
             trustStore.load(trustStoreStream, trustStorePassword.toCharArray());
