@@ -36,4 +36,14 @@ class TestReplicateProduct {
         assertEquals(Common.runCode("(inner-product + * '(1 2 3) '(4 5 6) '(7 8 9))").getReal(), BigDecimal.valueOf(270));
         assertEquals(Common.runCode("((inner-product + *) '(1 2 3) '(4 5 6) '(7 8 9))").getReal(), BigDecimal.valueOf(270));
     }
+
+    @Test
+    void testMatrixProduct() {
+        assertEquals(Common.runCode("""
+                (def mat '((1 2 3) (4 5 6) (7 8 9)))
+                ($(foldl + 0)%[1] \\outer-product * mat (matrix:transpose mat))
+        """), Common.runCode("""
+                #0 '((30 36 42) (66 81 96) (102 126 150))
+        """));
+    }
 }
