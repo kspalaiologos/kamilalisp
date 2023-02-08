@@ -266,6 +266,9 @@ public class FunctionRegistry {
         env.setPrimitive("json:parse", new Atom(new JsonParse()));
         env.setPrimitive("json:write", new Atom(new JsonWrite()));
 
+        env.setPrimitive("codec:gzip-compress", new Atom(new GzipCompress()));
+        env.setPrimitive("codec:gzip-decompress", new Atom(new GzipDecompress()));
+
         env.setPrimitive("date:from", new Atom(new DateTimeFrom()));
         env.setPrimitive("time:from", new Atom(new TimeFrom()));
         env.setPrimitive("date:add", new Atom(new DateTimeAdd()));

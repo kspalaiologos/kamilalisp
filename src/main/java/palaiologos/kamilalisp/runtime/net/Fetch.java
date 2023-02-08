@@ -6,6 +6,7 @@ import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
+import palaiologos.kamilalisp.runtime.dataformat.BufferAtomList;
 import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
 import java.io.InputStream;
@@ -31,9 +32,7 @@ public class Fetch extends PrimitiveFunction implements Lambda {
                 InputStream response = con.getInputStream();
                 byte[] data = response.readAllBytes();
                 response.close();
-                List<Atom> buffer = new ArrayList<>();
-                for (byte b : data) buffer.add(new Atom(BigInteger.valueOf(b)));
-                return new Atom(List.of(new Atom(BigInteger.valueOf(responseCode)), new Atom(buffer)));
+                return new Atom(List.of(new Atom(BigInteger.valueOf(responseCode)), new Atom(BufferAtomList.from(data))));
             } else if (args.size() == 2) {
                 URL url = new URL(args.get(0).getString());
                 HashPMap<Atom, Atom> headers = args.get(1).getUserdata(HashMapUserData.class).value();
@@ -59,9 +58,7 @@ public class Fetch extends PrimitiveFunction implements Lambda {
                 InputStream response = con.getInputStream();
                 byte[] data = response.readAllBytes();
                 response.close();
-                List<Atom> buffer = new ArrayList<>();
-                for (byte b : data) buffer.add(new Atom(BigInteger.valueOf(b)));
-                return new Atom(List.of(new Atom(BigInteger.valueOf(responseCode)), new Atom(buffer)));
+                return new Atom(List.of(new Atom(BigInteger.valueOf(responseCode)), new Atom(BufferAtomList.from(data))));
             } else {
                 throw new RuntimeException("net:fetch takes 1 or 2 arguments");
             }

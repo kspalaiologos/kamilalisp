@@ -3,6 +3,7 @@ package palaiologos.kamilalisp.runtime.net;
 import org.pcollections.HashTreePMap;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.InterruptionError;
+import palaiologos.kamilalisp.runtime.dataformat.BufferAtomList;
 import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
 import java.io.IOException;
@@ -53,11 +54,7 @@ public class SocketObject {
                 if (read == -1) {
                     return Atom.NULL;
                 }
-                List<Atom> atoms = new ArrayList<>(read);
-                for (int i = 0; i < read; i++) {
-                    atoms.add(new Atom(BigInteger.valueOf(bytes[i])));
-                }
-                return new Atom(atoms);
+                return new Atom(BufferAtomList.from(bytes, read));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

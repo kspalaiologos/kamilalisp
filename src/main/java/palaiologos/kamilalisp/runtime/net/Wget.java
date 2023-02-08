@@ -4,6 +4,7 @@ import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
+import palaiologos.kamilalisp.runtime.dataformat.BufferAtomList;
 
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -20,11 +21,7 @@ public class Wget extends PrimitiveFunction implements Lambda {
             InputStream data = url.openStream();
             byte[] bytes = data.readAllBytes();
             data.close();
-            List<Atom> list = new ArrayList<>(bytes.length);
-            for (byte b : bytes) {
-                list.add(new Atom(BigInteger.valueOf(b)));
-            }
-            return new Atom(list);
+            return new Atom(BufferAtomList.from(bytes));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
