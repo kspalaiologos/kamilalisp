@@ -15,8 +15,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
-    - name: Build native image with Maven
       run: mvn -B package -P native --file pom.xml
     - name: Compress the native image with UPX
       run: upx --lzma target/kamilalisp
