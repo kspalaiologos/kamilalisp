@@ -154,6 +154,7 @@ public class FunctionRegistry {
         env.setPrimitive("to-string", "⍫←", new Atom(new ToString()));
         env.setPrimitive("str:escape", new Atom(new Escape()));
         env.setPrimitive("str:unescape", new Atom(new Unescape()));
+        env.setPrimitive("str:contains", "⍫⊂←", new Atom(new Contains()));
 
         env.setPrimitive("io:writeln", "↑⍫", new Atom(new Writeln()));
         env.setPrimitive("io:readln", "↓⍫", new Atom(new Readln()));
@@ -258,6 +259,8 @@ public class FunctionRegistry {
 
         env.setPrimitive("xml:parse", new Atom(new XmlParse()));
         env.setPrimitive("xml:write", new Atom(new XmlWrite()));
+        env.setPrimitive("xml:escape", new Atom(new XmlEscape()));
+        env.setPrimitive("xml:unescape", new Atom(new XmlUnescape()));
         env.setPrimitive("csv:parse", new Atom(new CsvParse()));
         env.setPrimitive("csv:write", new Atom(new CsvWrite()));
         env.setPrimitive("json:parse", new Atom(new JsonParse()));

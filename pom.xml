@@ -71,7 +71,6 @@
             <version>1.10.0</version>
         </dependency>
 
-
         <!-- Testing dependencies. -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
