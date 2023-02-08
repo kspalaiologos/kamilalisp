@@ -16,6 +16,7 @@ and the return value of the code.
 - audio
 - compression codecs
 - kamilalisp as a shell?
+- bzip3 (needs java porting).
 
 book:
 - huffman coding, elias gamma, histograms, fft, ski calculus, matrix algos, Chinese Remainder Theorem?
