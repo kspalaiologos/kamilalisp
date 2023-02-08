@@ -160,6 +160,7 @@
                     <options>
                         <option>-libraryjars &lt;java.home&gt;/jmods</option>
                         <option>-keep class org.jline.** { *; }</option>
+                        <option>-keep class org.tukaani.xz.** { *; }</option>
                         <option>-optimizationpasses 9</option>
                         <option>-allowaccessmodification</option>
                         <option>-flattenpackagehierarchy ''</option>
