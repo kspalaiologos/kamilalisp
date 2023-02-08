@@ -19,7 +19,8 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
         // env is the caller environment that defines the lambda function.
         // (lambda (x) (+ x x))
         // (lambda x (+ x x))
-        assertArity(args, 2);
+        if(args.size() < 2)
+            throw new TypeError("Expected at least two arguments to `lambda'.");
 
         List<String> bindings;
         if (args.get(0).getType() == Type.LIST) {
@@ -36,7 +37,7 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
 
         boolean wantsVararg = !bindings.isEmpty() && (bindings.get(bindings.size() - 1)).startsWith("...");
 
-        Atom code = args.get(1);
+        List<Atom> code = args.subList(1, args.size());
 
         int line = 0, col = 0;
         if (args.get(0) instanceof CodeAtom) {
@@ -52,11 +53,11 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
     public class DfnClass implements Lambda {
         List<String> bindings;
         boolean wantsVararg;
-        Atom code;
+        List<Atom> code;
         Environment env;
         int f_line, f_col;
 
-        DfnClass(List<String> bindings, boolean wantsVararg, Atom code, Environment env, int f_line, int f_col) {
+        DfnClass(List<String> bindings, boolean wantsVararg, List<Atom> code, Environment env, int f_line, int f_col) {
             this.bindings = bindings;
             this.wantsVararg = wantsVararg;
             this.code = code;
@@ -67,12 +68,18 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
 
         @Override
         public String stringify() {
-            return "(λ " + String.join(" ", bindings) + " . " + code.toString() + ")";
+            if(code.size() == 1)
+                return "(λ " + String.join(" ", bindings) + " . " + code.get(0).toString() + ")";
+            else
+                return "(λ " + String.join(" ", bindings) + " . " + code.get(0).toString() + "...)";
         }
 
         @Override
         public String frameString() {
-            return "(λ " + String.join(" ", bindings) + " . " + code.shortString() + ")";
+            if(code.size() == 1)
+                return "(λ " + String.join(" ", bindings) + " . " + code.get(0).shortString() + ")";
+            else
+                return "(λ " + String.join(" ", bindings) + " . " + code.get(0).shortString() + "...)";
         }
 
         @Override
@@ -91,7 +98,9 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
                         descendantEnv.set(bindings.get(i), args.get(i));
                     descendantEnv.set(bindings.get(bindings.size() - 1), new Atom(args.subList(bindings.size() - 1, args.size())));
                 }
-                Atom a = Evaluation.evaluate(descendantEnv, code);
+                for(int i = 0; i < code.size() - 1; i++)
+                    Evaluation.evaluate(descendantEnv, code.get(i));
+                Atom a = Evaluation.evaluate(descendantEnv, code.get(code.size() - 1));
                 if (a.getType() == Type.LIST && !a.getList().isEmpty() && a.getList().get(0).getType() == Type.CALLABLE && a.getList().get(0).getCallable() instanceof Self.SelfThunk selfThunk) {
                     if (selfThunk.index() == StackFrame.currentLambdaIdx()) {
                         args = selfThunk.args();

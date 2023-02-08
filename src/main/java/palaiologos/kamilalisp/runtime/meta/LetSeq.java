@@ -21,9 +21,7 @@ public class LetSeq extends PrimitiveFunction implements SpecialForm {
                                 throw new RuntimeException("Expected identifier in `defun' declaration in `let-seq'.");
                             }
                             String name = declaration.get(1).getIdentifier();
-                            Atom lambdaArgs = declaration.get(2);
-                            Atom lambdaValue = declaration.get(3);
-                            Atom lambda = Evaluation.evaluate(newEnv, Dfn.INSTANCE, List.of(lambdaArgs, lambdaValue));
+                            Atom lambda = Evaluation.evaluate(newEnv, Dfn.INSTANCE, declaration.subList(2, declaration.size()));
                             newEnv.set(name, lambda);
                             continue;
                         }
