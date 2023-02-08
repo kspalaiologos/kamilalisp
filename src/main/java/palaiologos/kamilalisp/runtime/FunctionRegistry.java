@@ -268,6 +268,10 @@ public class FunctionRegistry {
 
         env.setPrimitive("codec:gzip-compress", new Atom(new GzipCompress()));
         env.setPrimitive("codec:gzip-decompress", new Atom(new GzipDecompress()));
+        env.setPrimitive("codec:bzip2-compress", new Atom(new Bzip2Compress()));
+        env.setPrimitive("codec:bzip2-decompress", new Atom(new Bzip2Decompress()));
+        env.setPrimitive("codec:lz4-compress", new Atom(new Lz4Compress()));
+        env.setPrimitive("codec:lz4-decompress", new Atom(new Lz4Decompress()));
 
         env.setPrimitive("date:from", new Atom(new DateTimeFrom()));
         env.setPrimitive("time:from", new Atom(new TimeFrom()));
