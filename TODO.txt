@@ -6,6 +6,16 @@
 - extend regex library
 - matrix stuff
 - dfn: multiple statements
+- http/https server w. routing
+- actor model (create actor handles using actor:create, subscribe to handles using actor:subscribe,
+broadcast messages using actor:broadcast, unsubscribe to handles using actor:unsubscribe)
+- an idea to slightly simplify list and tree traversal: a sink data structure. you can declare
+a sink at any place in the code and have some code to be evaluated in its context. then, any call
+to sink:push will add the data to the sink in an impure way, regardless of where you called it but
+it must be in the "sink block" and what the sink block returns is the content of the sink itself
+and the return value of the code.
+- audio
+- compression codecs
 
 book:
 - huffman coding, elias gamma, histograms, fft, ski calculus, matrix algos, Chinese Remainder Theorem?
