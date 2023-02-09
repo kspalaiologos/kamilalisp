@@ -10,6 +10,9 @@ import palaiologos.kamilalisp.runtime.array.sais.SacaBwt;
 import palaiologos.kamilalisp.runtime.array.sais.SacaSais;
 import palaiologos.kamilalisp.runtime.array.sais.SacaUnbwt;
 import palaiologos.kamilalisp.runtime.dataformat.*;
+import palaiologos.kamilalisp.runtime.dataformat.archive.ZipCreate;
+import palaiologos.kamilalisp.runtime.dataformat.archive.ZipLoad;
+import palaiologos.kamilalisp.runtime.dataformat.archive.ZipSave;
 import palaiologos.kamilalisp.runtime.datetime.*;
 import palaiologos.kamilalisp.runtime.hashmap.*;
 import palaiologos.kamilalisp.runtime.image.LoadImage;
@@ -31,6 +34,8 @@ import palaiologos.kamilalisp.runtime.net.*;
 import palaiologos.kamilalisp.runtime.regex.RegexMatches;
 import palaiologos.kamilalisp.runtime.regex.RegexReplace;
 import palaiologos.kamilalisp.runtime.regex.RegexSplit;
+import palaiologos.kamilalisp.runtime.sh.Mkdir;
+import palaiologos.kamilalisp.runtime.sh.Mkdirs;
 import palaiologos.kamilalisp.runtime.string.*;
 
 import java.math.BigDecimal;
@@ -274,6 +279,13 @@ public class FunctionRegistry {
         env.setPrimitive("codec:lz4-decompress", new Atom(new Lz4Decompress()));
         env.setPrimitive("codec:xz-compress", new Atom(new XzCompress()));
         env.setPrimitive("codec:xz-decompress", new Atom(new XzDecompress()));
+
+        env.setPrimitive("archive:zip:create", new Atom(new ZipCreate()));
+        env.setPrimitive("archive:zip:load", new Atom(new ZipLoad()));
+        env.setPrimitive("archive:zip:save", new Atom(new ZipSave()));
+
+        env.setPrimitive("sh:mkdir", new Atom(new Mkdir()));
+        env.setPrimitive("sh:mkdirs", new Atom(new Mkdirs()));
 
         env.setPrimitive("date:from", new Atom(new DateTimeFrom()));
         env.setPrimitive("time:from", new Atom(new TimeFrom()));

@@ -5,13 +5,16 @@ import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Userdata;
 
 import java.math.BigDecimal;
+import java.util.Map;
+import java.util.Optional;
 
 public record HashMapUserData(HashPMap<Atom, Atom> value) implements Userdata {
     @Override
     public Atom field(Object key) {
         if (key instanceof BigDecimal) {
-            if (value.containsKey(new Atom(key.toString())))
-                return value.get(new Atom(key.toString()));
+            Optional<Map.Entry<Atom, Atom>> a = value.entrySet().stream().skip(((BigDecimal) key).longValue()).findFirst();
+            if (a.isPresent())
+                return a.get().getValue();
             else
                 return Atom.NULL;
         } else if (key instanceof String) {
