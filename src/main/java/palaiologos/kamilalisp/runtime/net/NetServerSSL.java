@@ -55,7 +55,7 @@ public class NetServerSSL extends PrimitiveFunction implements Lambda {
             sslListener.setNeedClientAuth(true);
             sslListener.setEnabledProtocols(new String[] {"TLSv1.2"});
 
-            return new Atom(new HashMapUserData(HashTreePMap.from(SocketObject.from(env, listener, callable))));
+            return new Atom(new ServerSocketUserdata(env, callable, listener));
         } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException |
                  UnrecoverableKeyException | KeyManagementException e) {
             throw new RuntimeException(e);

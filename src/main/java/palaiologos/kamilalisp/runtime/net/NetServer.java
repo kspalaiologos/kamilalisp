@@ -16,7 +16,7 @@ public class NetServer extends PrimitiveFunction implements Lambda {
         Callable callable = args.get(1).getCallable();
         try {
             ServerSocket serverSocket = new ServerSocket(port);
-            return new Atom(new HashMapUserData(HashTreePMap.from(SocketObject.from(env, serverSocket, callable))));
+            return new Atom(new ServerSocketUserdata(env, callable, serverSocket));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

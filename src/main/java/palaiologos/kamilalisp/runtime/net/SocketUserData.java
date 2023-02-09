@@ -1,20 +1,14 @@
 package palaiologos.kamilalisp.runtime.net;
 
-import org.pcollections.HashTreePMap;
 import palaiologos.kamilalisp.atom.*;
-import palaiologos.kamilalisp.error.InterruptionError;
 import palaiologos.kamilalisp.runtime.dataformat.BufferAtomList;
-import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class SocketObject {
+public class SocketUserData implements Userdata {
     private static class SocketClose extends PrimitiveFunction implements Lambda {
         private final Socket socket;
 
@@ -223,66 +217,62 @@ public class SocketObject {
         }
     }
 
-    public static Map<Atom, Atom> from(Socket s) {
-        return Map.of(
-                new Atom("close"), new Atom(new SocketClose(s)),
-                new Atom("read-bytes"), new Atom(new SocketReadBytes(s)),
-                new Atom("write-bytes"), new Atom(new SocketWriteBytes(s)),
-                new Atom("read-line"), new Atom(new SocketReadLine(s)),
-                new Atom("write-line"), new Atom(new SocketWriteLine(s)),
-                new Atom("flush"), new Atom(new SocketFlush(s)),
-                new Atom("skip"), new Atom(new SocketSkip(s)),
-                new Atom("available"), new Atom(new SocketAvailable(s))
-        );
+    private final Socket socket;
+
+    public SocketUserData(Socket socket) {
+        this.socket = socket;
     }
 
-    private static class ServerSocketClose extends PrimitiveFunction implements Lambda {
-        private final ServerSocket socket;
-        private final Thread server;
-
-        public ServerSocketClose(ServerSocket socket, Thread server) {
-            this.socket = socket;
-            this.server = server;
+    @Override
+    public Atom field(Object key) {
+        if(!(key instanceof String)) {
+            throw new RuntimeException("net:client-socket field name must be a string");
         }
 
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            try {
-                server.interrupt();
-                socket.close();
-                return Atom.NULL;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        return switch ((String) key) {
+            case "close" -> new Atom(new SocketClose(socket));
+            case "read-bytes" -> new Atom(new SocketReadBytes(socket));
+            case "write-bytes" -> new Atom(new SocketWriteBytes(socket));
+            case "read-line" -> new Atom(new SocketReadLine(socket));
+            case "write-line" -> new Atom(new SocketWriteLine(socket));
+            case "flush" -> new Atom(new SocketFlush(socket));
+            case "skip" -> new Atom(new SocketSkip(socket));
+            case "available" -> new Atom(new SocketAvailable(socket));
+            default -> throw new RuntimeException("net:client-socket has no field " + key);
+        };
+    }
 
-        @Override
-        protected String name() {
-            return "net:server:close";
+    @Override
+    public int compareTo(Userdata other) {
+        return socket.hashCode() - other.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        return socket.hashCode();
+    }
+
+    @Override
+    public boolean equals(Userdata other) {
+        if(other instanceof SocketUserData) {
+            return socket.equals(((SocketUserData) other).socket);
+        } else {
+            return false;
         }
     }
 
-    public static Map<Atom, Atom> from(Environment env, ServerSocket s, Callable handler) {
-        Thread server = new Thread(() -> {
-            do {
-                try {
-                    Socket client = s.accept();
-                    Atom data = new Atom(new HashMapUserData(HashTreePMap.from(from(client))));
-                    Evaluation.safeEvaluate(env, handler, List.of(data), err -> {
-                        System.err.println(err);
-                        throw new InterruptionError();
-                    });
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            } while (!Thread.interrupted());
-        });
+    @Override
+    public String toDisplayString() {
+        return "net:client-socket";
+    }
 
-        Map<Atom, Atom> map = Map.of(
-                new Atom("close"), new Atom(new ServerSocketClose(s, server))
-        );
+    @Override
+    public String typeName() {
+        return "net:client-socket";
+    }
 
-        server.start();
-        return map;
+    @Override
+    public boolean coerceBoolean() {
+        return true;
     }
 }

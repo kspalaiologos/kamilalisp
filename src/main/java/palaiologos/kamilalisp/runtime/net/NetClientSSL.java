@@ -54,7 +54,7 @@ public class NetClientSSL extends PrimitiveFunction implements Lambda {
             sslParams.setEndpointIdentificationAlgorithm("HTTPS");
             ((SSLSocket) connection).setSSLParameters(sslParams);
 
-            return new Atom(new HashMapUserData(HashTreePMap.from(SocketObject.from(connection))));
+            return new Atom(new SocketUserData(connection));
         } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException |
                  UnrecoverableKeyException | KeyManagementException e) {
             throw new RuntimeException(e);

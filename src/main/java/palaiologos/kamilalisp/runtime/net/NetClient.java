@@ -19,7 +19,7 @@ public class NetClient extends PrimitiveFunction implements Lambda {
         int port = args.get(1).getInteger().intValueExact();
         try {
             Socket socket = new Socket(host, port);
-            return new Atom(new HashMapUserData(HashTreePMap.from(SocketObject.from(socket))));
+            return new Atom(new SocketUserData(socket));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

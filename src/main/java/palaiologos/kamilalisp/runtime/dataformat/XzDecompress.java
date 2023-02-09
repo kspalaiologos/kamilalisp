@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime.dataformat;
 
-import org.apache.commons.compress.compressors.lz4.BlockLZ4CompressorInputStream;
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 import palaiologos.kamilalisp.atom.*;
 
