@@ -1,29 +1,31 @@
 package palaiologos.kamilalisp.runtime.sh;
 
 import palaiologos.kamilalisp.atom.Atom;
-import palaiologos.kamilalisp.atom.Environment;
-import palaiologos.kamilalisp.atom.Lambda;
-import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
 import java.io.File;
 import java.util.List;
 
-public class Mkdir extends PrimitiveFunction implements Lambda {
+public class Mkdir extends ShellFunction {
     @Override
-    public Atom apply(Environment env, List<Atom> args) {
-        args.stream().map(Atom::getString).forEach(x -> {
-            File file = new File(x);
-            if (!file.exists()) {
-                if(!file.mkdir()) {
-                    throw new RuntimeException("mkdir: failed to create directory: " + x);
-                }
-            }
-        });
-        return Atom.NULL;
+    protected String command() {
+        return "mkdir";
     }
 
     @Override
-    protected String name() {
-        return "sh:mkdir";
+    protected Atom execute(String flags, List<Atom> args) {
+        if(flags.contains("s")) {
+            args.stream().map(Atom::getString).forEach(s -> {
+                if(!new File(s).mkdirs()) {
+                    throw new RuntimeException("mkdir: failed to create directory '" + s + "'");
+                }
+            });
+        } else {
+            args.stream().map(Atom::getString).forEach(s -> {
+                if(!new File(s).mkdir()) {
+                    throw new RuntimeException("mkdir: failed to create directory '" + s + "'");
+                }
+            });
+        }
+        return Atom.NULL;
     }
 }
