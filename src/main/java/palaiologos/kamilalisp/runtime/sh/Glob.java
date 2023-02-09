@@ -17,7 +17,7 @@ public class Glob extends ShellFunction {
 
     @Override
     protected Atom execute(String flags, List<Atom> args) {
-        final PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher(args.get(0).getString());
+        final PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + args.get(0).getString());
         List<Atom> files = new ArrayList<>();
 
         try {
