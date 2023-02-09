@@ -32,8 +32,7 @@ import palaiologos.kamilalisp.runtime.net.*;
 import palaiologos.kamilalisp.runtime.regex.RegexMatches;
 import palaiologos.kamilalisp.runtime.regex.RegexReplace;
 import palaiologos.kamilalisp.runtime.regex.RegexSplit;
-import palaiologos.kamilalisp.runtime.sh.Cwd;
-import palaiologos.kamilalisp.runtime.sh.Mkdir;
+import palaiologos.kamilalisp.runtime.sh.*;
 import palaiologos.kamilalisp.runtime.string.*;
 
 import java.math.BigDecimal;
@@ -287,6 +286,9 @@ public class FunctionRegistry {
 
         env.setPrimitive("sh:mkdir", new Atom(new Mkdir()));
         env.setPrimitive("sh:cwd", new Atom(new Cwd()));
+        env.setPrimitive("sh:cd", new Atom(new Cd()));
+        env.setPrimitive("sh:rm", new Atom(new Rm()));
+        env.setPrimitive("sh:glob", new Atom(new Glob()));
 
         env.setPrimitive("date:from", new Atom(new DateTimeFrom()));
         env.setPrimitive("time:from", new Atom(new TimeFrom()));
