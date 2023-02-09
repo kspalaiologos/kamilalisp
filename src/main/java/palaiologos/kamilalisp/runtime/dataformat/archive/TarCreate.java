@@ -1,78 +1,37 @@
 package palaiologos.kamilalisp.runtime.dataformat.archive;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+import org.pcollections.HashPMap;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.runtime.dataformat.BufferAtomList;
 import palaiologos.kamilalisp.runtime.datetime.DateTime;
+import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
 import java.io.*;
+import java.nio.file.attribute.FileTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
-public class ZipCreate extends PrimitiveFunction implements ReactiveFunction, SpecialForm {
+public class TarCreate extends PrimitiveFunction implements ReactiveFunction, SpecialForm {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ZipArchiveOutputStream archive = new ZipArchiveOutputStream(baos);
-        return new Atom(new ZipArchiveWriterUserdata(archive, baos));
+        TarArchiveOutputStream archive = new TarArchiveOutputStream(baos);
+        return new Atom(new TarArchiveWriterUserdata(archive, baos));
     }
 
     @Override
     protected String name() {
-        return "archive:zip:create";
+        return "archive:tar:create";
     }
 
-    private static class SetLevel extends PrimitiveFunction implements Lambda {
-        private final ZipArchiveOutputStream zaos;
+    private static class TarAddFromFile extends PrimitiveFunction implements Lambda {
+        private final TarArchiveOutputStream zaos;
 
-        public SetLevel(ZipArchiveOutputStream zaos) {
-            this.zaos = zaos;
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 1);
-            int level = args.get(0).getInteger().intValueExact();
-            synchronized (zaos) {
-                zaos.setLevel(level);
-            }
-            return args.get(0);
-        }
-
-        @Override
-        protected String name() {
-            return "archive:zip:memory-writer.set-level";
-        }
-    }
-
-    private static class SetComment extends PrimitiveFunction implements Lambda {
-        private final ZipArchiveOutputStream zaos;
-
-        public SetComment(ZipArchiveOutputStream zaos) {
-            this.zaos = zaos;
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 1);
-            String comment = args.get(0).getString();
-            synchronized (zaos) {
-                zaos.setComment(comment);
-            }
-            return args.get(0);
-        }
-
-        @Override
-        protected String name() {
-            return "archive:zip:memory-writer.set-comment";
-        }
-    }
-
-    private static class ZipAddFromFile extends PrimitiveFunction implements Lambda {
-        private final ZipArchiveOutputStream zaos;
-
-        public ZipAddFromFile(ZipArchiveOutputStream zaos) {
+        public TarAddFromFile(TarArchiveOutputStream zaos) {
             this.zaos = zaos;
         }
 
@@ -99,21 +58,21 @@ public class ZipCreate extends PrimitiveFunction implements ReactiveFunction, Sp
 
         @Override
         protected String name() {
-            return "archive:zip:memory-writer.add-from-file";
+            return "archive:tar:memory-writer.add-from-file";
         }
     }
 
-    private static class ZipAddFromBuffer extends PrimitiveFunction implements Lambda {
-        private final ZipArchiveOutputStream zaos;
+    private static class TarAddFromBuffer extends PrimitiveFunction implements Lambda {
+        private final TarArchiveOutputStream zaos;
 
-        public ZipAddFromBuffer(ZipArchiveOutputStream zaos) {
+        public TarAddFromBuffer(TarArchiveOutputStream zaos) {
             this.zaos = zaos;
         }
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
             if(args.size() < 2)
-                throw new RuntimeException("archive:zip:memory-writer.add-from-buffer - expected at least 2 arguments, got " + args.size());
+                throw new RuntimeException("archive:tar:memory-writer.add-from-buffer - expected at least 2 arguments, got " + args.size());
             List<Atom> buffer = args.get(0).getList();
             String entryName = args.get(1).getString();
             byte[] buf = new byte[buffer.size()];
@@ -123,10 +82,25 @@ public class ZipCreate extends PrimitiveFunction implements ReactiveFunction, Sp
             try {
                 synchronized (zaos) {
                     ByteArrayInputStream bais = new ByteArrayInputStream(buf);
-                    ZipArchiveEntry e = new ZipArchiveEntry(entryName);
-                    if(args.size() == 3)
-                        e.setTimeLocal(args.get(2).getUserdata(DateTime.class).getValue());
-                    zaos.addRawArchiveEntry(e, bais);
+                    TarArchiveEntry e = new TarArchiveEntry(entryName);
+                    if(args.size() == 3) {
+                        HashPMap<Atom, Atom> data = args.get(2).getUserdata(HashMapUserData.class).value();
+                        if(data.containsKey(new Atom("creation-time")))
+                            e.setCreationTime(FileTime.from(data.get(new Atom("creation-time")).getUserdata(DateTime.class).getValue().toInstant(ZoneOffset.UTC)));
+                        if(data.containsKey(new Atom("last-modified-time")))
+                            e.setLastModifiedTime(FileTime.from(data.get(new Atom("last-modified-time")).getUserdata(DateTime.class).getValue().toInstant(ZoneOffset.UTC)));
+                        if(data.containsKey(new Atom("last-access-time")))
+                            e.setLastAccessTime(FileTime.from(data.get(new Atom("last-access-time")).getUserdata(DateTime.class).getValue().toInstant(ZoneOffset.UTC)));
+                        if(data.containsKey(new Atom("mode")))
+                            e.setMode(data.get(new Atom("mode")).getInteger().intValueExact());
+                        if(data.containsKey(new Atom("user-name")))
+                            e.setUserName(data.get(new Atom("user-name")).getString());
+                        if(data.containsKey(new Atom("group-name")))
+                            e.setGroupName(data.get(new Atom("group-name")).getString());
+                    }
+                    zaos.putArchiveEntry(e);
+                    bais.transferTo(zaos);
+                    zaos.closeArchiveEntry();
                     zaos.flush();
                     bais.close();
                 }
@@ -138,24 +112,26 @@ public class ZipCreate extends PrimitiveFunction implements ReactiveFunction, Sp
 
         @Override
         protected String name() {
-            return "archive:zip:memory-writer.add-from-buffer";
+            return "archive:tar:memory-writer.add-from-buffer";
         }
     }
 
     private static class CopyEntry extends PrimitiveFunction implements Lambda {
-        private final ZipArchiveOutputStream zaos;
+        private final TarArchiveOutputStream zaos;
 
-        public CopyEntry(ZipArchiveOutputStream zaos) {
+        public CopyEntry(TarArchiveOutputStream zaos) {
             this.zaos = zaos;
         }
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
             assertArity(args, 1);
-            ZipEntry e = args.get(0).getUserdata(ZipEntry.class);
+            TarEntry e = args.get(0).getUserdata(TarEntry.class);
             try {
                 synchronized (zaos) {
-                    zaos.addRawArchiveEntry(e.entry(), e.file().getRawInputStream(e.entry()));
+                    zaos.putArchiveEntry(e.entry());
+                    e.file().getInputStream(e.entry()).transferTo(zaos);
+                    zaos.closeArchiveEntry();
                     zaos.flush();
                 }
             } catch (IOException ioException) {
@@ -166,11 +142,11 @@ public class ZipCreate extends PrimitiveFunction implements ReactiveFunction, Sp
 
         @Override
         protected String name() {
-            return "archive:zip:memory-writer.copy-entry";
+            return "archive:tar:memory-writer.copy-entry";
         }
     }
 
-    private record ZipArchiveWriterUserdata(ZipArchiveOutputStream archive,
+    private record TarArchiveWriterUserdata(TarArchiveOutputStream archive,
                                             ByteArrayOutputStream baos) implements Userdata {
         @Override
         public Atom field(Object key) {
@@ -190,25 +166,19 @@ public class ZipCreate extends PrimitiveFunction implements ReactiveFunction, Sp
                             return new Atom(BufferAtomList.from(data));
                         }
                     }
-                    case "set-level" -> {
-                        return new Atom(new SetLevel(archive));
-                    }
-                    case "set-comment" -> {
-                        return new Atom(new SetComment(archive));
-                    }
                     case "add-from-file" -> {
-                        return new Atom(new ZipAddFromFile(archive));
+                        return new Atom(new TarAddFromFile(archive));
                     }
                     case "add-from-buffer" -> {
-                        return new Atom(new ZipAddFromBuffer(archive));
+                        return new Atom(new TarAddFromBuffer(archive));
                     }
                     case "copy-entry" -> {
                         return new Atom(new CopyEntry(archive));
                     }
-                    default -> throw new RuntimeException("archive:zip - unknown key: " + key);
+                    default -> throw new RuntimeException("archive:tar - unknown key: " + key);
                 }
             } else {
-                throw new RuntimeException("archive:zip:memory-writer - key must be a string");
+                throw new RuntimeException("archive:tar:memory-writer - key must be a string");
             }
         }
 
@@ -219,8 +189,8 @@ public class ZipCreate extends PrimitiveFunction implements ReactiveFunction, Sp
 
         @Override
         public boolean equals(Userdata other) {
-            if (other instanceof ZipArchiveWriterUserdata) {
-                return ((ZipArchiveWriterUserdata) other).archive.equals(archive);
+            if (other instanceof TarArchiveWriterUserdata) {
+                return ((TarArchiveWriterUserdata) other).archive.equals(archive);
             } else {
                 return false;
             }
@@ -228,12 +198,12 @@ public class ZipCreate extends PrimitiveFunction implements ReactiveFunction, Sp
 
         @Override
         public String toDisplayString() {
-            return "archive:zip:memory-writer";
+            return "archive:tar:memory-writer";
         }
 
         @Override
         public String typeName() {
-            return "archive:zip:memory-writer";
+            return "archive:tar:memory-writer";
         }
 
         @Override

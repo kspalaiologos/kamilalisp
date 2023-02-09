@@ -10,6 +10,7 @@ import palaiologos.kamilalisp.runtime.array.sais.SacaBwt;
 import palaiologos.kamilalisp.runtime.array.sais.SacaSais;
 import palaiologos.kamilalisp.runtime.array.sais.SacaUnbwt;
 import palaiologos.kamilalisp.runtime.dataformat.*;
+import palaiologos.kamilalisp.runtime.dataformat.archive.TarCreate;
 import palaiologos.kamilalisp.runtime.dataformat.archive.ZipCreate;
 import palaiologos.kamilalisp.runtime.dataformat.archive.ZipLoad;
 import palaiologos.kamilalisp.runtime.dataformat.archive.ZipSave;
@@ -282,6 +283,9 @@ public class FunctionRegistry {
         env.setPrimitive("archive:zip:create", new Atom(new ZipCreate()));
         env.setPrimitive("archive:zip:load", new Atom(new ZipLoad()));
         env.setPrimitive("archive:zip:save", new Atom(new ZipSave()));
+        env.setPrimitive("archive:tar:create", new Atom(new TarCreate()));
+        env.setPrimitive("archive:tar:load", new Atom(new TarLoad()));
+        env.setPrimitive("archive:tar:save", new Atom(new TarSave()));
 
         env.setPrimitive("sh:mkdir", new Atom(new Mkdir()));
 
