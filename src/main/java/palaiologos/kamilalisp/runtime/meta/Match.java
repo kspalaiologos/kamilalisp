@@ -7,11 +7,6 @@ import palaiologos.kamilalisp.runtime.Quote;
 import java.util.List;
 
 public class Match extends PrimitiveFunction implements SpecialForm {
-    @Override
-    protected String name() {
-        return "match";
-    }
-
     private static boolean isIdInPattern(Atom a) {
         if (a.getType() != Type.LIST)
             return false;
@@ -70,6 +65,11 @@ public class Match extends PrimitiveFunction implements SpecialForm {
             // No idea. Match if a == pat.
             return a.equals(pat);
         }
+    }
+
+    @Override
+    protected String name() {
+        return "match";
     }
 
     @Override

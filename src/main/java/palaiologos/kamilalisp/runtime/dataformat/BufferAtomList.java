@@ -11,7 +11,7 @@ public class BufferAtomList {
         return new AbstractList<>() {
             @Override
             public Atom get(int index) {
-                if(index < 0 || index >= data.length)
+                if (index < 0 || index >= data.length)
                     throw new IndexOutOfBoundsException();
                 return new Atom(BigInteger.valueOf(data[index]));
             }
@@ -27,7 +27,7 @@ public class BufferAtomList {
         return new AbstractList<>() {
             @Override
             public Atom get(int index) {
-                if(index < 0 || index >= size)
+                if (index < 0 || index >= size)
                     throw new IndexOutOfBoundsException();
                 return new Atom(BigInteger.valueOf(data[index]));
             }

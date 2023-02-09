@@ -6,6 +6,7 @@ import java.util.List;
 
 public abstract class ShellFunction extends PrimitiveFunction implements Lambda {
     protected abstract String command();
+
     protected abstract Atom execute(String flags, List<Atom> args);
 
     @Override
@@ -16,7 +17,7 @@ public abstract class ShellFunction extends PrimitiveFunction implements Lambda 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         String flags = "";
-        if(args.size() >= 1 && args.get(0).getType() == Type.IDENTIFIER) {
+        if (args.size() >= 1 && args.get(0).getType() == Type.IDENTIFIER) {
             flags = args.get(0).getIdentifier();
             args = args.subList(1, args.size());
         }

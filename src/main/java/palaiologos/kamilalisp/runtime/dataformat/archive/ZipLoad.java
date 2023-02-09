@@ -3,12 +3,8 @@ package palaiologos.kamilalisp.runtime.dataformat.archive;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import palaiologos.kamilalisp.atom.*;
-import palaiologos.kamilalisp.runtime.dataformat.BufferAtomList;
-import palaiologos.kamilalisp.runtime.datetime.DateTime;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,12 +13,22 @@ public class ZipLoad extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         assertArity(args, 1);
-        String filename = args.get(0).getString();
-        try {
-            ZipFile archive = new ZipFile(filename);
-            return new Atom(new ZipArchiveUserdata(archive));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (args.get(0).getType() == Type.STRING) {
+            String filename = args.get(0).getString();
+            try {
+                ZipFile archive = new ZipFile(filename);
+                return new Atom(new ZipArchiveUserdata(archive));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            List<Atom> data = args.get(0).getList();
+            try {
+                ZipFile archive = new ZipFile(new SeekableKamilaLispByteChannel(data));
+                return new Atom(new ZipArchiveUserdata(archive));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

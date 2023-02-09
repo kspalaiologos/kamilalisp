@@ -2,8 +2,6 @@ package palaiologos.kamilalisp.runtime.dataformat.archive;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarFile;
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipFile;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Userdata;
 import palaiologos.kamilalisp.runtime.dataformat.BufferAtomList;
@@ -24,9 +22,12 @@ public record TarEntry(TarArchiveEntry entry, TarFile file) implements Userdata 
             case "name" -> new Atom(entry.getName());
             case "size" -> new Atom(BigDecimal.valueOf(entry.getSize()));
             case "is-directory" -> new Atom(entry.isDirectory());
-            case "creation-time" -> new Atom(new DateTime(entry.getCreationTime().toInstant().atZone(ZoneOffset.UTC).toLocalDateTime()));
-            case "last-mod-time" -> new Atom(new DateTime(entry.getLastModifiedTime().toInstant().atZone(ZoneOffset.UTC).toLocalDateTime()));
-            case "last-access-time" -> new Atom(new DateTime(entry.getLastAccessTime().toInstant().atZone(ZoneOffset.UTC).toLocalDateTime()));
+            case "creation-time" ->
+                    new Atom(new DateTime(entry.getCreationTime().toInstant().atZone(ZoneOffset.UTC).toLocalDateTime()));
+            case "last-mod-time" ->
+                    new Atom(new DateTime(entry.getLastModifiedTime().toInstant().atZone(ZoneOffset.UTC).toLocalDateTime()));
+            case "last-access-time" ->
+                    new Atom(new DateTime(entry.getLastAccessTime().toInstant().atZone(ZoneOffset.UTC).toLocalDateTime()));
             case "group-name" -> new Atom(entry.getGroupName());
             case "user-name" -> new Atom(entry.getUserName());
             case "mode" -> new Atom(BigInteger.valueOf(entry.getMode()));

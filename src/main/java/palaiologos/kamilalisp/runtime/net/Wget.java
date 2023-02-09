@@ -7,9 +7,7 @@ import palaiologos.kamilalisp.atom.PrimitiveFunction;
 import palaiologos.kamilalisp.runtime.dataformat.BufferAtomList;
 
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Wget extends PrimitiveFunction implements Lambda {

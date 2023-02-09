@@ -7,19 +7,28 @@ import palaiologos.kamilalisp.atom.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class TarLoad extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         assertArity(args, 1);
-        String filename = args.get(0).getString();
-        try {
-            TarFile archive = new TarFile(new File(filename));
-            return new Atom(new TarArchiveUserdata(archive));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (args.get(0).getType() == Type.STRING) {
+            String filename = args.get(0).getString();
+            try {
+                TarFile archive = new TarFile(new File(filename));
+                return new Atom(new TarArchiveUserdata(archive));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            List<Atom> data = args.get(0).getList();
+            try {
+                TarFile archive = new TarFile(new SeekableKamilaLispByteChannel(data));
+                return new Atom(new TarArchiveUserdata(archive));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

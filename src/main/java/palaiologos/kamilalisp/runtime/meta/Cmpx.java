@@ -10,11 +10,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class Cmpx extends PrimitiveFunction implements SpecialForm {
-    @Override
-    public String name() {
-        return "cmpx";
-    }
-
     private static long getGC() {
         long garbageCollectionTime = 0;
 
@@ -31,6 +26,11 @@ public class Cmpx extends PrimitiveFunction implements SpecialForm {
 
     private static boolean isSpecial(double d) {
         return Double.isNaN(d) || Double.isInfinite(d);
+    }
+
+    @Override
+    public String name() {
+        return "cmpx";
     }
 
     @Override

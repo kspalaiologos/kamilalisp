@@ -15,7 +15,7 @@ public class Defun extends PrimitiveFunction implements SpecialForm {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.size() < 3) {
+        if (args.size() < 3) {
             throw new RuntimeException("Expected at least 3 arguments in `defun'.");
         }
         Atom lambda = Evaluation.evaluate(env, Dfn.INSTANCE, args.subList(1, args.size()));

@@ -4,10 +4,12 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import palaiologos.kamilalisp.atom.*;
-import palaiologos.kamilalisp.runtime.dataformat.BufferAtomList;
 import palaiologos.kamilalisp.runtime.datetime.DateTime;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 public class ZipSave extends PrimitiveFunction implements Lambda {
@@ -118,7 +120,7 @@ public class ZipSave extends PrimitiveFunction implements Lambda {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            if(args.size() < 2)
+            if (args.size() < 2)
                 throw new RuntimeException("archive:zip:file-writer.add-from-buffer - expected at least 2 arguments, got " + args.size());
             List<Atom> buffer = args.get(0).getList();
             String entryName = args.get(1).getString();
@@ -130,7 +132,7 @@ public class ZipSave extends PrimitiveFunction implements Lambda {
                 synchronized (zaos) {
                     ByteArrayInputStream bais = new ByteArrayInputStream(buf);
                     ZipArchiveEntry e = new ZipArchiveEntry(entryName);
-                    if(args.size() == 3)
+                    if (args.size() == 3)
                         e.setTimeLocal(args.get(0).getUserdata(DateTime.class).getValue());
                     zaos.addRawArchiveEntry(e, bais);
                     zaos.flush();

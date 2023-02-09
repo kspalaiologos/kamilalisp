@@ -112,7 +112,7 @@ public class ZipCreate extends PrimitiveFunction implements ReactiveFunction, Sp
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            if(args.size() < 2)
+            if (args.size() < 2)
                 throw new RuntimeException("archive:zip:memory-writer.add-from-buffer - expected at least 2 arguments, got " + args.size());
             List<Atom> buffer = args.get(0).getList();
             String entryName = args.get(1).getString();
@@ -124,7 +124,7 @@ public class ZipCreate extends PrimitiveFunction implements ReactiveFunction, Sp
                 synchronized (zaos) {
                     ByteArrayInputStream bais = new ByteArrayInputStream(buf);
                     ZipArchiveEntry e = new ZipArchiveEntry(entryName);
-                    if(args.size() == 3)
+                    if (args.size() == 3)
                         e.setTimeLocal(args.get(2).getUserdata(DateTime.class).getValue());
                     zaos.addRawArchiveEntry(e, bais);
                     zaos.flush();

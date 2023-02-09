@@ -6,10 +6,7 @@ import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 import palaiologos.kamilalisp.runtime.dataformat.BufferAtomList;
 
-import java.math.BigInteger;
-import java.nio.Buffer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Ucb extends PrimitiveFunction implements Lambda {

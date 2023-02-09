@@ -4,7 +4,6 @@ import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.TypeError;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Dfn extends PrimitiveFunction implements SpecialForm {
     public static final Dfn INSTANCE = new Dfn();
@@ -19,7 +18,7 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
         // env is the caller environment that defines the lambda function.
         // (lambda (x) (+ x x))
         // (lambda x (+ x x))
-        if(args.size() < 2)
+        if (args.size() < 2)
             throw new TypeError("Expected at least two arguments to `lambda'.");
 
         List<String> bindings;
@@ -68,7 +67,7 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
 
         @Override
         public String stringify() {
-            if(code.size() == 1)
+            if (code.size() == 1)
                 return "(λ " + String.join(" ", bindings) + " . " + code.get(0).toString() + ")";
             else
                 return "(λ " + String.join(" ", bindings) + " . " + code.get(0).toString() + "...)";
@@ -76,7 +75,7 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
 
         @Override
         public String frameString() {
-            if(code.size() == 1)
+            if (code.size() == 1)
                 return "(λ " + String.join(" ", bindings) + " . " + code.get(0).shortString() + ")";
             else
                 return "(λ " + String.join(" ", bindings) + " . " + code.get(0).shortString() + "...)";
@@ -98,7 +97,7 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
                         descendantEnv.set(bindings.get(i), args.get(i));
                     descendantEnv.set(bindings.get(bindings.size() - 1), new Atom(args.subList(bindings.size() - 1, args.size())));
                 }
-                for(int i = 0; i < code.size() - 1; i++)
+                for (int i = 0; i < code.size() - 1; i++)
                     Evaluation.evaluate(descendantEnv, code.get(i));
                 Atom a = Evaluation.evaluate(descendantEnv, code.get(code.size() - 1));
                 if (a.getType() == Type.LIST && !a.getList().isEmpty() && a.getList().get(0).getType() == Type.CALLABLE && a.getList().get(0).getCallable() instanceof Self.SelfThunk selfThunk) {

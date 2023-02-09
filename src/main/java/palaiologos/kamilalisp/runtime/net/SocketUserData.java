@@ -9,6 +9,65 @@ import java.net.Socket;
 import java.util.List;
 
 public class SocketUserData implements Userdata {
+    private final Socket socket;
+
+    public SocketUserData(Socket socket) {
+        this.socket = socket;
+    }
+
+    @Override
+    public Atom field(Object key) {
+        if (!(key instanceof String)) {
+            throw new RuntimeException("net:client-socket field name must be a string");
+        }
+
+        return switch ((String) key) {
+            case "close" -> new Atom(new SocketClose(socket));
+            case "read-bytes" -> new Atom(new SocketReadBytes(socket));
+            case "write-bytes" -> new Atom(new SocketWriteBytes(socket));
+            case "read-line" -> new Atom(new SocketReadLine(socket));
+            case "write-line" -> new Atom(new SocketWriteLine(socket));
+            case "flush" -> new Atom(new SocketFlush(socket));
+            case "skip" -> new Atom(new SocketSkip(socket));
+            case "available" -> new Atom(new SocketAvailable(socket));
+            default -> throw new RuntimeException("net:client-socket has no field " + key);
+        };
+    }
+
+    @Override
+    public int compareTo(Userdata other) {
+        return socket.hashCode() - other.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        return socket.hashCode();
+    }
+
+    @Override
+    public boolean equals(Userdata other) {
+        if (other instanceof SocketUserData) {
+            return socket.equals(((SocketUserData) other).socket);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public String toDisplayString() {
+        return "net:client-socket";
+    }
+
+    @Override
+    public String typeName() {
+        return "net:client-socket";
+    }
+
+    @Override
+    public boolean coerceBoolean() {
+        return true;
+    }
+
     private static class SocketClose extends PrimitiveFunction implements Lambda {
         private final Socket socket;
 
@@ -215,64 +274,5 @@ public class SocketUserData implements Userdata {
         protected String name() {
             return "net:client:available";
         }
-    }
-
-    private final Socket socket;
-
-    public SocketUserData(Socket socket) {
-        this.socket = socket;
-    }
-
-    @Override
-    public Atom field(Object key) {
-        if(!(key instanceof String)) {
-            throw new RuntimeException("net:client-socket field name must be a string");
-        }
-
-        return switch ((String) key) {
-            case "close" -> new Atom(new SocketClose(socket));
-            case "read-bytes" -> new Atom(new SocketReadBytes(socket));
-            case "write-bytes" -> new Atom(new SocketWriteBytes(socket));
-            case "read-line" -> new Atom(new SocketReadLine(socket));
-            case "write-line" -> new Atom(new SocketWriteLine(socket));
-            case "flush" -> new Atom(new SocketFlush(socket));
-            case "skip" -> new Atom(new SocketSkip(socket));
-            case "available" -> new Atom(new SocketAvailable(socket));
-            default -> throw new RuntimeException("net:client-socket has no field " + key);
-        };
-    }
-
-    @Override
-    public int compareTo(Userdata other) {
-        return socket.hashCode() - other.hashCode();
-    }
-
-    @Override
-    public int hashCode() {
-        return socket.hashCode();
-    }
-
-    @Override
-    public boolean equals(Userdata other) {
-        if(other instanceof SocketUserData) {
-            return socket.equals(((SocketUserData) other).socket);
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public String toDisplayString() {
-        return "net:client-socket";
-    }
-
-    @Override
-    public String typeName() {
-        return "net:client-socket";
-    }
-
-    @Override
-    public boolean coerceBoolean() {
-        return true;
     }
 }

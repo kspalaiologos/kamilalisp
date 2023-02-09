@@ -42,6 +42,74 @@ public class Depth implements SpecialForm, ReactiveFunction {
     public Atom apply(Environment oldEnv, List<Atom> args) {
         Callable lambda = Evaluation.evaluate(oldEnv, form).getCallable();
         return new Atom(new Lambda() {
+            private static void mapN(Atom data, int d, List<Atom> dt) {
+                if (data.getType() != Type.LIST)
+                    dt.add(data);
+                else if (d == 1)
+                    dt.addAll(data.getList());
+                else
+                    data.getList().forEach(x -> mapN(x, d - 1, dt));
+            }
+
+            private static Atom map_pos1(Environment e, Callable c, Atom data, int d) {
+                int actualRank = Math.abs(Rank.computeRank(data));
+                if (d >= actualRank)
+                    return Evaluation.evaluate(e, c, List.of(data));
+                else {
+                    return new Atom((List<Atom>)
+                            data.getList().stream().map(x -> map_pos1(e, c, x, d))
+                                    .collect(Collectors.toCollection(ArrayList::new)));
+                }
+            }
+
+            private static Atom map_pos2(Environment e, Callable c, Atom data, int d, List<List<Atom>> aux_pos) {
+                int actualRank = Math.abs(Rank.computeRank(data));
+                if (d >= actualRank)
+                    return Evaluation.evaluate(e, c, Streams.concat(Stream.of(data), aux_pos.stream().map(x -> x.size() == 1 ? x.get(0) : x.remove(0))).toList());
+                else {
+                    return new Atom((List<Atom>)
+                            data.getList().stream().map(x -> map_pos2(e, c, x, d, aux_pos))
+                                    .collect(Collectors.toCollection(ArrayList::new)));
+                }
+            }
+
+            private static void map_posN(Atom data, int d, List<Atom> target) {
+                int actualRank = Math.abs(Rank.computeRank(data));
+                if (d >= actualRank)
+                    target.add(data);
+                else {
+                    data.getList().forEach(x -> map_posN(x, d, target));
+                }
+            }
+
+            private static Atom map2(Environment e, Callable c, Atom data, int d, List<List<Atom>> aux_pos) {
+                if (data.getType() != Type.LIST)
+                    return Evaluation.evaluate(e, c, Streams.concat(Stream.of(data), aux_pos.stream().map(x -> x.size() == 1 ? x.get(0) : x.remove(0))).toList());
+                if (d == 1) {
+                    return new Atom((List<Atom>)
+                            data.getList().stream().map(x -> Evaluation.evaluate(e, c, Streams.concat(Stream.of(x), aux_pos.stream().map(y -> y.size() == 1 ? y.get(0) : y.remove(0))).toList()))
+                                    .collect(Collectors.toCollection(ArrayList::new)));
+                } else {
+                    return new Atom((List<Atom>)
+                            data.getList().stream().map(x -> map2(e, c, x, d - 1, aux_pos))
+                                    .collect(Collectors.toCollection(ArrayList::new)));
+                }
+            }
+
+            private static Atom map1(Environment e, Callable c, Atom data, int d) {
+                if (data.getType() != Type.LIST)
+                    return Evaluation.evaluate(e, c, List.of(data));
+                if (d == 1) {
+                    return new Atom((List<Atom>)
+                            data.getList().stream().map(x -> Evaluation.evaluate(e, c, List.of(x)))
+                                    .collect(Collectors.toCollection(ArrayList::new)));
+                } else {
+                    return new Atom((List<Atom>)
+                            data.getList().stream().map(x -> map1(e, c, x, d - 1))
+                                    .collect(Collectors.toCollection(ArrayList::new)));
+                }
+            }
+
             @Override
             public String stringify() {
                 return Depth.this.stringify();
@@ -121,74 +189,6 @@ public class Depth implements SpecialForm, ReactiveFunction {
                     } else {
                         return map_pos2(env, lambda, a, d, aux_pos);
                     }
-                }
-            }
-
-            private static void mapN(Atom data, int d, List<Atom> dt) {
-                if (data.getType() != Type.LIST)
-                    dt.add(data);
-                else if (d == 1)
-                    dt.addAll(data.getList());
-                else
-                    data.getList().forEach(x -> mapN(x, d - 1, dt));
-            }
-
-            private static Atom map_pos1(Environment e, Callable c, Atom data, int d) {
-                int actualRank = Math.abs(Rank.computeRank(data));
-                if (d >= actualRank)
-                    return Evaluation.evaluate(e, c, List.of(data));
-                else {
-                    return new Atom((List<Atom>)
-                            data.getList().stream().map(x -> map_pos1(e, c, x, d))
-                                    .collect(Collectors.toCollection(ArrayList::new)));
-                }
-            }
-
-            private static Atom map_pos2(Environment e, Callable c, Atom data, int d, List<List<Atom>> aux_pos) {
-                int actualRank = Math.abs(Rank.computeRank(data));
-                if (d >= actualRank)
-                    return Evaluation.evaluate(e, c, Streams.concat(Stream.of(data), aux_pos.stream().map(x -> x.size() == 1 ? x.get(0) : x.remove(0))).toList());
-                else {
-                    return new Atom((List<Atom>)
-                            data.getList().stream().map(x -> map_pos2(e, c, x, d, aux_pos))
-                                    .collect(Collectors.toCollection(ArrayList::new)));
-                }
-            }
-
-            private static void map_posN(Atom data, int d, List<Atom> target) {
-                int actualRank = Math.abs(Rank.computeRank(data));
-                if (d >= actualRank)
-                    target.add(data);
-                else {
-                    data.getList().forEach(x -> map_posN(x, d, target));
-                }
-            }
-
-            private static Atom map2(Environment e, Callable c, Atom data, int d, List<List<Atom>> aux_pos) {
-                if (data.getType() != Type.LIST)
-                    return Evaluation.evaluate(e, c, Streams.concat(Stream.of(data), aux_pos.stream().map(x -> x.size() == 1 ? x.get(0) : x.remove(0))).toList());
-                if (d == 1) {
-                    return new Atom((List<Atom>)
-                            data.getList().stream().map(x -> Evaluation.evaluate(e, c, Streams.concat(Stream.of(x), aux_pos.stream().map(y -> y.size() == 1 ? y.get(0) : y.remove(0))).toList()))
-                                    .collect(Collectors.toCollection(ArrayList::new)));
-                } else {
-                    return new Atom((List<Atom>)
-                            data.getList().stream().map(x -> map2(e, c, x, d - 1, aux_pos))
-                                    .collect(Collectors.toCollection(ArrayList::new)));
-                }
-            }
-
-            private static Atom map1(Environment e, Callable c, Atom data, int d) {
-                if (data.getType() != Type.LIST)
-                    return Evaluation.evaluate(e, c, List.of(data));
-                if (d == 1) {
-                    return new Atom((List<Atom>)
-                            data.getList().stream().map(x -> Evaluation.evaluate(e, c, List.of(x)))
-                                    .collect(Collectors.toCollection(ArrayList::new)));
-                } else {
-                    return new Atom((List<Atom>)
-                            data.getList().stream().map(x -> map1(e, c, x, d - 1))
-                                    .collect(Collectors.toCollection(ArrayList::new)));
                 }
             }
 

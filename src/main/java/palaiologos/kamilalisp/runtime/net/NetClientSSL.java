@@ -1,15 +1,15 @@
 package palaiologos.kamilalisp.runtime.net;
 
-import org.pcollections.HashTreePMap;
-import palaiologos.kamilalisp.atom.*;
-import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
+import palaiologos.kamilalisp.atom.Atom;
+import palaiologos.kamilalisp.atom.Environment;
+import palaiologos.kamilalisp.atom.Lambda;
+import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
 import javax.net.SocketFactory;
 import javax.net.ssl.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.*;
 import java.security.cert.CertificateException;
@@ -47,7 +47,7 @@ public class NetClientSSL extends PrimitiveFunction implements Lambda {
 
             SocketFactory factory = ctx.getSocketFactory();
             Socket connection = factory.createSocket(host, port);
-            ((SSLSocket) connection).setEnabledProtocols(new String[] {"TLSv1.2"});
+            ((SSLSocket) connection).setEnabledProtocols(new String[]{"TLSv1.2"});
             // Difference from the server code, no idea what this accomplishes but
             // without this, the code ceases to work.
             SSLParameters sslParams = new SSLParameters();

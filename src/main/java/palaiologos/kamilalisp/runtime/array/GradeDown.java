@@ -3,7 +3,6 @@ package palaiologos.kamilalisp.runtime.array;
 import palaiologos.kamilalisp.atom.*;
 
 import java.math.BigInteger;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 

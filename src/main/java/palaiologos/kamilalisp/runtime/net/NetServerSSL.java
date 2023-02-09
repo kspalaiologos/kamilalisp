@@ -1,17 +1,14 @@
 package palaiologos.kamilalisp.runtime.net;
 
-import org.pcollections.HashTreePMap;
 import palaiologos.kamilalisp.atom.*;
-import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
+import javax.net.ssl.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.security.*;
-
 import java.security.cert.CertificateException;
-import javax.net.ssl.*;
 import java.util.List;
 
 public class NetServerSSL extends PrimitiveFunction implements Lambda {
@@ -53,7 +50,7 @@ public class NetServerSSL extends PrimitiveFunction implements Lambda {
             ServerSocket listener = factory.createServerSocket(port);
             SSLServerSocket sslListener = (SSLServerSocket) listener;
             sslListener.setNeedClientAuth(true);
-            sslListener.setEnabledProtocols(new String[] {"TLSv1.2"});
+            sslListener.setEnabledProtocols(new String[]{"TLSv1.2"});
 
             return new Atom(new ServerSocketUserdata(env, callable, listener));
         } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException |

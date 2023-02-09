@@ -77,7 +77,7 @@ public class TarSave extends PrimitiveFunction implements Lambda {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            if(args.size() < 2)
+            if (args.size() < 2)
                 throw new RuntimeException("archive:tar:file-writer.add-from-buffer - expected at least 2 arguments, got " + args.size());
             List<Atom> buffer = args.get(0).getList();
             String entryName = args.get(1).getString();
@@ -89,19 +89,19 @@ public class TarSave extends PrimitiveFunction implements Lambda {
                 synchronized (zaos) {
                     ByteArrayInputStream bais = new ByteArrayInputStream(buf);
                     TarArchiveEntry e = new TarArchiveEntry(entryName);
-                    if(args.size() == 3) {
+                    if (args.size() == 3) {
                         HashPMap<Atom, Atom> data = args.get(2).getUserdata(HashMapUserData.class).value();
-                        if(data.containsKey(new Atom("creation-time")))
+                        if (data.containsKey(new Atom("creation-time")))
                             e.setCreationTime(FileTime.from(data.get(new Atom("creation-time")).getUserdata(DateTime.class).getValue().toInstant(ZoneOffset.UTC)));
-                        if(data.containsKey(new Atom("last-modified-time")))
+                        if (data.containsKey(new Atom("last-modified-time")))
                             e.setLastModifiedTime(FileTime.from(data.get(new Atom("last-modified-time")).getUserdata(DateTime.class).getValue().toInstant(ZoneOffset.UTC)));
-                        if(data.containsKey(new Atom("last-access-time")))
+                        if (data.containsKey(new Atom("last-access-time")))
                             e.setLastAccessTime(FileTime.from(data.get(new Atom("last-access-time")).getUserdata(DateTime.class).getValue().toInstant(ZoneOffset.UTC)));
-                        if(data.containsKey(new Atom("mode")))
+                        if (data.containsKey(new Atom("mode")))
                             e.setMode(data.get(new Atom("mode")).getInteger().intValueExact());
-                        if(data.containsKey(new Atom("user-name")))
+                        if (data.containsKey(new Atom("user-name")))
                             e.setUserName(data.get(new Atom("user-name")).getString());
-                        if(data.containsKey(new Atom("group-name")))
+                        if (data.containsKey(new Atom("group-name")))
                             e.setGroupName(data.get(new Atom("group-name")).getString());
                     }
                     zaos.putArchiveEntry(e);
