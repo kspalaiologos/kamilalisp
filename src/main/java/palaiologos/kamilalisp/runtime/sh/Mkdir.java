@@ -15,13 +15,13 @@ public class Mkdir extends ShellFunction {
     protected Atom execute(String flags, List<Atom> args) {
         if (flags.contains("s")) {
             args.stream().map(Atom::getString).forEach(s -> {
-                if (!new File(s).mkdirs()) {
+                if (!new File(s).getAbsoluteFile().mkdirs()) {
                     throw new RuntimeException("mkdir: failed to create directory '" + s + "'");
                 }
             });
         } else {
             args.stream().map(Atom::getString).forEach(s -> {
-                if (!new File(s).mkdir()) {
+                if (!new File(s).getAbsoluteFile().mkdir()) {
                     throw new RuntimeException("mkdir: failed to create directory '" + s + "'");
                 }
             });

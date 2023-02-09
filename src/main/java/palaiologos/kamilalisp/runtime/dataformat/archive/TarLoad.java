@@ -16,7 +16,7 @@ public class TarLoad extends PrimitiveFunction implements Lambda {
         if (args.get(0).getType() == Type.STRING) {
             String filename = args.get(0).getString();
             try {
-                TarFile archive = new TarFile(new File(filename));
+                TarFile archive = new TarFile(new File(filename).getAbsoluteFile());
                 return new Atom(new TarArchiveUserdata(archive));
             } catch (IOException e) {
                 throw new RuntimeException(e);

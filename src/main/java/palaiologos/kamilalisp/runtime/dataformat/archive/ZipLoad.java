@@ -4,6 +4,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import palaiologos.kamilalisp.atom.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,7 +17,7 @@ public class ZipLoad extends PrimitiveFunction implements Lambda {
         if (args.get(0).getType() == Type.STRING) {
             String filename = args.get(0).getString();
             try {
-                ZipFile archive = new ZipFile(filename);
+                ZipFile archive = new ZipFile(new File(filename).getAbsoluteFile());
                 return new Atom(new ZipArchiveUserdata(archive));
             } catch (IOException e) {
                 throw new RuntimeException(e);

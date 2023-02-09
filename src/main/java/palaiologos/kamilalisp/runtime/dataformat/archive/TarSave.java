@@ -18,10 +18,11 @@ public class TarSave extends PrimitiveFunction implements Lambda {
     public Atom apply(Environment env, List<Atom> args) {
         assertArity(args, 1);
         String fileName = args.get(0).getString();
+        File f = new File(fileName).getAbsoluteFile();
         TarArchiveOutputStream archive;
         FileOutputStream fos;
         try {
-            fos = new FileOutputStream(fileName);
+            fos = new FileOutputStream(f);
             archive = new TarArchiveOutputStream(fos);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -46,11 +47,12 @@ public class TarSave extends PrimitiveFunction implements Lambda {
             assertArity(args, 2);
             String filename = args.get(0).getString();
             String entryName = args.get(1).getString();
+            File f = new File(filename).getAbsoluteFile();
             try {
                 synchronized (zaos) {
-                    ArchiveEntry e = zaos.createArchiveEntry(new File(filename), entryName);
+                    ArchiveEntry e = zaos.createArchiveEntry(f, entryName);
                     zaos.putArchiveEntry(e);
-                    FileInputStream fis = new FileInputStream(filename);
+                    FileInputStream fis = new FileInputStream(f);
                     fis.transferTo(zaos);
                     zaos.closeArchiveEntry();
                     zaos.flush();

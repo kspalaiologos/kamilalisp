@@ -43,7 +43,7 @@ public class WriteImage extends PrimitiveFunction implements Lambda {
             }
         }
         try {
-            ImageIO.write(img, fileFormat, new File(fileName));
+            ImageIO.write(img, fileFormat, new File(fileName).getAbsoluteFile());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

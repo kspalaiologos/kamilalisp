@@ -6,13 +6,13 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 
-public class PutFile extends PrimitiveFunction implements Lambda {
+public class AppendFile extends PrimitiveFunction implements Lambda {
     @Override
     protected String name() {
-        return "io:put-file";
+        return "io:file-append";
     }
 
     @Override
@@ -22,7 +22,7 @@ public class PutFile extends PrimitiveFunction implements Lambda {
         if(args.get(1).getType() == Type.STRING) {
             String content = args.get(1).getString();
             try {
-                Files.writeString(new File(fileName).getAbsoluteFile().toPath(), content);
+                Files.writeString(new File(fileName).getAbsoluteFile().toPath(), content, StandardOpenOption.APPEND);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -32,7 +32,7 @@ public class PutFile extends PrimitiveFunction implements Lambda {
             for (int i = 0; i < content.size(); i++)
                 data[i] = content.get(i).byteValueExact();
             try {
-                Files.write(new File(fileName).getAbsoluteFile().toPath(), data);
+                Files.write(new File(fileName).getAbsoluteFile().toPath(), data, StandardOpenOption.APPEND);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

@@ -32,6 +32,7 @@ import palaiologos.kamilalisp.runtime.net.*;
 import palaiologos.kamilalisp.runtime.regex.RegexMatches;
 import palaiologos.kamilalisp.runtime.regex.RegexReplace;
 import palaiologos.kamilalisp.runtime.regex.RegexSplit;
+import palaiologos.kamilalisp.runtime.sh.Cwd;
 import palaiologos.kamilalisp.runtime.sh.Mkdir;
 import palaiologos.kamilalisp.runtime.string.*;
 
@@ -163,8 +164,8 @@ public class FunctionRegistry {
         env.setPrimitive("io:write", "↗⍫", new Atom(new Write()));
         env.setPrimitive("io:get-file", "⍫⊢", new Atom(new GetFile()));
         env.setPrimitive("io:put-file", "⍫⊣", new Atom(new PutFile()));
+        env.setPrimitive("io:append-file", "⍫⊣+", new Atom(new AppendFile()));
         env.setPrimitive("io:get-file-buffer", "⍫⎕⊢", new Atom(new GetFileBuffer()));
-        env.setPrimitive("io:put-file-buffer", "⍫⎕⊣", new Atom(new PutFileBuffer()));
 
         env.setPrimitive("saca:sais", new Atom(new SacaSais()));
         env.setPrimitive("saca:bwt", new Atom(new SacaBwt()));
@@ -285,6 +286,7 @@ public class FunctionRegistry {
         env.setPrimitive("archive:tar:save", new Atom(new TarSave()));
 
         env.setPrimitive("sh:mkdir", new Atom(new Mkdir()));
+        env.setPrimitive("sh:cwd", new Atom(new Cwd()));
 
         env.setPrimitive("date:from", new Atom(new DateTimeFrom()));
         env.setPrimitive("time:from", new Atom(new TimeFrom()));

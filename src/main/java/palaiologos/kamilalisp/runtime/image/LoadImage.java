@@ -22,7 +22,7 @@ public class LoadImage extends PrimitiveFunction implements Lambda {
         BufferedImage image;
 
         try {
-            image = ImageIO.read(new File(fileName));
+            image = ImageIO.read(new File(fileName).getAbsoluteFile());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

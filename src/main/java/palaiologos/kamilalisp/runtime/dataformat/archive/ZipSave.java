@@ -19,7 +19,7 @@ public class ZipSave extends PrimitiveFunction implements Lambda {
         String fileName = args.get(0).getString();
         ZipArchiveOutputStream archive;
         try {
-            archive = new ZipArchiveOutputStream(new File(fileName));
+            archive = new ZipArchiveOutputStream(new File(fileName).getAbsoluteFile());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -89,11 +89,12 @@ public class ZipSave extends PrimitiveFunction implements Lambda {
             assertArity(args, 2);
             String filename = args.get(0).getString();
             String entryName = args.get(1).getString();
+            File f = new File(filename).getAbsoluteFile();
             try {
                 synchronized (zaos) {
-                    ArchiveEntry e = zaos.createArchiveEntry(new File(filename), entryName);
+                    ArchiveEntry e = zaos.createArchiveEntry(f, entryName);
                     zaos.putArchiveEntry(e);
-                    FileInputStream fis = new FileInputStream(filename);
+                    FileInputStream fis = new FileInputStream(f);
                     fis.transferTo(zaos);
                     zaos.closeArchiveEntry();
                     zaos.flush();

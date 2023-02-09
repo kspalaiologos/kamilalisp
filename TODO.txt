@@ -20,3 +20,7 @@ and the return value of the code.
 
 book:
 - huffman coding, elias gamma, histograms, fft, ski calculus, matrix algos, Chinese Remainder Theorem?
+
+programming guidelines:
+- always use absolute File-s and avoid specifying path as a string.
+- always catch exceptions in new threads using safeEvaluate.
