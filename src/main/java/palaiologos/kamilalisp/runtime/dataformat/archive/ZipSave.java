@@ -176,28 +176,66 @@ public class ZipSave extends PrimitiveFunction implements Lambda {
         }
     }
 
+    private static class ZipFlush extends PrimitiveFunction implements SpecialForm, ReactiveFunction {
+        private final ZipArchiveOutputStream zaos;
+
+        public ZipFlush(ZipArchiveOutputStream zaos) {
+            this.zaos = zaos;
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            try {
+                synchronized (zaos) {
+                    zaos.flush();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return Atom.NULL;
+        }
+
+        @Override
+        protected String name() {
+            return "archive:zip:file-writer.flush";
+        }
+    }
+
+    private static class ZipClose extends PrimitiveFunction implements SpecialForm, ReactiveFunction {
+        private final ZipArchiveOutputStream zaos;
+
+        public ZipClose(ZipArchiveOutputStream zaos) {
+            this.zaos = zaos;
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            try {
+                synchronized (zaos) {
+                    zaos.close();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return Atom.NULL;
+        }
+
+        @Override
+        protected String name() {
+            return "archive:zip:file-writer.close";
+        }
+    }
+
     private record ZipArchiveWriterUserdata(ZipArchiveOutputStream archive) implements Userdata {
         @Override
         public Atom field(Object key) {
             if (key instanceof String) {
                 switch ((String) key) {
                     case "flush" -> {
-                        try {
-                            synchronized (archive) {
-                                archive.flush();
-                            }
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+                        return new Atom(new ZipFlush(archive));
                     }
                     case "close" -> {
-                        try {
-                            synchronized (archive) {
-                                archive.close();
-                            }
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+                        return new Atom(new ZipClose(archive));
                     }
                     case "set-level" -> {
                         return new Atom(new SetLevel(archive));
@@ -219,8 +257,6 @@ public class ZipSave extends PrimitiveFunction implements Lambda {
             } else {
                 throw new RuntimeException("archive:zip:file-writer - key must be a string");
             }
-
-            return Atom.NULL;
         }
 
         @Override

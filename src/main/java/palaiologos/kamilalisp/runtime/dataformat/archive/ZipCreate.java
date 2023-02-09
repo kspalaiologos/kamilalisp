@@ -176,7 +176,7 @@ public class ZipCreate extends PrimitiveFunction implements ReactiveFunction, Sp
         public Atom field(Object key) {
             if (key instanceof String) {
                 switch ((String) key) {
-                    case "get-buffer" -> {
+                    case "buffer" -> {
                         try {
                             synchronized (archive) {
                                 archive.flush();
