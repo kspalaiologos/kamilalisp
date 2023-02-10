@@ -10,7 +10,6 @@
 ![Lines of Code](https://tokei.rs/b1/github/kspalaiologos/kamilalisp)
 ![WakaTime](https://wakatime.com/badge/user/c3a8c589-783c-4ab2-be05-93fa48bc9a94/project/1c00d725-551f-46d2-a691-1408603a8707.svg)
 ![GitHub](https://img.shields.io/github/license/kspalaiologos/kamilalisp)
-
 <span class="badge-patreon"><a href="https://patreon.com/kspalaiologos" title="Donate to this project using Patreon"><img src="https://img.shields.io/badge/patreon-donate-yellow.svg" alt="Patreon donate button" /></a></span>
 
 A functional, flexible and concise Lisp inspired by Haskell and APL, among others. A ground-up rewrite.
