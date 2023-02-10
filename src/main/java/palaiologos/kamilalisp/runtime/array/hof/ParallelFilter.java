@@ -19,6 +19,6 @@ public class ParallelFilter extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "parallel-filter";
+        return "parallel:filter";
     }
 }

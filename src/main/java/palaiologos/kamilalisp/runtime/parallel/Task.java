@@ -12,6 +12,7 @@ public class Task extends PrimitiveFunction implements Lambda {
         Callable code = args.get(0).getCallable();
         TaskThread task = new TaskThread(code, env);
         Thread t = new Thread(task);
+        t.setDaemon(false);
         t.start();
         return new Atom(new TaskUserdata(t, task));
     }
