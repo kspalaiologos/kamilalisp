@@ -41,7 +41,7 @@ class TestFilterMapAnyAll {
     @Test
     void testFilterAllMapParallel() {
         assertEquals(Common.runCode(
-                "(def evens \\parallel-filter $(not@mod _ 2) \\range 0 10000)" +
+                "(def evens \\parallel:filter $(not@mod _ 2) \\range 0 10000)" +
                         "(all $(= _ 0) \\$:$(mod _ 2) evens)"
         ).getInteger().intValueExact(), 1);
     }

@@ -31,6 +31,7 @@ import palaiologos.kamilalisp.runtime.meta.*;
 import palaiologos.kamilalisp.runtime.net.*;
 import palaiologos.kamilalisp.runtime.parallel.Daemon;
 import palaiologos.kamilalisp.runtime.parallel.Task;
+import palaiologos.kamilalisp.runtime.parallel.actor.ActorCreate;
 import palaiologos.kamilalisp.runtime.regex.RegexMatches;
 import palaiologos.kamilalisp.runtime.regex.RegexReplace;
 import palaiologos.kamilalisp.runtime.regex.RegexSplit;
@@ -162,6 +163,7 @@ public class FunctionRegistry {
 
         env.setPrimitive("parallel:task", new Atom(new Task()));
         env.setPrimitive("parallel:daemon", new Atom(new Daemon()));
+        env.setPrimitive("parallel:actor", new Atom(new ActorCreate()));
 
         env.setPrimitive("io:writeln", "↑⍫", new Atom(new Writeln()));
         env.setPrimitive("io:readln", "↓⍫", new Atom(new Readln()));
