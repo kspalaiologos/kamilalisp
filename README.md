@@ -84,3 +84,10 @@ Shannon Entropy: 4.57328272673034
 ## License
 
 KamilaLisp is distributed under the GNU General Public License v3. See [LICENSE](https://github.com/kspalaiologos/kamilalisp/v0.2/main/LICENSE) for details.
+
+## Lisp Roadmap
+
+- MalbolgeLISP v1.0-v1.2 - initial prototypes.
+- KamilaLisp v0.1 - initial Java prototype, concept exploration.
+- KamilaLisp v0.2 - design solidifying, API documentation.
+- KamilaLisp v0.3 - a compiler and bytecode virtual machine.

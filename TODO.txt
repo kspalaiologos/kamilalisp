@@ -17,7 +17,7 @@ and the return value of the code.
 - more shell builtins
 - unit testing
 - bzip3 (needs java porting).
-- setting the prompt?
+- refactor date/time userdata classes to use methods
 
 book:
 - huffman coding, elias gamma, histograms, fft, ski calculus, matrix algos, Chinese Remainder Theorem?
