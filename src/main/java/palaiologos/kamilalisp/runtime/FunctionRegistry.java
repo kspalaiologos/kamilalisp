@@ -294,8 +294,6 @@ public class FunctionRegistry {
 
         env.setPrimitive("date:from", new Atom(new DateTimeFrom()));
         env.setPrimitive("time:from", new Atom(new TimeFrom()));
-        env.setPrimitive("date:add", new Atom(new DateTimeAdd()));
-        env.setPrimitive("date:difference", new Atom(new DateTimeDifference()));
         env.setPrimitive("time:hours", new Atom(new TimeHours()));
         env.setPrimitive("time:minutes", new Atom(new TimeMinutes()));
         env.setPrimitive("time:seconds", new Atom(new TimeSeconds()));

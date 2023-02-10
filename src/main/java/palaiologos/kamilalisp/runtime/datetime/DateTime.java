@@ -1,13 +1,52 @@
 package palaiologos.kamilalisp.runtime.datetime;
 
-import palaiologos.kamilalisp.atom.Atom;
-import palaiologos.kamilalisp.atom.Userdata;
+import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.error.TypeError;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public record DateTime(LocalDateTime value) implements Userdata {
+    private static class AddOp extends PrimitiveFunction implements Lambda {
+        private final DateTime value;
+
+        public AddOp(DateTime value) {
+            this.value = value;
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if(args.size() == 0)
+                throw new TypeError("Expected 1 or more arguments to `datetime.add'");
+            return args.stream().reduce(new Atom(value), AbstractTime::add);
+        }
+
+        @Override
+        public String name() {
+            return "datetime.add";
+        }
+    }
+
+    private static class SubOp extends PrimitiveFunction implements Lambda {
+        private final DateTime value;
+
+        public SubOp(DateTime value) {
+            this.value = value;
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if(args.size() == 0)
+                throw new TypeError("Expected 1 or more arguments to `datetime.sub'");
+            return args.stream().reduce(new Atom(value), AbstractTime::sub);
+        }
+
+        @Override
+        public String name() {
+            return "datetime.sub";
+        }
+    }
 
     @Override
     public Atom field(Object key) {
@@ -32,6 +71,8 @@ public record DateTime(LocalDateTime value) implements Userdata {
                     new Atom(BigInteger.valueOf(value.getSecond())),
                     new Atom(BigInteger.valueOf(value.getNano()))
             ));
+            case "add" -> new Atom(new AddOp(this));
+            case "sub" -> new Atom(new SubOp(this));
             default -> throw new UnsupportedOperationException("DateTime does not support field access");
         };
     }

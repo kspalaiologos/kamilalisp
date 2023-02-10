@@ -1,13 +1,52 @@
 package palaiologos.kamilalisp.runtime.datetime;
 
-import palaiologos.kamilalisp.atom.Atom;
-import palaiologos.kamilalisp.atom.Userdata;
+import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.error.TypeError;
 
 import java.math.BigInteger;
 import java.time.Duration;
 import java.util.List;
 
 public record Time(Duration value) implements Userdata {
+    private static class AddOp extends PrimitiveFunction implements Lambda {
+        private final Time value;
+
+        public AddOp(Time value) {
+            this.value = value;
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if(args.size() == 0)
+                throw new TypeError("Expected 1 or more arguments to `time.add'");
+            return args.stream().reduce(new Atom(value), AbstractTime::add);
+        }
+
+        @Override
+        public String name() {
+            return "time.add";
+        }
+    }
+
+    private static class SubOp extends PrimitiveFunction implements Lambda {
+        private final Time value;
+
+        public SubOp(Time value) {
+            this.value = value;
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if(args.size() == 0)
+                throw new TypeError("Expected 1 or more arguments to `time.sub'");
+            return args.stream().reduce(new Atom(value), AbstractTime::sub);
+        }
+
+        @Override
+        public String name() {
+            return "time.sub";
+        }
+    }
 
     @Override
     public Atom field(Object key) {
@@ -24,6 +63,8 @@ public record Time(Duration value) implements Userdata {
                     new Atom(BigInteger.valueOf(value.getSeconds())),
                     new Atom(BigInteger.valueOf(value.getNano()))
             ));
+            case "add" -> new Atom(new AddOp(this));
+            case "sub" -> new Atom(new SubOp(this));
             default -> throw new UnsupportedOperationException("Time does not support field access");
         };
     }
