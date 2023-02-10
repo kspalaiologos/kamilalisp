@@ -6,6 +6,7 @@ import palaiologos.kamilalisp.runtime.FunctionRegistry;
 
 import java.math.MathContext;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 public class Environment {
@@ -60,6 +61,18 @@ public class Environment {
         } else {
             return Atom.NULL;
         }
+    }
+
+    private void recursiveKeys(Environment env, Set<String> keys) {
+        keys.addAll(env.data.keySet());
+        if(env.parent != null)
+            recursiveKeys(env.parent, keys);
+    }
+
+    public Set<String> recursiveKeys() {
+        Set<String> keys = new HashSet<>();
+        recursiveKeys(this, keys);
+        return keys;
     }
 
     public Set<String> keys() {
