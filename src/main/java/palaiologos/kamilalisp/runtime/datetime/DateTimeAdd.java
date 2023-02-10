@@ -13,8 +13,8 @@ import java.util.List;
 public class DateTimeAdd extends PrimitiveFunction implements Lambda {
     private static Atom f(Atom a, Atom b) {
         if (a.isUserdata(DateTime.class) && b.isUserdata(DateTime.class)) {
-            LocalDateTime v = a.getUserdata(DateTime.class).getValue();
-            LocalDateTime x = b.getUserdata(DateTime.class).getValue();
+            LocalDateTime v = a.getUserdata(DateTime.class).value();
+            LocalDateTime x = b.getUserdata(DateTime.class).value();
             v = v.plusYears(x.getYear());
             v = v.plusMonths(x.getMonthValue());
             v = v.plusDays(x.getDayOfMonth());
@@ -24,24 +24,24 @@ public class DateTimeAdd extends PrimitiveFunction implements Lambda {
             v = v.plusNanos(x.getNano());
             return new Atom(new DateTime(v));
         } else if (a.isUserdata(DateTime.class) && b.isUserdata(Time.class)) {
-            LocalDateTime v = a.getUserdata(DateTime.class).getValue();
-            Duration x = b.getUserdata(Time.class).getValue();
+            LocalDateTime v = a.getUserdata(DateTime.class).value();
+            Duration x = b.getUserdata(Time.class).value();
             v = v.plusHours(x.toHoursPart());
             v = v.plusMinutes(x.toMinutesPart());
             v = v.plusSeconds(x.toSecondsPart());
             v = v.plusNanos(x.toNanosPart());
             return new Atom(new DateTime(v));
         } else if (a.isUserdata(Time.class) && b.isUserdata(DateTime.class)) {
-            LocalDateTime v = b.getUserdata(DateTime.class).getValue();
-            Duration x = a.getUserdata(Time.class).getValue();
+            LocalDateTime v = b.getUserdata(DateTime.class).value();
+            Duration x = a.getUserdata(Time.class).value();
             v = v.plusHours(x.toHoursPart());
             v = v.plusMinutes(x.toMinutesPart());
             v = v.plusSeconds(x.toSecondsPart());
             v = v.plusNanos(x.toNanosPart());
             return new Atom(new DateTime(v));
         } else if (a.isUserdata(Time.class) && b.isUserdata(Time.class)) {
-            Duration v = b.getUserdata(Time.class).getValue();
-            Duration x = a.getUserdata(Time.class).getValue();
+            Duration v = b.getUserdata(Time.class).value();
+            Duration x = a.getUserdata(Time.class).value();
             v = v.plusHours(x.toHoursPart());
             v = v.plusMinutes(x.toMinutesPart());
             v = v.plusSeconds(x.toSecondsPart());

@@ -3,22 +3,29 @@ package palaiologos.kamilalisp.runtime.datetime;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Userdata;
 
+import java.math.BigInteger;
 import java.time.Duration;
+import java.util.List;
 
-public class Time implements Userdata {
-    private final Duration value;
-
-    public Time(Duration value) {
-        this.value = value;
-    }
-
-    public Duration getValue() {
-        return value;
-    }
+public record Time(Duration value) implements Userdata {
 
     @Override
     public Atom field(Object key) {
-        throw new UnsupportedOperationException("Time does not support field access");
+        if (!(key instanceof String))
+            throw new UnsupportedOperationException("Time does not support field access");
+        return switch ((String) key) {
+            case "hours" -> new Atom(BigInteger.valueOf(value.toHours()));
+            case "minutes" -> new Atom(BigInteger.valueOf(value.toMinutes()));
+            case "seconds" -> new Atom(BigInteger.valueOf(value.getSeconds()));
+            case "nanoseconds" -> new Atom(BigInteger.valueOf(value.getNano()));
+            case "as-list" -> new Atom(List.of(
+                    new Atom(BigInteger.valueOf(value.toHours())),
+                    new Atom(BigInteger.valueOf(value.toMinutes())),
+                    new Atom(BigInteger.valueOf(value.getSeconds())),
+                    new Atom(BigInteger.valueOf(value.getNano()))
+            ));
+            default -> throw new UnsupportedOperationException("Time does not support field access");
+        };
     }
 
     @Override
@@ -50,8 +57,4 @@ public class Time implements Userdata {
         return true;
     }
 
-    @Override
-    public int hashCode() {
-        return value.hashCode();
-    }
 }

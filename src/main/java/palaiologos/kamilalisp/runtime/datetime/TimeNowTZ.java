@@ -22,12 +22,12 @@ public class TimeNowTZ extends PrimitiveFunction implements Lambda {
             LocalDateTime now = LocalDateTime.now(ZoneId.of(tz));
             return new Atom(new Time(Duration.ofHours(now.getHour()).plusMinutes(now.getMinute()).plusSeconds(now.getSecond()).plusNanos(now.getNano())));
         } else {
-            throw new TypeError("Expected one or zero arguments to `time:now-tz'.");
+            throw new TypeError("Expected one or zero arguments to `time:now'.");
         }
     }
 
     @Override
     protected String name() {
-        return "time:now-tz";
+        return "time:now";
     }
 }

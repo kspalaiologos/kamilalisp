@@ -303,10 +303,8 @@ public class FunctionRegistry {
         env.setPrimitive("date:years", new Atom(new DateYears()));
         env.setPrimitive("date:months", new Atom(new DateMonths()));
         env.setPrimitive("date:days", new Atom(new DateDays()));
-        env.setPrimitive("date:to-list", new Atom(new DateTimeToList()));
-        env.setPrimitive("date:day-of-week", new Atom(new DateTimeDayOfWeek()));
-        env.setPrimitive("date:now", new Atom(new DateNow()));
-        env.setPrimitive("date:now-tz", new Atom(new DateNowTZ()));
+        env.setPrimitive("date:now-utc", new Atom(new DateNow()));
+        env.setPrimitive("date:now", new Atom(new DateNowTZ()));
         env.setPrimitive("time:now-utc", new Atom(new TimeNow()));
         env.setPrimitive("time:now", new Atom(new TimeNowTZ()));
         env.setPrimitive("date:parse", new Atom(new DateParse()));

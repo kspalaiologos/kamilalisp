@@ -94,11 +94,11 @@ public class TarSave extends PrimitiveFunction implements Lambda {
                     if (args.size() == 3) {
                         HashPMap<Atom, Atom> data = args.get(2).getUserdata(HashMapUserData.class).value();
                         if (data.containsKey(new Atom("creation-time")))
-                            e.setCreationTime(FileTime.from(data.get(new Atom("creation-time")).getUserdata(DateTime.class).getValue().toInstant(ZoneOffset.UTC)));
+                            e.setCreationTime(FileTime.from(data.get(new Atom("creation-time")).getUserdata(DateTime.class).value().toInstant(ZoneOffset.UTC)));
                         if (data.containsKey(new Atom("last-modified-time")))
-                            e.setLastModifiedTime(FileTime.from(data.get(new Atom("last-modified-time")).getUserdata(DateTime.class).getValue().toInstant(ZoneOffset.UTC)));
+                            e.setLastModifiedTime(FileTime.from(data.get(new Atom("last-modified-time")).getUserdata(DateTime.class).value().toInstant(ZoneOffset.UTC)));
                         if (data.containsKey(new Atom("last-access-time")))
-                            e.setLastAccessTime(FileTime.from(data.get(new Atom("last-access-time")).getUserdata(DateTime.class).getValue().toInstant(ZoneOffset.UTC)));
+                            e.setLastAccessTime(FileTime.from(data.get(new Atom("last-access-time")).getUserdata(DateTime.class).value().toInstant(ZoneOffset.UTC)));
                         if (data.containsKey(new Atom("mode")))
                             e.setMode(data.get(new Atom("mode")).getInteger().intValueExact());
                         if (data.containsKey(new Atom("user-name")))

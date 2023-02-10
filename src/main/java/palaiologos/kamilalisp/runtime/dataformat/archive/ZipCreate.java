@@ -126,7 +126,7 @@ public class ZipCreate extends PrimitiveFunction implements ReactiveFunction, Sp
                     ByteArrayInputStream bais = new ByteArrayInputStream(buf);
                     ZipArchiveEntry e = new ZipArchiveEntry(entryName);
                     if (args.size() == 3)
-                        e.setTimeLocal(args.get(2).getUserdata(DateTime.class).getValue());
+                        e.setTimeLocal(args.get(2).getUserdata(DateTime.class).value());
                     zaos.addRawArchiveEntry(e, bais);
                     zaos.flush();
                     bais.close();

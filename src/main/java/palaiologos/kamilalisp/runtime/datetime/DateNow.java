@@ -27,11 +27,11 @@ public class DateNow implements SpecialForm, ReactiveFunction {
 
     @Override
     public String stringify() {
-        return "date:now";
+        return "date:now-utc";
     }
 
     @Override
     public String frameString() {
-        return "date:now/reactive-primitive function";
+        return "date:now-utc/reactive-primitive function";
     }
 }

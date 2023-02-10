@@ -19,12 +19,12 @@ public class DateNowTZ extends PrimitiveFunction implements Lambda {
             String tz = args.get(0).getString();
             return new Atom(new DateTime(LocalDateTime.now(ZoneId.of(tz))));
         } else {
-            throw new TypeError("Expected one or zero arguments to `date:now-tz'.");
+            throw new TypeError("Expected one or zero arguments to `date:now'.");
         }
     }
 
     @Override
     protected String name() {
-        return "date:now-tz";
+        return "date:now";
     }
 }

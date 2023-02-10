@@ -13,8 +13,8 @@ import java.util.List;
 public class DateTimeDifference extends PrimitiveFunction implements Lambda {
     private static Atom f(Atom a, Atom b) {
         if (a.isUserdata(DateTime.class) && b.isUserdata(DateTime.class)) {
-            LocalDateTime v = a.getUserdata(DateTime.class).getValue();
-            LocalDateTime x = b.getUserdata(DateTime.class).getValue();
+            LocalDateTime v = a.getUserdata(DateTime.class).value();
+            LocalDateTime x = b.getUserdata(DateTime.class).value();
             v = v.minusYears(x.getYear());
             v = v.minusMonths(x.getMonthValue());
             v = v.minusDays(x.getDayOfMonth());
@@ -24,16 +24,16 @@ public class DateTimeDifference extends PrimitiveFunction implements Lambda {
             v = v.minusNanos(x.getNano());
             return new Atom(new DateTime(v));
         } else if (a.isUserdata(DateTime.class) && b.isUserdata(Time.class)) {
-            LocalDateTime v = a.getUserdata(DateTime.class).getValue();
-            Duration x = b.getUserdata(Time.class).getValue();
+            LocalDateTime v = a.getUserdata(DateTime.class).value();
+            Duration x = b.getUserdata(Time.class).value();
             v = v.minusHours(x.toHoursPart());
             v = v.minusMinutes(x.toMinutesPart());
             v = v.minusSeconds(x.toSecondsPart());
             v = v.minusNanos(x.toNanosPart());
             return new Atom(new DateTime(v));
         } else if (a.isUserdata(Time.class) && b.isUserdata(DateTime.class)) {
-            Duration v = a.getUserdata(Time.class).getValue();
-            LocalDateTime x = b.getUserdata(DateTime.class).getValue();
+            Duration v = a.getUserdata(Time.class).value();
+            LocalDateTime x = b.getUserdata(DateTime.class).value();
             LocalDateTime z = LocalDateTime.of(0, 1, 1, v.toHoursPart(), v.toMinutesPart(), v.toSecondsPart(), v.toNanosPart());
             z = z.plusDays(v.toDaysPart());
             z = z.minusHours(x.getHour());
@@ -42,8 +42,8 @@ public class DateTimeDifference extends PrimitiveFunction implements Lambda {
             z = z.minusNanos(x.getNano());
             return new Atom(new DateTime(z));
         } else if (a.isUserdata(Time.class) && b.isUserdata(Time.class)) {
-            Duration v = b.getUserdata(Time.class).getValue();
-            Duration x = a.getUserdata(Time.class).getValue();
+            Duration v = b.getUserdata(Time.class).value();
+            Duration x = a.getUserdata(Time.class).value();
             v = v.minusHours(x.toHoursPart());
             v = v.minusMinutes(x.toMinutesPart());
             v = v.minusSeconds(x.toSecondsPart());

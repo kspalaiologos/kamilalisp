@@ -134,7 +134,7 @@ public class ZipSave extends PrimitiveFunction implements Lambda {
                     ByteArrayInputStream bais = new ByteArrayInputStream(buf);
                     ZipArchiveEntry e = new ZipArchiveEntry(entryName);
                     if (args.size() == 3)
-                        e.setTimeLocal(args.get(0).getUserdata(DateTime.class).getValue());
+                        e.setTimeLocal(args.get(0).getUserdata(DateTime.class).value());
                     zaos.addRawArchiveEntry(e, bais);
                     zaos.flush();
                     bais.close();
