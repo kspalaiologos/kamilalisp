@@ -38,6 +38,7 @@ import palaiologos.kamilalisp.runtime.regex.RegexSplit;
 import palaiologos.kamilalisp.runtime.sh.*;
 import palaiologos.kamilalisp.runtime.string.*;
 
+import java.io.File;
 import java.math.BigDecimal;
 
 public class FunctionRegistry {
@@ -303,6 +304,7 @@ public class FunctionRegistry {
         env.setPrimitive("sh:basename", new Atom(new Basename()));
         env.setPrimitive("sh:mv", new Atom(new Mv()));
         env.setPrimitive("sh:access", new Atom(new Access()));
+        env.setPrimitive("sh:path-sep", new Atom(File.pathSeparator));
 
         env.setPrimitive("date:from", new Atom(new DateTimeFrom()));
         env.setPrimitive("time:from", new Atom(new TimeFrom()));
