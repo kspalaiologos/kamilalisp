@@ -28,6 +28,49 @@ cd kamilalisp
 mvn package
 ```
 
+## Features
+
+KamilaLisp allows for actor programming, concurrent programming, imperative programming, functional programming, array programming, pure functional programming, object-oriented programming, rudimentary logic programming, mathematical programming, backend development, numerical computation, system administration and event-driven programming. In more detail:
+
+- Arbitrary precision complex, integer and decimal arithmetic.
+- Many mathematical functions (bernoulli, gamma, trigonometry, arcus functions, hyperbolic functions, inverse hyperbolic functions, FFT, IFFT)
+- Bit operations
+- Number theoretic, combinatoric and linear algebraic functions (permutations, Levi-Civita, etc...)
+- Functional higher order functions (fold, scan, all, none, some, converge, takewhile, dropwhile)
+- Functional parallelism (parallel map and filter)
+- Mu-recursive functions (SML projections, mu-recursive substitution operator).
+- Prototype-based object orientation.
+- No memory side effects, all collections are persistent.
+- Possibilities of writing code in pure functional paradigm.
+- Suffix array and Burrows-Wheeler transform construction.
+- APL-style array processing (grade-up, grade-down, find, range, where, encode, decode, replicate, etc...).
+- APL-style symbols for common operations.
+- Set operations.
+- Read/write support for JSON, CSV, XML, Base64, XZ, gzip, lz4, bzip2, tar and zip.
+- Date and time manipulations.
+- Persistent hashmaps, reactive hashmap literals.
+- PNG, BMP, JPG and JPEG image I/O.
+- File I/O (read, write, append).
+- Basic matrix operations (LU decomposition, transpose, trace, matrix multiplication easily implemented as `$(foldl + 0)%[1] \outer-product * A \matrix:transpose A`.
+- Performance benchmarks to measure GC time, average, median and standard deviation between runs of various expressions.
+- Module system.
+- Pattern matching.
+- Memoization.
+- Imperative programming support.
+- Networking (`net:fetch`, `net:wget`).
+- Sockets (`net:client`, `net:server` and their SSL counterparts).
+- Parallel processing using the actor model (daemon threads, task threads, message passing paradigm).
+- Regular expressions.
+- KamilaLisp as a shell (implementations of `sh:ls`, `sh:glob`, `sh:mv`, `sh:basename`, etc... - all usable from the REPL and from code, as they return plain data structures).
+- String functions (Shannon entropy, unicode handling, byte buffers, levenshtein distance, string interpolation/formatting)
+- On-The-Fly Lexical scanner generation.
+- Function compositions, partial application, variadic functions, static scoping.
+- Tail call optimisation.
+- Functional de Bruijn indices.
+- Possibility to write standalone non-interactive scripts.
+- Prompt styling
+- Portable.
+
 ## Examples
 
 SKI calculus:
