@@ -23,26 +23,35 @@ class LispHighlight implements Highlighter {
         return refGlobEnv.has(s);
     }
 
+    private static final AttributedStyle KW_STYLE = new AttributedStyle().foreground(AttributedStyle.MAGENTA);
+    private static final AttributedStyle NUM_STYLE = new AttributedStyle().foreground(AttributedStyle.YELLOW);
+    private static final AttributedStyle EMPTY_STYLE = new AttributedStyle();
+    private static final AttributedStyle COMMENT_STYLE = new AttributedStyle().foreground(AttributedStyle.BRIGHT | AttributedStyle.BLACK);
+    private static final AttributedStyle NIL_STYLE = new AttributedStyle().foreground(AttributedStyle.RED);
+    private static final AttributedStyle STR_STYLE = new AttributedStyle().foreground(AttributedStyle.GREEN);
+    private static final AttributedStyle DEF_STYLE = new AttributedStyle().foreground(AttributedStyle.BLUE);
+
+
     private static AttributedStyle getStyleForToken(Token t, boolean isKw, boolean isWs) {
         if (isKw)
-            return new AttributedStyle().foreground(AttributedStyle.MAGENTA);
+            return KW_STYLE;
         switch (t.getType()) {
             case GrammarLexer.BIN:
             case GrammarLexer.FLOAT:
             case GrammarLexer.HEX:
             case GrammarLexer.LONG:
             case GrammarLexer.COMPLEX:
-                return new AttributedStyle().foreground(AttributedStyle.YELLOW);
+                return NUM_STYLE;
             case GrammarLexer.NAME:
-                return new AttributedStyle();
+                return EMPTY_STYLE;
             case GrammarLexer.TRASH:
-                return isWs ? new AttributedStyle() : new AttributedStyle().foreground(AttributedStyle.BRIGHT | AttributedStyle.BLACK);
+                return isWs ? EMPTY_STYLE : COMMENT_STYLE;
             case GrammarLexer.NIL:
-                return new AttributedStyle().foreground(AttributedStyle.RED);
+                return NIL_STYLE;
             case GrammarLexer.STRING:
-                return new AttributedStyle().foreground(AttributedStyle.GREEN);
+                return STR_STYLE;
             default:
-                return new AttributedStyle().foreground(AttributedStyle.BLUE);
+                return DEF_STYLE;
         }
     }
 
@@ -57,17 +66,16 @@ class LispHighlight implements Highlighter {
                 b.style(getStyleForToken(x, isKeyword(x.getText()), x.getText().trim().isEmpty()));
                 b.append(x.getText());
             });
-            return b.toAttributedString();
         } else {
-            b.style(new AttributedStyle());
+            b.style(EMPTY_STYLE);
             b.append("?");
             GrammarLexer lex = new GrammarLexer(CharStreams.fromString(s.substring(1)));
             lex.getAllTokens().forEach(x -> {
                 b.style(getStyleForToken(x, isKeyword(x.getText()), x.getText().trim().isEmpty()));
                 b.append(x.getText());
             });
-            return b.toAttributedString();
         }
+        return b.toAttributedString();
     }
 
     @Override

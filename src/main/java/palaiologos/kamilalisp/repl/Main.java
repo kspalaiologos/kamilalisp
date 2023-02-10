@@ -9,15 +9,15 @@ import org.jline.reader.impl.DefaultParser;
 import org.jline.reader.impl.history.DefaultHistory;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
-import palaiologos.kamilalisp.atom.Atom;
-import palaiologos.kamilalisp.atom.Environment;
-import palaiologos.kamilalisp.atom.Evaluation;
-import palaiologos.kamilalisp.atom.Parser;
+import org.jline.utils.AttributedStringBuilder;
+import org.jline.utils.AttributedStyle;
+import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.InterruptionError;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.AttributedString;
 import java.util.Arrays;
 import java.util.List;
 
@@ -79,16 +79,28 @@ public class Main {
         int lineNumberOffset = 0;
         try {
             while (true) {
+                if(env.has("prompt")) {
+                    Callable prompt = env.get("prompt").getCallable();
+                    Atom a = Evaluation.safeEvaluate(env, prompt, List.of(), (s) -> {
+                        System.err.println(s);
+                        env.remove("prompt");
+                        throw new InterruptionError();
+                    });
+                    if (a.getType() == Type.STRING && !a.getString().isEmpty()) {
+                        AttributedStringBuilder b = AttributedStringParser.parse(a.getString());
+                        r.printAbove(b.toAttributedString());
+                    }
+                }
                 String code = r.readLine("--> ");
-                if (code.isEmpty() || code.trim().isEmpty() || !code.trim().isEmpty() && code.trim().charAt(0) == ';')
+                if (code.isEmpty() || code.trim().isEmpty() || code.trim().charAt(0) == ';')
                     continue;
                 try {
                     List<Atom> data;
                     try {
                         String cc;
-                        if (!code.isEmpty() && code.charAt(0) == '?') {
+                        if (code.charAt(0) == '?') {
                             cc = code.substring(1);
-                        } else if (!code.isEmpty() && code.charAt(0) == '(' && !code.isEmpty() && code.charAt(code.length() - 1) == ')') {
+                        } else if (code.charAt(0) == '(' && code.charAt(code.length() - 1) == ')') {
                             cc = code;
                         } else {
                             cc = "(" + code + "\n)";

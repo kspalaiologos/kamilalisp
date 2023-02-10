@@ -78,4 +78,11 @@ public class Environment {
         int precision = get("fr").getReal().intValue();
         return new MathContext(precision);
     }
+
+    public void remove(String key) {
+        if(has(key))
+            data.remove(key);
+        else if(parent != null)
+            parent.remove(key);
+    }
 }

@@ -14,13 +14,14 @@ to sink:push will add the data to the sink in an impure way, regardless of where
 it must be in the "sink block" and what the sink block returns is the content of the sink itself
 and the return value of the code.
 - audio
-- compression codecs
-- kamilalisp as a shell?
+- more shell builtins
+- unit testing
 - bzip3 (needs java porting).
+- setting the prompt?
 
 book:
 - huffman coding, elias gamma, histograms, fft, ski calculus, matrix algos, Chinese Remainder Theorem?
 
-programming guidelines:
+interpreter programming guidelines:
 - always use absolute File-s and avoid specifying path as a string.
 - always catch exceptions in new threads using safeEvaluate.
