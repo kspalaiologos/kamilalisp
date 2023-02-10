@@ -276,6 +276,8 @@ public class FunctionRegistry {
         env.setPrimitive("codec:lz4-decompress", new Atom(new Lz4Decompress()));
         env.setPrimitive("codec:xz-compress", new Atom(new XzCompress()));
         env.setPrimitive("codec:xz-decompress", new Atom(new XzDecompress()));
+        env.setPrimitive("codec:base64-encode", new Atom(new Base64Encode()));
+        env.setPrimitive("codec:base64-decode", new Atom(new Base64Decode()));
 
         env.setPrimitive("archive:zip:create", new Atom(new ZipCreate()));
         env.setPrimitive("archive:zip:load", new Atom(new ZipLoad()));
@@ -293,6 +295,7 @@ public class FunctionRegistry {
         env.setPrimitive("sh:ls", new Atom(new Ls()));
         env.setPrimitive("sh:basename", new Atom(new Basename()));
         env.setPrimitive("sh:mv", new Atom(new Mv()));
+        env.setPrimitive("sh:access", new Atom(new Access()));
 
         env.setPrimitive("date:from", new Atom(new DateTimeFrom()));
         env.setPrimitive("time:from", new Atom(new TimeFrom()));
