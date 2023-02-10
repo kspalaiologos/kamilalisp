@@ -5,6 +5,8 @@ import palaiologos.kamilalisp.atom.Type;
 import palaiologos.kamilalisp.error.TypeError;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 public class Cp extends ShellFunction {
@@ -66,10 +68,15 @@ public class Cp extends ShellFunction {
                 copy(file.getAbsolutePath(), destFile.getAbsolutePath() + File.pathSeparator + file.getName(), true, force);
             }
         } else {
-            if(!destFile.exists() && !destFile.getParentFile().mkdirs())
+            if(destFile.exists() && !force)
+                throw new RuntimeException("File " + dest + " already exists");
+            if(!destFile.getParentFile().exists() && !destFile.getParentFile().mkdirs())
                 throw new RuntimeException("Could not create directory " + destFile.getParentFile().getAbsolutePath());
-            if(!srcFile.renameTo(destFile) && !force)
-                throw new RuntimeException("Could not copy file " + src + " to " + dest);
+            try {
+                Files.copy(srcFile.toPath(), destFile.toPath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }
