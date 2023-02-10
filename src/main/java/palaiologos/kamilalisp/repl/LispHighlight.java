@@ -51,12 +51,23 @@ class LispHighlight implements Highlighter {
         AttributedStringBuilder b = new AttributedStringBuilder();
         if (s.isEmpty() || s.trim().isEmpty())
             return b.toAttributedString();
-        GrammarLexer lex = new GrammarLexer(CharStreams.fromString(s));
-        lex.getAllTokens().forEach(x -> {
-            b.style(getStyleForToken(x, isKeyword(x.getText()), x.getText().trim().isEmpty()));
-            b.append(x.getText());
-        });
-        return b.toAttributedString();
+        if(!s.startsWith("?")) {
+            GrammarLexer lex = new GrammarLexer(CharStreams.fromString(s));
+            lex.getAllTokens().forEach(x -> {
+                b.style(getStyleForToken(x, isKeyword(x.getText()), x.getText().trim().isEmpty()));
+                b.append(x.getText());
+            });
+            return b.toAttributedString();
+        } else {
+            b.style(new AttributedStyle());
+            b.append("?");
+            GrammarLexer lex = new GrammarLexer(CharStreams.fromString(s.substring(1)));
+            lex.getAllTokens().forEach(x -> {
+                b.style(getStyleForToken(x, isKeyword(x.getText()), x.getText().trim().isEmpty()));
+                b.append(x.getText());
+            });
+            return b.toAttributedString();
+        }
     }
 
     @Override

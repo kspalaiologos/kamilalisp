@@ -25,8 +25,9 @@ public class Glob extends ShellFunction {
             Files.walkFileTree(cwd, new SimpleFileVisitor<>() {
                 @Override
                 public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
-                    if (pathMatcher.matches(path)) {
-                        files.add(new Atom(path.relativize(cwd).toString()));
+                    Path p = cwd.relativize(path);
+                    if (pathMatcher.matches(p)) {
+                        files.add(new Atom(p.toString()));
                     }
 
                     return FileVisitResult.CONTINUE;

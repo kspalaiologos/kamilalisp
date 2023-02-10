@@ -279,42 +279,30 @@ public class Atom implements Comparable<Atom> {
                     return getList().get(0).toString();
                 else if (getList().get(0).type == Type.CALLABLE && getList().get(0).getCallable() instanceof Index)
                     return getList().get(0).toString() + "$[" + getList().stream().skip(1).map(Atom::toString).collect(Collectors.joining(" ")) + "]";
-                if (getList().stream().allMatch(x -> x.type.equals(Type.LIST))) {
-                    int len = getList().get(0).getList().size();
-                    if (getList().stream().allMatch(x -> x.getList().size() == len)
-                            && getList().stream().allMatch(x -> x.getList().stream().allMatch(Atom::isNumeric))) {
-                        // Square matrix.
-                        // Find the longest representation in each column.
-                        int[] max = new int[len];
-                        for (int i = 0; i < len; i++) {
-                            for (Atom row : getList()) {
-                                max[i] = Math.max(max[i], row.getList().get(i).toDisplayString().length());
-                            }
-                        }
-                        for (int i = 0; i < len; i++) {
-                            if (max[i] > 20) {
-                                // Back to normal display, that wouldn't work otherwise.
-                                return "(" + getList().stream().map(Atom::toString).collect(Collectors.joining(" ")) + ")";
-                            }
-                        }
-                        StringBuilder b = new StringBuilder();
-                        b.append("[[");
-                        List<Atom> cur = getList().get(0).getList();
-                        for (int i = 0; i < cur.size(); i++) {
-                            b.append(Strings.padStart(cur.get(i).toString(), max[i], ' ')).append(i == cur.size() - 1 ? "" : " ");
-                        }
-                        b.append("]");
-                        for (int i = 1; i < getList().size(); i++) {
-                            cur = getList().get(i).getList();
-                            b.append("\n [");
-                            for (int j = 0; j < cur.size(); j++) {
-                                b.append(Strings.padStart(cur.get(j).toString(), max[j], ' ')).append(j == cur.size() - 1 ? "" : " ");
-                            }
-                            b.append("]");
-                        }
-                        b.append("]");
-                        return b.toString();
+                if (getList().stream().allMatch(x -> x.type.equals(Type.LIST)) && getList().stream().allMatch(x -> x.getList().stream().allMatch(y -> y.getType() != Type.LIST))) {
+                    StringBuilder b = new StringBuilder();
+                    b.append("[");
+                    for (int i = 0; i < getList().size(); i++) {
+                        if(i != 0)
+                            b.append(" ");
+                        b.append(getList().get(i).toDisplayString());
+                        if(i != getList().size() - 1)
+                            b.append("\n");
                     }
+                    b.append("]");
+                    return b.toString();
+                } else if(getList().stream().allMatch(x -> x.type.equals(Type.STRING))) {
+                    StringBuilder b = new StringBuilder();
+                    b.append("[");
+                    for (int i = 0; i < getList().size(); i++) {
+                        if(i != 0)
+                            b.append(" ");
+                        b.append(getList().get(i).toString());
+                        if(i != getList().size() - 1)
+                            b.append("\n");
+                    }
+                    b.append("]");
+                    return b.toString();
                 }
                 return "(" + getList().stream().map(Atom::toString).collect(Collectors.joining(" ")) + ")";
             case CALLABLE:
