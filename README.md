@@ -8,6 +8,8 @@
 
 [![codecov](https://codecov.io/gh/kspalaiologos/kamilalisp/branch/v0.2/graph/badge.svg?token=V9D86RYQO8)](https://codecov.io/gh/kspalaiologos/kamilalisp) [![Java CI with Maven](https://github.com/kspalaiologos/kamilalisp/actions/workflows/maven.yml/badge.svg)](https://github.com/kspalaiologos/kamilalisp/actions/workflows/maven.yml)
 ![Lines of Code](https://tokei.rs/b1/github/kspalaiologos/kamilalisp)
+![GitHub](https://img.shields.io/github/license/kspalaiologos/kamilalisp)
+<span class="badge-patreon"><a href="https://patreon.com/kspalaiologos" title="Donate to this project using Patreon"><img src="https://img.shields.io/badge/patreon-donate-yellow.svg" alt="Patreon donate button" /></a></span>
 
 A functional, flexible and concise Lisp inspired by Haskell and APL, among others. A ground-up rewrite.
 
