@@ -291,6 +291,8 @@ public class FunctionRegistry {
         env.setPrimitive("sh:glob", new Atom(new Glob()));
         env.setPrimitive("sh:cp", new Atom(new Cp()));
         env.setPrimitive("sh:ls", new Atom(new Ls()));
+        env.setPrimitive("sh:basename", new Atom(new Basename()));
+        env.setPrimitive("sh:mv", new Atom(new Mv()));
 
         env.setPrimitive("date:from", new Atom(new DateTimeFrom()));
         env.setPrimitive("time:from", new Atom(new TimeFrom()));
