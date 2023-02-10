@@ -57,33 +57,6 @@ List operations and point-free programming:
 ; 1=⍴∪(⊢+⌽)⍳10000
 ```
 
-Display a bar chart of the byte frequency in the file using a logarithmic scale and print Shannon Entropy of a file passed argument:
-```
-% cat script.lisp
-(def a \io:get-file-buffer \car args)
-(if (= (tally a) 0)
-    (let-seq
-        (io:writeln \str:format "Shannon Entropy: 0")
-        (exit 0))
-    '())
-(def b
-    \:[tie car $(+ 1)@tally@car@cdr]
-        \list:group a)
-(def b b$[grade-up \car%[1] b])
-(def c \ln \foldl1 max \:car@:cdr b)
-(def b \:car@:cdr
-    \:(lambda x
-        (tie (car x) (floor \* 30 \ / (ln \car \cdr x) c))) b)
-(def d \filter $(foldl or 0)
-    \reverse@matrix:transpose
-        \:(lambda x (take 30 \cycle x '(1))) b)
-(:io:writeln@:(lambda x " ⎕"$[#0 x]) d)
-(io:writeln \str:format "Shannon Entropy: {shannon-entropy a}")
-% java -jar target/kamilalisp-0.2.jar script.lisp LICENSE
-[ histogram omitted ... ]
-Shannon Entropy: 4.57328272673034
-```
-
 ## License
 
 KamilaLisp is distributed under the GNU General Public License v3. See [LICENSE](https://github.com/kspalaiologos/kamilalisp/v0.2/main/LICENSE) for details.
