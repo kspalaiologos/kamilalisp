@@ -29,6 +29,7 @@ import palaiologos.kamilalisp.runtime.matrix.Trace;
 import palaiologos.kamilalisp.runtime.matrix.Transpose;
 import palaiologos.kamilalisp.runtime.meta.*;
 import palaiologos.kamilalisp.runtime.net.*;
+import palaiologos.kamilalisp.runtime.parallel.Task;
 import palaiologos.kamilalisp.runtime.regex.RegexMatches;
 import palaiologos.kamilalisp.runtime.regex.RegexReplace;
 import palaiologos.kamilalisp.runtime.regex.RegexSplit;
@@ -157,6 +158,8 @@ public class FunctionRegistry {
         env.setPrimitive("str:escape", new Atom(new Escape()));
         env.setPrimitive("str:unescape", new Atom(new Unescape()));
         env.setPrimitive("str:contains", "⍫⊂←", new Atom(new Contains()));
+
+        env.setPrimitive("parallel:task", new Atom(new Task()));
 
         env.setPrimitive("io:writeln", "↑⍫", new Atom(new Writeln()));
         env.setPrimitive("io:readln", "↓⍫", new Atom(new Readln()));

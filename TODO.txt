@@ -1,8 +1,7 @@
 - More persistent data structures?
 - File/Terminal I/O functions
 - More string utilities (interpolate, capitalize, etc.)
-- Web server stuff
-- graphics/sound
+- graphics/sound, audio generation
 - extend regex library
 - matrix stuff
 - http/https server w. routing
@@ -13,7 +12,6 @@ a sink at any place in the code and have some code to be evaluated in its contex
 to sink:push will add the data to the sink in an impure way, regardless of where you called it but
 it must be in the "sink block" and what the sink block returns is the content of the sink itself
 and the return value of the code.
-- audio
 - more shell builtins
 - unit testing
 - bzip3 (needs java porting).
