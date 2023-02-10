@@ -67,6 +67,7 @@ public class AttributedStringParser {
                         }
                     }
                 }
+                b.style(style);
             } else {
                 b.append(s);
             }
