@@ -3,9 +3,9 @@ package palaiologos.kamilalisp.atom;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
-import palaiologos.kamilalisp.parser.DefaultGrammarVisitor;
-import palaiologos.kamilalisp.parser.GrammarLexer;
-import palaiologos.kamilalisp.parser.GrammarParser;
+import palaiologos.kamilalisp.parsers.DefaultGrammarVisitor;
+import palaiologos.kamilalisp.parsers.GrammarLexer;
+import palaiologos.kamilalisp.parsers.GrammarParser;
 
 import java.util.List;
 

@@ -30,16 +30,16 @@ bin/
 target/
 
 ## ANTLR stuff ##
-src/main/java/palaiologos/kamilalisp/parser/Grammar.interp
-src/main/java/palaiologos/kamilalisp/parser/Grammar.tokens
-src/main/java/palaiologos/kamilalisp/parser/GrammarBaseListener.java
-src/main/java/palaiologos/kamilalisp/parser/GrammarBaseVisitor.java
-src/main/java/palaiologos/kamilalisp/parser/GrammarLexer.interp
-src/main/java/palaiologos/kamilalisp/parser/GrammarLexer.java
-src/main/java/palaiologos/kamilalisp/parser/GrammarLexer.tokens
-src/main/java/palaiologos/kamilalisp/parser/GrammarListener.java
-src/main/java/palaiologos/kamilalisp/parser/GrammarParser.java
-src/main/java/palaiologos/kamilalisp/parser/GrammarVisitor.java
+src/main/java/palaiologos/kamilalisp/parsers/Grammar.interp
+src/main/java/palaiologos/kamilalisp/parsers/Grammar.tokens
+src/main/java/palaiologos/kamilalisp/parsers/GrammarBaseListener.java
+src/main/java/palaiologos/kamilalisp/parsers/GrammarBaseVisitor.java
+src/main/java/palaiologos/kamilalisp/parsers/GrammarLexer.interp
+src/main/java/palaiologos/kamilalisp/parsers/GrammarLexer.java
+src/main/java/palaiologos/kamilalisp/parsers/GrammarLexer.tokens
+src/main/java/palaiologos/kamilalisp/parsers/GrammarListener.java
+src/main/java/palaiologos/kamilalisp/parsers/GrammarParser.java
+src/main/java/palaiologos/kamilalisp/parsers/GrammarVisitor.java
 
 ## IDE stuff ##
 .idea/
@@ -54,22 +54,22 @@ doc/*.out
 doc/*.fls
 doc/*.fdb_latexmk
 
-src/main/java/palaiologos/kamilalisp/parser/JSON.interp
+src/main/java/palaiologos/kamilalisp/parsers/JSON.interp
 
-src/main/java/palaiologos/kamilalisp/parser/JSON.tokens
+src/main/java/palaiologos/kamilalisp/parsers/JSON.tokens
 
-src/main/java/palaiologos/kamilalisp/parser/JSONBaseListener.java
+src/main/java/palaiologos/kamilalisp/parsers/JSONBaseListener.java
 
-src/main/java/palaiologos/kamilalisp/parser/JSONBaseVisitor.java
+src/main/java/palaiologos/kamilalisp/parsers/JSONBaseVisitor.java
 
-src/main/java/palaiologos/kamilalisp/parser/JSONLexer.interp
+src/main/java/palaiologos/kamilalisp/parsers/JSONLexer.interp
 
-src/main/java/palaiologos/kamilalisp/parser/JSONLexer.java
+src/main/java/palaiologos/kamilalisp/parsers/JSONLexer.java
 
-src/main/java/palaiologos/kamilalisp/parser/JSONLexer.tokens
+src/main/java/palaiologos/kamilalisp/parsers/JSONLexer.tokens
 
-src/main/java/palaiologos/kamilalisp/parser/JSONListener.java
+src/main/java/palaiologos/kamilalisp/parsers/JSONListener.java
 
-src/main/java/palaiologos/kamilalisp/parser/JSONParser.java
+src/main/java/palaiologos/kamilalisp/parsers/JSONParser.java
 
-src/main/java/palaiologos/kamilalisp/parser/JSONVisitor.java
+src/main/java/palaiologos/kamilalisp/parsers/JSONVisitor.java

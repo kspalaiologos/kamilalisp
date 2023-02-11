@@ -8,7 +8,7 @@ import org.jline.utils.AttributedString;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 import palaiologos.kamilalisp.atom.Environment;
-import palaiologos.kamilalisp.parser.GrammarLexer;
+import palaiologos.kamilalisp.parsers.GrammarLexer;
 
 import java.util.regex.Pattern;
 

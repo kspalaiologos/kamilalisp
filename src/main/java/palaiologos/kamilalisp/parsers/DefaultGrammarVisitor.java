@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.parser;
+package palaiologos.kamilalisp.parsers;
 
 import ch.obermuhlner.math.big.BigComplex;
 import org.apache.commons.text.StringEscapeUtils;

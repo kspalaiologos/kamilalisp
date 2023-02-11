@@ -71,7 +71,7 @@ public class FriCAS {
                 e.printStackTrace();
             }
         }
-        return String.join("\n", result.subList(0, result.size() - 1)).replaceFirst("\\([0-9]+\\)", "");
+        return String.join("\n", result).replaceFirst("\\([0-9]+\\)", "");
     }
 
     private String eval(String msg) {

@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.parser;
+package palaiologos.kamilalisp.parsers;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.pcollections.HashTreePMap;

@@ -38,7 +38,6 @@ import static org.armedbear.lisp.Lisp.*;
 public final class arglist
 {
     static final Operator getOperator(LispObject obj)
-
     {
         if (obj instanceof Operator)
             return (Operator) obj;

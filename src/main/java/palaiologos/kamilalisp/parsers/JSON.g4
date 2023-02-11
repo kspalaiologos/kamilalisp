@@ -1,7 +1,7 @@
 grammar JSON;
 
 @header {
-    package palaiologos.kamilalisp.parser;
+    package palaiologos.kamilalisp.parsers;
 }
 
 json

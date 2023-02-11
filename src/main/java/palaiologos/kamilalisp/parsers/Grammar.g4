@@ -4,7 +4,7 @@
 grammar Grammar;
 
 @header {
-    package palaiologos.kamilalisp.parser;
+    package palaiologos.kamilalisp.parsers;
 }
 
 file_: form * EOF;
