@@ -189,6 +189,7 @@
                 <configuration>
                     <excludes>
                         <exclude>palaiologos/kamilalisp/repl/*.class</exclude>
+                        <exclude>org/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>
