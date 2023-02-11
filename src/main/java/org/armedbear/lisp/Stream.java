@@ -1783,7 +1783,14 @@ public class Stream extends StructureObject {
         if (reader == null)
             streamNotCharacterInputStream();
 
-        int n = reader.read();
+        int n;
+        if(reader instanceof DecodingReader && ((DecodingReader) reader).isStdin)
+            try {
+                n = palaiologos.kamilalisp.runtime.cas.FriCAS.getInstance().cin.take();
+            } catch (InterruptedException e) { n = -1; }
+        else {
+            n = reader.read();
+        }
 
         if (n < 0) {
             pastEnd = true;

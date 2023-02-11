@@ -62,7 +62,7 @@
 /*     */ {
 /*  63 */   private static Reader staticReader = new StringReader("");
 /*     */ 
-/*     */   
+/*     */   public boolean isStdin = false;
 /*     */   private ByteBuffer bbuf;
 /*     */ 
 /*     */   
@@ -85,6 +85,10 @@
 /*  85 */     this.ce = cs.newEncoder();
 /*  86 */     this.bbuf = ByteBuffer.allocate(size);
 /*  87 */     this.bbuf.flip();
+
+                if(stream == palaiologos.kamilalisp.runtime.cas.FriCAS.nis) {
+                    this.isStdin = true;
+                }
 /*     */   }
 /*     */ 
 /*     */ 

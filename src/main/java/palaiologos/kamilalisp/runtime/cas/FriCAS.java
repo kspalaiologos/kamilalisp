@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class FriCAS {
     // Singleton API
     private static FriCAS instance = null;
-    public FriCAS getInstance() {
+    public static FriCAS getInstance() {
         if (instance == null) {
             instance = new FriCAS();
         }
@@ -21,93 +21,38 @@ public class FriCAS {
     }
 
     // Normal API.
-    private LinkedBlockingQueue<Integer> cin = new LinkedBlockingQueue<>();
-    private LinkedBlockingQueue<Integer> cout = new LinkedBlockingQueue<>();
+    public LinkedBlockingQueue<Integer> cin = new LinkedBlockingQueue<>();
+    public LinkedBlockingQueue<Integer> cout = new LinkedBlockingQueue<>();
+    public static InputStream nis = InputStream.nullInputStream();
     private Thread thread;
-    private AtomicBoolean pending = new AtomicBoolean(false);
 
     private FriCAS() {
-        InputStream is = new InputStream() {
-            @Override
-            public int read() {
-                int value;
-                pending.set(true);
-                try {
-                    value = cin.take();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                pending.set(false);
-                System.out.println("Sending " + value);
-                return value;
-            }
-
-            @Override
-            public int available() {
-                return cin.size();
-            }
-        };
-
-        OutputStream os = new OutputStream() {
-            @Override
-            public void write(int b) {
-                cout.add(b);
-                System.out.write(b);
-            }
-        };
-
         URL resUrl = this.getClass().getResource("/lisp/fricas.lisp");
         String urlString = resUrl.toString();
         String str = urlString.substring(0, urlString.length() - "/fricas.lisp".length());
         thread = new Thread(() -> {
-            Interpreter interpreter = Interpreter.createInstance(is, os, str);
+            Interpreter interpreter = Interpreter.createInstance(nis, System.out, str);
             interpreter.eval("(load \"fricas.lisp\")");
         });
         thread.setDaemon(true);
         thread.start();
-
-        // Wait until input is desired.
-        while(!pending.get()) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        cout.clear();
-
-        System.out.println("FriCAS started.");
     }
 
-    private String eval(String s) {
-        // Send input.
-        byte[] bytes = s.getBytes();
-        for (byte b : bytes) {
-            cin.add((int) b);
-        }
-
-        // Wait until input is desired again.
-        while(pending.get()) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        // Read output.
-        byte[] bytesOut = new byte[cout.size()];
-        Iterator<Integer> it = cout.iterator();
-        for (int i = 0; i < bytesOut.length; i++) {
-            bytesOut[i] = it.next().byteValue();
-        }
-        cout.clear();
-        return new String(bytesOut);
+    private String eval(String msg) {
+        msg.codePoints().forEach(cin::add);
+        return "";
     }
 
     public static void main(String[] args) {
-        FriCAS cas = new FriCAS();
+        FriCAS cas = FriCAS.getInstance();
         System.out.println(cas.eval("integrate(exp(1/x^2)/x^3,x)::InputForm\n"));
         System.out.println(cas.eval("limit(exp(-1/x^2),x=0)::InputForm\n"));
+        while(true) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
