@@ -1,0 +1,10 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/ldiff.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.ldiff"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'LDIFF 'SOURCE (CONS '((:FUNCTION LDIFF) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/ldiff.lisp" 
+1608) (GET 'LDIFF 'SOURCE NIL))) (FSET 'LDIFF (GET-FASL-FUNCTION *FASL-LOADER* 0) 
+1608 '(LIST OBJECT) NIL))

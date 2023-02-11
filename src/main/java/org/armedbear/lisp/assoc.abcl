@@ -1,0 +1,37 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/assoc.lisp")
+(COMMON-LISP:SETQ SYSTEM::*FASL-UNINTERNED-SYMBOLS* #(#:WHOLE-246890 #:ENVIRONMENT-246891))
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.assoc"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'ASSOC-GUTS 'SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/assoc.lisp" 
+1596) (GET 'ASSOC-GUTS 'SOURCE NIL))) (FSET 'ASSOC-GUTS (MAKE-MACRO 'ASSOC-GUTS (GET-FASL-FUNCTION 
+*FASL-LOADER* 0)) 1596 '(TEST-GUY) NIL))
+(PROGN (PUT 'ASSOC 'SOURCE (CONS '((:FUNCTION ASSOC) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/assoc.lisp" 
+1755) (GET 'ASSOC 'SOURCE NIL))) (FSET 'ASSOC (GET-FASL-FUNCTION *FASL-LOADER* 1) 
+1755 '(ITEM ALIST &KEY KEY TEST TEST-NOT) NIL))
+(PROGN (PUT 'ASSOC-IF 'SOURCE (CONS '((:FUNCTION ASSOC-IF) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/assoc.lisp" 
+2344) (GET 'ASSOC-IF 'SOURCE NIL))) (FSET 'ASSOC-IF (GET-FASL-FUNCTION *FASL-LOADER* 
+2) 2344 '(PREDICATE ALIST &KEY KEY) NIL))
+(PROGN (PUT 'ASSOC-IF-NOT 'SOURCE (CONS '((:FUNCTION ASSOC-IF-NOT) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/assoc.lisp" 
+2518) (GET 'ASSOC-IF-NOT 'SOURCE NIL))) (FSET 'ASSOC-IF-NOT (GET-FASL-FUNCTION *FASL-LOADER* 
+3) 2518 '(PREDICATE ALIST &KEY KEY) NIL))
+(PROGN (PUT 'RASSOC 'SOURCE (CONS '((:FUNCTION RASSOC) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/assoc.lisp" 
+2708) (GET 'RASSOC 'SOURCE NIL))) (FSET 'RASSOC (GET-FASL-FUNCTION *FASL-LOADER* 
+4) 2708 '(ITEM ALIST &KEY KEY TEST TEST-NOT) NIL))
+(PROGN (PUT 'RASSOC-IF 'SOURCE (CONS '((:FUNCTION RASSOC-IF) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/assoc.lisp" 
+3298) (GET 'RASSOC-IF 'SOURCE NIL))) (FSET 'RASSOC-IF (GET-FASL-FUNCTION *FASL-LOADER* 
+5) 3298 '(PREDICATE ALIST &KEY KEY) NIL))
+(PROGN (PUT 'RASSOC-IF-NOT 'SOURCE (CONS '((:FUNCTION RASSOC-IF-NOT) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/assoc.lisp" 
+3473) (GET 'RASSOC-IF-NOT 'SOURCE NIL))) (FSET 'RASSOC-IF-NOT (GET-FASL-FUNCTION 
+*FASL-LOADER* 6) 3473 '(PREDICATE ALIST &KEY KEY) NIL))
+(PROGN (PUT 'ACONS 'SOURCE (CONS '((:FUNCTION ACONS) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/assoc.lisp" 
+3664) (GET 'ACONS 'SOURCE NIL))) (FSET 'ACONS (GET-FASL-FUNCTION *FASL-LOADER* 7) 
+3664 '(KEY DATUM ALIST) NIL))
+(PROGN (PUT 'PAIRLIS 'SOURCE (CONS '((:FUNCTION PAIRLIS) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/assoc.lisp" 
+3729) (GET 'PAIRLIS 'SOURCE NIL))) (FSET 'PAIRLIS (GET-FASL-FUNCTION *FASL-LOADER* 
+8) 3729 '(KEYS DATA &OPTIONAL (ALIST 'NIL)) NIL))
+(PROGN (PUT 'COPY-ALIST 'SOURCE (CONS '((:FUNCTION COPY-ALIST) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/assoc.lisp" 
+4014) (GET 'COPY-ALIST 'SOURCE NIL))) (FSET 'COPY-ALIST (GET-FASL-FUNCTION *FASL-LOADER* 
+9) 4014 '(ALIST) "Return a new association list which is EQUAL to ALIST."))

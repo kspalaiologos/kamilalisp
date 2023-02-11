@@ -1,0 +1,287 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp")
+(COMMON-LISP:SETQ SYSTEM::*FASL-UNINTERNED-SYMBOLS* #(#:PROCESS- #:G298607 #:G298662 #:G298732 #:G298786 #:G298856 #:G298911 #:G298980 #:G299035 #:G299383 #:G299448))
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.run_program"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(REQUIRE :JAVA)
+(PROGN (PUT 'NOT-JAVA-6-P 'SOURCE (CONS '((:FUNCTION NOT-JAVA-6-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+1602) (GET 'NOT-JAVA-6-P 'SOURCE NIL))) (FSET 'NOT-JAVA-6-P (GET-FASL-FUNCTION *FASL-LOADER* 
+0) 1602 'NIL NIL))
+(PROGN (PUT 'PRE-JAVA-11-P 'SOURCE (CONS '((:FUNCTION PRE-JAVA-11-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+1661) (GET 'PRE-JAVA-11-P 'SOURCE NIL))) (FSET 'PRE-JAVA-11-P (GET-FASL-FUNCTION 
+*FASL-LOADER* 1) 1661 'NIL NIL))
+(EXPORT '(RUN-PROGRAM PROCESS PROCESS-P PROCESS-INPUT PROCESS-OUTPUT PROCESS-ERROR 
+PROCESS-ALIVE-P PROCESS-WAIT PROCESS-EXIT-CODE PROCESS-KILL PROCESS-PID))
+(PROGN (PUT 'RUN-PROGRAM 'SOURCE (CONS '((:FUNCTION RUN-PROGRAM) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+1962) (GET 'RUN-PROGRAM 'SOURCE NIL))) (FSET 'RUN-PROGRAM (GET-FASL-FUNCTION *FASL-LOADER* 
+2) 1962 '(PROGRAM ARGS &KEY ENVIRONMENT (WAIT T) CLEAR-ENVIRONMENT (INPUT :STREAM) 
+(OUTPUT :STREAM) (ERROR :STREAM) IF-INPUT-DOES-NOT-EXIST (IF-OUTPUT-EXISTS :ERROR) 
+(IF-ERROR-EXISTS :ERROR) DIRECTORY) "Run PROGRAM with ARGS in with ENVIRONMENT variables.
+
+Possibly WAIT for subprocess to exit.
+
+Optionally CLEAR-ENVIRONMENT of the subprocess of any non specified values.
+
+Creates a new process running the the PROGRAM.
+
+ARGS are a list of strings to be passed to the program as arguments.
+
+For no arguments, use nil which means that just the name of the
+program is passed as arg 0.
+
+Returns a process structure containing the JAVA-OBJECT wrapped Process
+object, and the PROCESS-INPUT, PROCESS-OUTPUT, and PROCESS-ERROR streams.
+
+c.f. http://download.oracle.com/javase/6/docs/api/java/lang/Process.html
+
+Notes about Unix environments (as in the :environment):
+
+    * The ABCL implementation of run-program, like SBCL, Perl and many
+      other programs, copies the Unix environment by default.
+
+    * Running Unix programs from a setuid process, or in any other
+      situation where the Unix environment is under the control of
+      someone else, is a mother lode of security problems. If you are
+      contemplating doing this, read about it first. (The Perl
+      community has a lot of good documentation about this and other
+      security issues in script-like programs.
+
+The &key arguments have the following meanings:
+
+:environment
+    An alist of STRINGs (name . value) describing new
+    environment values that replace existing ones.
+
+:clear-environment
+    If non-NIL, the current environment is cleared before the
+    values supplied by :environment are inserted.
+
+:wait
+    If non-NIL, which is the default, wait until the created process
+    finishes. If NIL, continue running Lisp until the program
+    finishes.
+
+:input
+    If T, I/O is inherited from the Java process. If NIL, /dev/null is used
+    (nul on Windows). If a PATHNAME designator other than a stream is
+    supplied, input will be read from that file. If set to :STREAM, a stream
+    will be available via PROCESS-INPUT to read from. Defaults to :STREAM.
+
+:if-input-does-not-exist
+    If :input points to a non-existing file, this may be set to :ERROR in
+    order to signal an error, :CREATE to create and read from an empty file,
+    or NIL to immediately NIL instead of creating the process.
+    Defaults to NIL.
+
+:output
+    If T, I/O is inherited from the Java process. If NIL, /dev/null is used
+    (nul on Windows). If a PATHNAME designator other than a stream is
+    supplied, output will be redirect to that file. If set to :STREAM, a
+    stream will be available via PROCESS-OUTPUT to write to.
+    Defaults to :STREAM.
+
+:if-output-exists
+    If :output points to a non-existing file, this may be set to :ERROR in
+    order to signal an error, :SUPERSEDE to supersede the existing file,
+    :APPEND to append to it instead, or NIL to immediately NIL instead of
+    creating the process. Defaults to :ERROR.
+
+:error
+    Same as :output, but can also be :output, in which case the error stream
+    is redirected to wherever the standard output stream goes.
+    Defaults to :STREAM.
+
+:if-error-exists
+    Same as :if-output-exists, but for the :error target.
+
+:directory
+    If set will become the working directory for the new process, otherwise
+    the working directory will be unchanged from the current Java process.
+    Defaults to NIL.
+"))
+(PROGN (PUT '+INHERIT+ 'SOURCE (CONS '(+INHERIT+ "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+8614) (GET '+INHERIT+ 'SOURCE NIL))) (DEFCONSTANT +INHERIT+ (IGNORE-ERRORS (JAVA:JFIELD 
+"java.lang.ProcessBuilder$Redirect" "INHERIT"))))
+(PROGN (PUT 'COERCE-TO-FILE 'SOURCE (CONS '((:FUNCTION COERCE-TO-FILE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+8721) (GET 'COERCE-TO-FILE 'SOURCE NIL))) (FSET 'COERCE-TO-FILE (GET-FASL-FUNCTION 
+*FASL-LOADER* 6) 8721 '(VALUE) NIL))
+(PUT 'IMPLEMENTATION-NOT-AVAILABLE 'SOURCE (CONS '(:CONDITION "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+9023) (GET 'IMPLEMENTATION-NOT-AVAILABLE 'SOURCE NIL)))
+(PUT 'IMPLEMENTATION-NOT-AVAILABLE 'SOURCE (CONS '(:CLASS "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+9023) (GET 'IMPLEMENTATION-NOT-AVAILABLE 'SOURCE NIL)))
+(FUNCALL (GET-FASL-FUNCTION *FASL-LOADER* 7))
+(PUT 'PRINT-OBJECT 'SOURCE (CONS '((:METHOD PRINT-OBJECT NIL (IMPLEMENTATION-NOT-AVAILABLE 
+T)) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+9023) (GET 'PRINT-OBJECT 'SOURCE NIL)))
+(MOP::ENSURE-METHOD 'PRINT-OBJECT :LAMBDA-LIST '(CONDITION STREAM) :QUALIFIERS 'NIL 
+:SPECIALIZERS (MOP::CANONICALIZE-SPECIALIZERS (LIST 'IMPLEMENTATION-NOT-AVAILABLE 
+'T)) :FUNCTION (GET-FASL-FUNCTION *FASL-LOADER* 8))
+(PROGN (PUT 'SETUP-INPUT-REDIRECTION 'SOURCE (CONS '((:FUNCTION SETUP-INPUT-REDIRECTION) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 9274) 
+(GET 'SETUP-INPUT-REDIRECTION 'SOURCE NIL))) (FSET 'SETUP-INPUT-REDIRECTION (GET-FASL-FUNCTION 
+*FASL-LOADER* 13) 9274 '(PROCESS-BUILDER VALUE IF-DOES-NOT-EXIST) "Returns boolean truth when input redirections has been successfully set up.
+
+As a second value, returns either nil if input should inherit from the
+parent process, or a java.io.File reference to the file to read input from."))
+(PROGN (PUT 'SETUP-OUTPUT-REDIRECTION 'SOURCE (CONS '((:FUNCTION SETUP-OUTPUT-REDIRECTION) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 10825) 
+(GET 'SETUP-OUTPUT-REDIRECTION 'SOURCE NIL))) (FSET 'SETUP-OUTPUT-REDIRECTION (GET-FASL-FUNCTION 
+*FASL-LOADER* 14) 10825 '(PROCESS-BUILDER VALUE ERRORP IF-DOES-EXIST) NIL))
+(COMPILER-DEFSTRUCT 'PROCESS :CONC-NAME '#0? :DEFAULT-CONSTRUCTOR 'NIL :CONSTRUCTORS 
+'((%MAKE-PROCESS (JPROCESS))) :COPIER 'COPY-PROCESS :PREDICATE '"PROCESS-P" :DIRECT-SLOTS 
+'(#(DEFSTRUCT-SLOT-DESCRIPTION JPROCESS 0 PROCESS-JPROCESS NIL T NIL) #(DEFSTRUCT-SLOT-DESCRIPTION
+ %INPUT 1 PROCESS-%INPUT NIL T NIL) #(DEFSTRUCT-SLOT-DESCRIPTION %OUTPUT 2 PROCESS-%OUTPUT
+ NIL T NIL) #(DEFSTRUCT-SLOT-DESCRIPTION %ERROR 3 PROCESS-%ERROR NIL T NIL)) :SLOTS 
+'(#(DEFSTRUCT-SLOT-DESCRIPTION JPROCESS 0 PROCESS-JPROCESS NIL T NIL) #(DEFSTRUCT-SLOT-DESCRIPTION
+ %INPUT 1 PROCESS-%INPUT NIL T NIL) #(DEFSTRUCT-SLOT-DESCRIPTION %OUTPUT 2 PROCESS-%OUTPUT
+ NIL T NIL) #(DEFSTRUCT-SLOT-DESCRIPTION %ERROR 3 PROCESS-%ERROR NIL T NIL)) :INHERITED-ACCESSORS 
+'NIL :DOCUMENTATION 'NIL)
+(PUT 'PROCESS 'SOURCE (CONS '(:STRUCTURE "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+12581) (GET 'PROCESS 'SOURCE NIL)))
+(PROCLAIM '(INLINE %MAKE-PROCESS))
+(SETF (INLINE-EXPANSION '%MAKE-PROCESS) '(LAMBDA (JPROCESS) (BLOCK %MAKE-PROCESS 
+(MAKE-STRUCTURE (TRULY-THE SYMBOL 'PROCESS) JPROCESS NIL NIL NIL))))
+(PROGN (PUT '%MAKE-PROCESS 'SOURCE (CONS '((:FUNCTION %MAKE-PROCESS) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+12581) (GET '%MAKE-PROCESS 'SOURCE NIL))) (FSET '%MAKE-PROCESS (GET-FASL-FUNCTION 
+*FASL-LOADER* 15) 12581 '(JPROCESS) NIL))
+(PROGN (PUT 'PROCESS-P 'SOURCE (CONS '((:FUNCTION PROCESS-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+12581) (GET 'PROCESS-P 'SOURCE NIL))) (FSET 'PROCESS-P (GET-FASL-FUNCTION *FASL-LOADER* 
+16) 12581 '(OBJECT) NIL))
+(PROCLAIM '(FTYPE (FUNCTION * T) PROCESS-JPROCESS))
+(FUNCALL (GET-FASL-FUNCTION *FASL-LOADER* 17))
+(PUT 'PROCESS-JPROCESS 'SOURCE (CONS '((:STRUCTURE-READER PROCESS) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+12581) (GET 'PROCESS-JPROCESS 'SOURCE NIL)))
+(PUT 'PROCESS-JPROCESS 'SOURCE (CONS '((:SOURCE-TRANSFORM PROCESS-JPROCESS) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+12581) (GET 'PROCESS-JPROCESS 'SOURCE NIL)))
+(FUNCALL (GET-FASL-FUNCTION *FASL-LOADER* 18))
+(PUT 'PROCESS-JPROCESS 'SETF-FUNCTION (MAKE-STRUCTURE-WRITER 0 'PROCESS))
+(PUT 'PROCESS-JPROCESS 'SOURCE (CONS '((:STRUCTURE-WRITER PROCESS) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+12581) (GET 'PROCESS-JPROCESS 'SOURCE NIL)))
+(PUT 'PROCESS-JPROCESS 'SOURCE (CONS '((:SOURCE-TRANSFORM (SETF PROCESS-JPROCESS)) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 12581) 
+(GET 'PROCESS-JPROCESS 'SOURCE NIL)))
+(FUNCALL (GET-FASL-FUNCTION *FASL-LOADER* 20))
+(PROCLAIM '(FTYPE (FUNCTION * T) PROCESS-%INPUT))
+(FUNCALL (GET-FASL-FUNCTION *FASL-LOADER* 22))
+(PUT 'PROCESS-%INPUT 'SOURCE (CONS '((:STRUCTURE-READER PROCESS) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+12581) (GET 'PROCESS-%INPUT 'SOURCE NIL)))
+(PUT 'PROCESS-%INPUT 'SOURCE (CONS '((:SOURCE-TRANSFORM PROCESS-%INPUT) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+12581) (GET 'PROCESS-%INPUT 'SOURCE NIL)))
+(FUNCALL (GET-FASL-FUNCTION *FASL-LOADER* 23))
+(PUT 'PROCESS-%INPUT 'SETF-FUNCTION (MAKE-STRUCTURE-WRITER 1 'PROCESS))
+(PUT 'PROCESS-%INPUT 'SOURCE (CONS '((:STRUCTURE-WRITER PROCESS) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+12581) (GET 'PROCESS-%INPUT 'SOURCE NIL)))
+(PUT 'PROCESS-%INPUT 'SOURCE (CONS '((:SOURCE-TRANSFORM (SETF PROCESS-%INPUT)) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+12581) (GET 'PROCESS-%INPUT 'SOURCE NIL)))
+(FUNCALL (GET-FASL-FUNCTION *FASL-LOADER* 25))
+(PROCLAIM '(FTYPE (FUNCTION * T) PROCESS-%OUTPUT))
+(FUNCALL (GET-FASL-FUNCTION *FASL-LOADER* 27))
+(PUT 'PROCESS-%OUTPUT 'SOURCE (CONS '((:STRUCTURE-READER PROCESS) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+12581) (GET 'PROCESS-%OUTPUT 'SOURCE NIL)))
+(PUT 'PROCESS-%OUTPUT 'SOURCE (CONS '((:SOURCE-TRANSFORM PROCESS-%OUTPUT) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+12581) (GET 'PROCESS-%OUTPUT 'SOURCE NIL)))
+(FUNCALL (GET-FASL-FUNCTION *FASL-LOADER* 28))
+(PUT 'PROCESS-%OUTPUT 'SETF-FUNCTION (MAKE-STRUCTURE-WRITER 2 'PROCESS))
+(PUT 'PROCESS-%OUTPUT 'SOURCE (CONS '((:STRUCTURE-WRITER PROCESS) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+12581) (GET 'PROCESS-%OUTPUT 'SOURCE NIL)))
+(PUT 'PROCESS-%OUTPUT 'SOURCE (CONS '((:SOURCE-TRANSFORM (SETF PROCESS-%OUTPUT)) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 12581) 
+(GET 'PROCESS-%OUTPUT 'SOURCE NIL)))
+(FUNCALL (GET-FASL-FUNCTION *FASL-LOADER* 30))
+(PROCLAIM '(FTYPE (FUNCTION * T) PROCESS-%ERROR))
+(FUNCALL (GET-FASL-FUNCTION *FASL-LOADER* 32))
+(PUT 'PROCESS-%ERROR 'SOURCE (CONS '((:STRUCTURE-READER PROCESS) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+12581) (GET 'PROCESS-%ERROR 'SOURCE NIL)))
+(PUT 'PROCESS-%ERROR 'SOURCE (CONS '((:SOURCE-TRANSFORM PROCESS-%ERROR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+12581) (GET 'PROCESS-%ERROR 'SOURCE NIL)))
+(FUNCALL (GET-FASL-FUNCTION *FASL-LOADER* 33))
+(PUT 'PROCESS-%ERROR 'SETF-FUNCTION (MAKE-STRUCTURE-WRITER 3 'PROCESS))
+(PUT 'PROCESS-%ERROR 'SOURCE (CONS '((:STRUCTURE-WRITER PROCESS) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+12581) (GET 'PROCESS-%ERROR 'SOURCE NIL)))
+(PUT 'PROCESS-%ERROR 'SOURCE (CONS '((:SOURCE-TRANSFORM (SETF PROCESS-%ERROR)) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+12581) (GET 'PROCESS-%ERROR 'SOURCE NIL)))
+(FUNCALL (GET-FASL-FUNCTION *FASL-LOADER* 35))
+(PROCLAIM '(FTYPE (FUNCTION (T) T) COPY-PROCESS))
+(%SET-FDEFINITION 'COPY-PROCESS (FUNCTION COPY-STRUCTURE))
+(PROGN (PUT 'MAKE-PROCESS 'SOURCE (CONS '((:FUNCTION MAKE-PROCESS) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+12704) (GET 'MAKE-PROCESS 'SOURCE NIL))) (FSET 'MAKE-PROCESS (GET-FASL-FUNCTION *FASL-LOADER* 
+37) 12704 '(PROC INPUTP OUTPUTP ERRORP) NIL))
+(PROGN (PUT 'PROCESS-INPUT 'SOURCE (CONS '((:FUNCTION PROCESS-INPUT) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+13081) (GET 'PROCESS-INPUT 'SOURCE NIL))) (FSET 'PROCESS-INPUT (GET-FASL-FUNCTION 
+*FASL-LOADER* 38) 13081 '(PROCESS) NIL))
+(PROGN (PUT 'PROCESS-OUTPUT 'SOURCE (CONS '((:FUNCTION PROCESS-OUTPUT) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+13141) (GET 'PROCESS-OUTPUT 'SOURCE NIL))) (FSET 'PROCESS-OUTPUT (GET-FASL-FUNCTION 
+*FASL-LOADER* 39) 13141 '(PROCESS) NIL))
+(PROGN (PUT 'PROCESS-ERROR 'SOURCE (CONS '((:FUNCTION PROCESS-ERROR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+13203) (GET 'PROCESS-ERROR 'SOURCE NIL))) (FSET 'PROCESS-ERROR (GET-FASL-FUNCTION 
+*FASL-LOADER* 40) 13203 '(PROCESS) NIL))
+(PROGN (PUT 'PROCESS-ALIVE-P 'SOURCE (CONS '((:FUNCTION PROCESS-ALIVE-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+13263) (GET 'PROCESS-ALIVE-P 'SOURCE NIL))) (FSET 'PROCESS-ALIVE-P (GET-FASL-FUNCTION 
+*FASL-LOADER* 41) 13263 '(PROCESS) "Return t if process is still alive, nil otherwise."))
+(PROGN (PUT 'PROCESS-WAIT 'SOURCE (CONS '((:FUNCTION PROCESS-WAIT) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+13401) (GET 'PROCESS-WAIT 'SOURCE NIL))) (FSET 'PROCESS-WAIT (GET-FASL-FUNCTION *FASL-LOADER* 
+42) 13401 '(PROCESS) "Wait for process to quit running for some reason."))
+(PROGN (PUT 'PROCESS-EXIT-CODE 'SOURCE (CONS '((:FUNCTION PROCESS-EXIT-CODE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+13532) (GET 'PROCESS-EXIT-CODE 'SOURCE NIL))) (FSET 'PROCESS-EXIT-CODE (GET-FASL-FUNCTION 
+*FASL-LOADER* 43) 13532 '(INSTANCE) "The exit code of a process."))
+(PROGN (PUT 'PROCESS-KILL 'SOURCE (CONS '((:FUNCTION PROCESS-KILL) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+13653) (GET 'PROCESS-KILL 'SOURCE NIL))) (FSET 'PROCESS-KILL (GET-FASL-FUNCTION *FASL-LOADER* 
+44) 13653 '(PROCESS) "Kills the process."))
+(PROGN (PUT 'PROCESS-PID 'SOURCE (CONS '((:FUNCTION PROCESS-PID) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+13753) (GET 'PROCESS-PID 'SOURCE NIL))) (FSET 'PROCESS-PID (GET-FASL-FUNCTION *FASL-LOADER* 
+45) 13753 '(PROCESS) "Return the process ID."))
+(PROGN (PUT '%MAKE-PROCESS-BUILDER 'SOURCE (CONS '((:FUNCTION %MAKE-PROCESS-BUILDER) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 13855) 
+(GET '%MAKE-PROCESS-BUILDER 'SOURCE NIL))) (FSET '%MAKE-PROCESS-BUILDER (GET-FASL-FUNCTION 
+*FASL-LOADER* 46) 13855 '(PROGRAM ARGS) NIL))
+(PROGN (PUT '%PROCESS-BUILDER-ENVIRONMENT 'SOURCE (CONS '((:FUNCTION %PROCESS-BUILDER-ENVIRONMENT) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 14245) 
+(GET '%PROCESS-BUILDER-ENVIRONMENT 'SOURCE NIL))) (FSET '%PROCESS-BUILDER-ENVIRONMENT 
+(GET-FASL-FUNCTION *FASL-LOADER* 47) 14245 '(PB) NIL))
+(PROGN (PUT '%PROCESS-BUILDER-ENV-PUT 'SOURCE (CONS '((:FUNCTION %PROCESS-BUILDER-ENV-PUT) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 14320) 
+(GET '%PROCESS-BUILDER-ENV-PUT 'SOURCE NIL))) (FSET '%PROCESS-BUILDER-ENV-PUT (GET-FASL-FUNCTION 
+*FASL-LOADER* 48) 14320 '(ENV-MAP KEY VALUE) NIL))
+(PROGN (PUT '%PROCESS-BUILDER-ENV-CLEAR 'SOURCE (CONS '((:FUNCTION %PROCESS-BUILDER-ENV-CLEAR) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 14413) 
+(GET '%PROCESS-BUILDER-ENV-CLEAR 'SOURCE NIL))) (FSET '%PROCESS-BUILDER-ENV-CLEAR 
+(GET-FASL-FUNCTION *FASL-LOADER* 49) 14413 '(ENV-MAP) NIL))
+(PROGN (PUT '%PROCESS-BUILDER-START 'SOURCE (CONS '((:FUNCTION %PROCESS-BUILDER-START) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 14490) 
+(GET '%PROCESS-BUILDER-START 'SOURCE NIL))) (FSET '%PROCESS-BUILDER-START (GET-FASL-FUNCTION 
+*FASL-LOADER* 50) 14490 '(PB) NIL))
+(PROGN (PUT '%MAKE-PROCESS-INPUT-STREAM 'SOURCE (CONS '((:FUNCTION %MAKE-PROCESS-INPUT-STREAM) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 14553) 
+(GET '%MAKE-PROCESS-INPUT-STREAM 'SOURCE NIL))) (FSET '%MAKE-PROCESS-INPUT-STREAM 
+(GET-FASL-FUNCTION *FASL-LOADER* 51) 14553 '(PROC) NIL))
+(PROGN (PUT '%MAKE-PROCESS-OUTPUT-STREAM 'SOURCE (CONS '((:FUNCTION %MAKE-PROCESS-OUTPUT-STREAM) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 14740) 
+(GET '%MAKE-PROCESS-OUTPUT-STREAM 'SOURCE NIL))) (FSET '%MAKE-PROCESS-OUTPUT-STREAM 
+(GET-FASL-FUNCTION *FASL-LOADER* 52) 14740 '(PROC) NIL))
+(PROGN (PUT '%MAKE-PROCESS-ERROR-STREAM 'SOURCE (CONS '((:FUNCTION %MAKE-PROCESS-ERROR-STREAM) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 14927) 
+(GET '%MAKE-PROCESS-ERROR-STREAM 'SOURCE NIL))) (FSET '%MAKE-PROCESS-ERROR-STREAM 
+(GET-FASL-FUNCTION *FASL-LOADER* 53) 14927 '(PROC) NIL))
+(PROGN (PUT '%PROCESS-ALIVE-P 'SOURCE (CONS '((:FUNCTION %PROCESS-ALIVE-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+15099) (GET '%PROCESS-ALIVE-P 'SOURCE NIL))) (FSET '%PROCESS-ALIVE-P (GET-FASL-FUNCTION 
+*FASL-LOADER* 54) 15099 '(JPROCESS) NIL))
+(PROGN (PUT '%PROCESS-WAIT 'SOURCE (CONS '((:FUNCTION %PROCESS-WAIT) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+15194) (GET '%PROCESS-WAIT 'SOURCE NIL))) (FSET '%PROCESS-WAIT (GET-FASL-FUNCTION 
+*FASL-LOADER* 56) 15194 '(JPROCESS) NIL))
+(PROGN (PUT '%PROCESS-EXIT-CODE 'SOURCE (CONS '((:FUNCTION %PROCESS-EXIT-CODE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+15262) (GET '%PROCESS-EXIT-CODE 'SOURCE NIL))) (FSET '%PROCESS-EXIT-CODE (GET-FASL-FUNCTION 
+*FASL-LOADER* 57) 15262 '(JPROCESS) NIL))
+(PROGN (PUT '%PROCESS-PID 'SOURCE (CONS '((:FUNCTION %PROCESS-PID) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+15353) (GET '%PROCESS-PID 'SOURCE NIL))) (FSET '%PROCESS-PID (GET-FASL-FUNCTION *FASL-LOADER* 
+59) 15353 '(JPROCESS) NIL))
+(PROGN (PUT '%PROCESS-KILL 'SOURCE (CONS '((:FUNCTION %PROCESS-KILL) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+15832) (GET '%PROCESS-KILL 'SOURCE NIL))) (FSET '%PROCESS-KILL (GET-FASL-FUNCTION 
+*FASL-LOADER* 60) 15832 '(JPROCESS) NIL))
+(PROGN (PUT 'TO-FILE 'SOURCE (CONS '((:FUNCTION TO-FILE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+15900) (GET 'TO-FILE 'SOURCE NIL))) (FSET 'TO-FILE (GET-FASL-FUNCTION *FASL-LOADER* 
+61) 15900 '(INPUT JAVA.IO.FILE &KEY (APPEND NIL)) NIL))
+(PROGN (PUT 'FROM-FILE 'SOURCE (CONS '((:FUNCTION FROM-FILE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/run-program.lisp" 
+16450) (GET 'FROM-FILE 'SOURCE NIL))) (FSET 'FROM-FILE (GET-FASL-FUNCTION *FASL-LOADER* 
+62) 16450 '(JAVA.IO.FILE OUTPUT) NIL))

@@ -1,0 +1,10 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/read-sequence.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.read_sequence"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'READ-SEQUENCE 'SOURCE (CONS '((:FUNCTION READ-SEQUENCE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/read-sequence.lisp" 
+1592) (GET 'READ-SEQUENCE 'SOURCE NIL))) (FSET 'READ-SEQUENCE (GET-FASL-FUNCTION 
+*FASL-LOADER* 0) 1592 '(SEQUENCE STREAM &KEY (START 0) END) NIL))

@@ -1,0 +1,113 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp")
+(COMMON-LISP:SETQ SYSTEM::*FASL-UNINTERNED-SYMBOLS* #(#:G305339 #:MAILBOX- #:G305401 #:G305453 #:G305508 #:MUTEX- #:G305664 #:G305716 #:G305771 #:WHOLE-305884 #:ENVIRONMENT-305885 #:WHOLE-305934 #:ENVIRONMENT-305935))
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.threads"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "THREADS")
+(EXPORT '(MAKE-MAILBOX MAILBOX-SEND MAILBOX-EMPTY-P MAILBOX-READ MAILBOX-PEEK MAKE-THREAD-LOCK 
+WITH-THREAD-LOCK CURRENT-THREAD YIELD MAKE-MUTEX GET-MUTEX RELEASE-MUTEX WITH-MUTEX))
+(PROGN (PUT 'THREAD-FUNCTION-WRAPPER 'SYSTEM::SOURCE (CONS '((:FUNCTION THREAD-FUNCTION-WRAPPER) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 1848) (GET 
+'THREAD-FUNCTION-WRAPPER 'SYSTEM::SOURCE NIL))) (FSET 'THREAD-FUNCTION-WRAPPER (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 0) 1848 '(FUN) NIL))
+(EXPORT '(MAKE-MAILBOX MAILBOX-SEND MAILBOX-EMPTY-P MAILBOX-READ MAILBOX-PEEK))
+(COMPILER-DEFSTRUCT 'MAILBOX :CONC-NAME '#1? :DEFAULT-CONSTRUCTOR 'MAKE-MAILBOX :COPIER 
+'COPY-MAILBOX :PREDICATE '"MAILBOX-P" :DIRECT-SLOTS '(#(SYSTEM::DEFSTRUCT-SLOT-DESCRIPTION
+ QUEUE 0 MAILBOX-QUEUE NIL T NIL)) :SLOTS '(#(SYSTEM::DEFSTRUCT-SLOT-DESCRIPTION QUEUE
+ 0 MAILBOX-QUEUE NIL T NIL)) :INHERITED-ACCESSORS 'NIL :DOCUMENTATION '"A first-in-first out queue of messages")
+(PUT 'MAILBOX 'SYSTEM::SOURCE (CONS '(:STRUCTURE "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+2178) (GET 'MAILBOX 'SYSTEM::SOURCE NIL)))
+(PROGN (PUT 'MAKE-MAILBOX 'SYSTEM::SOURCE (CONS '((:FUNCTION MAKE-MAILBOX) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+2178) (GET 'MAKE-MAILBOX 'SYSTEM::SOURCE NIL))) (FSET 'MAKE-MAILBOX (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 4) 2178 '(&KEY ((:QUEUE #2?) NIL)) NIL))
+(PROGN (PUT 'MAILBOX-P 'SYSTEM::SOURCE (CONS '((:FUNCTION MAILBOX-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+2178) (GET 'MAILBOX-P 'SYSTEM::SOURCE NIL))) (FSET 'MAILBOX-P (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 5) 2178 '(SYSTEM::OBJECT) NIL))
+(PROCLAIM '(FTYPE (FUNCTION * T) MAILBOX-QUEUE))
+(FUNCALL (SYSTEM::GET-FASL-FUNCTION *FASL-LOADER* 6))
+(PUT 'MAILBOX-QUEUE 'SYSTEM::SOURCE (CONS '((:STRUCTURE-READER MAILBOX) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+2178) (GET 'MAILBOX-QUEUE 'SYSTEM::SOURCE NIL)))
+(PUT 'MAILBOX-QUEUE 'SYSTEM::SOURCE (CONS '((:SOURCE-TRANSFORM MAILBOX-QUEUE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+2178) (GET 'MAILBOX-QUEUE 'SYSTEM::SOURCE NIL)))
+(FUNCALL (SYSTEM::GET-FASL-FUNCTION *FASL-LOADER* 7))
+(PUT 'MAILBOX-QUEUE 'SETF-FUNCTION (SYSTEM::MAKE-STRUCTURE-WRITER 0 'MAILBOX))
+(PUT 'MAILBOX-QUEUE 'SYSTEM::SOURCE (CONS '((:STRUCTURE-WRITER MAILBOX) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+2178) (GET 'MAILBOX-QUEUE 'SYSTEM::SOURCE NIL)))
+(PUT 'MAILBOX-QUEUE 'SYSTEM::SOURCE (CONS '((:SOURCE-TRANSFORM (SETF MAILBOX-QUEUE)) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 2178) (GET 
+'MAILBOX-QUEUE 'SYSTEM::SOURCE NIL)))
+(FUNCALL (SYSTEM::GET-FASL-FUNCTION *FASL-LOADER* 9))
+(PROCLAIM '(FTYPE (FUNCTION (T) T) COPY-MAILBOX))
+(SYSTEM::%SET-FDEFINITION 'COPY-MAILBOX (FUNCTION COPY-STRUCTURE))
+(PROGN (PUT 'MAILBOX-SEND 'SYSTEM::SOURCE (CONS '((:FUNCTION MAILBOX-SEND) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+2250) (GET 'MAILBOX-SEND 'SYSTEM::SOURCE NIL))) (FSET 'MAILBOX-SEND (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 11) 2250 '(MAILBOX ITEM) "Sends an item into the mailbox, notifying 1 waiter
+to wake up for retrieval of that object."))
+(PROGN (PUT 'MAILBOX-EMPTY-P 'SYSTEM::SOURCE (CONS '((:FUNCTION MAILBOX-EMPTY-P) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 2497) (GET 
+'MAILBOX-EMPTY-P 'SYSTEM::SOURCE NIL))) (FSET 'MAILBOX-EMPTY-P (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 12) 2497 '(MAILBOX) "Returns non-NIL if the mailbox can be read from, NIL otherwise."))
+(PROGN (PUT 'MAILBOX-READ 'SYSTEM::SOURCE (CONS '((:FUNCTION MAILBOX-READ) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+2806) (GET 'MAILBOX-READ 'SYSTEM::SOURCE NIL))) (FSET 'MAILBOX-READ (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 13) 2806 '(MAILBOX) "Blocks on the mailbox until an item is available for reading.
+When an item is available, it is returned."))
+(PROGN (PUT 'MAILBOX-PEEK 'SYSTEM::SOURCE (CONS '((:FUNCTION MAILBOX-PEEK) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+3122) (GET 'MAILBOX-PEEK 'SYSTEM::SOURCE NIL))) (FSET 'MAILBOX-PEEK (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 14) 3122 '(MAILBOX) "Returns two values. The second returns non-NIL when the mailbox
+is empty. The first is the next item to be read from the mailbox.
+
+Note that due to multi-threading, the first value returned upon
+peek, may be different from the one returned upon next read in the
+calling thread."))
+(EXPORT '(MAKE-MUTEX GET-MUTEX RELEASE-MUTEX))
+(COMPILER-DEFSTRUCT 'MUTEX :CONC-NAME '#5? :DEFAULT-CONSTRUCTOR 'MAKE-MUTEX :COPIER 
+'COPY-MUTEX :PREDICATE '"MUTEX-P" :DIRECT-SLOTS '(#(SYSTEM::DEFSTRUCT-SLOT-DESCRIPTION
+ IN-USE 0 MUTEX-IN-USE NIL T NIL)) :SLOTS '(#(SYSTEM::DEFSTRUCT-SLOT-DESCRIPTION IN-USE
+ 0 MUTEX-IN-USE NIL T NIL)) :INHERITED-ACCESSORS 'NIL :DOCUMENTATION '"An object used as a mutex lock")
+(PUT 'MUTEX 'SYSTEM::SOURCE (CONS '(:STRUCTURE "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+3693) (GET 'MUTEX 'SYSTEM::SOURCE NIL)))
+(PROGN (PUT 'MAKE-MUTEX 'SYSTEM::SOURCE (CONS '((:FUNCTION MAKE-MUTEX) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+3693) (GET 'MAKE-MUTEX 'SYSTEM::SOURCE NIL))) (FSET 'MAKE-MUTEX (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 15) 3693 '(&KEY ((:IN-USE #6?) NIL)) NIL))
+(PROGN (PUT 'MUTEX-P 'SYSTEM::SOURCE (CONS '((:FUNCTION MUTEX-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+3693) (GET 'MUTEX-P 'SYSTEM::SOURCE NIL))) (FSET 'MUTEX-P (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 16) 3693 '(SYSTEM::OBJECT) NIL))
+(PROCLAIM '(FTYPE (FUNCTION * T) MUTEX-IN-USE))
+(FUNCALL (SYSTEM::GET-FASL-FUNCTION *FASL-LOADER* 17))
+(PUT 'MUTEX-IN-USE 'SYSTEM::SOURCE (CONS '((:STRUCTURE-READER MUTEX) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+3693) (GET 'MUTEX-IN-USE 'SYSTEM::SOURCE NIL)))
+(PUT 'MUTEX-IN-USE 'SYSTEM::SOURCE (CONS '((:SOURCE-TRANSFORM MUTEX-IN-USE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+3693) (GET 'MUTEX-IN-USE 'SYSTEM::SOURCE NIL)))
+(FUNCALL (SYSTEM::GET-FASL-FUNCTION *FASL-LOADER* 18))
+(PUT 'MUTEX-IN-USE 'SETF-FUNCTION (SYSTEM::MAKE-STRUCTURE-WRITER 0 'MUTEX))
+(PUT 'MUTEX-IN-USE 'SYSTEM::SOURCE (CONS '((:STRUCTURE-WRITER MUTEX) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+3693) (GET 'MUTEX-IN-USE 'SYSTEM::SOURCE NIL)))
+(PUT 'MUTEX-IN-USE 'SYSTEM::SOURCE (CONS '((:SOURCE-TRANSFORM (SETF MUTEX-IN-USE)) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 3693) (GET 
+'MUTEX-IN-USE 'SYSTEM::SOURCE NIL)))
+(FUNCALL (SYSTEM::GET-FASL-FUNCTION *FASL-LOADER* 20))
+(PROCLAIM '(FTYPE (FUNCTION (T) T) COPY-MUTEX))
+(SYSTEM::%SET-FDEFINITION 'COPY-MUTEX (FUNCTION COPY-STRUCTURE))
+(PROGN (PUT 'GET-MUTEX 'SYSTEM::SOURCE (CONS '((:FUNCTION GET-MUTEX) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+3756) (GET 'GET-MUTEX 'SYSTEM::SOURCE NIL))) (FSET 'GET-MUTEX (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 22) 3756 '(MUTEX) "Acquires the lock associated with the MUTEX"))
+(PROGN (PUT 'RELEASE-MUTEX 'SYSTEM::SOURCE (CONS '((:FUNCTION RELEASE-MUTEX) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+3966) (GET 'RELEASE-MUTEX 'SYSTEM::SOURCE NIL))) (FSET 'RELEASE-MUTEX (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 23) 3966 '(MUTEX) "Releases a lock associated with MUTEX"))
+(PROGN (PUT 'WITH-MUTEX 'SYSTEM::SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+4127) (GET 'WITH-MUTEX 'SYSTEM::SOURCE NIL))) (FSET 'WITH-MUTEX (MAKE-MACRO 'WITH-MUTEX 
+(SYSTEM::GET-FASL-FUNCTION *FASL-LOADER* 24)) 4127 '((MUTEX) &BODY BODY) "Acquires a lock on MUTEX, executes BODY, and then releases the lock"))
+(PROGN (PUT 'MAKE-THREAD-LOCK 'SYSTEM::SOURCE (CONS '((:FUNCTION MAKE-THREAD-LOCK) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 4412) (GET 
+'MAKE-THREAD-LOCK 'SYSTEM::SOURCE NIL))) (FSET 'MAKE-THREAD-LOCK (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 25) 4412 'NIL "Returns an object to be used with the WITH-THREAD-LOCK macro."))
+(PROGN (PUT 'WITH-THREAD-LOCK 'SYSTEM::SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+4549) (GET 'WITH-THREAD-LOCK 'SYSTEM::SOURCE NIL))) (FSET 'WITH-THREAD-LOCK (MAKE-MACRO 
+'WITH-THREAD-LOCK (SYSTEM::GET-FASL-FUNCTION *FASL-LOADER* 26)) 4549 '((LOCK) &BODY 
+BODY) "Acquires the LOCK, executes BODY and releases the LOCK"))
+(PROGN (PUT 'YIELD 'SYSTEM::SOURCE (CONS '((:FUNCTION YIELD) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/threads.lisp" 
+4761) (GET 'YIELD 'SYSTEM::SOURCE NIL))) (FSET 'YIELD (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 27) 4761 'NIL "A hint to the scheduler that the current thread is willing to yield its current use of a processor. The scheduler is free to ignore this hint. 
+
+See java.lang.Thread.yield()."))

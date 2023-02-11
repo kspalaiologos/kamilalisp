@@ -1,0 +1,27 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/define-modify-macro.lisp")
+(COMMON-LISP:SETQ SYSTEM::*FASL-UNINTERNED-SYMBOLS* #(#:WHOLE-252067 #:ENVIRONMENT-252068 #:WHOLE-252158 #:ENVIRONMENT-252159 #:G252157 #:G252156 #:WHOLE-252213 #:ENVIRONMENT-252214 #:G252212 #:G252211 #:WHOLE-252266 #:ENVIRONMENT-252267 #:WHOLE-252309 #:ENVIRONMENT-252310))
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.define_modify_macro"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'DEFINE-MODIFY-MACRO 'SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/define-modify-macro.lisp" 
+1622) (GET 'DEFINE-MODIFY-MACRO 'SOURCE NIL))) (FSET 'DEFINE-MODIFY-MACRO (MAKE-MACRO 
+'DEFINE-MODIFY-MACRO (GET-FASL-FUNCTION *FASL-LOADER* 0)) 1622 '(NAME LAMBDA-LIST 
+FUNCTION &OPTIONAL DOC-STRING) "Creates a new read-modify-write macro like PUSH or INCF."))
+(PROGN (PUT 'INCF-COMPLEX 'SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/define-modify-macro.lisp" 
+3612) (GET 'INCF-COMPLEX 'SOURCE NIL))) (FSET 'INCF-COMPLEX (MAKE-MACRO 'INCF-COMPLEX 
+(GET-FASL-FUNCTION *FASL-LOADER* 1)) 3612 '(#4? &OPTIONAL (DELTA 1) &ENVIRONMENT 
+#5?) "The first argument is some location holding a number.  This number is
+   incremented by the second argument, DELTA, which defaults to 1."))
+(PROGN (PUT 'DECF-COMPLEX 'SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/define-modify-macro.lisp" 
+3813) (GET 'DECF-COMPLEX 'SOURCE NIL))) (FSET 'DECF-COMPLEX (MAKE-MACRO 'DECF-COMPLEX 
+(GET-FASL-FUNCTION *FASL-LOADER* 2)) 3813 '(#8? &OPTIONAL (DELTA 1) &ENVIRONMENT 
+#9?) "The first argument is some location holding a number.  This number is
+   decremented by the second argument, DELTA, which defaults to 1."))
+(PROGN (PUT 'INCF 'SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/define-modify-macro.lisp" 
+4014) (GET 'INCF 'SOURCE NIL))) (FSET 'INCF (MAKE-MACRO 'INCF (GET-FASL-FUNCTION 
+*FASL-LOADER* 3)) 4014 '(PLACE &OPTIONAL (DELTA 1)) NIL))
+(PROGN (PUT 'DECF 'SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/define-modify-macro.lisp" 
+4605) (GET 'DECF 'SOURCE NIL))) (FSET 'DECF (MAKE-MACRO 'DECF (GET-FASL-FUNCTION 
+*FASL-LOADER* 4)) 4605 '(PLACE &OPTIONAL (DELTA 1)) NIL))

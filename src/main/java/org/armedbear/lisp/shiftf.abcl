@@ -1,0 +1,14 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/shiftf.lisp")
+(COMMON-LISP:SETQ SYSTEM::*FASL-UNINTERNED-SYMBOLS* #(#:COLLECT #:WHOLE-302072 #:ENVIRONMENT-302073))
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.shiftf"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(REQUIRE '#0?)
+(PROGN (PUT 'SHIFTF 'SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/shiftf.lisp" 
+1624) (GET 'SHIFTF 'SOURCE NIL))) (FSET 'SHIFTF (MAKE-MACRO 'SHIFTF (GET-FASL-FUNCTION 
+*FASL-LOADER* 0)) 1624 '(&REST ARGS &ENVIRONMENT ENV) "One or more SETF-style place expressions, followed by a single
+   value expression.  Evaluates all of the expressions in turn, then
+   assigns the value of each expression to the place on its left,
+   returning the value of the leftmost."))

@@ -1,0 +1,34 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/inspect.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.inspect"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(REQUIRE 'CLOS)
+(REQUIRE 'FORMAT)
+(PROGN (PUT '*INSPECT-BREAK* 'SOURCE (CONS (LIST :VARIABLE "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/inspect.lisp" 
+1621) (GET '*INSPECT-BREAK* 'SOURCE NIL))) (DEFVAR *INSPECT-BREAK* NIL))
+(PROGN (PUT '*INSPECTED-OBJECT-STACK* 'SOURCE (CONS (LIST :VARIABLE "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/inspect.lisp" 
+1652) (GET '*INSPECTED-OBJECT-STACK* 'SOURCE NIL))) (DEFVAR *INSPECTED-OBJECT-STACK* 
+NIL))
+(PROGN (PUT '*INSPECTED-OBJECT* 'SOURCE (CONS (LIST :VARIABLE "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/inspect.lisp" 
+1690) (GET '*INSPECTED-OBJECT* 'SOURCE NIL))) (DEFVAR *INSPECTED-OBJECT* NIL))
+(PROGN (PUT 'LEADER 'SOURCE (CONS '((:FUNCTION LEADER) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/inspect.lisp" 
+1722) (GET 'LEADER 'SOURCE NIL))) (FSET 'LEADER (GET-FASL-FUNCTION *FASL-LOADER* 
+0) 1722 '(NAME) NIL))
+(PROGN (PUT 'SAFE-LENGTH 'SOURCE (CONS '((:FUNCTION SAFE-LENGTH) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/inspect.lisp" 
+1873) (GET 'SAFE-LENGTH 'SOURCE NIL))) (FSET 'SAFE-LENGTH (GET-FASL-FUNCTION *FASL-LOADER* 
+1) 1873 '(X) NIL))
+(PROGN (PUT 'DISPLAY-OBJECT 'SOURCE (CONS '((:FUNCTION DISPLAY-OBJECT) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/inspect.lisp" 
+2317) (GET 'DISPLAY-OBJECT 'SOURCE NIL))) (FSET 'DISPLAY-OBJECT (GET-FASL-FUNCTION 
+*FASL-LOADER* 2) 2317 '(OBJ) NIL))
+(PROGN (PUT 'DISPLAY-CURRENT 'SOURCE (CONS '((:FUNCTION DISPLAY-CURRENT) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/inspect.lisp" 
+5343) (GET 'DISPLAY-CURRENT 'SOURCE NIL))) (FSET 'DISPLAY-CURRENT (GET-FASL-FUNCTION 
+*FASL-LOADER* 19) 5343 'NIL NIL))
+(PROGN (PUT 'INSPECT 'SOURCE (CONS '((:FUNCTION INSPECT) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/inspect.lisp" 
+5485) (GET 'INSPECT 'SOURCE NIL))) (FSET 'INSPECT (GET-FASL-FUNCTION *FASL-LOADER* 
+21) 5485 '(OBJ) NIL))
+(PROGN (PUT 'ISTEP 'SOURCE (CONS '((:FUNCTION ISTEP) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/inspect.lisp" 
+5936) (GET 'ISTEP 'SOURCE NIL))) (FSET 'ISTEP (GET-FASL-FUNCTION *FASL-LOADER* 22) 
+5936 '(ARGS) NIL))

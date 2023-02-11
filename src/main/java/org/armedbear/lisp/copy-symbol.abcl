@@ -1,0 +1,10 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/copy-symbol.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.copy_symbol"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'COPY-SYMBOL 'SOURCE (CONS '((:FUNCTION COPY-SYMBOL) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/copy-symbol.lisp" 
+1590) (GET 'COPY-SYMBOL 'SOURCE NIL))) (FSET 'COPY-SYMBOL (GET-FASL-FUNCTION *FASL-LOADER* 
+0) 1590 '(SYMBOL &OPTIONAL (COPY-PROPS NIL) &AUX NEW-SYMBOL) NIL))

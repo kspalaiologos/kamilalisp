@@ -1,0 +1,105 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/runtime-class.lisp")
+(COMMON-LISP:SETQ SYSTEM::*FASL-UNINTERNED-SYMBOLS* #(#:WHOLE-300908 #:ENVIRONMENT-300909))
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.runtime_class"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(REQUIRE "JVM")
+(SYSTEM:%IN-PACKAGE "JVM")
+(PROGN (PUT '+ABCL-JAVA-OBJECT+ 'SYSTEM::SOURCE (CONS '(+ABCL-JAVA-OBJECT+ "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/runtime-class.lisp" 
+214) (GET '+ABCL-JAVA-OBJECT+ 'SYSTEM::SOURCE NIL))) (DEFCONSTANT +ABCL-JAVA-OBJECT+ 
+(MAKE-JVM-CLASS-NAME "org.armedbear.lisp.JavaObject")))
+(PROGN (PUT 'JAVA::MAKE-MEMORY-CLASS-LOADER 'SYSTEM::SOURCE (CONS '((:FUNCTION JAVA::MAKE-MEMORY-CLASS-LOADER) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/runtime-class.lisp" 302) 
+(GET 'JAVA::MAKE-MEMORY-CLASS-LOADER 'SYSTEM::SOURCE NIL))) (FSET 'JAVA::MAKE-MEMORY-CLASS-LOADER 
+(SYSTEM::GET-FASL-FUNCTION *FASL-LOADER* 0) 302 '(&OPTIONAL (PARENT (JAVA:GET-CURRENT-CLASSLOADER))) 
+NIL))
+(PROGN (PUT 'JAVA:JNEW-RUNTIME-CLASS 'SYSTEM::SOURCE (CONS '((:FUNCTION JAVA:JNEW-RUNTIME-CLASS) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/runtime-class.lisp" 454) 
+(GET 'JAVA:JNEW-RUNTIME-CLASS 'SYSTEM::SOURCE NIL))) (FSET 'JAVA:JNEW-RUNTIME-CLASS 
+(SYSTEM::GET-FASL-FUNCTION *FASL-LOADER* 1) 454 '(CLASS-NAME &REST ARGS &KEY (SUPERCLASS 
+"java.lang.Object") INTERFACES CONSTRUCTORS METHODS FIELDS (ACCESS-FLAGS '(:PUBLIC)) 
+ANNOTATIONS (CLASS-LOADER (JAVA::MAKE-MEMORY-CLASS-LOADER))) "Creates and loads a Java class with methods calling Lisp closures
+   as given in METHODS.  CLASS-NAME and SUPER-NAME are strings,
+   INTERFACES is a list of strings, CONSTRUCTORS, METHODS and FIELDS are
+   lists of constructor, method and field definitions.
+
+   Constructor definitions - currently NOT supported - are lists of the form
+   (argument-types function &optional super-invocation-arguments)
+   where argument-types is a list of strings and function is a lisp function of
+   (1+ (length argument-types)) arguments; the instance (`this') is passed in as
+   the last argument. The optional super-invocation-arguments is a list of numbers
+   between 1 and (length argument-types), where the number k stands for the kth argument
+   to the just defined constructor. If present, the constructor of the superclass
+   will be called with the appropriate arguments. E.g., if the constructor definition is
+   ((\"java.lang.String\" \"int\") #'(lambda (string i this) ...) (2 1))
+   then the constructor of the superclass with argument types (int, java.lang.String) will
+   be called with the second and first arguments.
+
+   Method definitions are lists of the form
+
+     (METHOD-NAME RETURN-TYPE ARGUMENT-TYPES FUNCTION &key MODIFIERS ANNOTATIONS)
+
+   where
+      METHOD-NAME is a string
+      RETURN-TYPE denotes the type of the object returned by the method
+      ARGUMENT-TYPES is a list of parameters to the method
+
+        The types are either strings naming fully qualified java classes or Lisp keywords referring to
+        primitive types (:void, :int, etc.).
+
+     FUNCTION is a Lisp function of minimum arity (1+ (length
+     argument-types)). The instance (`this') is passed as the first
+     argument.
+
+   Field definitions are lists of the form (field-name type &key modifiers annotations)."))
+(PROGN (PUT '+ABCL-LISP-INTEGER-OBJECT+ 'SYSTEM::SOURCE (CONS '(+ABCL-LISP-INTEGER-OBJECT+ 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/runtime-class.lisp" 3140) 
+(GET '+ABCL-LISP-INTEGER-OBJECT+ 'SYSTEM::SOURCE NIL))) (DEFCONSTANT +ABCL-LISP-INTEGER-OBJECT+ 
+(MAKE-JVM-CLASS-NAME "org.armedbear.lisp.LispInteger")))
+(PROGN (PUT 'BOX-ARGUMENTS 'SYSTEM::SOURCE (CONS '((:FUNCTION BOX-ARGUMENTS) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/runtime-class.lisp" 
+3237) (GET 'BOX-ARGUMENTS 'SYSTEM::SOURCE NIL))) (FSET 'BOX-ARGUMENTS (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 2) 3237 '(ARGUMENT-TYPES OFFSET ALL-ARGC) NIL))
+(PROGN (PUT 'JAVA::%JNEW-RUNTIME-CLASS 'SYSTEM::SOURCE (CONS '((:FUNCTION JAVA::%JNEW-RUNTIME-CLASS) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/runtime-class.lisp" 3955) 
+(GET 'JAVA::%JNEW-RUNTIME-CLASS 'SYSTEM::SOURCE NIL))) (FSET 'JAVA::%JNEW-RUNTIME-CLASS 
+(SYSTEM::GET-FASL-FUNCTION *FASL-LOADER* 3) 3955 '(CLASS-NAME STREAM &KEY (SUPERCLASS 
+"java.lang.Object") INTERFACES CONSTRUCTORS METHODS FIELDS (ACCESS-FLAGS '(:PUBLIC)) 
+ANNOTATIONS) "Actual implementation of jnew-runtime-class. Writes the class bytes to a stream. Returns two values: the finalized class-file structure and the alist of method implementation fields."))
+(PROGN (PUT 'JAVA::MAKE-ACCESSOR-NAME 'SYSTEM::SOURCE (CONS '((:FUNCTION JAVA::MAKE-ACCESSOR-NAME) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/runtime-class.lisp" 7695) 
+(GET 'JAVA::MAKE-ACCESSOR-NAME 'SYSTEM::SOURCE NIL))) (FSET 'JAVA::MAKE-ACCESSOR-NAME 
+(SYSTEM::GET-FASL-FUNCTION *FASL-LOADER* 4) 7695 '(PREFIX NAME) NIL))
+(PROGN (PUT 'EMIT-INVOKESPECIAL 'SYSTEM::SOURCE (CONS '((:FUNCTION EMIT-INVOKESPECIAL) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/runtime-class.lisp" 7868) 
+(GET 'EMIT-INVOKESPECIAL 'SYSTEM::SOURCE NIL))) (FSET 'EMIT-INVOKESPECIAL (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 6) 7868 '(CLASS-NAME METHOD-NAME ARG-TYPES RETURN-TYPE) NIL))
+(PROGN (PUT 'JAVA::CANONICALIZE-JAVA-TYPE 'SYSTEM::SOURCE (CONS '((:FUNCTION JAVA::CANONICALIZE-JAVA-TYPE) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/runtime-class.lisp" 8509) 
+(GET 'JAVA::CANONICALIZE-JAVA-TYPE 'SYSTEM::SOURCE NIL))) (FSET 'JAVA::CANONICALIZE-JAVA-TYPE 
+(SYSTEM::GET-FASL-FUNCTION *FASL-LOADER* 7) 8509 '(TYPE) NIL))
+(PROGN (PUT 'JAVA::EMIT-UNBOX-AND-RETURN 'SYSTEM::SOURCE (CONS '((:FUNCTION JAVA::EMIT-UNBOX-AND-RETURN) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/runtime-class.lisp" 8688) 
+(GET 'JAVA::EMIT-UNBOX-AND-RETURN 'SYSTEM::SOURCE NIL))) (FSET 'JAVA::EMIT-UNBOX-AND-RETURN 
+(SYSTEM::GET-FASL-FUNCTION *FASL-LOADER* 8) 8688 '(RETURN-TYPE) NIL))
+(PROGN (PUT 'JAVA::RUNTIME-CLASS-ADD-METHODS 'SYSTEM::SOURCE (CONS '((:FUNCTION JAVA::RUNTIME-CLASS-ADD-METHODS) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/runtime-class.lisp" 9335) 
+(GET 'JAVA::RUNTIME-CLASS-ADD-METHODS 'SYSTEM::SOURCE NIL))) (FSET 'JAVA::RUNTIME-CLASS-ADD-METHODS 
+(SYSTEM::GET-FASL-FUNCTION *FASL-LOADER* 9) 9335 '(CLASS-FILE METHODS) NIL))
+(PROGN (PUT 'JAVA::RUNTIME-CLASS-ADD-FIELDS 'SYSTEM::SOURCE (CONS '((:FUNCTION JAVA::RUNTIME-CLASS-ADD-FIELDS) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/runtime-class.lisp" 13371) 
+(GET 'JAVA::RUNTIME-CLASS-ADD-FIELDS 'SYSTEM::SOURCE NIL))) (FSET 'JAVA::RUNTIME-CLASS-ADD-FIELDS 
+(SYSTEM::GET-FASL-FUNCTION *FASL-LOADER* 11) 13371 '(CLASS-FILE FIELDS) NIL))
+(PROGN (PUT 'JAVA:DEFINE-JAVA-CLASS 'SYSTEM::SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/runtime-class.lisp" 
+15503) (GET 'JAVA:DEFINE-JAVA-CLASS 'SYSTEM::SOURCE NIL))) (FSET 'JAVA:DEFINE-JAVA-CLASS 
+(MAKE-MACRO 'JAVA:DEFINE-JAVA-CLASS (SYSTEM::GET-FASL-FUNCTION *FASL-LOADER* 12)) 
+15503 'NIL NIL))
+(PROGN (PUT 'PARSE-ANNOTATION 'SYSTEM::SOURCE (CONS '((:FUNCTION PARSE-ANNOTATION) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/runtime-class.lisp" 15547) 
+(GET 'PARSE-ANNOTATION 'SYSTEM::SOURCE NIL))) (FSET 'PARSE-ANNOTATION (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 13) 15547 '(ANNOTATION) NIL))
+(PROGN (PUT 'PARSE-ANNOTATION-ELEMENT 'SYSTEM::SOURCE (CONS '((:FUNCTION PARSE-ANNOTATION-ELEMENT) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/runtime-class.lisp" 15961) 
+(GET 'PARSE-ANNOTATION-ELEMENT 'SYSTEM::SOURCE NIL))) (FSET 'PARSE-ANNOTATION-ELEMENT 
+(SYSTEM::GET-FASL-FUNCTION *FASL-LOADER* 14) 15961 '(ELEM) NIL))
+(PROVIDE "RUNTIME-CLASS")

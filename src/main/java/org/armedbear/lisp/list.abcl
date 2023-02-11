@@ -1,0 +1,40 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/list.lisp")
+(COMMON-LISP:SETQ SYSTEM::*FASL-UNINTERNED-SYMBOLS* #(#:WHOLE-284272 #:ENVIRONMENT-284273))
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.list"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'FIFTH 'SOURCE (CONS '((:FUNCTION FIFTH) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/list.lisp" 
+1583) (GET 'FIFTH 'SOURCE NIL))) (FSET 'FIFTH (GET-FASL-FUNCTION *FASL-LOADER* 0) 
+1583 '(LIST) NIL))
+(PROGN (PUT 'SIXTH 'SOURCE (CONS '((:FUNCTION SIXTH) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/list.lisp" 
+1627) (GET 'SIXTH 'SOURCE NIL))) (FSET 'SIXTH (GET-FASL-FUNCTION *FASL-LOADER* 1) 
+1627 '(LIST) NIL))
+(PROGN (PUT 'SEVENTH 'SOURCE (CONS '((:FUNCTION SEVENTH) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/list.lisp" 
+1671) (GET 'SEVENTH 'SOURCE NIL))) (FSET 'SEVENTH (GET-FASL-FUNCTION *FASL-LOADER* 
+2) 1671 '(LIST) NIL))
+(PROGN (PUT 'EIGHTH 'SOURCE (CONS '((:FUNCTION EIGHTH) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/list.lisp" 
+1718) (GET 'EIGHTH 'SOURCE NIL))) (FSET 'EIGHTH (GET-FASL-FUNCTION *FASL-LOADER* 
+3) 1718 '(LIST) NIL))
+(PROGN (PUT 'NINTH 'SOURCE (CONS '((:FUNCTION NINTH) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/list.lisp" 
+1765) (GET 'NINTH 'SOURCE NIL))) (FSET 'NINTH (GET-FASL-FUNCTION *FASL-LOADER* 4) 
+1765 '(LIST) NIL))
+(PROGN (PUT 'TENTH 'SOURCE (CONS '((:FUNCTION TENTH) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/list.lisp" 
+1817) (GET 'TENTH 'SOURCE NIL))) (FSET 'TENTH (GET-FASL-FUNCTION *FASL-LOADER* 5) 
+1817 '(LIST) NIL))
+(PROGN (PUT 'MAKE-LIST 'SOURCE (CONS '((:FUNCTION MAKE-LIST) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/list.lisp" 
+1870) (GET 'MAKE-LIST 'SOURCE NIL))) (FSET 'MAKE-LIST (GET-FASL-FUNCTION *FASL-LOADER* 
+6) 1870 '(SIZE &KEY INITIAL-ELEMENT) NIL))
+(PROGN (PUT 'APPLY-KEY 'SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/list.lisp" 
+1953) (GET 'APPLY-KEY 'SOURCE NIL))) (FSET 'APPLY-KEY (MAKE-MACRO 'APPLY-KEY (GET-FASL-FUNCTION 
+*FASL-LOADER* 7)) 1953 '(KEY ELEMENT) NIL))
+(PROGN (PUT 'COMPLEMENT 'SOURCE (CONS '((:FUNCTION COMPLEMENT) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/list.lisp" 
+2049) (GET 'COMPLEMENT 'SOURCE NIL))) (FSET 'COMPLEMENT (GET-FASL-FUNCTION *FASL-LOADER* 
+8) 2049 '(F) NIL))
+(PROGN (PUT 'CONSTANTLY 'SOURCE (CONS '((:FUNCTION CONSTANTLY) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/list.lisp" 
+2114) (GET 'CONSTANTLY 'SOURCE NIL))) (FSET 'CONSTANTLY (GET-FASL-FUNCTION *FASL-LOADER* 
+10) 2114 '(X) NIL))
+(PROGN (PUT 'MEMBER 'SOURCE (CONS '((:FUNCTION MEMBER) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/list.lisp" 
+2190) (GET 'MEMBER 'SOURCE NIL))) (FSET 'MEMBER (GET-FASL-FUNCTION *FASL-LOADER* 
+12) 2190 '(ITEM LIST &KEY KEY TEST TEST-NOT) NIL))

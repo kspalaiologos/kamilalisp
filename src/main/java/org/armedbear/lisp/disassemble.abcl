@@ -1,0 +1,87 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/disassemble.lisp")
+(COMMON-LISP:SETQ SYSTEM::*FASL-UNINTERNED-SYMBOLS* #(#:WHOLE-256585 #:ENVIRONMENT-256586 #:G256786 #:G256790 #:G256794))
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.disassemble"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(REQUIRE :CLOS)
+(PROGN (PUT '*DISASSEMBLER-FUNCTION* 'SOURCE (CONS (LIST :VARIABLE "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/disassemble.lisp" 
+1600) (GET '*DISASSEMBLER-FUNCTION* 'SOURCE NIL))) (DEFVAR *DISASSEMBLER-FUNCTION* 
+NIL "The underlying function last used for CL:DISASSEMBLE or nil if not invoked
+
+Available disassemblers are configured by pushing a strategy to
+SYSTEM:*DISASSEMBLERS*.  The function SYSTEM:CHOOSE-DISASSEMBLER is
+used to select a current strategy from this list of strategies."))
+(PROGN (PUT '*DISASSEMBLERS* 'SOURCE (CONS (LIST :VARIABLE "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/disassemble.lisp" 
+1914) (GET '*DISASSEMBLERS* 'SOURCE NIL))) (DEFVAR *DISASSEMBLERS* '((:SYSTEM-JAVAP . DISASSEMBLE-CLASS-BYTES)) 
+"Methods of invoking CL:DISASSEMBLE consisting of a list of (KEYWORD FUNCTION) pairs
+
+The pairs (KEYWORD FUNCTION) contain a KEYWORD uniquely identifying a
+particular disassembler and a SYMBOL designating its invocation function.
+
+The KEYWORD values are used by SYS:CHOOSE-DISASSEMBLER to install a
+given disassembler as the one used by CL:DISASSEMBLE.  Additional
+disassemblers/decompilers are packaged in the ABCL-INTROSPECT contrib.
+
+The initial default is :SYSTEM-JAVAP which attempts to invoke the
+javap command line tool shipped as part of the Java Developement Kit
+which may or may not be installed locally.
+"))
+(PROGN (PUT 'CHOOSE-DISASSEMBLER 'SOURCE (CONS '((:FUNCTION CHOOSE-DISASSEMBLER) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/disassemble.lisp" 2606) 
+(GET 'CHOOSE-DISASSEMBLER 'SOURCE NIL))) (FSET 'CHOOSE-DISASSEMBLER (GET-FASL-FUNCTION 
+*FASL-LOADER* 0) 2606 '(&OPTIONAL NAME) "Report current disassembler that would be used by CL:DISASSEMBLE
+
+When the optional keyword NAME is specified, select the associated
+disassembler from SYS:*DISASSEMBLERS* for future invocations of
+CL:DISASSEMBLE."))
+(PROGN (PUT 'WITH-OPEN 'SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/disassemble.lisp" 
+3724) (GET 'WITH-OPEN 'SOURCE NIL))) (FSET 'WITH-OPEN (MAKE-MACRO 'WITH-OPEN (GET-FASL-FUNCTION 
+*FASL-LOADER* 2)) 3724 '((NAME VALUE) &BODY BODY) NIL))
+(PROGN (PUT 'READ-BYTE-ARRAY-FROM-STREAM 'SOURCE (CONS '((:FUNCTION READ-BYTE-ARRAY-FROM-STREAM) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/disassemble.lisp" 3948) 
+(GET 'READ-BYTE-ARRAY-FROM-STREAM 'SOURCE NIL))) (FSET 'READ-BYTE-ARRAY-FROM-STREAM 
+(GET-FASL-FUNCTION *FASL-LOADER* 3) 3948 '(STREAM) NIL))
+(PROGN (PUT 'CLASS-RESOURCE-PATH 'SOURCE (CONS '((:FUNCTION CLASS-RESOURCE-PATH) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/disassemble.lisp" 4365) 
+(GET 'CLASS-RESOURCE-PATH 'SOURCE NIL))) (FSET 'CLASS-RESOURCE-PATH (GET-FASL-FUNCTION 
+*FASL-LOADER* 4) 4365 '(CLASS) NIL))
+(PROGN (PUT 'CLASS-BYTES 'SOURCE (CONS '((:FUNCTION CLASS-BYTES) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/disassemble.lisp" 
+4478) (GET 'CLASS-BYTES 'SOURCE NIL))) (FSET 'CLASS-BYTES (GET-FASL-FUNCTION *FASL-LOADER* 
+6) 4478 '(CLASS) NIL))
+(PROGN (PUT 'DISASSEMBLE-BYTES 'SOURCE (CONS '((:FUNCTION DISASSEMBLE-BYTES) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/disassemble.lisp" 
+4744) (GET 'DISASSEMBLE-BYTES 'SOURCE NIL))) (FSET 'DISASSEMBLE-BYTES (GET-FASL-FUNCTION 
+*FASL-LOADER* 7) 4744 '(BYTES) "Disassemble jvm code BYTES returning a string."))
+(PROGN (PUT 'DISASSEMBLE-FUNCTION 'SOURCE (CONS '((:FUNCTION DISASSEMBLE-FUNCTION) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/disassemble.lisp" 4910) 
+(GET 'DISASSEMBLE-FUNCTION 'SOURCE NIL))) (FSET 'DISASSEMBLE-FUNCTION (GET-FASL-FUNCTION 
+*FASL-LOADER* 8) 4910 '(ARG) NIL))
+(PROGN (PUT '+PROPERTYLIST+ 'SOURCE (CONS (LIST :VARIABLE "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/disassemble.lisp" 
+8241) (GET '+PROPERTYLIST+ 'SOURCE NIL))) (DEFPARAMETER +PROPERTYLIST+ (LOAD-TIME-VALUE 
+(LET ((IT (FIND "propertyList" (JAVA:JCALL "getDeclaredFields" (JAVA:JCLASS "org.armedbear.lisp.Function")) 
+:KEY (LAMBDA (E) (JAVA:JCALL "getName" E)) :TEST 'EQUAL))) (JAVA:JCALL "setAccessible" 
+IT T) IT))))
+(PROGN (PUT 'FUNCTION-PLIST 'SOURCE (CONS '((:FUNCTION FUNCTION-PLIST) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/disassemble.lisp" 
+8513) (GET 'FUNCTION-PLIST 'SOURCE NIL))) (FSET 'FUNCTION-PLIST (GET-FASL-FUNCTION 
+*FASL-LOADER* 13) 8513 '(FUNCTION) NIL))
+(PROGN (PUT 'FUNCTION-PLIST 'SOURCE (CONS '((:FUNCTION (SETF FUNCTION-PLIST)) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/disassemble.lisp" 
+8594) (GET 'FUNCTION-PLIST 'SOURCE NIL))) (FSET '(SETF FUNCTION-PLIST) (GET-FASL-FUNCTION 
+*FASL-LOADER* 14) 8594 '(NEW FUNCTION) NIL))
+(PROGN (PUT 'GET-LOADED-FROM 'SOURCE (CONS '((:FUNCTION GET-LOADED-FROM) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/disassemble.lisp" 
+8690) (GET 'GET-LOADED-FROM 'SOURCE NIL))) (FSET 'GET-LOADED-FROM (GET-FASL-FUNCTION 
+*FASL-LOADER* 15) 8690 '(FUNCTION) NIL))
+(PROGN (PUT 'SET-LOADED-FROM 'SOURCE (CONS '((:FUNCTION SET-LOADED-FROM) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/disassemble.lisp" 
+9107) (GET 'SET-LOADED-FROM 'SOURCE NIL))) (FSET 'SET-LOADED-FROM (GET-FASL-FUNCTION 
+*FASL-LOADER* 16) 9107 '(FUNCTION VALUE) NIL))
+(PROGN (PUT 'FASL-COMPILED-CLOSURE-CLASS-BYTES 'SOURCE (CONS '((:FUNCTION FASL-COMPILED-CLOSURE-CLASS-BYTES) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/disassemble.lisp" 9423) 
+(GET 'FASL-COMPILED-CLOSURE-CLASS-BYTES 'SOURCE NIL))) (FSET 'FASL-COMPILED-CLOSURE-CLASS-BYTES 
+(GET-FASL-FUNCTION *FASL-LOADER* 17) 9423 '(FUNCTION) NIL))
+(PROGN (PUT 'DISASSEMBLE 'SOURCE (CONS '((:FUNCTION DISASSEMBLE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/disassemble.lisp" 
+10487) (GET 'DISASSEMBLE 'SOURCE NIL))) (FSET 'DISASSEMBLE (GET-FASL-FUNCTION *FASL-LOADER* 
+18) 10487 '(ARG) NIL))
+(PROGN (PUT 'PRINT-LINES-WITH-PREFIX 'SOURCE (CONS '((:FUNCTION PRINT-LINES-WITH-PREFIX) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/disassemble.lisp" 10684) 
+(GET 'PRINT-LINES-WITH-PREFIX 'SOURCE NIL))) (FSET 'PRINT-LINES-WITH-PREFIX (GET-FASL-FUNCTION 
+*FASL-LOADER* 19) 10684 '(STRING) NIL))

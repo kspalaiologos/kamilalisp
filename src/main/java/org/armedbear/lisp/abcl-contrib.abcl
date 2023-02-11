@@ -1,0 +1,76 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/abcl-contrib.lisp")
+(COMMON-LISP:SETQ SYSTEM::*FASL-UNINTERNED-SYMBOLS* #(#:G2175686 #:G2175690 #:G2175695 #:G2176373 #:G2176377 #:G2176381))
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.abcl_contrib"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(REQUIRE :ASDF)
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'BOOT-CLASSLOADER 'SOURCE (CONS '((:FUNCTION BOOT-CLASSLOADER) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/abcl-contrib.lisp" 
+199) (GET 'BOOT-CLASSLOADER 'SOURCE NIL))) (FSET 'BOOT-CLASSLOADER (GET-FASL-FUNCTION 
+*FASL-LOADER* 0) 199 'NIL NIL))
+(PROGN (PUT 'SYSTEM-ARTIFACTS-ARE-JARS-P 'SOURCE (CONS '((:FUNCTION SYSTEM-ARTIFACTS-ARE-JARS-P) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/abcl-contrib.lisp" 411) 
+(GET 'SYSTEM-ARTIFACTS-ARE-JARS-P 'SOURCE NIL))) (FSET 'SYSTEM-ARTIFACTS-ARE-JARS-P 
+(GET-FASL-FUNCTION *FASL-LOADER* 1) 411 'NIL NIL))
+(PROGN (PUT 'SYSTEM-JAR-P 'SOURCE (CONS '((:FUNCTION SYSTEM-JAR-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/abcl-contrib.lisp" 
+616) (GET 'SYSTEM-JAR-P 'SOURCE NIL))) (FSET 'SYSTEM-JAR-P (GET-FASL-FUNCTION *FASL-LOADER* 
+2) 616 '(P) NIL))
+(PROGN (PUT 'CONTRIB-JAR-P 'SOURCE (CONS '((:FUNCTION CONTRIB-JAR-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/abcl-contrib.lisp" 
+705) (GET 'CONTRIB-JAR-P 'SOURCE NIL))) (FSET 'CONTRIB-JAR-P (GET-FASL-FUNCTION *FASL-LOADER* 
+3) 705 '(P) NIL))
+(PROGN (PUT 'NAMED-JAR-P 'SOURCE (CONS '((:FUNCTION NAMED-JAR-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/abcl-contrib.lisp" 
+804) (GET 'NAMED-JAR-P 'SOURCE NIL))) (FSET 'NAMED-JAR-P (GET-FASL-FUNCTION *FASL-LOADER* 
+4) 804 '(NAME P) NIL))
+(PROGN (PUT 'FIND-SYSTEM 'SOURCE (CONS '((:FUNCTION FIND-SYSTEM) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/abcl-contrib.lisp" 
+1339) (GET 'FIND-SYSTEM 'SOURCE NIL))) (FSET 'FIND-SYSTEM (GET-FASL-FUNCTION *FASL-LOADER* 
+5) 1339 'NIL "Find the location of the Armed Bear system implementation
+
+Used to determine relative pathname to find 'abcl-contrib.jar'."))
+(PROGN (PUT 'FLATTEN 'SOURCE (CONS '((:FUNCTION FLATTEN) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/abcl-contrib.lisp" 
+2033) (GET 'FLATTEN 'SOURCE NIL))) (FSET 'FLATTEN (GET-FASL-FUNCTION *FASL-LOADER* 
+10) 2033 '(LIST) NIL))
+(PROGN (PUT 'JAVA.CLASS.PATH 'SOURCE (CONS '((:FUNCTION JAVA.CLASS.PATH) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/abcl-contrib.lisp" 
+2361) (GET 'JAVA.CLASS.PATH 'SOURCE NIL))) (FSET 'JAVA.CLASS.PATH (GET-FASL-FUNCTION 
+*FASL-LOADER* 12) 2361 'NIL "Return a list of the directories as pathnames referenced in the JVM classpath."))
+(PROGN (PUT 'ENUMERATE-RESOURCE-DIRECTORIES 'SOURCE (CONS '((:FUNCTION ENUMERATE-RESOURCE-DIRECTORIES) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/abcl-contrib.lisp" 2979) 
+(GET 'ENUMERATE-RESOURCE-DIRECTORIES 'SOURCE NIL))) (FSET 'ENUMERATE-RESOURCE-DIRECTORIES 
+(GET-FASL-FUNCTION *FASL-LOADER* 14) 2979 'NIL NIL))
+(PROGN (PUT 'FIND-JAR 'SOURCE (CONS '((:FUNCTION FIND-JAR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/abcl-contrib.lisp" 
+4125) (GET 'FIND-JAR 'SOURCE NIL))) (FSET 'FIND-JAR (GET-FASL-FUNCTION *FASL-LOADER* 
+16) 4125 '(PREDICATE) NIL))
+(PROGN (PUT 'FIND-SYSTEM-JAR 'SOURCE (CONS '((:FUNCTION FIND-SYSTEM-JAR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/abcl-contrib.lisp" 
+4557) (GET 'FIND-SYSTEM-JAR 'SOURCE NIL))) (FSET 'FIND-SYSTEM-JAR (GET-FASL-FUNCTION 
+*FASL-LOADER* 17) 4557 'NIL "Return the pathname of the system jar, one of `abcl.jar` or
+`abcl-m.n.p.jar` or `abcl-m.n.p[.~-]something.jar`."))
+(PROGN (PUT 'FIND-CONTRIB-JAR 'SOURCE (CONS '((:FUNCTION FIND-CONTRIB-JAR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/abcl-contrib.lisp" 
+4729) (GET 'FIND-CONTRIB-JAR 'SOURCE NIL))) (FSET 'FIND-CONTRIB-JAR (GET-FASL-FUNCTION 
+*FASL-LOADER* 18) 4729 'NIL "Return the pathname of the contrib jar, one of `abcl-contrib.jar` or
+`abcl-contrib-m.n.p.jar` or `abcl-contrib-m.n.p[.~-]something.jar`."))
+(PROGN (PUT '*ABCL-CONTRIB* 'SOURCE (CONS (LIST :VARIABLE "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/abcl-contrib.lisp" 
+4928) (GET '*ABCL-CONTRIB* 'SOURCE NIL))) (DEFVAR *ABCL-CONTRIB* NIL "Pathname of the abcl-contrib artifact.
+
+Initialized via SYSTEM:FIND-CONTRIB."))
+(PROGN (PUT 'ADD-CONTRIB 'SOURCE (CONS '((:FUNCTION ADD-CONTRIB) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/abcl-contrib.lisp" 
+5038) (GET 'ADD-CONTRIB 'SOURCE NIL))) (FSET 'ADD-CONTRIB (GET-FASL-FUNCTION *FASL-LOADER* 
+19) 5038 '(ABCL-CONTRIB-JAR &KEY (VERBOSE *LOAD-VERBOSE*)) "Introspects the ABCL-CONTRIB-JAR path for sub-directories which
+  contain asdf definitions, adding those found to asdf."))
+(PROGN (PUT 'FIND-AND-ADD-CONTRIB 'SOURCE (CONS '((:FUNCTION FIND-AND-ADD-CONTRIB) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/abcl-contrib.lisp" 5862) 
+(GET 'FIND-AND-ADD-CONTRIB 'SOURCE NIL))) (FSET 'FIND-AND-ADD-CONTRIB (GET-FASL-FUNCTION 
+*FASL-LOADER* 21) 5862 '(&KEY (VERBOSE *LOAD-VERBOSE*)) "Attempt to find the ABCL contrib jar and add its contents to ASDF.
+returns the pathname of the contrib if it can be found."))
+(PROGN (PUT 'FIND-NAME-FOR-IMPLEMENTATION-TITLE 'SOURCE (CONS '((:FUNCTION FIND-NAME-FOR-IMPLEMENTATION-TITLE) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/abcl-contrib.lisp" 6573) 
+(GET 'FIND-NAME-FOR-IMPLEMENTATION-TITLE 'SOURCE NIL))) (FSET 'FIND-NAME-FOR-IMPLEMENTATION-TITLE 
+(GET-FASL-FUNCTION *FASL-LOADER* 24) 6573 '(FILE ID) "For a jar FILE containing a manifest, return the name of the
+  section which annotates 'Implementation-Title' whose string value is
+  ID."))
+(PROGN (PUT 'FIND-CONTRIB 'SOURCE (CONS '((:FUNCTION FIND-CONTRIB) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/abcl-contrib.lisp" 
+7604) (GET 'FIND-CONTRIB 'SOURCE NIL))) (FSET 'FIND-CONTRIB (GET-FASL-FUNCTION *FASL-LOADER* 
+25) 7604 'NIL "Introspect runtime classpaths to return a pathname containing
+  subdirectories containing ASDF definitions."))
+(EXPORT '(FIND-SYSTEM FIND-CONTRIB SYSTEM-ARTIFACTS-ARE-JARS-P JAVA.CLASS.PATH *ABCL-CONTRIB*) 
+:SYSTEM)
+(FUNCALL (GET-FASL-FUNCTION *FASL-LOADER* 30))

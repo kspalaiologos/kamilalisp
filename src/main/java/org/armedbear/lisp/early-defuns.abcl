@@ -1,0 +1,83 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.early_defuns"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(EXPORT '(INDEX JAVA-LONG %TYPE-ERROR CHECK-SEQUENCE-BOUNDS REQUIRE-TYPE NORMALIZE-TYPE))
+(PUT 'INDEX 'DEFTYPE-DEFINITION (LAMBDA NIL '(INTEGER 0 (2147483647))))
+(PUT 'JAVA-LONG 'DEFTYPE-DEFINITION (LAMBDA NIL '(INTEGER -9223372036854775808 9223372036854775807)))
+(PROGN (PUT '%TYPE-ERROR 'SOURCE (CONS '((:FUNCTION %TYPE-ERROR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+2053) (GET '%TYPE-ERROR 'SOURCE NIL))) (FSET '%TYPE-ERROR (GET-FASL-FUNCTION *FASL-LOADER* 
+0) 2053 '(DATUM EXPECTED-TYPE) NIL))
+(PROGN (PUT 'CHECK-SEQUENCE-BOUNDS 'SOURCE (CONS '((:FUNCTION CHECK-SEQUENCE-BOUNDS) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 2160) 
+(GET 'CHECK-SEQUENCE-BOUNDS 'SOURCE NIL))) (FSET 'CHECK-SEQUENCE-BOUNDS (GET-FASL-FUNCTION 
+*FASL-LOADER* 1) 2160 '(SEQUENCE START END) NIL))
+(PROGN (PUT 'REQUIRE-TYPE 'SOURCE (CONS '((:FUNCTION REQUIRE-TYPE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+2415) (GET 'REQUIRE-TYPE 'SOURCE NIL))) (FSET 'REQUIRE-TYPE (GET-FASL-FUNCTION *FASL-LOADER* 
+2) 2415 '(ARG TYPE) NIL))
+(PROGN (PUT 'NORMALIZE-TYPE 'SOURCE (CONS '((:FUNCTION NORMALIZE-TYPE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+2572) (GET 'NORMALIZE-TYPE 'SOURCE NIL))) (FSET 'NORMALIZE-TYPE (GET-FASL-FUNCTION 
+*FASL-LOADER* 3) 2572 '(TYPE) NIL))
+(PROGN (PUT 'CAAAAR 'SOURCE (CONS '((:FUNCTION CAAAAR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+8728) (GET 'CAAAAR 'SOURCE NIL))) (FSET 'CAAAAR (GET-FASL-FUNCTION *FASL-LOADER* 
+4) 8728 '(LIST) NIL))
+(PROGN (PUT 'CAAADR 'SOURCE (CONS '((:FUNCTION CAAADR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+8780) (GET 'CAAADR 'SOURCE NIL))) (FSET 'CAAADR (GET-FASL-FUNCTION *FASL-LOADER* 
+5) 8780 '(LIST) NIL))
+(PROGN (PUT 'CAADDR 'SOURCE (CONS '((:FUNCTION CAADDR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+8831) (GET 'CAADDR 'SOURCE NIL))) (FSET 'CAADDR (GET-FASL-FUNCTION *FASL-LOADER* 
+6) 8831 '(LIST) NIL))
+(PROGN (PUT 'CADDDR 'SOURCE (CONS '((:FUNCTION CADDDR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+8882) (GET 'CADDDR 'SOURCE NIL))) (FSET 'CADDDR (GET-FASL-FUNCTION *FASL-LOADER* 
+7) 8882 '(LIST) NIL))
+(PROGN (PUT 'CDDDDR 'SOURCE (CONS '((:FUNCTION CDDDDR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+8933) (GET 'CDDDDR 'SOURCE NIL))) (FSET 'CDDDDR (GET-FASL-FUNCTION *FASL-LOADER* 
+8) 8933 '(LIST) NIL))
+(PROGN (PUT 'CDAAAR 'SOURCE (CONS '((:FUNCTION CDAAAR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+8984) (GET 'CDAAAR 'SOURCE NIL))) (FSET 'CDAAAR (GET-FASL-FUNCTION *FASL-LOADER* 
+9) 8984 '(LIST) NIL))
+(PROGN (PUT 'CDDAAR 'SOURCE (CONS '((:FUNCTION CDDAAR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+9035) (GET 'CDDAAR 'SOURCE NIL))) (FSET 'CDDAAR (GET-FASL-FUNCTION *FASL-LOADER* 
+10) 9035 '(LIST) NIL))
+(PROGN (PUT 'CDDDAR 'SOURCE (CONS '((:FUNCTION CDDDAR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+9086) (GET 'CDDDAR 'SOURCE NIL))) (FSET 'CDDDAR (GET-FASL-FUNCTION *FASL-LOADER* 
+11) 9086 '(LIST) NIL))
+(PROGN (PUT 'CAADAR 'SOURCE (CONS '((:FUNCTION CAADAR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+9137) (GET 'CAADAR 'SOURCE NIL))) (FSET 'CAADAR (GET-FASL-FUNCTION *FASL-LOADER* 
+12) 9137 '(LIST) NIL))
+(PROGN (PUT 'CADAAR 'SOURCE (CONS '((:FUNCTION CADAAR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+9188) (GET 'CADAAR 'SOURCE NIL))) (FSET 'CADAAR (GET-FASL-FUNCTION *FASL-LOADER* 
+13) 9188 '(LIST) NIL))
+(PROGN (PUT 'CADADR 'SOURCE (CONS '((:FUNCTION CADADR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+9239) (GET 'CADADR 'SOURCE NIL))) (FSET 'CADADR (GET-FASL-FUNCTION *FASL-LOADER* 
+14) 9239 '(LIST) NIL))
+(PROGN (PUT 'CADDAR 'SOURCE (CONS '((:FUNCTION CADDAR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+9290) (GET 'CADDAR 'SOURCE NIL))) (FSET 'CADDAR (GET-FASL-FUNCTION *FASL-LOADER* 
+15) 9290 '(LIST) NIL))
+(PROGN (PUT 'CDAADR 'SOURCE (CONS '((:FUNCTION CDAADR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+9341) (GET 'CDAADR 'SOURCE NIL))) (FSET 'CDAADR (GET-FASL-FUNCTION *FASL-LOADER* 
+16) 9341 '(LIST) NIL))
+(PROGN (PUT 'CDADAR 'SOURCE (CONS '((:FUNCTION CDADAR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+9392) (GET 'CDADAR 'SOURCE NIL))) (FSET 'CDADAR (GET-FASL-FUNCTION *FASL-LOADER* 
+17) 9392 '(LIST) NIL))
+(PROGN (PUT 'CDADDR 'SOURCE (CONS '((:FUNCTION CDADDR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+9443) (GET 'CDADDR 'SOURCE NIL))) (FSET 'CDADDR (GET-FASL-FUNCTION *FASL-LOADER* 
+18) 9443 '(LIST) NIL))
+(PROGN (PUT 'CDDADR 'SOURCE (CONS '((:FUNCTION CDDADR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+9494) (GET 'CDDADR 'SOURCE NIL))) (FSET 'CDDADR (GET-FASL-FUNCTION *FASL-LOADER* 
+19) 9494 '(LIST) NIL))
+(PROGN (PUT 'SOME 'SOURCE (CONS '((:FUNCTION SOME) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+9545) (GET 'SOME 'SOURCE NIL))) (FSET 'SOME (GET-FASL-FUNCTION *FASL-LOADER* 20) 
+9545 '(PREDICATE SEQUENCE &REST MORE-SEQUENCES) NIL))
+(PROGN (PUT 'EVERY 'SOURCE (CONS '((:FUNCTION EVERY) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+9974) (GET 'EVERY 'SOURCE NIL))) (FSET 'EVERY (GET-FASL-FUNCTION *FASL-LOADER* 22) 
+9974 '(PREDICATE SEQUENCE &REST MORE-SEQUENCES) NIL))
+(PROGN (PUT 'NOTANY 'SOURCE (CONS '((:FUNCTION NOTANY) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+10766) (GET 'NOTANY 'SOURCE NIL))) (FSET 'NOTANY (GET-FASL-FUNCTION *FASL-LOADER* 
+24) 10766 '(PREDICATE SEQUENCE &REST MORE-SEQUENCES) NIL))
+(PROGN (PUT 'NOTEVERY 'SOURCE (CONS '((:FUNCTION NOTEVERY) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/early-defuns.lisp" 
+10881) (GET 'NOTEVERY 'SOURCE NIL))) (FSET 'NOTEVERY (GET-FASL-FUNCTION *FASL-LOADER* 
+25) 10881 '(PREDICATE SEQUENCE &REST MORE-SEQUENCES) NIL))

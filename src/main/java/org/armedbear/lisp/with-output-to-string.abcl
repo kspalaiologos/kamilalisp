@@ -1,0 +1,13 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/with-output-to-string.lisp")
+(COMMON-LISP:SETQ SYSTEM::*FASL-UNINTERNED-SYMBOLS* #(#:WHOLE-308956 #:ENVIRONMENT-308957))
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.with_output_to_string"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'WITH-OUTPUT-TO-STRING 'SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/with-output-to-string.lisp" 
+1600) (GET 'WITH-OUTPUT-TO-STRING 'SOURCE NIL))) (FSET 'WITH-OUTPUT-TO-STRING (MAKE-MACRO 
+'WITH-OUTPUT-TO-STRING (GET-FASL-FUNCTION *FASL-LOADER* 0)) 1600 '((VAR &OPTIONAL 
+STRING &KEY (ELEMENT-TYPE ''CHARACTER)) &BODY BODY) "If STRING is specified, it must be a string with a fill pointer;
+   the output is incrementally appended to the string (as if by use of
+   VECTOR-PUSH-EXTEND)."))

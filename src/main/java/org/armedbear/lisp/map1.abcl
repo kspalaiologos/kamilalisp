@@ -1,0 +1,22 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/map1.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.map1"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'MAP1 'SOURCE (CONS '((:FUNCTION MAP1) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/map1.lisp" 
+1608) (GET 'MAP1 'SOURCE NIL))) (FSET 'MAP1 (GET-FASL-FUNCTION *FASL-LOADER* 0) 1608 
+'(FUNCTION ORIGINAL-ARGLISTS ACCUMULATE TAKE-CAR) NIL))
+(PROGN (PUT 'MAPCAN 'SOURCE (CONS '((:FUNCTION MAPCAN) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/map1.lisp" 
+2319) (GET 'MAPCAN 'SOURCE NIL))) (FSET 'MAPCAN (GET-FASL-FUNCTION *FASL-LOADER* 
+1) 2319 '(FUNCTION LIST &REST MORE-LISTS) NIL))
+(PROGN (PUT 'MAPL 'SOURCE (CONS '((:FUNCTION MAPL) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/map1.lisp" 
+2418) (GET 'MAPL 'SOURCE NIL))) (FSET 'MAPL (GET-FASL-FUNCTION *FASL-LOADER* 2) 2418 
+'(FUNCTION LIST &REST MORE-LISTS) NIL))
+(PROGN (PUT 'MAPLIST 'SOURCE (CONS '((:FUNCTION MAPLIST) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/map1.lisp" 
+2514) (GET 'MAPLIST 'SOURCE NIL))) (FSET 'MAPLIST (GET-FASL-FUNCTION *FASL-LOADER* 
+3) 2514 '(FUNCTION LIST &REST MORE-LISTS) NIL))
+(PROGN (PUT 'MAPCON 'SOURCE (CONS '((:FUNCTION MAPCON) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/map1.lisp" 
+2615) (GET 'MAPCON 'SOURCE NIL))) (FSET 'MAPCON (GET-FASL-FUNCTION *FASL-LOADER* 
+4) 2615 '(FUNCTION LIST &REST MORE-LISTS) NIL))
