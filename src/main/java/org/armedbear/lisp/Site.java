@@ -43,15 +43,6 @@ public final class Site
     private static LispObject LISP_HOME;
 
     private static void init() {
-        String s = System.getProperty("abcl.home");
-        if (s != null) {
-            String fileSeparator = System.getProperty("file.separator");
-            if (!s.endsWith(fileSeparator)) {
-                s += fileSeparator;
-            }
-            LISP_HOME = Pathname.create(s);
-            return;
-        }
         URL url = Lisp.class.getResource("boot.lisp"); // what if this was "__loader__._"?!!
         if (url != null) {
             if (!Pathname.isSupportedProtocol(url.getProtocol())) {

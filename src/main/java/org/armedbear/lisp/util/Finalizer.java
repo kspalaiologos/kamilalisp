@@ -120,7 +120,7 @@
 /*     */                   while (true)
 /* 121 */                   { Finalizer.FinalizingWeakReference ref = (Finalizer.FinalizingWeakReference)Finalizer.queue.remove();
 /* 122 */                     Finalizer.anchor.remove(ref);
-/* 123 */                     ref.run(); }  break;
+/* 123 */                     ref.run(); }
 /* 124 */                 } catch (InterruptedException interruptedException) {}
 /*     */               } 
 /*     */             }
