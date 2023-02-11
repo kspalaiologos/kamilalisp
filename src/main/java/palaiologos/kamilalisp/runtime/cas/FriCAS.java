@@ -21,21 +21,24 @@ public class FriCAS {
     }
 
     // Normal API.
-    private Interpreter interpreter;
     private LinkedBlockingQueue<Integer> cin = new LinkedBlockingQueue<>();
     private LinkedBlockingQueue<Integer> cout = new LinkedBlockingQueue<>();
     private Thread thread;
+    private AtomicBoolean pending = new AtomicBoolean(false);
 
     private FriCAS() {
         InputStream is = new InputStream() {
             @Override
             public int read() {
                 int value;
+                pending.set(true);
                 try {
                     value = cin.take();
                 } catch (InterruptedException e) {
-                    value = -1;
+                    throw new RuntimeException(e);
                 }
+                pending.set(false);
+                System.out.println("Sending " + value);
                 return value;
             }
 
@@ -56,31 +59,50 @@ public class FriCAS {
         URL resUrl = this.getClass().getResource("/lisp/fricas.lisp");
         String urlString = resUrl.toString();
         String str = urlString.substring(0, urlString.length() - "/fricas.lisp".length());
-        this.interpreter = Interpreter.createInstance(is, os, str);
-        thread = new Thread(() -> interpreter.eval("(load \"fricas.lisp\")"));
+        thread = new Thread(() -> {
+            Interpreter interpreter = Interpreter.createInstance(is, os, str);
+            interpreter.eval("(load \"fricas.lisp\")");
+        });
         thread.setDaemon(true);
         thread.start();
-        StringBuilder sb = new StringBuilder();
-        while(!sb.toString().endsWith(") -> ")) {
+
+        // Wait until input is desired.
+        while(!pending.get()) {
             try {
-                sb.append((char) cout.take().intValue());
-            } catch (InterruptedException e) { }
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
+        cout.clear();
+
+        System.out.println("FriCAS started.");
     }
 
     private String eval(String s) {
-        cout.clear();
-        byte[] data = s.getBytes();
-        for (byte b : data) {
+        // Send input.
+        byte[] bytes = s.getBytes();
+        for (byte b : bytes) {
             cin.add((int) b);
         }
-        StringBuilder sb = new StringBuilder();
-        while(!sb.toString().endsWith(") -> ")) {
+
+        // Wait until input is desired again.
+        while(pending.get()) {
             try {
-                sb.append((char) cout.take().intValue());
-            } catch (InterruptedException e) { }
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
-        return sb.toString();
+
+        // Read output.
+        byte[] bytesOut = new byte[cout.size()];
+        Iterator<Integer> it = cout.iterator();
+        for (int i = 0; i < bytesOut.length; i++) {
+            bytesOut[i] = it.next().byteValue();
+        }
+        cout.clear();
+        return new String(bytesOut);
     }
 
     public static void main(String[] args) {
