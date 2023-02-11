@@ -49,7 +49,7 @@ public final class Interpreter
 
     private final boolean jlisp;
     private final InputStream inputStream;
-    private final OutputStream outputStream;
+    final OutputStream outputStream;
 
     private static boolean noinit = false;
     private static boolean nosystem = false;

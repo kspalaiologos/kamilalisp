@@ -56,6 +56,7 @@ import java.util.SortedMap;
 import java.util.Set;
 
 import org.armedbear.lisp.util.DecodingReader;
+import palaiologos.kamilalisp.runtime.cas.FriCAS;
 
 /** The stream class
  *
@@ -1569,6 +1570,13 @@ public class Stream extends StructureObject {
     public LispObject readLine(boolean eofError, LispObject eofValue)
 
     {
+        if(reader instanceof DecodingReader && ((DecodingReader)reader).isStdin) {
+            try {
+                Interpreter.getInstance().outputStream.write('\n');
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         final LispThread thread = LispThread.currentThread();
         StringBuilder sb = new StringBuilder();
         try {
