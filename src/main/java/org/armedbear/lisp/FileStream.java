@@ -1,343 +1,338 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ import java.io.File;
-/*     */ import java.io.FileNotFoundException;
-/*     */ import java.io.IOException;
-/*     */ import java.io.RandomAccessFile;
-/*     */ import org.armedbear.lisp.util.RandomAccessCharacterFile;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public final class FileStream
-/*     */   extends Stream
-/*     */ {
-/*     */   private final RandomAccessCharacterFile racf;
-/*     */   private final Pathname pathname;
-/*     */   private final int bytesPerUnit;
-/*     */   
-/*     */   public FileStream(Pathname pathname, LispObject elementType, LispObject direction, LispObject ifExists, LispObject format) throws IOException {
-/*  73 */     super(Symbol.FILE_STREAM);
-/*  74 */     File file = pathname.getFile();
-/*  75 */     String mode = null;
-/*  76 */     if (direction == Keyword.INPUT) {
-/*  77 */       mode = "r";
-/*  78 */       this.isInputStream = true;
-/*  79 */     } else if (direction == Keyword.OUTPUT) {
-/*  80 */       mode = "rw";
-/*  81 */       this.isOutputStream = true;
-/*  82 */     } else if (direction == Keyword.IO) {
-/*  83 */       mode = "rw";
-/*  84 */       this.isInputStream = true;
-/*  85 */       this.isOutputStream = true;
-/*     */     } 
-/*     */     
-/*  88 */     Debug.assertTrue((mode != null));
-/*  89 */     RandomAccessFile raf = new RandomAccessFile(file, mode);
-/*     */ 
-/*     */     
-/*  92 */     if (this.isOutputStream) {
-/*  93 */       long length = file.isFile() ? file.length() : 0L;
-/*  94 */       if (length > 0L)
-/*  95 */         if (ifExists == Keyword.OVERWRITE) {
-/*  96 */           raf.seek(0L);
-/*  97 */         } else if (ifExists == Keyword.APPEND) {
-/*  98 */           raf.seek(raf.length());
-/*     */         } else {
-/* 100 */           raf.setLength(0L);
-/*     */         }  
-/*     */     } 
-/* 103 */     setExternalFormat(format);
-/*     */ 
-/*     */ 
-/*     */     
-/* 107 */     this.racf = new RandomAccessCharacterFile(raf, this.encoding);
-/*     */     
-/* 109 */     this.pathname = pathname;
-/* 110 */     this.elementType = elementType;
-/* 111 */     if (elementType == Symbol.CHARACTER || elementType == Symbol.BASE_CHAR) {
-/* 112 */       this.isCharacterStream = true;
-/* 113 */       this.bytesPerUnit = 1;
-/* 114 */       if (this.isInputStream) {
-/* 115 */         initAsCharacterInputStream(this.racf.getReader());
-/*     */       }
-/* 117 */       if (this.isOutputStream) {
-/* 118 */         initAsCharacterOutputStream(this.racf.getWriter());
-/*     */       }
-/*     */     } else {
-/* 121 */       this.isBinaryStream = true;
-/* 122 */       int width = Fixnum.getValue(elementType.cadr());
-/* 123 */       this.bytesPerUnit = width / 8;
-/* 124 */       if (this.isInputStream) {
-/* 125 */         initAsBinaryInputStream(this.racf.getInputStream());
-/*     */       }
-/* 127 */       if (this.isOutputStream) {
-/* 128 */         initAsBinaryOutputStream(this.racf.getOutputStream());
-/*     */       }
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typeOf() {
-/* 136 */     return Symbol.FILE_STREAM;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject classOf() {
-/* 142 */     return BuiltInClass.FILE_STREAM;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typep(LispObject typeSpecifier) {
-/* 148 */     if (typeSpecifier == Symbol.FILE_STREAM)
-/* 149 */       return Lisp.T; 
-/* 150 */     if (typeSpecifier == BuiltInClass.FILE_STREAM)
-/* 151 */       return Lisp.T; 
-/* 152 */     return super.typep(typeSpecifier);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public void setExternalFormat(LispObject format) {
-/* 157 */     super.setExternalFormat(format);
-/*     */     
-/* 159 */     if (this.racf != null)
-/*     */     {
-/* 161 */       this.racf.setEncoding(this.encoding);
-/*     */     }
-/*     */   }
-/*     */   
-/*     */   public Pathname getPathname() {
-/* 166 */     return this.pathname;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject fileLength() {
-/*     */     long length;
-/* 173 */     if (isOpen()) {
-/*     */       try {
-/* 175 */         length = this.racf.length();
-/*     */       }
-/* 177 */       catch (IOException e) {
-/* 178 */         Lisp.error(new StreamError(this, e));
-/*     */         
-/* 180 */         return Lisp.NIL;
-/*     */       } 
-/*     */     } else {
-/* 183 */       String namestring = this.pathname.getNamestring();
-/* 184 */       if (namestring == null)
-/* 185 */         return Lisp.error(new SimpleError("Pathname has no namestring: " + this.pathname
-/* 186 */               .princToString())); 
-/* 187 */       File file = new File(namestring);
-/* 188 */       length = file.length();
-/*     */     } 
-/* 190 */     if (this.isCharacterStream) {
-/* 191 */       return Lisp.number(length);
-/*     */     }
-/*     */     
-/* 194 */     return Lisp.number(length / this.bytesPerUnit);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   protected boolean _charReady() {
-/* 200 */     return true;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public void _clearInput() {
-/*     */     try {
-/* 207 */       if (this.isInputStream) {
-/* 208 */         this.racf.position(this.racf.length());
-/*     */       } else {
-/* 210 */         streamNotInputStream();
-/*     */       }
-/*     */     
-/* 213 */     } catch (IOException e) {
-/* 214 */       Lisp.error(new StreamError(this, e));
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   protected long _getFilePosition() {
-/*     */     try {
-/* 222 */       long pos = this.racf.position();
-/* 223 */       return pos / this.bytesPerUnit;
-/*     */     }
-/* 225 */     catch (IOException e) {
-/* 226 */       Lisp.error(new StreamError(this, e));
-/*     */       
-/* 228 */       return -1L;
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   protected boolean _setFilePosition(LispObject arg) {
-/*     */     try {
-/* 236 */       long pos = 0L;
-/* 237 */       if (arg == Keyword.START) {
-/* 238 */         pos = 0L;
-/* 239 */       } else if (arg == Keyword.END) {
-/* 240 */         pos = this.racf.length();
-/* 241 */       } else if (arg instanceof Fixnum) {
-/* 242 */         pos = (((Fixnum)arg).value * this.bytesPerUnit);
-/* 243 */       } else if (arg instanceof Bignum) {
-/* 244 */         pos = ((Bignum)arg).longValue() * this.bytesPerUnit;
-/*     */       } else {
-/* 246 */         Lisp.type_error(arg, Symbol.INTEGER);
-/* 247 */       }  this.racf.position(pos);
-/*     */     }
-/* 249 */     catch (IOException e) {
-/* 250 */       Lisp.error(new StreamError(this, e));
-/*     */     } 
-/* 252 */     return true;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public void _close() {
-/*     */     try {
-/* 259 */       this.racf.close();
-/* 260 */       setOpen(false);
-/*     */     }
-/* 262 */     catch (IOException e) {
-/* 263 */       Lisp.error(new StreamError(this, e));
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public String printObject() {
-/* 270 */     return unreadableString("FILE-STREAM");
-/*     */   }
-/*     */ 
-/*     */   
-/* 274 */   private static final Primitive MAKE_FILE_STREAM = new Primitive("make-file-stream", Lisp.PACKAGE_SYS, true, "pathname element-type direction if-exists external-format")
-/*     */     {
-/*     */       public LispObject execute(LispObject first, LispObject second, LispObject third, LispObject fourth, LispObject fifth)
-/*     */       {
-/*     */         Pathname pathname;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */         
-/* 285 */         if (first instanceof Pathname) {
-/* 286 */           pathname = (Pathname)first;
-/*     */         } else {
-/*     */           
-/* 289 */           return Lisp.type_error(first, Symbol.PATHNAME);
-/*     */         } 
-/* 291 */         LispObject elementType = second;
-/* 292 */         LispObject direction = third;
-/* 293 */         LispObject ifExists = fourth;
-/* 294 */         LispObject externalFormat = fifth;
-/*     */         
-/* 296 */         if (direction != Keyword.INPUT && direction != Keyword.OUTPUT && direction != Keyword.IO)
-/*     */         {
-/* 298 */           Lisp.error(new LispError("Direction must be :INPUT, :OUTPUT, or :IO."));
-/*     */         }
-/* 300 */         if (pathname.isJar()) {
-/* 301 */           if (direction != Keyword.INPUT) {
-/* 302 */             Lisp.error(new FileError("Only direction :INPUT is supported for jar files.", pathname));
-/*     */           }
-/*     */           try {
-/* 305 */             return new JarStream(pathname, elementType, direction, ifExists, externalFormat);
-/*     */           
-/*     */           }
-/* 308 */           catch (IOException e) {
-/* 309 */             return Lisp.error(new StreamError(null, e));
-/*     */           } 
-/* 311 */         }  if (pathname instanceof URLPathname && 
-/* 312 */           !URLPathname.isFile(pathname)) {
-/* 313 */           if (direction != Keyword.INPUT) {
-/* 314 */             Lisp.error(new FileError("Only direction :INPUT is supported for URLs.", pathname));
-/*     */           }
-/*     */           try {
-/* 317 */             return new URLStream(pathname, elementType, direction, ifExists, externalFormat);
-/*     */           
-/*     */           }
-/* 320 */           catch (IOException e) {
-/* 321 */             return Lisp.error(new StreamError(null, e));
-/*     */           } 
-/*     */         } 
-/*     */         try {
-/* 325 */           return new FileStream(pathname, elementType, direction, ifExists, externalFormat);
-/*     */ 
-/*     */         
-/*     */         }
-/* 329 */         catch (FileNotFoundException e) {
-/* 330 */           return Lisp.NIL;
-/*     */         }
-/* 332 */         catch (IOException e) {
-/* 333 */           return Lisp.error(new StreamError(null, e));
-/*     */         } 
-/*     */       }
-/*     */     };
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/FileStream.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * FileStream.java
+ *
+ * Copyright (C) 2004-2006 Peter Graves
+ * Copyright (C) 2008 Hideo at Yokohama
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import org.armedbear.lisp.util.RandomAccessCharacterFile;
+
+public final class FileStream extends Stream
+{
+    private final RandomAccessCharacterFile racf;
+    private final Pathname pathname;
+    private final int bytesPerUnit;
+
+    public FileStream(Pathname pathname, 
+                      LispObject elementType, LispObject direction,
+                      LispObject ifExists, LispObject format)
+        throws IOException
+    {
+        /* externalFormat is a LispObject of which the first char is a
+         * name of a character encoding (such as :UTF-8 or :ISO-8859-1), used
+         * by ABCL as a string designator, unless the name is :CODE-PAGE.
+         * A real string is (thus) also allowed.
+         * 
+         * Then, a property list follows with 3 possible keys:
+         *   :ID (values: code page numbers supported by MS-DOS/IBM-DOS/MS-Windows
+         *   :EOL-STYLE (values: :CR / :LF / :CRLF [none means native])
+         *   :LITTLE-ENDIAN (values: NIL / T)
+         * 
+         * These definitions have been taken from FLEXI-STREAMS:
+         *    http://www.weitz.de/flexi-streams/#make-external-format
+         */
+        super(Symbol.FILE_STREAM);
+        final File file = pathname.getFile();
+        String mode = null;
+        if (direction == Keyword.INPUT) {
+            mode = "r";
+            isInputStream = true;
+        } else if (direction == Keyword.OUTPUT) {
+            mode = "rw";
+            isOutputStream = true;
+        } else if (direction == Keyword.IO) {
+            mode = "rw";
+            isInputStream = true;
+            isOutputStream = true;
+        }
+        
+        Debug.assertTrue(mode != null);
+        RandomAccessFile raf = new RandomAccessFile(file, mode);
+        
+        // ifExists is ignored unless we have an output stream.
+        if (isOutputStream) {
+            final long length = file.isFile() ? file.length() : 0;
+            if (length > 0) {
+                if (ifExists == Keyword.OVERWRITE)
+                    raf.seek(0);
+                else if (ifExists == Keyword.APPEND)
+                    raf.seek(raf.length());
+                else
+                    raf.setLength(0);
+            }
+        }
+        setExternalFormat(format);
+        
+        // don't touch raf directly after passing it to racf.
+        // the state will become inconsistent if you do that.
+        racf = new RandomAccessCharacterFile(raf, encoding);
+
+        this.pathname = pathname;
+        this.elementType = elementType;
+        if (elementType == Symbol.CHARACTER || elementType == Symbol.BASE_CHAR) {
+            isCharacterStream = true;
+            bytesPerUnit = 1;
+            if (isInputStream) {
+                initAsCharacterInputStream(racf.getReader());
+            }
+            if (isOutputStream) {
+                initAsCharacterOutputStream(racf.getWriter());
+            }
+        } else {
+            isBinaryStream = true;
+            int width = Fixnum.getValue(elementType.cadr());
+            bytesPerUnit = width / 8;
+            if (isInputStream) {
+                initAsBinaryInputStream(racf.getInputStream());
+            }
+            if (isOutputStream) {
+                initAsBinaryOutputStream(racf.getOutputStream());
+            }
+        }
+    }
+
+    @Override
+    public LispObject typeOf()
+    {
+        return Symbol.FILE_STREAM;
+    }
+
+    @Override
+    public LispObject classOf()
+    {
+        return BuiltInClass.FILE_STREAM;
+    }
+
+    @Override
+    public LispObject typep(LispObject typeSpecifier)
+    {
+        if (typeSpecifier == Symbol.FILE_STREAM)
+            return T;
+        if (typeSpecifier == BuiltInClass.FILE_STREAM)
+            return T;
+        return super.typep(typeSpecifier);
+    }
+
+    @Override
+    public void setExternalFormat(LispObject format) {
+        super.setExternalFormat(format);
+
+        if (racf != null)
+            // setExternalFormat also called before 'racf' is set up
+            racf.setEncoding(encoding);
+    }
+
+    public Pathname getPathname()
+    {
+        return pathname;
+    }
+
+    @Override
+    public LispObject fileLength()
+    {
+        final long length;
+        if (isOpen()) {
+            try {
+                length = racf.length();
+            }
+            catch (IOException e) {
+                error(new StreamError(this, e));
+                // Not reached.
+                return NIL;
+            }
+        } else {
+            String namestring = pathname.getNamestring();
+            if (namestring == null)
+                return error(new SimpleError("Pathname has no namestring: " +
+                                              pathname.princToString()));
+            File file = new File(namestring);
+            length = file.length(); // in 8-bit bytes
+        }
+        if (isCharacterStream)
+            return number(length);
+        // "For a binary file, the length is measured in units of the
+        // element type of the stream."
+        return number(length / bytesPerUnit);
+    }
+
+    @Override
+    protected boolean _charReady()
+    {
+        return true;
+    }
+
+    @Override
+    public void _clearInput()
+    {
+        try {
+            if (isInputStream) {
+                racf.position(racf.length());
+            } else {
+                streamNotInputStream();
+            }
+        }
+        catch (IOException e) {
+            error(new StreamError(this, e));
+        }
+    }
+
+    @Override
+    protected long _getFilePosition()
+    {
+        try {
+            long pos = racf.position();
+            return pos / bytesPerUnit;
+        }
+        catch (IOException e) {
+            error(new StreamError(this, e));
+            // Not reached.
+            return -1;
+        }
+    }
+
+    @Override
+    protected boolean _setFilePosition(LispObject arg)
+    {
+        try {
+            long pos = 0;
+            if (arg == Keyword.START)
+                pos = 0;
+            else if (arg == Keyword.END)
+                pos = racf.length();
+            else if (arg instanceof Fixnum)
+                pos = ((Fixnum) arg).value * bytesPerUnit;
+            else if (arg instanceof Bignum)
+                pos = ((Bignum) arg).longValue() * bytesPerUnit;
+            else
+                type_error(arg, Symbol.INTEGER);
+            racf.position(pos);
+        }
+        catch (IOException e) {
+            error(new StreamError(this, e));
+        }
+        return true;
+    }
+
+    @Override
+    public void _close()
+    {
+        try {
+            racf.close();
+            setOpen(false);
+        }
+        catch (IOException e) {
+            error(new StreamError(this, e));
+        }
+    }
+
+    @Override
+    public String printObject()
+    {
+        return unreadableString("FILE-STREAM");
+    }
+
+    // ### make-file-stream pathname element-type direction if-exists external-format => stream
+    private static final Primitive MAKE_FILE_STREAM =
+        new Primitive("make-file-stream", PACKAGE_SYS, true,
+                      "pathname element-type direction if-exists external-format")
+    {
+        @Override
+        public LispObject execute(LispObject first, LispObject second,
+                                  LispObject third, LispObject fourth,
+                                  LispObject fifth)
+
+        {
+            final Pathname pathname;
+            if (first instanceof Pathname) {
+                pathname = (Pathname) first;
+            }
+            else {
+                return type_error(first, Symbol.PATHNAME);
+            }
+            LispObject elementType = second;
+            LispObject direction = third;
+            LispObject ifExists = fourth;
+            LispObject externalFormat = fifth;
+            
+            if (direction != Keyword.INPUT && direction != Keyword.OUTPUT &&
+                direction != Keyword.IO)
+                error(new LispError("Direction must be :INPUT, :OUTPUT, or :IO."));
+
+            if (pathname.isJar())  {
+                if (direction != Keyword.INPUT) {
+                    error(new FileError("Only direction :INPUT is supported for jar files.", pathname));
+                }
+                try { 
+                    return new JarStream(pathname, 
+                                         elementType, direction, ifExists,
+                                         externalFormat);
+                } catch (IOException e) {
+                    return error(new StreamError(null, e));
+                }
+            } else if (pathname instanceof URLPathname
+                       && !(URLPathname.isFile(pathname))) {
+                if (direction != Keyword.INPUT) {
+                    error(new FileError("Only direction :INPUT is supported for URLs.", pathname));
+                }
+                try { 
+                    return new URLStream(pathname,
+                                         elementType, direction, ifExists,
+                                         externalFormat);
+                } catch (IOException e) {
+                    return error(new StreamError(null, e));
+                }
+            } else {
+                try {
+                    return new FileStream(pathname, 
+                                          elementType, direction, ifExists,
+                                          externalFormat);
+                }
+                catch (FileNotFoundException e) {
+                    return NIL;
+                }
+                catch (IOException e) {
+                    return error(new StreamError(null, e));
+                }
+            }
+        }
+    };
+}

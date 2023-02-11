@@ -1,146 +1,140 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public class Profiler
-/*     */ {
-/*  40 */   static int sleep = 1;
-/*     */ 
-/*     */ 
-/*     */   
-/*  44 */   public static final Primitive _START_PROFILER = new Primitive("%start-profiler", Lisp.PACKAGE_PROF, false)
-/*     */     {
-/*     */ 
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject first, LispObject second)
-/*     */       {
-/*  51 */         final LispThread thread = LispThread.currentThread();
-/*  52 */         Stream out = Lisp.getStandardOutput();
-/*  53 */         out.freshLine();
-/*  54 */         if (Lisp.profiling) {
-/*  55 */           out._writeLine("; Profiler already started.");
-/*     */         } else {
-/*  57 */           if (first == Keyword.TIME) {
-/*  58 */             Lisp.sampling = true;
-/*  59 */           } else if (first == Keyword.COUNT_ONLY) {
-/*  60 */             Lisp.sampling = false;
-/*     */           } else {
-/*  62 */             return Lisp.error(new LispError("%START-PROFILER: argument must be either :TIME or :COUNT-ONLY"));
-/*     */           } 
-/*  64 */           Package[] packages = Packages.getAllPackages();
-/*  65 */           for (int i = 0; i < packages.length; i++) {
-/*  66 */             Package pkg = packages[i];
-/*  67 */             Symbol[] symbols = pkg.symbols();
-/*  68 */             for (int j = 0; j < symbols.length; j++) {
-/*  69 */               Symbol symbol = symbols[j];
-/*  70 */               LispObject object = symbol.getSymbolFunction();
-/*  71 */               if (object != null) {
-/*  72 */                 object.setCallCount(0);
-/*  73 */                 object.setHotCount(0);
-/*  74 */                 LispObject methods = null;
-/*  75 */                 if (object.typep(Symbol.STANDARD_GENERIC_FUNCTION) != Lisp.NIL)
-/*     */                 {
-/*  77 */                   methods = Symbol.GENERIC_FUNCTION_METHODS.execute(object);
-/*     */                 }
-/*  79 */                 while (methods != null && methods != Lisp.NIL) {
-/*  80 */                   LispObject method = methods.car();
-/*     */                   
-/*  82 */                   LispObject function = Symbol.METHOD_FUNCTION.execute(method);
-/*  83 */                   if (function != Lisp.NIL) {
-/*  84 */                     function.setCallCount(0);
-/*  85 */                     function.setHotCount(0);
-/*  86 */                     methods = methods.cdr();
-/*     */                   } 
-/*     */                 } 
-/*     */               } 
-/*     */             } 
-/*     */           } 
-/*  92 */           if (Lisp.sampling) {
-/*  93 */             Profiler.sleep = Fixnum.getValue(second);
-/*  94 */             Runnable profilerRunnable = new Runnable()
-/*     */               {
-/*     */                 public void run() {
-/*  97 */                   Lisp.profiling = true;
-/*  98 */                   while (Lisp.profiling) {
-/*     */                     try {
-/* 100 */                       thread.incrementCallCounts();
-/* 101 */                       Thread.sleep(Profiler.sleep);
-/*     */                     
-/*     */                     }
-/* 104 */                     catch (InterruptedException e) {
-/* 105 */                       Debug.trace(e);
-/*     */                     } 
-/*     */                   } 
-/*     */                 }
-/*     */               };
-/* 110 */             Thread t = new Thread(profilerRunnable);
-/*     */ 
-/*     */             
-/* 113 */             t.setPriority(10);
-/* 114 */             (new Thread(profilerRunnable)).start();
-/*     */           } 
-/* 116 */           out._writeLine("; Profiler started.");
-/*     */         } 
-/* 118 */         return thread.nothing();
-/*     */       }
-/*     */     };
-/*     */ 
-/*     */   
-/* 123 */   public static final Primitive STOP_PROFILER = new Primitive("stop-profiler", Lisp.PACKAGE_PROF, true)
-/*     */     {
-/*     */ 
-/*     */       
-/*     */       public LispObject execute()
-/*     */       {
-/* 129 */         Stream out = Lisp.getStandardOutput();
-/* 130 */         out.freshLine();
-/* 131 */         if (Lisp.profiling) {
-/* 132 */           Lisp.profiling = false;
-/* 133 */           out._writeLine("; Profiler stopped.");
-/*     */         } else {
-/* 135 */           out._writeLine("; Profiler was not started.");
-/* 136 */         }  out._finishOutput();
-/* 137 */         return LispThread.currentThread().nothing();
-/*     */       }
-/*     */     };
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/Profiler.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * Profiler.java
+ *
+ * Copyright (C) 2003-2005 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+public class Profiler
+{
+    static int sleep = 1;
+
+    // ### %start-profiler
+    // %start-profiler type granularity
+    public static final Primitive _START_PROFILER =
+        new Primitive("%start-profiler", PACKAGE_PROF, false)
+    {
+        @Override
+        public LispObject execute(LispObject first, LispObject second)
+
+        {
+            final LispThread thread = LispThread.currentThread();
+            Stream out = getStandardOutput();
+            out.freshLine();
+            if (profiling) {
+                out._writeLine("; Profiler already started.");
+            } else {
+                if (first == Keyword.TIME)
+                    sampling = true;
+                else if (first == Keyword.COUNT_ONLY)
+                    sampling = false;
+                else
+                    return error(new LispError(
+                        "%START-PROFILER: argument must be either :TIME or :COUNT-ONLY"));
+                Package[] packages = Packages.getAllPackages();
+                for (int i = 0; i < packages.length; i++) {
+                    Package pkg = packages[i];
+                    Symbol[] symbols = pkg.symbols();
+                    for (int j = 0; j < symbols.length; j++) {
+                        Symbol symbol = symbols[j];
+                        LispObject object = symbol.getSymbolFunction();
+                        if (object != null) {
+                            object.setCallCount(0);
+                            object.setHotCount(0);
+                            LispObject methods = null;
+                            if (object.typep(Symbol.STANDARD_GENERIC_FUNCTION) != NIL) {
+                                methods =
+                                    Symbol.GENERIC_FUNCTION_METHODS.execute(object);
+                            }
+                            while (methods != null && methods != NIL) {
+                                LispObject method = methods.car();
+                                LispObject function =
+                                  Symbol.METHOD_FUNCTION.execute(method);
+                                if (function != NIL) {
+                                  function.setCallCount(0);
+                                  function.setHotCount(0);
+                                  methods = methods.cdr();
+                                }
+                            }
+                        }
+                    }
+                }
+                if (sampling) {
+                    sleep = Fixnum.getValue(second);
+                    Runnable profilerRunnable = new Runnable() {
+                        public void run()
+                        {
+                            profiling = true; // make sure we don't fall through on the first iteration
+                            while (profiling) {
+                                try {
+                                    thread.incrementCallCounts();
+                                    Thread.sleep(sleep);
+                                }
+                                //### FIXME exception
+                                catch (InterruptedException e) {
+                                    Debug.trace(e);
+                                }
+                            }
+                        }
+                    };
+                    Thread t = new Thread(profilerRunnable);
+                    // Maximum priority doesn't hurt:
+                    // we're sleeping all the time anyway
+                    t.setPriority(Thread.MAX_PRIORITY);
+                    new Thread(profilerRunnable).start();
+                }
+                out._writeLine("; Profiler started.");
+            }
+            return thread.nothing();
+        }
+    };
+
+    // ### stop-profiler
+    public static final Primitive STOP_PROFILER =
+        new Primitive("stop-profiler", PACKAGE_PROF, true)
+    {
+        @Override
+        public LispObject execute()
+        {
+            Stream out = getStandardOutput();
+            out.freshLine();
+            if (profiling) {
+                profiling = false;
+                out._writeLine("; Profiler stopped.");
+            } else
+                out._writeLine("; Profiler was not started.");
+            out._finishOutput();
+            return LispThread.currentThread().nothing();
+        }
+    };
+}

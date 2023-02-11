@@ -1,257 +1,251 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public class CompiledClosure
-/*     */   extends Closure
-/*     */   implements Cloneable
-/*     */ {
-/*     */   public ClosureBinding[] ctx;
-/*     */   
-/*     */   public CompiledClosure(ArgumentListProcessor arglist) {
-/*  46 */     super(arglist);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public CompiledClosure(LispObject lambdaList) {
-/*  52 */     super(Lisp.list(Symbol.LAMBDA, new LispObject[] { lambdaList }), null);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public final CompiledClosure setContext(ClosureBinding[] context) {
-/*  57 */     this.ctx = context;
-/*  58 */     return this;
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public final CompiledClosure dup() {
-/*  63 */     CompiledClosure result = null;
-/*     */     try {
-/*  65 */       result = (CompiledClosure)clone();
-/*  66 */     } catch (CloneNotSupportedException cloneNotSupportedException) {}
-/*     */     
-/*  68 */     return result;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typep(LispObject typeSpecifier) {
-/*  74 */     if (typeSpecifier == Symbol.COMPILED_FUNCTION)
-/*  75 */       return Lisp.T; 
-/*  76 */     return super.typep(typeSpecifier);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   private final LispObject notImplemented() {
-/*  81 */     return Lisp.error(new WrongNumberOfArgumentsException(this));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute() {
-/*  88 */     LispObject[] args = new LispObject[0];
-/*  89 */     return execute(args);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first) {
-/*  96 */     LispObject[] args = new LispObject[1];
-/*  97 */     args[0] = first;
-/*  98 */     return execute(args);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second) {
-/* 106 */     LispObject[] args = new LispObject[2];
-/* 107 */     args[0] = first;
-/* 108 */     args[1] = second;
-/* 109 */     return execute(args);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second, LispObject third) {
-/* 117 */     LispObject[] args = new LispObject[3];
-/* 118 */     args[0] = first;
-/* 119 */     args[1] = second;
-/* 120 */     args[2] = third;
-/* 121 */     return execute(args);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second, LispObject third, LispObject fourth) {
-/* 130 */     LispObject[] args = new LispObject[4];
-/* 131 */     args[0] = first;
-/* 132 */     args[1] = second;
-/* 133 */     args[2] = third;
-/* 134 */     args[3] = fourth;
-/* 135 */     return execute(args);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second, LispObject third, LispObject fourth, LispObject fifth) {
-/* 144 */     LispObject[] args = new LispObject[5];
-/* 145 */     args[0] = first;
-/* 146 */     args[1] = second;
-/* 147 */     args[2] = third;
-/* 148 */     args[3] = fourth;
-/* 149 */     args[4] = fifth;
-/* 150 */     return execute(args);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second, LispObject third, LispObject fourth, LispObject fifth, LispObject sixth) {
-/* 160 */     LispObject[] args = new LispObject[6];
-/* 161 */     args[0] = first;
-/* 162 */     args[1] = second;
-/* 163 */     args[2] = third;
-/* 164 */     args[3] = fourth;
-/* 165 */     args[4] = fifth;
-/* 166 */     args[5] = sixth;
-/* 167 */     return execute(args);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second, LispObject third, LispObject fourth, LispObject fifth, LispObject sixth, LispObject seventh) {
-/* 177 */     LispObject[] args = new LispObject[7];
-/* 178 */     args[0] = first;
-/* 179 */     args[1] = second;
-/* 180 */     args[2] = third;
-/* 181 */     args[3] = fourth;
-/* 182 */     args[4] = fifth;
-/* 183 */     args[5] = sixth;
-/* 184 */     args[6] = seventh;
-/* 185 */     return execute(args);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second, LispObject third, LispObject fourth, LispObject fifth, LispObject sixth, LispObject seventh, LispObject eighth) {
-/* 196 */     LispObject[] args = new LispObject[8];
-/* 197 */     args[0] = first;
-/* 198 */     args[1] = second;
-/* 199 */     args[2] = third;
-/* 200 */     args[3] = fourth;
-/* 201 */     args[4] = fifth;
-/* 202 */     args[5] = sixth;
-/* 203 */     args[6] = seventh;
-/* 204 */     args[7] = eighth;
-/* 205 */     return execute(args);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject[] args) {
-/* 212 */     return notImplemented();
-/*     */   }
-/*     */ 
-/*     */   
-/* 216 */   private static final Primitive LOAD_COMPILED_FUNCTION = new Primitive("load-compiled-function", Lisp.PACKAGE_SYS, true, "source")
-/*     */     {
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject arg)
-/*     */       {
-/* 222 */         String namestring = null;
-/* 223 */         if (arg instanceof Pathname) {
-/* 224 */           namestring = ((Pathname)arg).getNamestring();
-/* 225 */         } else if (arg instanceof AbstractString) {
-/* 226 */           namestring = arg.getStringValue();
-/* 227 */         }  if (arg instanceof JavaObject) {
-/*     */           try {
-/* 229 */             return Lisp.loadClassBytes((byte[])arg.javaInstance(byte[].class));
-/* 230 */           } catch (Throwable t) {
-/* 231 */             Debug.trace(t);
-/* 232 */             return Lisp.error(new LispError("Unable to load " + arg.princToString()));
-/*     */           } 
-/*     */         }
-/* 235 */         return Lisp.error(new LispError("Unable to load " + arg.princToString()));
-/*     */       }
-/*     */     };
-/*     */ 
-/*     */   
-/* 240 */   private static final Primitive VARLIST = new Primitive("varlist", Lisp.PACKAGE_SYS, false)
-/*     */     {
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject arg)
-/*     */       {
-/* 246 */         if (arg instanceof Closure)
-/* 247 */           return ((Closure)arg).getVariableList(); 
-/* 248 */         return Lisp.type_error(arg, Symbol.COMPILED_FUNCTION);
-/*     */       }
-/*     */     };
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/CompiledClosure.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * CompiledClosure.java
+ *
+ * Copyright (C) 2004-2005 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+public class CompiledClosure extends Closure
+        implements Cloneable
+{
+
+  public ClosureBinding[] ctx;
+
+  public CompiledClosure(ArgumentListProcessor arglist)
+  {
+      super(arglist);
+  }
+
+
+  public CompiledClosure(LispObject lambdaList)
+  {
+    super(list(Symbol.LAMBDA, lambdaList), null);
+  }
+
+  final public CompiledClosure setContext(ClosureBinding[] context)
+  {
+    ctx = context;
+    return this;
+  }
+
+  final public CompiledClosure dup()
+  {
+      CompiledClosure result = null;
+      try {
+          result = (CompiledClosure)super.clone();
+      } catch (CloneNotSupportedException e) {
+      }
+      return result;
+  }
+
+  @Override
+  public LispObject typep(LispObject typeSpecifier)
+  {
+    if (typeSpecifier == Symbol.COMPILED_FUNCTION)
+      return T;
+    return super.typep(typeSpecifier);
+  }
+
+  private final LispObject notImplemented()
+  {
+    return error(new WrongNumberOfArgumentsException(this));
+  }
+
+
+  // Zero args.
+  public LispObject execute()
+  {
+    LispObject[] args = new LispObject[0];
+    return execute(args);
+  }
+
+  // One arg.
+  public LispObject execute( LispObject first)
+
+  {
+    LispObject[] args = new LispObject[1];
+    args[0] = first;
+    return execute(args);
+  }
+
+  // Two args.
+  public LispObject execute( LispObject first,
+                            LispObject second)
+
+  {
+    LispObject[] args = new LispObject[2];
+    args[0] = first;
+    args[1] = second;
+    return execute(args);
+  }
+
+  // Three args.
+  public LispObject execute( LispObject first,
+                            LispObject second, LispObject third)
+
+  {
+    LispObject[] args = new LispObject[3];
+    args[0] = first;
+    args[1] = second;
+    args[2] = third;
+    return execute(args);
+  }
+
+  // Four args.
+  public LispObject execute( LispObject first,
+                            LispObject second, LispObject third,
+                            LispObject fourth)
+
+  {
+    LispObject[] args = new LispObject[4];
+    args[0] = first;
+    args[1] = second;
+    args[2] = third;
+    args[3] = fourth;
+    return execute(args);
+  }
+
+  // Five args.
+  public LispObject execute( LispObject first,
+                            LispObject second, LispObject third,
+                            LispObject fourth, LispObject fifth)
+
+  {
+    LispObject[] args = new LispObject[5];
+    args[0] = first;
+    args[1] = second;
+    args[2] = third;
+    args[3] = fourth;
+    args[4] = fifth;
+    return execute(args);
+  }
+
+  // Six args.
+  public LispObject execute( LispObject first,
+                            LispObject second, LispObject third,
+                            LispObject fourth, LispObject fifth,
+                            LispObject sixth)
+
+  {
+    LispObject[] args = new LispObject[6];
+    args[0] = first;
+    args[1] = second;
+    args[2] = third;
+    args[3] = fourth;
+    args[4] = fifth;
+    args[5] = sixth;
+    return execute(args);
+  }
+
+  // Seven args.
+  public LispObject execute( LispObject first,
+                            LispObject second, LispObject third,
+                            LispObject fourth, LispObject fifth,
+                            LispObject sixth, LispObject seventh)
+
+  {
+    LispObject[] args = new LispObject[7];
+    args[0] = first;
+    args[1] = second;
+    args[2] = third;
+    args[3] = fourth;
+    args[4] = fifth;
+    args[5] = sixth;
+    args[6] = seventh;
+    return execute(args);
+  }
+
+  // Eight args.
+  public LispObject execute( LispObject first,
+                            LispObject second, LispObject third,
+                            LispObject fourth, LispObject fifth,
+                            LispObject sixth, LispObject seventh,
+                            LispObject eighth)
+
+  {
+    LispObject[] args = new LispObject[8];
+    args[0] = first;
+    args[1] = second;
+    args[2] = third;
+    args[3] = fourth;
+    args[4] = fifth;
+    args[5] = sixth;
+    args[6] = seventh;
+    args[7] = eighth;
+    return execute(args);
+  }
+
+  // Arg array.
+  public LispObject execute(LispObject[] args)
+
+  {
+    return notImplemented();
+  }
+
+  // ### load-compiled-function
+  private static final Primitive LOAD_COMPILED_FUNCTION =
+      new Primitive("load-compiled-function", PACKAGE_SYS, true, "source")
+  {
+    @Override
+    public LispObject execute(LispObject arg)
+    {
+      String namestring = null;
+      if (arg instanceof Pathname)
+        namestring = ((Pathname)arg).getNamestring();
+      else if (arg instanceof AbstractString)
+        namestring = arg.getStringValue();
+      if(arg instanceof JavaObject) {
+          try {
+              return loadClassBytes((byte[]) arg.javaInstance(byte[].class));
+          } catch(Throwable t) {
+              Debug.trace(t);
+              return error(new LispError("Unable to load " + arg.princToString()));
+          }
+      }
+      return error(new LispError("Unable to load " + arg.princToString()));
+    }
+  };
+
+  // ### varlist
+  private static final Primitive VARLIST =
+      new Primitive("varlist", PACKAGE_SYS, false)
+  {
+    @Override
+    public LispObject execute(LispObject arg)
+    {
+      if (arg instanceof Closure)
+        return ((Closure)arg).getVariableList();
+      return type_error(arg, Symbol.COMPILED_FUNCTION);
+    }
+  };
+}

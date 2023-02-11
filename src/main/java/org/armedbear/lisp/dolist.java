@@ -1,139 +1,133 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public final class dolist
-/*     */   extends SpecialOperator
-/*     */ {
-/*     */   private dolist() {
-/*  43 */     super(Symbol.DOLIST);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject args, Environment env) {
-/*  50 */     LispObject bodyForm = args.cdr();
-/*  51 */     args = args.car();
-/*  52 */     Symbol var = Lisp.checkSymbol(args.car());
-/*  53 */     LispObject listForm = args.cadr();
-/*  54 */     LispThread thread = LispThread.currentThread();
-/*  55 */     LispObject resultForm = args.cdr().cdr().car();
-/*  56 */     SpecialBindingsMark mark = thread.markSpecialBindings();
-/*     */     
-/*  58 */     LispObject bodyAndDecls = Lisp.parseBody(bodyForm, false);
-/*  59 */     LispObject specials = Lisp.parseSpecials(bodyAndDecls.NTH(1));
-/*  60 */     bodyForm = bodyAndDecls.car();
-/*     */     
-/*  62 */     LispObject blockId = new LispObject();
-/*  63 */     Environment ext = new Environment(env);
-/*  64 */     thread.envStack.push(ext);
-/*     */     try {
-/*     */       Object binding;
-/*  67 */       ext.addBlock(Lisp.NIL, blockId);
-/*     */       
-/*  69 */       LispObject list = Lisp.checkList(Lisp.eval(listForm, ext, thread));
-/*     */       
-/*  71 */       LispObject remaining = bodyForm;
-/*  72 */       LispObject localTags = Lisp.preprocessTagBody(bodyForm, ext);
-/*     */ 
-/*     */       
-/*  75 */       if (specials != Lisp.NIL && Lisp.memq(var, specials)) {
-/*     */         
-/*  77 */         thread.bindSpecial(var, null);
-/*  78 */         binding = thread.getSpecialBinding(var);
-/*  79 */         ext.declareSpecial(var);
-/*     */       }
-/*  81 */       else if (var.isSpecialVariable()) {
-/*     */         
-/*  83 */         thread.bindSpecial(var, null);
-/*  84 */         binding = thread.getSpecialBinding(var);
-/*     */       }
-/*     */       else {
-/*     */         
-/*  88 */         ext.bind(var, null);
-/*  89 */         binding = ext.getBinding(var);
-/*     */       } 
-/*  91 */       while (specials != Lisp.NIL) {
-/*     */         
-/*  93 */         ext.declareSpecial(Lisp.checkSymbol(specials.car()));
-/*  94 */         specials = specials.cdr();
-/*     */       } 
-/*  96 */       while (list != Lisp.NIL) {
-/*     */         
-/*  98 */         if (binding instanceof SpecialBinding) {
-/*  99 */           ((SpecialBinding)binding).value = list.car();
-/*     */         } else {
-/* 101 */           ((Binding)binding).value = list.car();
-/*     */         } 
-/* 103 */         Lisp.processTagBody(bodyForm, localTags, ext);
-/*     */         
-/* 105 */         list = list.cdr();
-/* 106 */         if (Lisp.interrupted)
-/* 107 */           Lisp.handleInterrupt(); 
-/*     */       } 
-/* 109 */       if (binding instanceof SpecialBinding) {
-/* 110 */         ((SpecialBinding)binding).value = Lisp.NIL;
-/*     */       } else {
-/* 112 */         ((Binding)binding).value = Lisp.NIL;
-/* 113 */       }  LispObject result = Lisp.eval(resultForm, ext, thread);
-/* 114 */       return result;
-/*     */     }
-/* 116 */     catch (Return ret) {
-/*     */       
-/* 118 */       if (ret.getBlock() == blockId)
-/*     */       {
-/* 120 */         return ret.getResult();
-/*     */       }
-/* 122 */       throw ret;
-/*     */     }
-/*     */     finally {
-/*     */       
-/* 126 */       while (thread.envStack.pop() != ext);
-/* 127 */       thread.resetSpecialBindings(mark);
-/* 128 */       ext.inactive = true;
-/*     */     } 
-/*     */   }
-/*     */   
-/* 132 */   private static final dolist DOLIST = new dolist();
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/dolist.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * dolist.java
+ *
+ * Copyright (C) 2003-2006 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+// ### dolist
+public final class dolist extends SpecialOperator
+{
+  private dolist()
+  {
+    super(Symbol.DOLIST);
+  }
+
+  @Override
+  public LispObject execute(LispObject args, Environment env)
+
+  {
+    LispObject bodyForm = args.cdr();
+    args = args.car();
+    Symbol var = checkSymbol(args.car());
+    LispObject listForm = args.cadr();
+    final LispThread thread = LispThread.currentThread();
+    LispObject resultForm = args.cdr().cdr().car();
+    final SpecialBindingsMark mark = thread.markSpecialBindings();
+    // Process declarations.
+    LispObject bodyAndDecls = parseBody(bodyForm, false);
+    LispObject specials = parseSpecials(bodyAndDecls.NTH(1));
+    bodyForm = bodyAndDecls.car();
+
+    LispObject blockId = new LispObject();
+    final Environment ext = new Environment(env);
+    thread.envStack.push(ext);
+    try
+      { // Implicit block.
+        ext.addBlock(NIL, blockId);
+        // Evaluate the list form.
+        LispObject list = checkList(eval(listForm, ext, thread));
+        // Look for tags.
+        LispObject remaining = bodyForm;
+        LispObject localTags = preprocessTagBody(bodyForm, ext);
+
+        final Object binding;
+        if (specials != NIL && memq(var, specials))
+          {
+            thread.bindSpecial(var, null);
+            binding = thread.getSpecialBinding(var);
+            ext.declareSpecial(var);
+          }
+        else if (var.isSpecialVariable())
+          {
+            thread.bindSpecial(var, null);
+            binding = thread.getSpecialBinding(var);
+          }
+        else
+          {
+            ext.bind(var, null);
+            binding = ext.getBinding(var);
+          }
+        while (specials != NIL)
+          {
+            ext.declareSpecial(checkSymbol(specials.car()));
+            specials = specials.cdr();
+          }
+        while (list != NIL)
+          {
+            if (binding instanceof SpecialBinding)
+              ((SpecialBinding)binding).value = list.car();
+            else
+              ((Binding)binding).value = list.car();
+
+            processTagBody(bodyForm, localTags, ext);
+
+            list = list.cdr();
+            if (interrupted)
+              handleInterrupt();
+          }
+        if (binding instanceof SpecialBinding)
+          ((SpecialBinding)binding).value = NIL;
+        else
+          ((Binding)binding).value = NIL;
+        LispObject result = eval(resultForm, ext, thread);
+        return result;
+      }
+    catch (Return ret)
+      {
+        if (ret.getBlock() == blockId)
+          {
+            return ret.getResult();
+          }
+        throw ret;
+      }
+    finally
+      {
+        while (thread.envStack.pop() != ext) {};
+        thread.resetSpecialBindings(mark);
+        ext.inactive = true;
+      }
+  }
+
+  private static final dolist DOLIST = new dolist();
+}

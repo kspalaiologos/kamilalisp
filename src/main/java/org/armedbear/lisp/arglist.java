@@ -1,134 +1,128 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public final class arglist
-/*     */ {
-/*     */   static final Operator getOperator(LispObject obj) {
-/*  43 */     if (obj instanceof Operator)
-/*  44 */       return (Operator)obj; 
-/*  45 */     if (obj instanceof Symbol) {
-/*  46 */       LispObject function = obj.getSymbolFunction();
-/*  47 */       if (function instanceof Autoload) {
-/*  48 */         Autoload autoload = (Autoload)function;
-/*  49 */         autoload.load();
-/*  50 */         function = autoload.getSymbol().getSymbolFunction();
-/*     */       } 
-/*  52 */       if (function instanceof Operator) {
-/*  53 */         Operator operator = (Operator)function;
-/*  54 */         if (operator.getLambdaList() != null)
-/*  55 */           return operator; 
-/*  56 */         LispObject other = Lisp.get(obj, Symbol.MACROEXPAND_MACRO, null);
-/*  57 */         if (other != null) {
-/*  58 */           return getOperator(other);
-/*     */         }
-/*  60 */         return null;
-/*     */       } 
-/*  62 */     } else if (obj instanceof Cons && obj.car() == Symbol.LAMBDA) {
-/*  63 */       return new Closure(obj, new Environment());
-/*  64 */     }  return null;
-/*     */   }
-/*     */ 
-/*     */   
-/*  68 */   private static final Primitive ARGLIST = new Primitive("arglist", Lisp.PACKAGE_EXT, true, "extended-function-designator")
-/*     */     {
-/*     */       public LispObject execute(LispObject arg)
-/*     */       {
-/*     */         LispObject value1, value2;
-/*     */         
-/*  74 */         LispThread thread = LispThread.currentThread();
-/*  75 */         Operator operator = arglist.getOperator(arg);
-/*  76 */         LispObject arglist = null;
-/*  77 */         if (operator != null) {
-/*  78 */           arglist = operator.getLambdaList();
-/*     */         }
-/*  80 */         if (arglist instanceof AbstractString) {
-/*  81 */           String s = arglist.getStringValue();
-/*     */           
-/*  83 */           s = "(" + s + ")";
-/*     */ 
-/*     */           
-/*  86 */           SpecialBindingsMark mark = thread.markSpecialBindings();
-/*  87 */           thread.bindSpecial(Symbol._PACKAGE_, Lisp.PACKAGE_EXT);
-/*     */           try {
-/*  89 */             arglist = Lisp.readObjectFromString(s);
-/*     */           } finally {
-/*     */             
-/*  92 */             thread.resetSpecialBindings(mark);
-/*     */           } 
-/*  94 */           operator.setLambdaList(arglist);
-/*     */         } 
-/*  96 */         if (arglist != null) {
-/*  97 */           value1 = arglist;
-/*  98 */           value2 = Lisp.T;
-/*     */         } else {
-/* 100 */           value1 = Lisp.NIL;
-/* 101 */           value2 = Lisp.NIL;
-/*     */         } 
-/* 103 */         return thread.setValues(value1, value2);
-/*     */       }
-/*     */     };
-/*     */ 
-/*     */   
-/* 108 */   private static final Primitive _SET_ARGLIST = new Primitive("%set-arglist", Lisp.PACKAGE_SYS, false)
-/*     */     {
-/*     */ 
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject first, LispObject second)
-/*     */       {
-/* 115 */         Operator operator = null;
-/* 116 */         if (first instanceof Operator) {
-/* 117 */           operator = (Operator)first;
-/* 118 */         } else if (first instanceof Symbol) {
-/* 119 */           LispObject function = first.getSymbolFunction();
-/* 120 */           if (function instanceof Operator)
-/* 121 */             operator = (Operator)function; 
-/*     */         } 
-/* 123 */         if (operator != null)
-/* 124 */           operator.setLambdaList(second); 
-/* 125 */         return second;
-/*     */       }
-/*     */     };
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/arglist.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * arglist.java
+ *
+ * Copyright (C) 2003-2005 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+public final class arglist
+{
+    static final Operator getOperator(LispObject obj)
+
+    {
+        if (obj instanceof Operator)
+            return (Operator) obj;
+        if (obj instanceof Symbol) {
+            LispObject function = obj.getSymbolFunction();
+            if (function instanceof Autoload) {
+                Autoload autoload = (Autoload) function;
+                autoload.load();
+                function = autoload.getSymbol().getSymbolFunction();
+            }
+            if (function instanceof Operator) {
+                Operator operator = (Operator) function;
+                if (operator.getLambdaList() != null)
+                    return operator;
+                LispObject other = get(obj, Symbol.MACROEXPAND_MACRO, null);
+                if (other != null)
+                    return getOperator(other);
+                else
+                    return null;
+            }
+        } else if (obj instanceof Cons && obj.car() == Symbol.LAMBDA)
+            return new Closure(obj, new Environment());
+        return null;
+    }
+
+    // ### arglist
+    private static final Primitive ARGLIST =
+        new Primitive("arglist", PACKAGE_EXT, true, "extended-function-designator")
+    {
+        @Override
+        public LispObject execute(LispObject arg)
+        {
+            LispThread thread = LispThread.currentThread();
+            Operator operator = getOperator(arg);
+            LispObject arglist = null;
+            if (operator != null)
+                arglist = operator.getLambdaList();
+            final LispObject value1, value2;
+            if (arglist instanceof AbstractString) {
+                String s = arglist.getStringValue();
+                // Give the string list syntax.
+                s = "(" + s + ")";
+                // Bind *PACKAGE* so we use the EXT package if we need
+                // to intern any symbols.
+                final SpecialBindingsMark mark = thread.markSpecialBindings();
+                thread.bindSpecial(Symbol._PACKAGE_, PACKAGE_EXT);
+                try {
+                    arglist = readObjectFromString(s);
+                }
+                finally {
+                    thread.resetSpecialBindings(mark);
+                }
+                operator.setLambdaList(arglist);
+            }
+            if (arglist != null) {
+                value1 = arglist;
+                value2 = T;
+            } else {
+                value1 = NIL;
+                value2 = NIL;
+            }
+            return thread.setValues(value1, value2);
+        }
+    };
+
+    // ### %set-arglist
+    private static final Primitive _SET_ARGLIST =
+        new Primitive("%set-arglist", PACKAGE_SYS, false)
+    {
+        @Override
+        public LispObject execute(LispObject first, LispObject second)
+
+        {
+            Operator operator = null;
+            if (first instanceof Operator) {
+                operator = (Operator) first;
+            } else if (first instanceof Symbol) {
+                LispObject function = first.getSymbolFunction();
+                if (function instanceof Operator)
+                    operator = (Operator) function;
+            }
+            if (operator != null)
+                operator.setLambdaList(second);
+            return second;
+        }
+    };
+}

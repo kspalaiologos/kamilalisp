@@ -1,172 +1,166 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public class LispStackFrame
-/*     */   extends StackFrame
-/*     */ {
-/*     */   public final LispObject operator;
-/*     */   private final LispObject[] args;
-/*     */   public LispThread thread;
-/*     */   
-/*     */   private static final class UnavailableArgument
-/*     */     extends LispObject
-/*     */   {
-/*     */     public String printObject() {
-/*  49 */       return unreadableString("unavailable arg", false);
-/*     */     }
-/*     */   }
-/*     */   
-/*  53 */   private static final LispObject UNAVAILABLE_ARG = new UnavailableArgument();
-/*     */ 
-/*     */   
-/*     */   public LispStackFrame(Object[] stack, int framePos, int numArgs) {
-/*  57 */     this.operator = (LispObject)stack[framePos];
-/*  58 */     this.args = new LispObject[numArgs];
-/*  59 */     for (int i = 0; i < numArgs; i++)
-/*     */     {
-/*  61 */       this.args[i] = (LispObject)stack[framePos + 1 + i];
-/*     */     }
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public LispObject typeOf() {
-/*  67 */     return Symbol.LISP_STACK_FRAME;
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public LispObject classOf() {
-/*  72 */     return BuiltInClass.LISP_STACK_FRAME;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public String printObject() {
-/*  78 */     String result = "";
-/*  79 */     String LISP_STACK_FRAME = "LISP-STACK-FRAME";
-/*     */     try {
-/*  81 */       result = unreadableString("LISP-STACK-FRAME " + toLispList().printObject());
-/*  82 */     } catch (Throwable t) {
-/*  83 */       Debug.trace("Serious printing error: ");
-/*  84 */       Debug.trace(t);
-/*  85 */       result = unreadableString("LISP-STACK-FRAME");
-/*     */     } 
-/*  87 */     return result;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typep(LispObject typeSpecifier) {
-/*  94 */     if (typeSpecifier == Symbol.LISP_STACK_FRAME)
-/*  95 */       return Lisp.T; 
-/*  96 */     if (typeSpecifier == BuiltInClass.LISP_STACK_FRAME)
-/*  97 */       return Lisp.T; 
-/*  98 */     return super.typep(typeSpecifier);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject toLispList() {
-/* 104 */     LispObject result = argsToLispList();
-/* 105 */     if (this.operator instanceof Operator) {
-/* 106 */       LispObject lambdaName = ((Operator)this.operator).getLambdaName();
-/* 107 */       if (lambdaName != null && lambdaName != Lisp.NIL)
-/* 108 */         return result.push(lambdaName); 
-/*     */     } 
-/* 110 */     return result.push(this.operator);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   private LispObject argsToLispList() {
-/* 116 */     LispObject result = Lisp.NIL;
-/* 117 */     for (int i = 0; i < this.args.length; i++) {
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */       
-/* 123 */       if (this.args[i] == null)
-/* 124 */       { result = result.push(UNAVAILABLE_ARG); }
-/*     */       else
-/* 126 */       { result = result.push(this.args[i]); } 
-/* 127 */     }  return result.nreverse();
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public SimpleString toLispString() {
-/*     */     String result;
-/*     */     try {
-/* 135 */       result = toLispList().printObject();
-/* 136 */     } catch (Throwable t) {
-/* 137 */       Debug.trace("Serious printing error: ");
-/* 138 */       Debug.trace(t);
-/* 139 */       result = unreadableString("LISP-STACK-FRAME");
-/*     */     } 
-/* 141 */     return new SimpleString(result);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public int getNumArgs() {
-/* 146 */     return this.args.length;
-/*     */   }
-/*     */   
-/*     */   public LispObject getOperator() {
-/* 150 */     return this.operator;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject getParts() {
-/* 157 */     LispObject result = Lisp.NIL;
-/* 158 */     result = result.push(new Cons("OPERATOR", getOperator()));
-/* 159 */     LispObject args = argsToLispList();
-/* 160 */     if (args != Lisp.NIL) {
-/* 161 */       result = result.push(new Cons("ARGS", args));
-/*     */     }
-/*     */     
-/* 164 */     return result.nreverse();
-/*     */   }
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/LispStackFrame.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * LispStackFrame.java
+ *
+ * Copyright (C) 2009 Mark Evenson
+ * $Id: LispStackFrame.java 14572 2013-08-10 08:24:46Z mevenson $
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+public class LispStackFrame 
+  extends StackFrame
+{
+  public final LispObject operator;
+  private final LispObject[] args;
+  public LispThread thread;
+  private final static class UnavailableArgument extends LispObject 
+  {
+    public UnavailableArgument () { }
+    @Override
+    public String printObject() { 
+      return unreadableString("unavailable arg", false); 
+    }
+  }
+
+  private final static LispObject UNAVAILABLE_ARG = new UnavailableArgument();
+
+  public LispStackFrame(Object[] stack, int framePos, int numArgs)
+  {
+    operator = (LispObject) stack[framePos];
+    args = new LispObject[numArgs];
+    for (int i = 0; i < numArgs; i++) 
+    {
+      args[i] = (LispObject) stack[framePos + 1 + i];
+    }
+  }
+
+   @Override
+   public LispObject typeOf() { 
+     return Symbol.LISP_STACK_FRAME; 
+   }
+  
+   @Override
+   public LispObject classOf() { 
+     return BuiltInClass.LISP_STACK_FRAME; 
+   }
+
+   @Override
+   public String printObject() 
+   { 
+     String result = "";
+     final String LISP_STACK_FRAME = "LISP-STACK-FRAME";
+     try {
+       result = unreadableString(LISP_STACK_FRAME + " " + toLispList().printObject());
+     } catch (Throwable t) { // error while printing stack
+       Debug.trace("Serious printing error: ");
+       Debug.trace(t);
+       result = unreadableString(LISP_STACK_FRAME);
+     }
+     return result;
+   }
+
+  @Override
+  public LispObject typep(LispObject typeSpecifier) 
+
+  {
+    if (typeSpecifier == Symbol.LISP_STACK_FRAME)
+      return T;
+    if (typeSpecifier == BuiltInClass.LISP_STACK_FRAME)
+      return T;
+    return super.typep(typeSpecifier);
+   }
+
+  public LispObject toLispList() 
+
+  {
+    LispObject result = argsToLispList();
+    if (operator instanceof Operator) {
+      LispObject lambdaName = ((Operator)operator).getLambdaName();
+      if (lambdaName != null && lambdaName != Lisp.NIL)
+        return result.push(lambdaName);
+    }
+    return result.push(operator);
+  }
+
+  private LispObject argsToLispList()
+
+  {
+    LispObject result = Lisp.NIL;
+    for (int i = 0; i < args.length; i++)
+      // `args' come here from LispThread.execute. I don't know
+      // how it comes that some callers pass NULL ptrs around but
+      // we better do not create conses with their CAR being NULL;
+      // it'll horribly break printing such a cons; and probably
+      // other bad things may happen, too. --TCR, 2009-09-17.
+      if (args[i] == null)
+        result = result.push(UNAVAILABLE_ARG);
+      else
+        result = result.push(args[i]);
+    return result.nreverse();
+  }
+
+  public SimpleString toLispString() 
+
+  {
+    String result;
+    try {
+      result = this.toLispList().printObject();
+    } catch (Throwable t) { // error while printing stack
+      Debug.trace("Serious printing error: ");
+      Debug.trace(t);
+      result = unreadableString("LISP-STACK-FRAME");
+    }
+    return new SimpleString(result);
+  }
+
+  public int getNumArgs()
+  {
+    return args.length;
+  }
+
+  public LispObject getOperator() {
+    return operator;
+  }
+
+  @Override 
+  public LispObject getParts() 
+
+  {
+    LispObject result = NIL;
+    result = result.push(new Cons("OPERATOR", getOperator()));
+    LispObject args = argsToLispList();
+    if (args != NIL) {
+      result = result.push(new Cons("ARGS", args));
+    }
+                         
+    return result.nreverse();
+  }
+}

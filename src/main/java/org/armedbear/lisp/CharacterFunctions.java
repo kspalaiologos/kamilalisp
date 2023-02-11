@@ -1,373 +1,367 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public final class CharacterFunctions
-/*     */ {
-/*  41 */   private static final Primitive CHAR_EQUALS = new Primitive("char=", "&rest characters")
-/*     */     {
-/*     */ 
-/*     */       
-/*     */       public LispObject execute()
-/*     */       {
-/*  47 */         return Lisp.error(new WrongNumberOfArgumentsException(this, 1, -1));
-/*     */       }
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject arg) {
-/*  52 */         if (arg instanceof LispCharacter)
-/*  53 */           return Lisp.T; 
-/*  54 */         return Lisp.type_error(arg, Symbol.CHARACTER);
-/*     */       }
-/*     */ 
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject first, LispObject second) {
-/*  60 */         return (LispCharacter.getValue(first) == LispCharacter.getValue(second)) ? Lisp.T : Lisp.NIL;
-/*     */       }
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject[] array) {
-/*  65 */         int length = array.length;
-/*  66 */         char c0 = LispCharacter.getValue(array[0]);
-/*  67 */         for (int i = 1; i < length; i++) {
-/*  68 */           if (c0 != LispCharacter.getValue(array[i]))
-/*  69 */             return Lisp.NIL; 
-/*     */         } 
-/*  71 */         return Lisp.T;
-/*     */       }
-/*     */     };
-/*     */ 
-/*     */   
-/*  76 */   private static final Primitive CHAR_EQUAL = new Primitive("char-equal", "&rest characters")
-/*     */     {
-/*     */ 
-/*     */       
-/*     */       public LispObject execute()
-/*     */       {
-/*  82 */         return Lisp.error(new WrongNumberOfArgumentsException(this, 1, -1));
-/*     */       }
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject arg) {
-/*  87 */         if (arg instanceof LispCharacter)
-/*  88 */           return Lisp.T; 
-/*  89 */         return Lisp.type_error(arg, Symbol.CHARACTER);
-/*     */       }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject first, LispObject second) {
-/*  96 */         char c1 = LispCharacter.getValue(first);
-/*  97 */         char c2 = LispCharacter.getValue(second);
-/*  98 */         if (c1 == c2)
-/*  99 */           return Lisp.T; 
-/* 100 */         if (LispCharacter.toUpperCase(c1) == LispCharacter.toUpperCase(c2))
-/* 101 */           return Lisp.T; 
-/* 102 */         if (LispCharacter.toLowerCase(c1) == LispCharacter.toLowerCase(c2))
-/* 103 */           return Lisp.T; 
-/* 104 */         return Lisp.NIL;
-/*     */       }
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject[] array) {
-/* 109 */         int length = array.length;
-/* 110 */         char c0 = LispCharacter.getValue(array[0]);
-/* 111 */         for (int i = 1; i < length; i++) {
-/* 112 */           char c = LispCharacter.getValue(array[i]);
-/* 113 */           if (c0 != c)
-/*     */           {
-/* 115 */             if (LispCharacter.toUpperCase(c0) != LispCharacter.toUpperCase(c))
-/*     */             {
-/* 117 */               if (LispCharacter.toLowerCase(c0) != LispCharacter.toLowerCase(c))
-/*     */               {
-/* 119 */                 return Lisp.NIL; }  }  } 
-/*     */         } 
-/* 121 */         return Lisp.T;
-/*     */       }
-/*     */     };
-/*     */ 
-/*     */   
-/* 126 */   private static final Primitive CHAR_GREATERP = new Primitive("char-greaterp", "&rest characters")
-/*     */     {
-/*     */ 
-/*     */       
-/*     */       public LispObject execute()
-/*     */       {
-/* 132 */         return Lisp.error(new WrongNumberOfArgumentsException(this, 1, -1));
-/*     */       }
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject arg) {
-/* 137 */         if (arg instanceof LispCharacter)
-/* 138 */           return Lisp.T; 
-/* 139 */         return Lisp.type_error(arg, Symbol.CHARACTER);
-/*     */       }
-/*     */ 
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject first, LispObject second) {
-/* 145 */         char c1 = LispCharacter.toUpperCase(LispCharacter.getValue(first));
-/* 146 */         char c2 = LispCharacter.toUpperCase(LispCharacter.getValue(second));
-/* 147 */         return (c1 > c2) ? Lisp.T : Lisp.NIL;
-/*     */       }
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject[] array) {
-/* 152 */         int length = array.length;
-/* 153 */         char[] chars = new char[length]; int i;
-/* 154 */         for (i = 0; i < length; i++)
-/* 155 */           chars[i] = LispCharacter.toUpperCase(LispCharacter.getValue(array[i])); 
-/* 156 */         for (i = 1; i < length; i++) {
-/* 157 */           if (chars[i - 1] <= chars[i])
-/* 158 */             return Lisp.NIL; 
-/*     */         } 
-/* 160 */         return Lisp.T;
-/*     */       }
-/*     */     };
-/*     */ 
-/*     */   
-/* 165 */   private static final Primitive CHAR_NOT_GREATERP = new Primitive("char-not-greaterp", "&rest characters")
-/*     */     {
-/*     */ 
-/*     */       
-/*     */       public LispObject execute()
-/*     */       {
-/* 171 */         return Lisp.error(new WrongNumberOfArgumentsException(this, 1, -1));
-/*     */       }
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject arg) {
-/* 176 */         if (arg instanceof LispCharacter)
-/* 177 */           return Lisp.T; 
-/* 178 */         return Lisp.type_error(arg, Symbol.CHARACTER);
-/*     */       }
-/*     */ 
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject first, LispObject second) {
-/* 184 */         char c1 = LispCharacter.toUpperCase(LispCharacter.getValue(first));
-/* 185 */         char c2 = LispCharacter.toUpperCase(LispCharacter.getValue(second));
-/* 186 */         return (c1 <= c2) ? Lisp.T : Lisp.NIL;
-/*     */       }
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject[] array) {
-/* 191 */         int length = array.length;
-/* 192 */         char[] chars = new char[length]; int i;
-/* 193 */         for (i = 0; i < length; i++)
-/* 194 */           chars[i] = LispCharacter.toUpperCase(LispCharacter.getValue(array[i])); 
-/* 195 */         for (i = 1; i < length; i++) {
-/* 196 */           if (chars[i] < chars[i - 1])
-/* 197 */             return Lisp.NIL; 
-/*     */         } 
-/* 199 */         return Lisp.T;
-/*     */       }
-/*     */     };
-/*     */ 
-/*     */   
-/* 204 */   private static final Primitive CHAR_LESS_THAN = new Primitive("char<", "&rest characters")
-/*     */     {
-/*     */ 
-/*     */       
-/*     */       public LispObject execute()
-/*     */       {
-/* 210 */         return Lisp.error(new WrongNumberOfArgumentsException(this, 1, -1));
-/*     */       }
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject arg) {
-/* 215 */         if (arg instanceof LispCharacter)
-/* 216 */           return Lisp.T; 
-/* 217 */         return Lisp.type_error(arg, Symbol.CHARACTER);
-/*     */       }
-/*     */ 
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject first, LispObject second) {
-/* 223 */         return (LispCharacter.getValue(first) < LispCharacter.getValue(second)) ? Lisp.T : Lisp.NIL;
-/*     */       }
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject[] args) {
-/* 228 */         int length = args.length;
-/* 229 */         char[] chars = new char[length]; int i;
-/* 230 */         for (i = 0; i < length; i++) {
-/* 231 */           chars[i] = LispCharacter.getValue(args[i]);
-/*     */         }
-/* 233 */         for (i = 1; i < length; i++) {
-/* 234 */           if (chars[i - 1] >= chars[i])
-/* 235 */             return Lisp.NIL; 
-/*     */         } 
-/* 237 */         return Lisp.T;
-/*     */       }
-/*     */     };
-/*     */ 
-/*     */   
-/* 242 */   private static final Primitive CHAR_LE = new Primitive("char<=", "&rest characters")
-/*     */     {
-/*     */ 
-/*     */       
-/*     */       public LispObject execute()
-/*     */       {
-/* 248 */         return Lisp.error(new WrongNumberOfArgumentsException(this, 1, -1));
-/*     */       }
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject arg) {
-/* 253 */         if (arg instanceof LispCharacter)
-/* 254 */           return Lisp.T; 
-/* 255 */         return Lisp.type_error(arg, Symbol.CHARACTER);
-/*     */       }
-/*     */ 
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject first, LispObject second) {
-/* 261 */         return (LispCharacter.getValue(first) <= LispCharacter.getValue(second)) ? Lisp.T : Lisp.NIL;
-/*     */       }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject first, LispObject second, LispObject third) {
-/* 268 */         if (LispCharacter.getValue(first) > LispCharacter.getValue(second))
-/* 269 */           return Lisp.NIL; 
-/* 270 */         if (LispCharacter.getValue(second) > LispCharacter.getValue(third))
-/* 271 */           return Lisp.NIL; 
-/* 272 */         return Lisp.T;
-/*     */       }
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject[] args) {
-/* 277 */         int length = args.length;
-/* 278 */         char[] chars = new char[length]; int i;
-/* 279 */         for (i = 0; i < length; i++) {
-/* 280 */           chars[i] = LispCharacter.getValue(args[i]);
-/*     */         }
-/* 282 */         for (i = 1; i < length; i++) {
-/* 283 */           if (chars[i - 1] > chars[i])
-/* 284 */             return Lisp.NIL; 
-/*     */         } 
-/* 286 */         return Lisp.T;
-/*     */       }
-/*     */     };
-/*     */ 
-/*     */   
-/* 291 */   private static final Primitive CHAR_LESSP = new Primitive("char-lessp", "&rest characters")
-/*     */     {
-/*     */ 
-/*     */       
-/*     */       public LispObject execute()
-/*     */       {
-/* 297 */         return Lisp.error(new WrongNumberOfArgumentsException(this, 1, -1));
-/*     */       }
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject arg) {
-/* 302 */         if (arg instanceof LispCharacter)
-/* 303 */           return Lisp.T; 
-/* 304 */         return Lisp.type_error(arg, Symbol.CHARACTER);
-/*     */       }
-/*     */ 
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject first, LispObject second) {
-/* 310 */         char c1 = LispCharacter.toUpperCase(LispCharacter.getValue(first));
-/* 311 */         char c2 = LispCharacter.toUpperCase(LispCharacter.getValue(second));
-/* 312 */         return (c1 < c2) ? Lisp.T : Lisp.NIL;
-/*     */       }
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject[] array) {
-/* 317 */         int length = array.length;
-/* 318 */         char[] chars = new char[length]; int i;
-/* 319 */         for (i = 0; i < length; i++)
-/* 320 */           chars[i] = LispCharacter.toUpperCase(LispCharacter.getValue(array[i])); 
-/* 321 */         for (i = 1; i < length; i++) {
-/* 322 */           if (chars[i - 1] >= chars[i])
-/* 323 */             return Lisp.NIL; 
-/*     */         } 
-/* 325 */         return Lisp.T;
-/*     */       }
-/*     */     };
-/*     */ 
-/*     */   
-/* 330 */   private static final Primitive CHAR_NOT_LESSP = new Primitive("char-not-lessp", "&rest characters")
-/*     */     {
-/*     */ 
-/*     */       
-/*     */       public LispObject execute()
-/*     */       {
-/* 336 */         return Lisp.error(new WrongNumberOfArgumentsException(this, 1, -1));
-/*     */       }
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject arg) {
-/* 341 */         if (arg instanceof LispCharacter)
-/* 342 */           return Lisp.T; 
-/* 343 */         return Lisp.type_error(arg, Symbol.CHARACTER);
-/*     */       }
-/*     */ 
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject first, LispObject second) {
-/* 349 */         char c1 = LispCharacter.toUpperCase(LispCharacter.getValue(first));
-/* 350 */         char c2 = LispCharacter.toUpperCase(LispCharacter.getValue(second));
-/* 351 */         return (c1 >= c2) ? Lisp.T : Lisp.NIL;
-/*     */       }
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject[] array) {
-/* 356 */         int length = array.length;
-/* 357 */         char[] chars = new char[length]; int i;
-/* 358 */         for (i = 0; i < length; i++)
-/* 359 */           chars[i] = LispCharacter.toUpperCase(LispCharacter.getValue(array[i])); 
-/* 360 */         for (i = 1; i < length; i++) {
-/* 361 */           if (chars[i] > chars[i - 1])
-/* 362 */             return Lisp.NIL; 
-/*     */         } 
-/* 364 */         return Lisp.T;
-/*     */       }
-/*     */     };
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/CharacterFunctions.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * CharacterFunctions.java
+ *
+ * Copyright (C) 2003-2006 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+public final class CharacterFunctions
+{
+    // ### char=
+    private static final Primitive CHAR_EQUALS =
+        new Primitive("char=", "&rest characters")
+    {
+        @Override
+        public LispObject execute()
+        {
+            return error(new WrongNumberOfArgumentsException(this, 1, -1));
+        }
+        @Override
+        public LispObject execute(LispObject arg)
+        {
+            if (arg instanceof LispCharacter)
+                return T;
+            return type_error(arg, Symbol.CHARACTER);
+        }
+        @Override
+        public LispObject execute(LispObject first, LispObject second)
+
+        {
+            return LispCharacter.getValue(first) == LispCharacter.getValue(second) ? T : NIL;
+        }
+        @Override
+        public LispObject execute(LispObject[] array)
+        {
+            final int length = array.length;
+            final char c0 = LispCharacter.getValue(array[0]);
+            for (int i = 1; i < length; i++) {
+                if (c0 != LispCharacter.getValue(array[i]))
+                    return NIL;
+            }
+            return T;
+        }
+    };
+
+    // ### char-equal
+    private static final Primitive CHAR_EQUAL =
+        new Primitive("char-equal", "&rest characters")
+    {
+        @Override
+        public LispObject execute()
+        {
+            return error(new WrongNumberOfArgumentsException(this, 1, -1));
+        }
+        @Override
+        public LispObject execute(LispObject arg)
+        {
+            if (arg instanceof LispCharacter)
+                return T;
+            return type_error(arg, Symbol.CHARACTER);
+        }
+        @Override
+        public LispObject execute(LispObject first, LispObject second)
+
+        {
+            final char c1, c2;
+            c1 = LispCharacter.getValue(first);
+            c2 = LispCharacter.getValue(second);
+            if (c1 == c2)
+                return T;
+            if (LispCharacter.toUpperCase(c1) == LispCharacter.toUpperCase(c2))
+                return T;
+            if (LispCharacter.toLowerCase(c1) == LispCharacter.toLowerCase(c2))
+                return T;
+            return NIL;
+        }
+        @Override
+        public LispObject execute(LispObject[] array)
+        {
+            final int length = array.length;
+            final char c0 = LispCharacter.getValue(array[0]);
+            for (int i = 1; i < length; i++) {
+                char c = LispCharacter.getValue(array[i]);
+                if (c0 == c)
+                    continue;
+                if (LispCharacter.toUpperCase(c0) == LispCharacter.toUpperCase(c))
+                    continue;
+                if (LispCharacter.toLowerCase(c0) == LispCharacter.toLowerCase(c))
+                    continue;
+                return NIL;
+            }
+            return T;
+        }
+    };
+
+    // ### char-greaterp
+    private static final Primitive CHAR_GREATERP =
+        new Primitive("char-greaterp", "&rest characters")
+    {
+        @Override
+        public LispObject execute()
+        {
+            return error(new WrongNumberOfArgumentsException(this, 1, -1));
+        }
+        @Override
+        public LispObject execute(LispObject arg)
+        {
+            if (arg instanceof LispCharacter)
+                return T;
+            return type_error(arg, Symbol.CHARACTER);
+        }
+        @Override
+        public LispObject execute(LispObject first, LispObject second)
+
+        {
+            char c1 = LispCharacter.toUpperCase(LispCharacter.getValue(first));
+            char c2 = LispCharacter.toUpperCase(LispCharacter.getValue(second));
+            return c1 > c2 ? T : NIL;
+        }
+        @Override
+        public LispObject execute(LispObject[] array)
+        {
+            final int length = array.length;
+            char[] chars = new char[length];
+            for (int i = 0; i < length; i++)
+                chars[i] = LispCharacter.toUpperCase(LispCharacter.getValue(array[i]));
+            for (int i = 1; i < length; i++) {
+                if (chars[i-1] <= chars[i])
+                    return NIL;
+            }
+            return T;
+        }
+    };
+
+    // ### char-not-greaterp
+    private static final Primitive CHAR_NOT_GREATERP =
+        new Primitive("char-not-greaterp", "&rest characters")
+    {
+        @Override
+        public LispObject execute()
+        {
+            return error(new WrongNumberOfArgumentsException(this, 1, -1));
+        }
+        @Override
+        public LispObject execute(LispObject arg)
+        {
+            if (arg instanceof LispCharacter)
+                return T;
+            return type_error(arg, Symbol.CHARACTER);
+        }
+        @Override
+        public LispObject execute(LispObject first, LispObject second)
+
+        {
+            char c1 = LispCharacter.toUpperCase(LispCharacter.getValue(first));
+            char c2 = LispCharacter.toUpperCase(LispCharacter.getValue(second));
+            return c1 <= c2 ? T : NIL;
+        }
+        @Override
+        public LispObject execute(LispObject[] array)
+        {
+            final int length = array.length;
+            char[] chars = new char[length];
+            for (int i = 0; i < length; i++)
+                chars[i] = LispCharacter.toUpperCase(LispCharacter.getValue(array[i]));
+            for (int i = 1; i < length; i++) {
+                if (chars[i] < chars[i-1])
+                    return NIL;
+            }
+            return T;
+        }
+    };
+
+    // ### char<
+    private static final Primitive CHAR_LESS_THAN =
+        new Primitive("char<", "&rest characters")
+    {
+        @Override
+        public LispObject execute()
+        {
+            return error(new WrongNumberOfArgumentsException(this, 1, -1));
+        }
+        @Override
+        public LispObject execute(LispObject arg)
+        {
+            if (arg instanceof LispCharacter)
+                return T;
+            return type_error(arg, Symbol.CHARACTER);
+        }
+        @Override
+        public LispObject execute(LispObject first, LispObject second)
+
+        {
+            return LispCharacter.getValue(first) < LispCharacter.getValue(second) ? T : NIL;
+       }
+        @Override
+        public LispObject execute(LispObject[] args)
+        {
+            final int length = args.length;
+            char[] chars = new char[length];
+            for (int i = 0; i < length; i++) {
+                chars[i] = LispCharacter.getValue(args[i]);
+            }
+            for (int i = 1; i < length; i++) {
+                if (chars[i-1] >= chars[i])
+                    return NIL;
+            }
+            return T;
+        }
+    };
+
+    // ### char<=
+    private static final Primitive CHAR_LE =
+        new Primitive("char<=", "&rest characters")
+    {
+        @Override
+        public LispObject execute()
+        {
+            return error(new WrongNumberOfArgumentsException(this, 1, -1));
+        }
+        @Override
+        public LispObject execute(LispObject arg)
+        {
+            if (arg instanceof LispCharacter)
+                return T;
+            return type_error(arg, Symbol.CHARACTER);
+        }
+        @Override
+        public LispObject execute(LispObject first, LispObject second)
+
+        {
+            return LispCharacter.getValue(first) <= LispCharacter.getValue(second) ? T : NIL;
+        }
+        @Override
+        public LispObject execute(LispObject first, LispObject second,
+                                  LispObject third)
+
+        {
+            if (LispCharacter.getValue(first) > LispCharacter.getValue(second))
+                return NIL;
+            if (LispCharacter.getValue(second) > LispCharacter.getValue(third))
+                return NIL;
+            return T;
+        }
+        @Override
+        public LispObject execute(LispObject[] args)
+        {
+            final int length = args.length;
+            char[] chars = new char[length];
+            for (int i = 0; i < length; i++) {
+                chars[i] = LispCharacter.getValue(args[i]);
+            }
+            for (int i = 1; i < length; i++) {
+                if (chars[i-1] > chars[i])
+                    return NIL;
+            }
+            return T;
+        }
+    };
+
+    // ### char-lessp
+    private static final Primitive CHAR_LESSP =
+        new Primitive("char-lessp", "&rest characters")
+    {
+        @Override
+        public LispObject execute()
+        {
+            return error(new WrongNumberOfArgumentsException(this, 1, -1));
+        }
+        @Override
+        public LispObject execute(LispObject arg)
+        {
+            if (arg instanceof LispCharacter)
+                return T;
+            return type_error(arg, Symbol.CHARACTER);
+        }
+        @Override
+        public LispObject execute(LispObject first, LispObject second)
+
+        {
+            char c1 = LispCharacter.toUpperCase(LispCharacter.getValue(first));
+            char c2 = LispCharacter.toUpperCase(LispCharacter.getValue(second));
+            return c1 < c2 ? T : NIL;
+        }
+        @Override
+        public LispObject execute(LispObject[] array)
+        {
+            final int length = array.length;
+            char[] chars = new char[length];
+            for (int i = 0; i < length; i++)
+                chars[i] = LispCharacter.toUpperCase(LispCharacter.getValue(array[i]));
+            for (int i = 1; i < length; i++) {
+                if (chars[i-1] >= chars[i])
+                    return NIL;
+            }
+            return T;
+        }
+    };
+
+    // ### char-not-lessp
+    private static final Primitive CHAR_NOT_LESSP =
+        new Primitive("char-not-lessp", "&rest characters")
+    {
+        @Override
+        public LispObject execute()
+        {
+            return error(new WrongNumberOfArgumentsException(this, 1, -1));
+        }
+        @Override
+        public LispObject execute(LispObject arg)
+        {
+            if (arg instanceof LispCharacter)
+                return T;
+            return type_error(arg, Symbol.CHARACTER);
+        }
+        @Override
+        public LispObject execute(LispObject first, LispObject second)
+
+        {
+            char c1 = LispCharacter.toUpperCase(LispCharacter.getValue(first));
+            char c2 = LispCharacter.toUpperCase(LispCharacter.getValue(second));
+            return c1 >= c2 ? T : NIL;
+        }
+        @Override
+        public LispObject execute(LispObject[] array)
+        {
+            final int length = array.length;
+            char[] chars = new char[length];
+            for (int i = 0; i < length; i++)
+                chars[i] = LispCharacter.toUpperCase(LispCharacter.getValue(array[i]));
+            for (int i = 1; i < length; i++) {
+                if (chars[i] > chars[i-1])
+                    return NIL;
+            }
+            return T;
+        }
+    };
+}

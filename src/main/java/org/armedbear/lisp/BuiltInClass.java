@@ -1,356 +1,350 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public class BuiltInClass
-/*     */   extends LispClass
-/*     */ {
-/*     */   private BuiltInClass(Symbol symbol) {
-/*  42 */     super(symbol);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typeOf() {
-/*  48 */     return Symbol.BUILT_IN_CLASS;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject classOf() {
-/*  54 */     return StandardClass.BUILT_IN_CLASS;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean isFinalized() {
-/*  60 */     return true;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typep(LispObject type) {
-/*  66 */     if (type == Symbol.BUILT_IN_CLASS)
-/*  67 */       return Lisp.T; 
-/*  68 */     if (type == StandardClass.BUILT_IN_CLASS)
-/*  69 */       return Lisp.T; 
-/*  70 */     return super.typep(type);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject getDescription() {
-/*  76 */     return new SimpleString(princToString());
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public String printObject() {
-/*  82 */     return unreadableString(getName().princToString());
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   private static BuiltInClass addClass(Symbol symbol) {
-/*  87 */     BuiltInClass c = new BuiltInClass(symbol);
-/*  88 */     addClass(symbol, c);
-/*  89 */     return c;
-/*     */   }
-/*     */   
-/*  92 */   public static final BuiltInClass CLASS_T = addClass(Lisp.T);
-/*     */   
-/*  94 */   public static final BuiltInClass ARRAY = addClass(Symbol.ARRAY);
-/*  95 */   public static final BuiltInClass BIGNUM = addClass(Symbol.BIGNUM);
-/*  96 */   public static final BuiltInClass BASE_STRING = addClass(Symbol.BASE_STRING);
-/*  97 */   public static final BuiltInClass BIT_VECTOR = addClass(Symbol.BIT_VECTOR);
-/*  98 */   public static final BuiltInClass CHARACTER = addClass(Symbol.CHARACTER);
-/*  99 */   public static final BuiltInClass COMPLEX = addClass(Symbol.COMPLEX);
-/* 100 */   public static final BuiltInClass CONS = addClass(Symbol.CONS);
-/* 101 */   public static final BuiltInClass DOUBLE_FLOAT = addClass(Symbol.DOUBLE_FLOAT);
-/* 102 */   public static final BuiltInClass ENVIRONMENT = addClass(Symbol.ENVIRONMENT);
-/* 103 */   public static final BuiltInClass FIXNUM = addClass(Symbol.FIXNUM);
-/* 104 */   public static final BuiltInClass FLOAT = addClass(Symbol.FLOAT);
-/* 105 */   public static final BuiltInClass FUNCTION = addClass(Symbol.FUNCTION);
-/* 106 */   public static final BuiltInClass HASH_TABLE = addClass(Symbol.HASH_TABLE);
-/* 107 */   public static final BuiltInClass INTEGER = addClass(Symbol.INTEGER);
-/* 108 */   public static final BuiltInClass JAVA_OBJECT = addClass(Symbol.JAVA_OBJECT);
-/* 109 */   public static final BuiltInClass LIST = addClass(Symbol.LIST);
-/* 110 */   public static final BuiltInClass LOGICAL_PATHNAME = addClass(Symbol.LOGICAL_PATHNAME);
-/* 111 */   public static final BuiltInClass MAILBOX = addClass(Symbol.MAILBOX);
-/* 112 */   public static final BuiltInClass MUTEX = addClass(Symbol.MUTEX);
-/* 113 */   public static final BuiltInClass NIL_VECTOR = addClass(Symbol.NIL_VECTOR);
-/* 114 */   public static final BuiltInClass NULL = addClass(Symbol.NULL);
-/* 115 */   public static final BuiltInClass NUMBER = addClass(Symbol.NUMBER);
-/* 116 */   public static final BuiltInClass PACKAGE = addClass(Symbol.PACKAGE);
-/* 117 */   public static final BuiltInClass PATHNAME = addClass(Symbol.PATHNAME);
-/* 118 */   public static final BuiltInClass JAR_PATHNAME = addClass(Symbol.JAR_PATHNAME);
-/* 119 */   public static final BuiltInClass URL_PATHNAME = addClass(Symbol.URL_PATHNAME);
-/* 120 */   public static final BuiltInClass RANDOM_STATE = addClass(Symbol.RANDOM_STATE);
-/* 121 */   public static final BuiltInClass RATIO = addClass(Symbol.RATIO);
-/* 122 */   public static final BuiltInClass RATIONAL = addClass(Symbol.RATIONAL);
-/* 123 */   public static final BuiltInClass READTABLE = addClass(Symbol.READTABLE);
-/* 124 */   public static final BuiltInClass REAL = addClass(Symbol.REAL);
-/* 125 */   public static final BuiltInClass RESTART = addClass(Symbol.RESTART);
-/* 126 */   public static final BuiltInClass SEQUENCE = addClass(Symbol.SEQUENCE);
-/* 127 */   public static final BuiltInClass SIMPLE_ARRAY = addClass(Symbol.SIMPLE_ARRAY);
-/* 128 */   public static final BuiltInClass SIMPLE_BASE_STRING = addClass(Symbol.SIMPLE_BASE_STRING);
-/* 129 */   public static final BuiltInClass SIMPLE_BIT_VECTOR = addClass(Symbol.SIMPLE_BIT_VECTOR);
-/* 130 */   public static final BuiltInClass SIMPLE_STRING = addClass(Symbol.SIMPLE_STRING);
-/* 131 */   public static final BuiltInClass SIMPLE_VECTOR = addClass(Symbol.SIMPLE_VECTOR);
-/* 132 */   public static final BuiltInClass SINGLE_FLOAT = addClass(Symbol.SINGLE_FLOAT);
-/* 133 */   public static final BuiltInClass STRING = addClass(Symbol.STRING);
-/* 134 */   public static final BuiltInClass SYMBOL = addClass(Symbol.SYMBOL);
-/* 135 */   public static final BuiltInClass THREAD = addClass(Symbol.THREAD);
-/* 136 */   public static final BuiltInClass VECTOR = addClass(Symbol.VECTOR);
-/* 137 */   public static final BuiltInClass STACK_FRAME = addClass(Symbol.STACK_FRAME);
-/* 138 */   public static final BuiltInClass LISP_STACK_FRAME = addClass(Symbol.LISP_STACK_FRAME);
-/* 139 */   public static final BuiltInClass JAVA_STACK_FRAME = addClass(Symbol.JAVA_STACK_FRAME);
-/* 140 */   public static final BuiltInClass WEAK_REFERENCE = addClass(Symbol.WEAK_REFERENCE);
-/*     */ 
-/*     */ 
-/*     */   
-/* 144 */   public static final StructureClass STRUCTURE_OBJECT = addClass(Symbol.STRUCTURE_OBJECT, new StructureClass(Symbol.STRUCTURE_OBJECT, 
-/* 145 */         Lisp.list(CLASS_T, new LispObject[0])));
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/* 154 */   public static final LispClass STREAM = addClass(Symbol.STREAM, new StructureClass(Symbol.STREAM, 
-/* 155 */         Lisp.list(STRUCTURE_OBJECT, new LispObject[0])));
-/*     */   
-/* 157 */   public static final LispClass SYSTEM_STREAM = addClass(Symbol.SYSTEM_STREAM, new StructureClass(Symbol.SYSTEM_STREAM, 
-/* 158 */         Lisp.list(STREAM, new LispObject[0])));
-/*     */   
-/* 160 */   public static final LispClass TWO_WAY_STREAM = addClass(Symbol.TWO_WAY_STREAM, new StructureClass(Symbol.TWO_WAY_STREAM, 
-/* 161 */         Lisp.list(SYSTEM_STREAM, new LispObject[0])));
-/*     */   
-/* 163 */   public static final LispClass BROADCAST_STREAM = addClass(Symbol.BROADCAST_STREAM, new StructureClass(Symbol.BROADCAST_STREAM, 
-/* 164 */         Lisp.list(SYSTEM_STREAM, new LispObject[0])));
-/*     */   
-/* 166 */   public static final LispClass ECHO_STREAM = addClass(Symbol.ECHO_STREAM, new StructureClass(Symbol.ECHO_STREAM, 
-/* 167 */         Lisp.list(SYSTEM_STREAM, new LispObject[0])));
-/*     */   
-/* 169 */   public static final LispClass CASE_FROB_STREAM = addClass(Symbol.CASE_FROB_STREAM, new StructureClass(Symbol.CASE_FROB_STREAM, 
-/* 170 */         Lisp.list(SYSTEM_STREAM, new LispObject[0])));
-/*     */   
-/* 172 */   public static final LispClass STRING_STREAM = addClass(Symbol.STRING_STREAM, new StructureClass(Symbol.STRING_STREAM, 
-/* 173 */         Lisp.list(SYSTEM_STREAM, new LispObject[0])));
-/*     */   
-/* 175 */   public static final LispClass STRING_INPUT_STREAM = addClass(Symbol.STRING_INPUT_STREAM, new StructureClass(Symbol.STRING_INPUT_STREAM, 
-/* 176 */         Lisp.list(STRING_STREAM, new LispObject[0])));
-/*     */   
-/* 178 */   public static final LispClass STRING_OUTPUT_STREAM = addClass(Symbol.STRING_OUTPUT_STREAM, new StructureClass(Symbol.STRING_OUTPUT_STREAM, 
-/* 179 */         Lisp.list(STRING_STREAM, new LispObject[0])));
-/*     */   
-/* 181 */   public static final LispClass SYNONYM_STREAM = addClass(Symbol.SYNONYM_STREAM, new StructureClass(Symbol.SYNONYM_STREAM, 
-/* 182 */         Lisp.list(SYSTEM_STREAM, new LispObject[0])));
-/*     */   
-/* 184 */   public static final LispClass FILE_STREAM = addClass(Symbol.FILE_STREAM, new StructureClass(Symbol.FILE_STREAM, 
-/* 185 */         Lisp.list(SYSTEM_STREAM, new LispObject[0])));
-/*     */   
-/* 187 */   public static final LispClass JAR_STREAM = addClass(Symbol.JAR_STREAM, new StructureClass(Symbol.JAR_STREAM, 
-/* 188 */         Lisp.list(SYSTEM_STREAM, new LispObject[0])));
-/*     */   
-/* 190 */   public static final LispClass URL_STREAM = addClass(Symbol.URL_STREAM, new StructureClass(Symbol.URL_STREAM, 
-/* 191 */         Lisp.list(SYSTEM_STREAM, new LispObject[0])));
-/*     */   
-/* 193 */   public static final LispClass CONCATENATED_STREAM = addClass(Symbol.CONCATENATED_STREAM, new StructureClass(Symbol.CONCATENATED_STREAM, 
-/* 194 */         Lisp.list(SYSTEM_STREAM, new LispObject[0])));
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/* 200 */   public static final LispClass SOCKET_STREAM = addClass(Symbol.SOCKET_STREAM, new StructureClass(Symbol.SOCKET_STREAM, 
-/* 201 */         Lisp.list(TWO_WAY_STREAM, new LispObject[0])));
-/*     */   
-/* 203 */   public static final LispClass SLIME_INPUT_STREAM = addClass(Symbol.SLIME_INPUT_STREAM, new StructureClass(Symbol.SLIME_INPUT_STREAM, 
-/* 204 */         Lisp.list(STRING_STREAM, new LispObject[0])));
-/*     */   
-/* 206 */   public static final LispClass SLIME_OUTPUT_STREAM = addClass(Symbol.SLIME_OUTPUT_STREAM, new StructureClass(Symbol.SLIME_OUTPUT_STREAM, 
-/* 207 */         Lisp.list(STRING_STREAM, new LispObject[0])));
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   static {
-/* 213 */     ARRAY.setDirectSuperclass(CLASS_T);
-/* 214 */     ARRAY.setCPL(new LispObject[] { ARRAY, CLASS_T });
-/* 215 */     BASE_STRING.setDirectSuperclass(STRING);
-/* 216 */     BASE_STRING.setCPL(new LispObject[] { BASE_STRING, STRING, VECTOR, ARRAY, SEQUENCE, CLASS_T });
-/* 217 */     BIGNUM.setDirectSuperclass(INTEGER);
-/* 218 */     BIGNUM.setCPL(new LispObject[] { BIGNUM, INTEGER, RATIONAL, REAL, NUMBER, CLASS_T });
-/* 219 */     BIT_VECTOR.setDirectSuperclass(VECTOR);
-/* 220 */     BIT_VECTOR.setCPL(new LispObject[] { BIT_VECTOR, VECTOR, ARRAY, SEQUENCE, CLASS_T });
-/* 221 */     BROADCAST_STREAM.setCPL(new LispObject[] { BROADCAST_STREAM, SYSTEM_STREAM, STREAM, STRUCTURE_OBJECT, CLASS_T });
-/*     */     
-/* 223 */     CASE_FROB_STREAM.setCPL(new LispObject[] { CASE_FROB_STREAM, SYSTEM_STREAM, STREAM, STRUCTURE_OBJECT, CLASS_T });
-/*     */     
-/* 225 */     CHARACTER.setDirectSuperclass(CLASS_T);
-/* 226 */     CHARACTER.setCPL(new LispObject[] { CHARACTER, CLASS_T });
-/* 227 */     CLASS_T.setCPL(new LispObject[] { CLASS_T });
-/* 228 */     COMPLEX.setDirectSuperclass(NUMBER);
-/* 229 */     COMPLEX.setCPL(new LispObject[] { COMPLEX, NUMBER, CLASS_T });
-/* 230 */     CONCATENATED_STREAM.setCPL(new LispObject[] { CONCATENATED_STREAM, SYSTEM_STREAM, STREAM, STRUCTURE_OBJECT, CLASS_T });
-/*     */     
-/* 232 */     CONS.setDirectSuperclass(LIST);
-/* 233 */     CONS.setCPL(new LispObject[] { CONS, LIST, SEQUENCE, CLASS_T });
-/* 234 */     DOUBLE_FLOAT.setDirectSuperclass(FLOAT);
-/* 235 */     DOUBLE_FLOAT.setCPL(new LispObject[] { DOUBLE_FLOAT, FLOAT, REAL, NUMBER, CLASS_T });
-/* 236 */     ECHO_STREAM.setCPL(new LispObject[] { ECHO_STREAM, SYSTEM_STREAM, STREAM, STRUCTURE_OBJECT, CLASS_T });
-/*     */     
-/* 238 */     ENVIRONMENT.setDirectSuperclass(CLASS_T);
-/* 239 */     ENVIRONMENT.setCPL(new LispObject[] { ENVIRONMENT, CLASS_T });
-/* 240 */     FIXNUM.setDirectSuperclass(INTEGER);
-/* 241 */     FIXNUM.setCPL(new LispObject[] { FIXNUM, INTEGER, RATIONAL, REAL, NUMBER, CLASS_T });
-/* 242 */     FILE_STREAM.setCPL(new LispObject[] { FILE_STREAM, SYSTEM_STREAM, STREAM, STRUCTURE_OBJECT, CLASS_T });
-/*     */     
-/* 244 */     JAR_STREAM.setCPL(new LispObject[] { JAR_STREAM, SYSTEM_STREAM, STREAM, STRUCTURE_OBJECT, CLASS_T });
-/*     */     
-/* 246 */     URL_STREAM.setCPL(new LispObject[] { URL_STREAM, SYSTEM_STREAM, STREAM, STRUCTURE_OBJECT, CLASS_T });
-/*     */     
-/* 248 */     FLOAT.setDirectSuperclass(REAL);
-/* 249 */     FLOAT.setCPL(new LispObject[] { FLOAT, REAL, NUMBER, CLASS_T });
-/* 250 */     FUNCTION.setDirectSuperclass(CLASS_T);
-/* 251 */     FUNCTION.setCPL(new LispObject[] { FUNCTION, CLASS_T });
-/* 252 */     HASH_TABLE.setDirectSuperclass(CLASS_T);
-/* 253 */     HASH_TABLE.setCPL(new LispObject[] { HASH_TABLE, CLASS_T });
-/* 254 */     INTEGER.setDirectSuperclass(RATIONAL);
-/* 255 */     INTEGER.setCPL(new LispObject[] { INTEGER, RATIONAL, REAL, NUMBER, CLASS_T });
-/* 256 */     JAVA_OBJECT.setDirectSuperclass(CLASS_T);
-/* 257 */     JAVA_OBJECT.setCPL(new LispObject[] { JAVA_OBJECT, CLASS_T });
-/* 258 */     LIST.setDirectSuperclass(SEQUENCE);
-/* 259 */     LIST.setCPL(new LispObject[] { LIST, SEQUENCE, CLASS_T });
-/* 260 */     LOGICAL_PATHNAME.setDirectSuperclass(PATHNAME);
-/* 261 */     LOGICAL_PATHNAME.setCPL(new LispObject[] { LOGICAL_PATHNAME, PATHNAME, CLASS_T });
-/* 262 */     MAILBOX.setDirectSuperclass(CLASS_T);
-/* 263 */     MAILBOX.setCPL(new LispObject[] { MAILBOX, CLASS_T });
-/* 264 */     MUTEX.setDirectSuperclass(CLASS_T);
-/* 265 */     MUTEX.setCPL(new LispObject[] { MUTEX, CLASS_T });
-/* 266 */     NIL_VECTOR.setDirectSuperclass(STRING);
-/* 267 */     NIL_VECTOR.setCPL(new LispObject[] { NIL_VECTOR, STRING, VECTOR, ARRAY, SEQUENCE, CLASS_T });
-/* 268 */     NULL.setDirectSuperclass(LIST);
-/* 269 */     NULL.setCPL(new LispObject[] { NULL, SYMBOL, LIST, SEQUENCE, CLASS_T });
-/* 270 */     NUMBER.setDirectSuperclass(CLASS_T);
-/* 271 */     NUMBER.setCPL(new LispObject[] { NUMBER, CLASS_T });
-/* 272 */     PACKAGE.setDirectSuperclass(CLASS_T);
-/* 273 */     PACKAGE.setCPL(new LispObject[] { PACKAGE, CLASS_T });
-/* 274 */     PATHNAME.setDirectSuperclass(CLASS_T);
-/* 275 */     PATHNAME.setCPL(new LispObject[] { PATHNAME, CLASS_T });
-/* 276 */     JAR_PATHNAME.setDirectSuperclass(PATHNAME);
-/* 277 */     JAR_PATHNAME.setCPL(new LispObject[] { JAR_PATHNAME, PATHNAME, CLASS_T });
-/* 278 */     URL_PATHNAME.setDirectSuperclass(PATHNAME);
-/* 279 */     URL_PATHNAME.setCPL(new LispObject[] { URL_PATHNAME, PATHNAME, CLASS_T });
-/* 280 */     RANDOM_STATE.setDirectSuperclass(CLASS_T);
-/* 281 */     RANDOM_STATE.setCPL(new LispObject[] { RANDOM_STATE, CLASS_T });
-/* 282 */     RATIO.setDirectSuperclass(RATIONAL);
-/* 283 */     RATIO.setCPL(new LispObject[] { RATIO, RATIONAL, REAL, NUMBER, CLASS_T });
-/* 284 */     RATIONAL.setDirectSuperclass(REAL);
-/* 285 */     RATIONAL.setCPL(new LispObject[] { RATIONAL, REAL, NUMBER, CLASS_T });
-/* 286 */     READTABLE.setDirectSuperclass(CLASS_T);
-/* 287 */     READTABLE.setCPL(new LispObject[] { READTABLE, CLASS_T });
-/* 288 */     REAL.setDirectSuperclass(NUMBER);
-/* 289 */     REAL.setCPL(new LispObject[] { REAL, NUMBER, CLASS_T });
-/* 290 */     RESTART.setDirectSuperclass(CLASS_T);
-/* 291 */     RESTART.setCPL(new LispObject[] { RESTART, CLASS_T });
-/* 292 */     SEQUENCE.setDirectSuperclass(CLASS_T);
-/* 293 */     SEQUENCE.setCPL(new LispObject[] { SEQUENCE, CLASS_T });
-/* 294 */     SIMPLE_ARRAY.setDirectSuperclass(ARRAY);
-/* 295 */     SIMPLE_ARRAY.setCPL(new LispObject[] { SIMPLE_ARRAY, ARRAY, CLASS_T });
-/* 296 */     SIMPLE_BASE_STRING.setDirectSuperclasses(Lisp.list(BASE_STRING, new LispObject[] { SIMPLE_STRING }));
-/* 297 */     SIMPLE_BASE_STRING.setCPL(new LispObject[] { SIMPLE_BASE_STRING, BASE_STRING, SIMPLE_STRING, STRING, VECTOR, SIMPLE_ARRAY, ARRAY, SEQUENCE, CLASS_T });
-/*     */ 
-/*     */     
-/* 300 */     SIMPLE_BIT_VECTOR.setDirectSuperclasses(Lisp.list(BIT_VECTOR, new LispObject[] { SIMPLE_ARRAY }));
-/* 301 */     SIMPLE_BIT_VECTOR.setCPL(new LispObject[] { SIMPLE_BIT_VECTOR, BIT_VECTOR, VECTOR, SIMPLE_ARRAY, ARRAY, SEQUENCE, CLASS_T });
-/*     */     
-/* 303 */     SIMPLE_STRING.setDirectSuperclasses(Lisp.list(BASE_STRING, new LispObject[] { STRING, SIMPLE_ARRAY }));
-/* 304 */     SIMPLE_STRING.setCPL(new LispObject[] { SIMPLE_STRING, BASE_STRING, STRING, VECTOR, SIMPLE_ARRAY, ARRAY, SEQUENCE, CLASS_T });
-/*     */     
-/* 306 */     SIMPLE_VECTOR.setDirectSuperclasses(Lisp.list(VECTOR, new LispObject[] { SIMPLE_ARRAY }));
-/* 307 */     SIMPLE_VECTOR.setCPL(new LispObject[] { SIMPLE_VECTOR, VECTOR, SIMPLE_ARRAY, ARRAY, SEQUENCE, CLASS_T });
-/*     */     
-/* 309 */     SINGLE_FLOAT.setDirectSuperclass(FLOAT);
-/* 310 */     SINGLE_FLOAT.setCPL(new LispObject[] { SINGLE_FLOAT, FLOAT, REAL, NUMBER, CLASS_T });
-/* 311 */     SLIME_INPUT_STREAM.setCPL(new LispObject[] { SLIME_INPUT_STREAM, STRING_STREAM, SYSTEM_STREAM, STREAM, STRUCTURE_OBJECT, CLASS_T });
-/*     */     
-/* 313 */     SLIME_OUTPUT_STREAM.setCPL(new LispObject[] { SLIME_OUTPUT_STREAM, STRING_STREAM, SYSTEM_STREAM, STREAM, STRUCTURE_OBJECT, CLASS_T });
-/*     */     
-/* 315 */     SOCKET_STREAM.setCPL(new LispObject[] { SOCKET_STREAM, TWO_WAY_STREAM, SYSTEM_STREAM, STREAM, STRUCTURE_OBJECT, CLASS_T });
-/*     */     
-/* 317 */     STREAM.setCPL(new LispObject[] { STREAM, STRUCTURE_OBJECT, CLASS_T });
-/* 318 */     STRING.setDirectSuperclass(VECTOR);
-/* 319 */     STRING.setCPL(new LispObject[] { STRING, VECTOR, ARRAY, SEQUENCE, CLASS_T });
-/* 320 */     STRING_INPUT_STREAM.setCPL(new LispObject[] { STRING_INPUT_STREAM, STRING_STREAM, SYSTEM_STREAM, STREAM, STRUCTURE_OBJECT, CLASS_T });
-/*     */     
-/* 322 */     STRING_OUTPUT_STREAM.setCPL(new LispObject[] { STRING_OUTPUT_STREAM, STRING_STREAM, SYSTEM_STREAM, STREAM, STRUCTURE_OBJECT, CLASS_T });
-/*     */     
-/* 324 */     STRING_STREAM.setCPL(new LispObject[] { STRING_STREAM, SYSTEM_STREAM, STREAM, STRUCTURE_OBJECT, CLASS_T });
-/*     */     
-/* 326 */     STRUCTURE_OBJECT.setCPL(new LispObject[] { STRUCTURE_OBJECT, CLASS_T });
-/* 327 */     SYMBOL.setDirectSuperclass(CLASS_T);
-/* 328 */     SYMBOL.setCPL(new LispObject[] { SYMBOL, CLASS_T });
-/* 329 */     SYNONYM_STREAM.setCPL(new LispObject[] { SYNONYM_STREAM, SYSTEM_STREAM, STREAM, STRUCTURE_OBJECT, CLASS_T });
-/*     */     
-/* 331 */     SYSTEM_STREAM.setCPL(new LispObject[] { SYSTEM_STREAM, STREAM, STRUCTURE_OBJECT, CLASS_T });
-/* 332 */     THREAD.setDirectSuperclass(CLASS_T);
-/* 333 */     THREAD.setCPL(new LispObject[] { THREAD, CLASS_T });
-/* 334 */     TWO_WAY_STREAM.setCPL(new LispObject[] { TWO_WAY_STREAM, SYSTEM_STREAM, STREAM, STRUCTURE_OBJECT, CLASS_T });
-/*     */     
-/* 336 */     VECTOR.setDirectSuperclasses(Lisp.list(ARRAY, new LispObject[] { SEQUENCE }));
-/* 337 */     VECTOR.setCPL(new LispObject[] { VECTOR, ARRAY, SEQUENCE, CLASS_T });
-/* 338 */     STACK_FRAME.setDirectSuperclasses(CLASS_T);
-/* 339 */     STACK_FRAME.setCPL(new LispObject[] { STACK_FRAME, CLASS_T });
-/* 340 */     LISP_STACK_FRAME.setDirectSuperclasses(STACK_FRAME);
-/* 341 */     LISP_STACK_FRAME.setCPL(new LispObject[] { LISP_STACK_FRAME, STACK_FRAME, CLASS_T });
-/* 342 */     JAVA_STACK_FRAME.setDirectSuperclasses(STACK_FRAME);
-/* 343 */     JAVA_STACK_FRAME.setCPL(new LispObject[] { JAVA_STACK_FRAME, STACK_FRAME, CLASS_T });
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */     
-/* 348 */     StandardClass.initializeStandardClasses();
-/*     */   }
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/BuiltInClass.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * BuiltInClass.java
+ *
+ * Copyright (C) 2003-2007 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+public class BuiltInClass extends LispClass
+{
+  private BuiltInClass(Symbol symbol)
+  {
+    super(symbol);
+  }
+
+  @Override
+  public LispObject typeOf()
+  {
+    return Symbol.BUILT_IN_CLASS;
+  }
+
+  @Override
+  public LispObject classOf()
+  {
+    return StandardClass.BUILT_IN_CLASS;
+  }
+
+  @Override
+  public boolean isFinalized()
+  {
+    return true;
+  }
+
+  @Override
+  public LispObject typep(LispObject type)
+  {
+    if (type == Symbol.BUILT_IN_CLASS)
+      return T;
+    if (type == StandardClass.BUILT_IN_CLASS)
+      return T;
+    return super.typep(type);
+  }
+
+  @Override
+  public LispObject getDescription()
+  {
+    return new SimpleString(princToString());
+  }
+
+  @Override
+  public String printObject()
+  {
+    return unreadableString(getName().princToString());
+  }
+
+  private static BuiltInClass addClass(Symbol symbol)
+  {
+    BuiltInClass c = new BuiltInClass(symbol);
+    addClass(symbol, c);
+    return c;
+  }
+
+  public static final BuiltInClass CLASS_T              = addClass(T);
+
+  public static final BuiltInClass ARRAY                = addClass(Symbol.ARRAY);
+  public static final BuiltInClass BIGNUM               = addClass(Symbol.BIGNUM);
+  public static final BuiltInClass BASE_STRING          = addClass(Symbol.BASE_STRING);
+  public static final BuiltInClass BIT_VECTOR           = addClass(Symbol.BIT_VECTOR);
+  public static final BuiltInClass CHARACTER            = addClass(Symbol.CHARACTER);
+  public static final BuiltInClass COMPLEX              = addClass(Symbol.COMPLEX);
+  public static final BuiltInClass CONS                 = addClass(Symbol.CONS);
+  public static final BuiltInClass DOUBLE_FLOAT         = addClass(Symbol.DOUBLE_FLOAT);
+  public static final BuiltInClass ENVIRONMENT          = addClass(Symbol.ENVIRONMENT);
+  public static final BuiltInClass FIXNUM               = addClass(Symbol.FIXNUM);
+  public static final BuiltInClass FLOAT                = addClass(Symbol.FLOAT);
+  public static final BuiltInClass FUNCTION             = addClass(Symbol.FUNCTION);
+  public static final BuiltInClass HASH_TABLE           = addClass(Symbol.HASH_TABLE);
+  public static final BuiltInClass INTEGER              = addClass(Symbol.INTEGER);
+  public static final BuiltInClass JAVA_OBJECT          = addClass(Symbol.JAVA_OBJECT);
+  public static final BuiltInClass LIST                 = addClass(Symbol.LIST);
+  public static final BuiltInClass LOGICAL_PATHNAME     = addClass(Symbol.LOGICAL_PATHNAME);
+  public static final BuiltInClass MAILBOX              = addClass(Symbol.MAILBOX);
+  public static final BuiltInClass MUTEX                = addClass(Symbol.MUTEX);
+  public static final BuiltInClass NIL_VECTOR           = addClass(Symbol.NIL_VECTOR);
+  public static final BuiltInClass NULL                 = addClass(Symbol.NULL);
+  public static final BuiltInClass NUMBER               = addClass(Symbol.NUMBER);
+  public static final BuiltInClass PACKAGE              = addClass(Symbol.PACKAGE);
+  public static final BuiltInClass PATHNAME             = addClass(Symbol.PATHNAME);
+  public static final BuiltInClass JAR_PATHNAME         = addClass(Symbol.JAR_PATHNAME);
+  public static final BuiltInClass URL_PATHNAME         = addClass(Symbol.URL_PATHNAME);
+  public static final BuiltInClass RANDOM_STATE         = addClass(Symbol.RANDOM_STATE);
+  public static final BuiltInClass RATIO                = addClass(Symbol.RATIO);
+  public static final BuiltInClass RATIONAL             = addClass(Symbol.RATIONAL);
+  public static final BuiltInClass READTABLE            = addClass(Symbol.READTABLE);
+  public static final BuiltInClass REAL                 = addClass(Symbol.REAL);
+  public static final BuiltInClass RESTART              = addClass(Symbol.RESTART);
+  public static final BuiltInClass SEQUENCE             = addClass(Symbol.SEQUENCE); 
+  public static final BuiltInClass SIMPLE_ARRAY         = addClass(Symbol.SIMPLE_ARRAY);
+  public static final BuiltInClass SIMPLE_BASE_STRING   = addClass(Symbol.SIMPLE_BASE_STRING);
+  public static final BuiltInClass SIMPLE_BIT_VECTOR    = addClass(Symbol.SIMPLE_BIT_VECTOR);
+  public static final BuiltInClass SIMPLE_STRING        = addClass(Symbol.SIMPLE_STRING);
+  public static final BuiltInClass SIMPLE_VECTOR        = addClass(Symbol.SIMPLE_VECTOR);
+  public static final BuiltInClass SINGLE_FLOAT         = addClass(Symbol.SINGLE_FLOAT);
+  public static final BuiltInClass STRING               = addClass(Symbol.STRING);
+  public static final BuiltInClass SYMBOL               = addClass(Symbol.SYMBOL);
+  public static final BuiltInClass THREAD               = addClass(Symbol.THREAD);
+  public static final BuiltInClass VECTOR               = addClass(Symbol.VECTOR);
+  public static final BuiltInClass STACK_FRAME          = addClass(Symbol.STACK_FRAME);
+  public static final BuiltInClass LISP_STACK_FRAME     = addClass(Symbol.LISP_STACK_FRAME);
+  public static final BuiltInClass JAVA_STACK_FRAME     = addClass(Symbol.JAVA_STACK_FRAME);
+  public static final BuiltInClass WEAK_REFERENCE      = addClass(Symbol.WEAK_REFERENCE);
+
+
+  public static final StructureClass STRUCTURE_OBJECT =
+    (StructureClass)addClass(Symbol.STRUCTURE_OBJECT,
+             new StructureClass(Symbol.STRUCTURE_OBJECT, list(CLASS_T)));
+
+    /* All the stream classes below are being defined as structure classes
+       but won't be available as such until further action is taken:
+       the 'defstruct' internal administration is missing.
+
+       For STREAM and SYSTEM-STREAM, that bit is added in boot.lisp */
+
+  public static final LispClass STREAM =
+    addClass(Symbol.STREAM,
+             new StructureClass(Symbol.STREAM, list(STRUCTURE_OBJECT)));
+  public static final LispClass SYSTEM_STREAM =
+    addClass(Symbol.SYSTEM_STREAM,
+             new StructureClass(Symbol.SYSTEM_STREAM, list(STREAM)));
+  public static final LispClass TWO_WAY_STREAM =
+    addClass(Symbol.TWO_WAY_STREAM,
+             new StructureClass(Symbol.TWO_WAY_STREAM, list(SYSTEM_STREAM)));
+  public static final LispClass BROADCAST_STREAM =
+    addClass(Symbol.BROADCAST_STREAM,
+             new StructureClass(Symbol.BROADCAST_STREAM, list(SYSTEM_STREAM)));
+  public static final LispClass ECHO_STREAM =
+    addClass(Symbol.ECHO_STREAM,
+             new StructureClass(Symbol.ECHO_STREAM, list(SYSTEM_STREAM)));
+  public static final LispClass CASE_FROB_STREAM =
+    addClass(Symbol.CASE_FROB_STREAM,
+             new StructureClass(Symbol.CASE_FROB_STREAM, list(SYSTEM_STREAM)));
+  public static final LispClass STRING_STREAM =
+    addClass(Symbol.STRING_STREAM,
+             new StructureClass(Symbol.STRING_STREAM, list(SYSTEM_STREAM)));
+  public static final LispClass STRING_INPUT_STREAM =
+    addClass(Symbol.STRING_INPUT_STREAM,
+             new StructureClass(Symbol.STRING_INPUT_STREAM, list(STRING_STREAM)));
+  public static final LispClass STRING_OUTPUT_STREAM =
+    addClass(Symbol.STRING_OUTPUT_STREAM,
+             new StructureClass(Symbol.STRING_OUTPUT_STREAM, list(STRING_STREAM)));
+  public static final LispClass SYNONYM_STREAM =
+    addClass(Symbol.SYNONYM_STREAM,
+             new StructureClass(Symbol.SYNONYM_STREAM, list(SYSTEM_STREAM)));
+  public static final LispClass FILE_STREAM =
+    addClass(Symbol.FILE_STREAM,
+             new StructureClass(Symbol.FILE_STREAM, list(SYSTEM_STREAM)));
+  public static final LispClass JAR_STREAM =
+    addClass(Symbol.JAR_STREAM,
+             new StructureClass(Symbol.JAR_STREAM, list(SYSTEM_STREAM)));
+  public static final LispClass URL_STREAM =
+    addClass(Symbol.URL_STREAM,
+             new StructureClass(Symbol.URL_STREAM, list(SYSTEM_STREAM)));
+  public static final LispClass CONCATENATED_STREAM =
+    addClass(Symbol.CONCATENATED_STREAM,
+             new StructureClass(Symbol.CONCATENATED_STREAM, list(SYSTEM_STREAM)));
+
+
+
+    // Implementation defined streams
+  public static final LispClass SOCKET_STREAM =
+    addClass(Symbol.SOCKET_STREAM,
+             new StructureClass(Symbol.SOCKET_STREAM, list(TWO_WAY_STREAM)));
+  public static final LispClass SLIME_INPUT_STREAM =
+    addClass(Symbol.SLIME_INPUT_STREAM,
+             new StructureClass(Symbol.SLIME_INPUT_STREAM, list(STRING_STREAM)));
+  public static final LispClass SLIME_OUTPUT_STREAM =
+    addClass(Symbol.SLIME_OUTPUT_STREAM,
+             new StructureClass(Symbol.SLIME_OUTPUT_STREAM, list(STRING_STREAM)));
+
+
+
+  static
+  {
+    ARRAY.setDirectSuperclass(CLASS_T);
+    ARRAY.setCPL(ARRAY, CLASS_T);
+    BASE_STRING.setDirectSuperclass(STRING);
+    BASE_STRING.setCPL(BASE_STRING, STRING, VECTOR, ARRAY, SEQUENCE, CLASS_T);
+    BIGNUM.setDirectSuperclass(INTEGER);
+    BIGNUM.setCPL(BIGNUM, INTEGER, RATIONAL, REAL, NUMBER, CLASS_T);
+    BIT_VECTOR.setDirectSuperclass(VECTOR);
+    BIT_VECTOR.setCPL(BIT_VECTOR, VECTOR, ARRAY, SEQUENCE, CLASS_T);
+    BROADCAST_STREAM.setCPL(BROADCAST_STREAM, SYSTEM_STREAM, STREAM,
+                            STRUCTURE_OBJECT, CLASS_T);
+    CASE_FROB_STREAM.setCPL(CASE_FROB_STREAM, SYSTEM_STREAM, STREAM,
+                            STRUCTURE_OBJECT, CLASS_T);
+    CHARACTER.setDirectSuperclass(CLASS_T);
+    CHARACTER.setCPL(CHARACTER, CLASS_T);
+    CLASS_T.setCPL(CLASS_T);
+    COMPLEX.setDirectSuperclass(NUMBER);
+    COMPLEX.setCPL(COMPLEX, NUMBER, CLASS_T);
+    CONCATENATED_STREAM.setCPL(CONCATENATED_STREAM, SYSTEM_STREAM, STREAM,
+                               STRUCTURE_OBJECT, CLASS_T);
+    CONS.setDirectSuperclass(LIST);
+    CONS.setCPL(CONS, LIST, SEQUENCE, CLASS_T);
+    DOUBLE_FLOAT.setDirectSuperclass(FLOAT);
+    DOUBLE_FLOAT.setCPL(DOUBLE_FLOAT, FLOAT, REAL, NUMBER, CLASS_T);
+    ECHO_STREAM.setCPL(ECHO_STREAM, SYSTEM_STREAM, STREAM,
+                       STRUCTURE_OBJECT, CLASS_T);
+    ENVIRONMENT.setDirectSuperclass(CLASS_T);
+    ENVIRONMENT.setCPL(ENVIRONMENT, CLASS_T);
+    FIXNUM.setDirectSuperclass(INTEGER);
+    FIXNUM.setCPL(FIXNUM, INTEGER, RATIONAL, REAL, NUMBER, CLASS_T);
+    FILE_STREAM.setCPL(FILE_STREAM, SYSTEM_STREAM, STREAM,
+                       STRUCTURE_OBJECT, CLASS_T);
+    JAR_STREAM.setCPL(JAR_STREAM, SYSTEM_STREAM, STREAM,
+                      STRUCTURE_OBJECT, CLASS_T);
+    URL_STREAM.setCPL(URL_STREAM, SYSTEM_STREAM, STREAM,
+                      STRUCTURE_OBJECT, CLASS_T);
+    FLOAT.setDirectSuperclass(REAL);
+    FLOAT.setCPL(FLOAT, REAL, NUMBER, CLASS_T);
+    FUNCTION.setDirectSuperclass(CLASS_T);
+    FUNCTION.setCPL(FUNCTION, CLASS_T);
+    HASH_TABLE.setDirectSuperclass(CLASS_T);
+    HASH_TABLE.setCPL(HASH_TABLE, CLASS_T);
+    INTEGER.setDirectSuperclass(RATIONAL);
+    INTEGER.setCPL(INTEGER, RATIONAL, REAL, NUMBER, CLASS_T);
+    JAVA_OBJECT.setDirectSuperclass(CLASS_T);
+    JAVA_OBJECT.setCPL(JAVA_OBJECT, CLASS_T);
+    LIST.setDirectSuperclass(SEQUENCE);
+    LIST.setCPL(LIST, SEQUENCE, CLASS_T);
+    LOGICAL_PATHNAME.setDirectSuperclass(PATHNAME);
+    LOGICAL_PATHNAME.setCPL(LOGICAL_PATHNAME, PATHNAME, CLASS_T);
+    MAILBOX.setDirectSuperclass(CLASS_T);
+    MAILBOX.setCPL(MAILBOX, CLASS_T);
+    MUTEX.setDirectSuperclass(CLASS_T);
+    MUTEX.setCPL(MUTEX, CLASS_T);
+    NIL_VECTOR.setDirectSuperclass(STRING);
+    NIL_VECTOR.setCPL(NIL_VECTOR, STRING, VECTOR, ARRAY, SEQUENCE, CLASS_T);
+    NULL.setDirectSuperclass(LIST);
+    NULL.setCPL(NULL, SYMBOL, LIST, SEQUENCE, CLASS_T);
+    NUMBER.setDirectSuperclass(CLASS_T);
+    NUMBER.setCPL(NUMBER, CLASS_T);
+    PACKAGE.setDirectSuperclass(CLASS_T);
+    PACKAGE.setCPL(PACKAGE, CLASS_T);
+    PATHNAME.setDirectSuperclass(CLASS_T);
+    PATHNAME.setCPL(PATHNAME, CLASS_T);
+    JAR_PATHNAME.setDirectSuperclass(PATHNAME);
+    JAR_PATHNAME.setCPL(JAR_PATHNAME, PATHNAME, CLASS_T);
+    URL_PATHNAME.setDirectSuperclass(PATHNAME);
+    URL_PATHNAME.setCPL(URL_PATHNAME, PATHNAME, CLASS_T);
+    RANDOM_STATE.setDirectSuperclass(CLASS_T);
+    RANDOM_STATE.setCPL(RANDOM_STATE, CLASS_T);
+    RATIO.setDirectSuperclass(RATIONAL);
+    RATIO.setCPL(RATIO, RATIONAL, REAL, NUMBER, CLASS_T);
+    RATIONAL.setDirectSuperclass(REAL);
+    RATIONAL.setCPL(RATIONAL, REAL, NUMBER, CLASS_T);
+    READTABLE.setDirectSuperclass(CLASS_T);
+    READTABLE.setCPL(READTABLE, CLASS_T);
+    REAL.setDirectSuperclass(NUMBER);
+    REAL.setCPL(REAL, NUMBER, CLASS_T);
+    RESTART.setDirectSuperclass(CLASS_T);
+    RESTART.setCPL(RESTART, CLASS_T);
+    SEQUENCE.setDirectSuperclass(CLASS_T);
+    SEQUENCE.setCPL(SEQUENCE, CLASS_T);
+    SIMPLE_ARRAY.setDirectSuperclass(ARRAY);
+    SIMPLE_ARRAY.setCPL(SIMPLE_ARRAY, ARRAY, CLASS_T);
+    SIMPLE_BASE_STRING.setDirectSuperclasses(list(BASE_STRING, SIMPLE_STRING));
+    SIMPLE_BASE_STRING.setCPL(SIMPLE_BASE_STRING, BASE_STRING, SIMPLE_STRING,
+                              STRING, VECTOR, SIMPLE_ARRAY, ARRAY, SEQUENCE,
+                              CLASS_T);
+    SIMPLE_BIT_VECTOR.setDirectSuperclasses(list(BIT_VECTOR, SIMPLE_ARRAY));
+    SIMPLE_BIT_VECTOR.setCPL(SIMPLE_BIT_VECTOR, BIT_VECTOR, VECTOR,
+                             SIMPLE_ARRAY, ARRAY, SEQUENCE, CLASS_T);
+    SIMPLE_STRING.setDirectSuperclasses(list(BASE_STRING, STRING, SIMPLE_ARRAY));
+    SIMPLE_STRING.setCPL(SIMPLE_STRING, BASE_STRING, STRING, VECTOR,
+                         SIMPLE_ARRAY, ARRAY, SEQUENCE, CLASS_T);
+    SIMPLE_VECTOR.setDirectSuperclasses(list(VECTOR, SIMPLE_ARRAY));
+    SIMPLE_VECTOR.setCPL(SIMPLE_VECTOR, VECTOR, SIMPLE_ARRAY, ARRAY, SEQUENCE,
+                         CLASS_T);
+    SINGLE_FLOAT.setDirectSuperclass(FLOAT);
+    SINGLE_FLOAT.setCPL(SINGLE_FLOAT, FLOAT, REAL, NUMBER, CLASS_T);
+    SLIME_INPUT_STREAM.setCPL(SLIME_INPUT_STREAM, STRING_STREAM, SYSTEM_STREAM,
+                              STREAM, STRUCTURE_OBJECT, CLASS_T);
+    SLIME_OUTPUT_STREAM.setCPL(SLIME_OUTPUT_STREAM, STRING_STREAM, SYSTEM_STREAM,
+                               STREAM, STRUCTURE_OBJECT, CLASS_T);
+    SOCKET_STREAM.setCPL(SOCKET_STREAM, TWO_WAY_STREAM, SYSTEM_STREAM, STREAM,
+                         STRUCTURE_OBJECT, CLASS_T);
+    STREAM.setCPL(STREAM, STRUCTURE_OBJECT, CLASS_T);
+    STRING.setDirectSuperclass(VECTOR);
+    STRING.setCPL(STRING, VECTOR, ARRAY, SEQUENCE, CLASS_T);
+    STRING_INPUT_STREAM.setCPL(STRING_INPUT_STREAM, STRING_STREAM,
+                               SYSTEM_STREAM, STREAM, STRUCTURE_OBJECT, CLASS_T);
+    STRING_OUTPUT_STREAM.setCPL(STRING_OUTPUT_STREAM, STRING_STREAM,
+                                SYSTEM_STREAM, STREAM, STRUCTURE_OBJECT, CLASS_T);
+    STRING_STREAM.setCPL(STRING_STREAM, SYSTEM_STREAM, STREAM,
+                         STRUCTURE_OBJECT, CLASS_T);
+    STRUCTURE_OBJECT.setCPL(STRUCTURE_OBJECT, CLASS_T);
+    SYMBOL.setDirectSuperclass(CLASS_T);
+    SYMBOL.setCPL(SYMBOL, CLASS_T);
+    SYNONYM_STREAM.setCPL(SYNONYM_STREAM, SYSTEM_STREAM,
+                          STREAM, STRUCTURE_OBJECT, CLASS_T);
+    SYSTEM_STREAM.setCPL(SYSTEM_STREAM, STREAM, STRUCTURE_OBJECT, CLASS_T);
+    THREAD.setDirectSuperclass(CLASS_T);
+    THREAD.setCPL(THREAD, CLASS_T);
+    TWO_WAY_STREAM.setCPL(TWO_WAY_STREAM, SYSTEM_STREAM, STREAM,
+                          STRUCTURE_OBJECT, CLASS_T);
+    VECTOR.setDirectSuperclasses(list(ARRAY, SEQUENCE));
+    VECTOR.setCPL(VECTOR, ARRAY, SEQUENCE, CLASS_T);
+    STACK_FRAME.setDirectSuperclasses(CLASS_T);
+    STACK_FRAME.setCPL(STACK_FRAME, CLASS_T);
+    LISP_STACK_FRAME.setDirectSuperclasses(STACK_FRAME);
+    LISP_STACK_FRAME.setCPL(LISP_STACK_FRAME, STACK_FRAME, CLASS_T);
+    JAVA_STACK_FRAME.setDirectSuperclasses(STACK_FRAME);
+    JAVA_STACK_FRAME.setCPL(JAVA_STACK_FRAME, STACK_FRAME, CLASS_T);
+  }
+
+  static
+  {
+    StandardClass.initializeStandardClasses();
+  }
+}

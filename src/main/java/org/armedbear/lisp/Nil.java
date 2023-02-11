@@ -1,183 +1,178 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ import java.io.ObjectStreamException;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public final class Nil
-/*     */   extends Symbol
-/*     */ {
-/*  40 */   public static final Symbol NIL = new Nil(Lisp.PACKAGE_CL);
-/*     */ 
-/*     */   
-/*     */   public Nil(Package pkg) {
-/*  44 */     super("NIL", pkg);
-/*  45 */     pkg.addSymbol(this);
-/*  46 */     initializeConstant(this);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public Object javaInstance() {
-/*  52 */     return null;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public Object javaInstance(Class<Boolean> c) {
-/*  58 */     if (c == Boolean.class || c == boolean.class)
-/*  59 */       return Boolean.FALSE; 
-/*  60 */     return javaInstance();
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typeOf() {
-/*  66 */     return Symbol.NULL;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject classOf() {
-/*  72 */     return BuiltInClass.NULL;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject getDescription() {
-/*  78 */     return new SimpleString("The symbol NIL");
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean getBooleanValue() {
-/*  84 */     return false;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typep(LispObject typeSpecifier) {
-/*  90 */     if (typeSpecifier == Symbol.NULL)
-/*  91 */       return T; 
-/*  92 */     if (typeSpecifier == Symbol.LIST)
-/*  93 */       return T; 
-/*  94 */     if (typeSpecifier == Symbol.SEQUENCE)
-/*  95 */       return T; 
-/*  96 */     if (typeSpecifier == Symbol.SYMBOL)
-/*  97 */       return T; 
-/*  98 */     if (typeSpecifier == Symbol.BOOLEAN)
-/*  99 */       return T; 
-/* 100 */     if (typeSpecifier == BuiltInClass.NULL)
-/* 101 */       return T; 
-/* 102 */     if (typeSpecifier == BuiltInClass.LIST)
-/* 103 */       return T; 
-/* 104 */     if (typeSpecifier == BuiltInClass.SEQUENCE)
-/* 105 */       return T; 
-/* 106 */     if (typeSpecifier == BuiltInClass.SYMBOL)
-/* 107 */       return T; 
-/* 108 */     return super.typep(typeSpecifier);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean constantp() {
-/* 114 */     return true;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public final LispObject getSymbolValue() {
-/* 120 */     return this;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public int length() {
-/* 126 */     return 0;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject NTH(int index) {
-/* 132 */     if (index < 0) {
-/* 133 */       Lisp.error(new TypeError(String.valueOf(index) + " is not of type UNSIGNED-BYTE."));
-/*     */     }
-/* 135 */     return NIL;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject elt(int index) {
-/* 141 */     return Lisp.error(new TypeError("ELT: invalid index " + index + " for " + this + "."));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject reverse() {
-/* 147 */     return this;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject nreverse() {
-/* 153 */     return this;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject[] copyToArray() {
-/* 159 */     return new LispObject[0];
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject NOT() {
-/* 165 */     return T;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public final LispObject getSymbolFunction() {
-/* 171 */     return null;
-/*     */   }
-/*     */   
-/*     */   public Object readResolve() throws ObjectStreamException {
-/* 175 */     return NIL;
-/*     */   }
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/Nil.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * Nil.java
+ *
+ * Copyright (C) 2002-2006 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+public final class Nil extends Symbol
+{
+    final public static Symbol NIL = new Nil(PACKAGE_CL);
+
+    public Nil(Package pkg)
+    {
+        super("NIL", pkg);
+        pkg.addSymbol(this);
+        initializeConstant(this);
+    }
+
+    @Override
+    public Object javaInstance()
+    {
+        return null;
+    }
+
+    @Override
+    public Object javaInstance(Class c)
+    {
+        if (c == Boolean.class || c == boolean.class)
+            return Boolean.FALSE;
+        return javaInstance();
+    }
+
+    @Override
+    public LispObject typeOf()
+    {
+        return Symbol.NULL;
+    }
+
+    @Override
+    public LispObject classOf()
+    {
+        return BuiltInClass.NULL;
+    }
+
+    @Override
+    public LispObject getDescription()
+    {
+        return new SimpleString("The symbol NIL");
+    }
+
+    @Override
+    public boolean getBooleanValue()
+    {
+        return false;
+    }
+
+    @Override
+    public LispObject typep(LispObject typeSpecifier)
+    {
+        if (typeSpecifier == Symbol.NULL)
+            return T;
+        if (typeSpecifier == Symbol.LIST)
+            return T;
+        if (typeSpecifier == Symbol.SEQUENCE)
+            return T;
+        if (typeSpecifier == Symbol.SYMBOL)
+            return T;
+        if (typeSpecifier == Symbol.BOOLEAN)
+            return T;
+        if (typeSpecifier == BuiltInClass.NULL)
+            return T;
+        if (typeSpecifier == BuiltInClass.LIST)
+            return T;
+        if (typeSpecifier == BuiltInClass.SEQUENCE)
+            return T;
+        if (typeSpecifier == BuiltInClass.SYMBOL)
+            return T;
+        return super.typep(typeSpecifier);
+    }
+
+    @Override
+    public boolean constantp()
+    {
+        return true;
+    }
+
+    @Override
+    public final LispObject getSymbolValue()
+    {
+        return this;
+    }
+
+    @Override
+    public int length()
+    {
+        return 0;
+    }
+
+    @Override
+    public LispObject NTH(int index)
+    {
+        if (index < 0)
+            error(new TypeError(String.valueOf(index) +
+                                 " is not of type UNSIGNED-BYTE."));
+        return NIL;
+    }
+
+    @Override
+    public LispObject elt(int index)
+    {
+        return error(new TypeError("ELT: invalid index " + index + " for " + this + "."));
+    }
+
+    @Override
+    public LispObject reverse()
+    {
+        return this;
+    }
+
+    @Override
+    public LispObject nreverse()
+    {
+        return this;
+    }
+
+    @Override
+    public LispObject[] copyToArray()
+    {
+        return new LispObject[0];
+    }
+
+    @Override
+    public LispObject NOT()
+    {
+        return T;
+    }
+
+    @Override
+    public final LispObject getSymbolFunction()
+    {
+        return null;
+    }
+
+    public Object readResolve() throws java.io.ObjectStreamException {
+       return NIL;
+    }
+
+}

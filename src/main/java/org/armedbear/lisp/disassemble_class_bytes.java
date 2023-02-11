@@ -1,91 +1,86 @@
-/*    */ package org.armedbear.lisp;
-/*    */ 
-/*    */ import java.io.File;
-/*    */ import java.io.FileOutputStream;
-/*    */ import java.io.IOException;
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ public final class disassemble_class_bytes
-/*    */   extends Primitive
-/*    */ {
-/*    */   private disassemble_class_bytes() {
-/* 47 */     super("disassemble-class-bytes", Lisp.PACKAGE_SYS, true, "java-object");
-/*    */   }
-/*    */ 
-/*    */ 
-/*    */   
-/*    */   public LispObject execute(LispObject arg) {
-/* 53 */     if (arg instanceof JavaObject) {
-/* 54 */       byte[] bytes = (byte[])((JavaObject)arg).getObject();
-/*    */       try {
-/* 56 */         File file = File.createTempFile("abcl", ".class", null);
-/* 57 */         FileOutputStream out = new FileOutputStream(file);
-/* 58 */         out.write(bytes);
-/* 59 */         out.close();
-/* 60 */         LispObject disassembler = Lisp._DISASSEMBLER_.symbolValue();
-/* 61 */         StringBuffer command = new StringBuffer();
-/* 62 */         if (disassembler instanceof AbstractString) {
-/* 63 */           command.append(disassembler.getStringValue());
-/* 64 */           command.append(" ");
-/* 65 */           command.append(file.getPath());
-/* 66 */         } else if (disassembler instanceof Operator) {
-/* 67 */           Pathname p = Pathname.makePathname(file);
-/* 68 */           LispObject commandResult = disassembler.execute(p);
-/* 69 */           command.append(commandResult.getStringValue());
-/*    */         } else {
-/* 71 */           return new SimpleString("No disassembler is available.");
-/*    */         } 
-/* 73 */         ShellCommand sc = new ShellCommand(command.toString(), null, null);
-/* 74 */         sc.run();
-/* 75 */         file.delete();
-/* 76 */         return new SimpleString(sc.getOutput());
-/* 77 */       } catch (IOException e) {
-/* 78 */         Debug.trace(e);
-/*    */       } 
-/*    */     } 
-/* 81 */     return Lisp.NIL;
-/*    */   }
-/*    */   
-/* 84 */   private static final Primitive DISASSEMBLE_CLASS_BYTES = new disassemble_class_bytes();
-/*    */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/disassemble_class_bytes.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * disassemble_class_bytes.java
+ *
+ * Copyright (C) 2005 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+// ### disassemble-class-bytes
+public final class disassemble_class_bytes extends Primitive
+{
+    private disassemble_class_bytes()
+    {
+        super("disassemble-class-bytes", PACKAGE_SYS, true, "java-object");
+    }
+
+    @Override
+    public LispObject execute(LispObject arg)
+    {
+        if (arg instanceof JavaObject) {
+            byte[] bytes = (byte[]) ((JavaObject)arg).getObject();
+            try {
+                File file = File.createTempFile("abcl", ".class", null);
+                FileOutputStream out = new FileOutputStream(file);
+                out.write(bytes);
+                out.close();
+                LispObject disassembler = _DISASSEMBLER_.symbolValue();
+                StringBuffer command = new StringBuffer();
+                if (disassembler instanceof AbstractString) {
+                    command.append(disassembler.getStringValue());
+                    command.append(" ");
+                    command.append(file.getPath());
+                } else if (disassembler instanceof Operator) {
+                    Pathname p = Pathname.makePathname(file);
+                    LispObject commandResult = disassembler.execute(p);
+                    command.append(commandResult.getStringValue());
+                } else {
+                    return new SimpleString("No disassembler is available.");
+                }                        
+                ShellCommand sc = new ShellCommand(command.toString(), null, null);
+                sc.run();
+                file.delete();
+                return new SimpleString(sc.getOutput());
+            } catch (IOException e) {
+                Debug.trace(e);
+            }
+        }
+        return NIL;
+    }
+
+    private static final Primitive DISASSEMBLE_CLASS_BYTES =
+        new disassemble_class_bytes();
+}

@@ -1,413 +1,407 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ import java.nio.ByteBuffer;
-/*     */ import java.nio.CharBuffer;
-/*     */ import java.nio.IntBuffer;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public final class make_array
-/*     */   extends Primitive
-/*     */ {
-/*     */   public make_array() {
-/*  44 */     super("%make-array", Lisp.PACKAGE_SYS, false);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject[] args) {
-/*     */     AbstractArray array;
-/*  50 */     if (args.length != 13) {
-/*  51 */       return Lisp.error(new WrongNumberOfArgumentsException(this, 13));
-/*     */     }
-/*  53 */     LispObject dimensions = args[0];
-/*  54 */     LispObject elementType = args[1];
-/*  55 */     LispObject initialElement = args[2];
-/*  56 */     LispObject initialElementProvided = args[3];
-/*  57 */     LispObject initialContents = args[4];
-/*  58 */     LispObject adjustable = args[5];
-/*  59 */     LispObject fillPointer = args[6];
-/*  60 */     LispObject displacedTo = args[7];
-/*  61 */     LispObject displacedIndexOffset = args[8];
-/*  62 */     LispObject direct = args[9];
-/*     */     
-/*  64 */     boolean directAllocation = !direct.equals(Lisp.NIL);
-/*  65 */     LispObject nioBuffer = args[11];
-/*  66 */     LispObject nioBufferProvided = args[12];
-/*     */     
-/*  68 */     if (initialElementProvided != Lisp.NIL && initialContents != Lisp.NIL) {
-/*  69 */       return Lisp.error(new LispError("MAKE-ARRAY: cannot specify both initial element and initial contents."));
-/*     */     }
-/*     */     
-/*  72 */     int rank = dimensions.listp() ? dimensions.length() : 1;
-/*  73 */     int[] dimv = new int[rank];
-/*  74 */     if (dimensions.listp()) {
-/*  75 */       for (int i = 0; i < rank; i++) {
-/*  76 */         LispObject dim = dimensions.car();
-/*  77 */         dimv[i] = Fixnum.getValue(dim);
-/*  78 */         dimensions = dimensions.cdr();
-/*     */       } 
-/*     */     } else {
-/*  81 */       dimv[0] = Fixnum.getValue(dimensions);
-/*     */     } 
-/*  83 */     if (displacedTo != Lisp.NIL) {
-/*     */       int displacement;
-/*     */       
-/*  86 */       AbstractArray abstractArray = Lisp.checkArray(displacedTo);
-/*  87 */       if (initialElementProvided != Lisp.NIL) {
-/*  88 */         return Lisp.error(new LispError("Initial element must not be specified for a displaced array."));
-/*     */       }
-/*  90 */       if (initialContents != Lisp.NIL) {
-/*  91 */         return Lisp.error(new LispError("Initial contents must not be specified for a displaced array."));
-/*     */       }
-/*     */       
-/*  94 */       if (displacedIndexOffset != Lisp.NIL) {
-/*  95 */         displacement = Fixnum.getValue(displacedIndexOffset);
-/*     */       } else {
-/*  97 */         displacement = 0;
-/*     */       } 
-/*  99 */       if (rank == 1) {
-/*     */         
-/* 101 */         AbstractVector v = null;
-/* 102 */         LispObject arrayElementType = abstractArray.getElementType();
-/* 103 */         if (arrayElementType == Symbol.CHARACTER) {
-/* 104 */           v = new ComplexString(dimv[0], abstractArray, displacement);
-/* 105 */         } else if (arrayElementType == Symbol.BIT) {
-/* 106 */           v = new ComplexBitVector(dimv[0], abstractArray, displacement);
-/* 107 */         } else if (arrayElementType.equal(Lisp.UNSIGNED_BYTE_8)) {
-/* 108 */           if (Java.Buffers.active.equals(Java.Buffers.AllocationPolicy.NIO)) {
-/*     */             
-/* 110 */             v = new ComplexVector_ByteBuffer(dimv[0], abstractArray, displacement, directAllocation);
-/*     */           } else {
-/* 112 */             v = new ComplexVector_UnsignedByte8(dimv[0], abstractArray, displacement);
-/*     */           } 
-/* 114 */         } else if (arrayElementType.equal(Lisp.UNSIGNED_BYTE_32)) {
-/* 115 */           if (Java.Buffers.active.equals(Java.Buffers.AllocationPolicy.NIO)) {
-/*     */             
-/* 117 */             v = new ComplexVector_IntBuffer(dimv[0], abstractArray, displacement, directAllocation);
-/*     */           } else {
-/* 119 */             v = new ComplexVector_UnsignedByte32(dimv[0], abstractArray, displacement);
-/*     */           } 
-/*     */         } else {
-/* 122 */           v = new ComplexVector(dimv[0], abstractArray, displacement);
-/*     */         } 
-/* 124 */         if (fillPointer != Lisp.NIL) {
-/* 125 */           v.setFillPointer(fillPointer);
-/*     */         }
-/* 127 */         return v;
-/*     */       } 
-/* 129 */       return new ComplexArray(dimv, abstractArray, displacement);
-/*     */     } 
-/*     */     
-/* 132 */     LispObject upgradedType = Lisp.getUpgradedArrayElementType(elementType);
-/* 133 */     if (rank == 0) {
-/*     */       LispObject data;
-/* 135 */       if (initialElementProvided != Lisp.NIL) {
-/* 136 */         data = initialElement;
-/*     */       } else {
-/* 138 */         data = initialContents;
-/*     */       } 
-/* 140 */       return new ZeroRankArray(upgradedType, data, (adjustable != Lisp.NIL));
-/* 141 */     }  if (rank == 1) {
-/* 142 */       AbstractVector v; LispObject defaultInitialElement; int size = dimv[0];
-/* 143 */       if (size < 0 || size >= Integer.MAX_VALUE) {
-/* 144 */         StringBuilder sb = new StringBuilder();
-/* 145 */         sb.append("The size specified for this array (");
-/* 146 */         sb.append(size);
-/* 147 */         sb.append(')');
-/* 148 */         if (size >= Integer.MAX_VALUE) {
-/* 149 */           sb.append(" is >= ARRAY-DIMENSION-LIMIT (");
-/* 150 */           sb.append(2147483647);
-/* 151 */           sb.append(").");
-/*     */         } else {
-/* 153 */           sb.append(" is negative.");
-/* 154 */         }  return Lisp.error(new LispError(sb.toString()));
-/*     */       } 
-/*     */ 
-/*     */       
-/* 158 */       if (upgradedType == Symbol.CHARACTER) {
-/* 159 */         if (fillPointer != Lisp.NIL || adjustable != Lisp.NIL) {
-/* 160 */           v = new ComplexString(size);
-/*     */         } else {
-/* 162 */           v = new SimpleString(size);
-/*     */         } 
-/* 164 */         defaultInitialElement = LispCharacter.getInstance(false);
-/* 165 */       } else if (upgradedType == Symbol.BIT) {
-/* 166 */         if (fillPointer != Lisp.NIL || adjustable != Lisp.NIL) {
-/* 167 */           v = new ComplexBitVector(size);
-/*     */         } else {
-/* 169 */           v = new SimpleBitVector(size);
-/*     */         } 
-/* 171 */         defaultInitialElement = Fixnum.ZERO;
-/* 172 */       } else if (upgradedType.equal(Lisp.UNSIGNED_BYTE_8)) {
-/* 173 */         if (fillPointer != Lisp.NIL || adjustable != Lisp.NIL) {
-/* 174 */           if (Java.Buffers.active.equals(Java.Buffers.AllocationPolicy.NIO)) {
-/* 175 */             v = new ComplexVector_ByteBuffer(size, directAllocation);
-/*     */           } else {
-/* 177 */             v = new ComplexVector_UnsignedByte8(size);
-/*     */           }
-/*     */         
-/* 180 */         } else if (Java.Buffers.active.equals(Java.Buffers.AllocationPolicy.NIO)) {
-/* 181 */           if (!nioBuffer.equals(Lisp.NIL)) {
-/* 182 */             v = new BasicVector_ByteBuffer((ByteBuffer)((JavaObject)nioBuffer).getObject(), directAllocation);
-/*     */           } else {
-/*     */             
-/* 185 */             v = new BasicVector_ByteBuffer(size, directAllocation);
-/*     */           } 
-/*     */         } else {
-/* 188 */           v = new BasicVector_UnsignedByte8(size);
-/*     */         } 
-/*     */         
-/* 191 */         defaultInitialElement = Fixnum.ZERO;
-/* 192 */       } else if (upgradedType.equal(Lisp.UNSIGNED_BYTE_16) && fillPointer == Lisp.NIL && adjustable == Lisp.NIL) {
-/*     */         
-/* 194 */         if (Java.Buffers.active.equals(Java.Buffers.AllocationPolicy.NIO)) {
-/* 195 */           if (!nioBuffer.equals(Lisp.NIL)) {
-/* 196 */             Object o = ((JavaObject)nioBuffer).getObject();
-/* 197 */             if (o instanceof CharBuffer) {
-/* 198 */               v = new BasicVector_CharBuffer((CharBuffer)o, directAllocation);
-/* 199 */             } else if (o instanceof ByteBuffer) {
-/* 200 */               v = new BasicVector_CharBuffer((ByteBuffer)o, directAllocation);
-/*     */             } else {
-/* 202 */               return Lisp.type_error(nioBuffer, JavaObject.getInstance(CharBuffer.class));
-/*     */             } 
-/*     */           } else {
-/* 205 */             v = new BasicVector_CharBuffer(size, directAllocation);
-/*     */           } 
-/*     */         } else {
-/* 208 */           v = new BasicVector_UnsignedByte16(size);
-/*     */         } 
-/* 210 */         defaultInitialElement = Fixnum.ZERO;
-/* 211 */       } else if (upgradedType.equal(Lisp.UNSIGNED_BYTE_32)) {
-/* 212 */         if (fillPointer != Lisp.NIL || adjustable != Lisp.NIL) {
-/* 213 */           if (Java.Buffers.active.equals(Java.Buffers.AllocationPolicy.NIO)) {
-/* 214 */             v = new ComplexVector_IntBuffer(size);
-/*     */           } else {
-/* 216 */             v = new ComplexVector_UnsignedByte32(size);
-/*     */           }
-/*     */         
-/* 219 */         } else if (Java.Buffers.active.equals(Java.Buffers.AllocationPolicy.NIO)) {
-/* 220 */           if (!nioBuffer.equals(Lisp.NIL)) {
-/* 221 */             Object o = ((JavaObject)nioBuffer).getObject();
-/* 222 */             if (o instanceof IntBuffer) {
-/* 223 */               v = new BasicVector_IntBuffer((IntBuffer)o, directAllocation);
-/* 224 */             } else if (o instanceof ByteBuffer) {
-/* 225 */               v = new BasicVector_IntBuffer((ByteBuffer)o, directAllocation);
-/*     */             } else {
-/* 227 */               return Lisp.type_error(nioBuffer, JavaObject.getInstance(IntBuffer.class));
-/*     */             } 
-/*     */           } else {
-/* 230 */             v = new BasicVector_IntBuffer(size, directAllocation);
-/*     */           } 
-/*     */         } else {
-/* 233 */           v = new BasicVector_UnsignedByte32(size);
-/*     */         } 
-/*     */         
-/* 236 */         defaultInitialElement = Fixnum.ZERO;
-/* 237 */       } else if (upgradedType == Lisp.NIL) {
-/* 238 */         v = new NilVector(size);
-/* 239 */         defaultInitialElement = null;
-/*     */       } else {
-/* 241 */         if (fillPointer != Lisp.NIL || adjustable != Lisp.NIL) {
-/* 242 */           v = new ComplexVector(size);
-/*     */         } else {
-/* 244 */           v = new SimpleVector(size);
-/*     */         } 
-/* 246 */         defaultInitialElement = Lisp.NIL;
-/*     */       } 
-/*     */       
-/* 249 */       if (nioBuffer == Lisp.NIL)
-/*     */       {
-/*     */         
-/* 252 */         if (initialElementProvided != Lisp.NIL) {
-/*     */           
-/* 254 */           v.fill(initialElement);
-/* 255 */         } else if (initialContents != Lisp.NIL) {
-/* 256 */           if (initialContents.listp()) {
-/* 257 */             LispObject list = initialContents;
-/* 258 */             for (int i = 0; i < size; i++) {
-/* 259 */               v.aset(i, list.car());
-/* 260 */               list = list.cdr();
-/*     */             } 
-/* 262 */           } else if (initialContents.vectorp()) {
-/* 263 */             for (int i = 0; i < size; i++) {
-/* 264 */               v.aset(i, initialContents.elt(i));
-/*     */             }
-/*     */           } else {
-/* 267 */             return Lisp.type_error(initialContents, Symbol.SEQUENCE);
-/*     */           }
-/*     */         
-/* 270 */         } else if (defaultInitialElement != null) {
-/* 271 */           v.fill(defaultInitialElement);
-/*     */         } 
-/*     */       }
-/* 274 */       if (fillPointer != Lisp.NIL) {
-/* 275 */         v.setFillPointer(fillPointer);
-/*     */       }
-/* 277 */       return v;
-/*     */     } 
-/*     */     
-/* 280 */     if (adjustable == Lisp.NIL) {
-/* 281 */       if (upgradedType.equal(Lisp.UNSIGNED_BYTE_8)) {
-/* 282 */         if (initialContents != Lisp.NIL) {
-/* 283 */           if (Java.Buffers.active.equals(Java.Buffers.AllocationPolicy.NIO)) {
-/* 284 */             array = new SimpleArray_ByteBuffer(dimv, initialContents, directAllocation);
-/*     */           } else {
-/* 286 */             array = new SimpleArray_UnsignedByte8(dimv, initialContents);
-/*     */           } 
-/*     */         } else {
-/* 289 */           if (Java.Buffers.active.equals(Java.Buffers.AllocationPolicy.NIO)) {
-/* 290 */             array = new SimpleArray_ByteBuffer(dimv, directAllocation);
-/*     */           } else {
-/* 292 */             array = new SimpleArray_UnsignedByte8(dimv);
-/*     */           } 
-/* 294 */           if (initialElementProvided != Lisp.NIL) {
-/* 295 */             array.fill(initialElement);
-/*     */           } else {
-/* 297 */             array.fill(Fixnum.ZERO);
-/*     */           } 
-/*     */         } 
-/* 300 */       } else if (upgradedType.equal(Lisp.UNSIGNED_BYTE_16)) {
-/* 301 */         if (initialContents != Lisp.NIL) {
-/* 302 */           if (Java.Buffers.active.equals(Java.Buffers.AllocationPolicy.NIO)) {
-/* 303 */             array = new SimpleArray_CharBuffer(dimv, initialContents, directAllocation);
-/*     */           } else {
-/* 305 */             array = new SimpleArray_UnsignedByte16(dimv, initialContents);
-/*     */           } 
-/*     */         } else {
-/* 308 */           if (Java.Buffers.active.equals(Java.Buffers.AllocationPolicy.NIO)) {
-/* 309 */             array = new SimpleArray_CharBuffer(dimv, directAllocation);
-/*     */           } else {
-/* 311 */             array = new SimpleArray_UnsignedByte16(dimv);
-/*     */           } 
-/* 313 */           if (initialElementProvided != Lisp.NIL) {
-/* 314 */             array.fill(initialElement);
-/*     */           } else {
-/* 316 */             array.fill(Fixnum.ZERO);
-/*     */           } 
-/*     */         } 
-/* 319 */       } else if (upgradedType.equal(Lisp.UNSIGNED_BYTE_32)) {
-/* 320 */         if (initialContents != Lisp.NIL) {
-/* 321 */           if (Java.Buffers.active.equals(Java.Buffers.AllocationPolicy.NIO)) {
-/* 322 */             array = new SimpleArray_IntBuffer(dimv, initialContents, directAllocation);
-/*     */           } else {
-/* 324 */             array = new SimpleArray_UnsignedByte32(dimv, initialContents);
-/*     */           } 
-/*     */         } else {
-/* 327 */           if (Java.Buffers.active.equals(Java.Buffers.AllocationPolicy.NIO)) {
-/* 328 */             array = new SimpleArray_IntBuffer(dimv, directAllocation);
-/*     */           } else {
-/* 330 */             array = new SimpleArray_UnsignedByte32(dimv);
-/*     */           } 
-/* 332 */           if (initialElementProvided != Lisp.NIL) {
-/* 333 */             array.fill(initialElement);
-/*     */           } else {
-/* 335 */             array.fill(Fixnum.ZERO);
-/*     */           }
-/*     */         
-/*     */         } 
-/* 339 */       } else if (initialContents != Lisp.NIL) {
-/* 340 */         array = new SimpleArray_T(dimv, upgradedType, initialContents);
-/*     */       } else {
-/* 342 */         array = new SimpleArray_T(dimv, upgradedType);
-/* 343 */         if (initialElementProvided != Lisp.NIL) {
-/* 344 */           array.fill(initialElement);
-/*     */         } else {
-/* 346 */           array.fill(Lisp.NIL);
-/*     */         }
-/*     */       
-/*     */       }
-/*     */     
-/* 351 */     } else if (upgradedType.equal(Lisp.UNSIGNED_BYTE_8)) {
-/* 352 */       if (initialContents != Lisp.NIL) {
-/* 353 */         if (Java.Buffers.active.equals(Java.Buffers.AllocationPolicy.NIO)) {
-/* 354 */           array = new ComplexArray_ByteBuffer(dimv, initialContents);
-/*     */         } else {
-/* 356 */           array = new ComplexArray_UnsignedByte8(dimv, initialContents);
-/*     */         } 
-/*     */       } else {
-/* 359 */         if (Java.Buffers.active.equals(Java.Buffers.AllocationPolicy.NIO)) {
-/* 360 */           array = new ComplexArray_ByteBuffer(dimv);
-/*     */         } else {
-/* 362 */           array = new ComplexArray_UnsignedByte8(dimv);
-/*     */         } 
-/* 364 */         if (initialElementProvided != Lisp.NIL) {
-/* 365 */           array.fill(initialElement);
-/*     */         } else {
-/* 367 */           array.fill(Fixnum.ZERO);
-/*     */         } 
-/*     */       } 
-/* 370 */     } else if (upgradedType.equal(Lisp.UNSIGNED_BYTE_32)) {
-/* 371 */       if (initialContents != Lisp.NIL) {
-/* 372 */         if (Java.Buffers.active.equals(Java.Buffers.AllocationPolicy.NIO)) {
-/* 373 */           array = new ComplexArray_IntBuffer(dimv, initialContents, directAllocation);
-/*     */         } else {
-/* 375 */           array = new ComplexArray_UnsignedByte32(dimv, initialContents);
-/*     */         } 
-/*     */       } else {
-/* 378 */         if (Java.Buffers.active.equals(Java.Buffers.AllocationPolicy.NIO)) {
-/* 379 */           array = new ComplexArray_IntBuffer(dimv, directAllocation);
-/*     */         } else {
-/* 381 */           array = new ComplexArray_UnsignedByte32(dimv);
-/*     */         } 
-/* 383 */         if (initialElementProvided != Lisp.NIL) {
-/* 384 */           array.fill(initialElement);
-/*     */         } else {
-/* 386 */           array.fill(Fixnum.ZERO);
-/*     */         }
-/*     */       
-/*     */       } 
-/* 390 */     } else if (initialContents != Lisp.NIL) {
-/* 391 */       array = new ComplexArray(dimv, upgradedType, initialContents);
-/*     */     } else {
-/* 393 */       array = new ComplexArray(dimv, upgradedType);
-/* 394 */       if (initialElementProvided != Lisp.NIL) {
-/* 395 */         array.fill(initialElement);
-/*     */       } else {
-/* 397 */         array.fill(Lisp.NIL);
-/*     */       } 
-/*     */     } 
-/*     */ 
-/*     */     
-/* 402 */     return array;
-/*     */   }
-/*     */ 
-/*     */   
-/* 406 */   private static final Primitive _MAKE_ARRAY = new make_array();
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/make_array.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * make_array.java
+ *
+ * Copyright (C) 2003-2005 Peter Graves
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import org.armedbear.lisp.Java.Buffers.AllocationPolicy;
+import static org.armedbear.lisp.Lisp.*;
+
+// ### %make-array dimensions element-type initial-element initial-element-p initial-contents adjustable fill-pointer displaced-to displaced-index-offset nio-buffer nio-buffer-provided-p 
+// => new-array
+public final class make_array
+  extends Primitive
+{
+  public make_array() {
+    super("%make-array", PACKAGE_SYS, false);
+  }
+
+  @Override
+  public LispObject execute(LispObject[] args) {
+    // What a mess without keywords, but it still works…
+    if (args.length != 13) {
+      return error(new WrongNumberOfArgumentsException(this, 13));
+    }
+    LispObject dimensions = args[0];
+    LispObject elementType = args[1];
+    LispObject initialElement = args[2];
+    LispObject initialElementProvided = args[3];
+    LispObject initialContents = args[4];
+    LispObject adjustable = args[5];
+    LispObject fillPointer = args[6];
+    LispObject displacedTo = args[7];
+    LispObject displacedIndexOffset = args[8];
+    LispObject direct = args[9]; // boolean whether to do a direct allocation for nio capable vectors
+    //    LispObject directProvided = args[10]; // UNUSED but included for consistency
+    boolean directAllocation = direct.equals(NIL) ? false : true;
+    LispObject nioBuffer = args[11];
+    LispObject nioBufferProvided = args[12];
+    
+    if (initialElementProvided != NIL && initialContents != NIL) {
+        return error(new LispError("MAKE-ARRAY: cannot specify both " +
+                                    "initial element and initial contents."));
+    }
+    final int rank = dimensions.listp() ? dimensions.length() : 1;
+    int[] dimv = new int[rank];
+    if (dimensions.listp()) {
+      for (int i = 0; i < rank; i++) {
+        LispObject dim = dimensions.car();
+        dimv[i] = Fixnum.getValue(dim);
+        dimensions = dimensions.cdr();
+      }
+    } else {
+      dimv[0] = Fixnum.getValue(dimensions);
+    }
+    if (displacedTo != NIL) {
+        // FIXME Make sure element type (if specified) is compatible with
+        // displaced-to array.
+        final AbstractArray array = checkArray(displacedTo);
+        if (initialElementProvided != NIL) {
+          return error(new LispError("Initial element must not be specified for a displaced array."));
+        }
+        if (initialContents != NIL) {
+          return error(new LispError("Initial contents must not be specified for a displaced array."));
+        }
+        final int displacement;
+        if (displacedIndexOffset != NIL) {
+          displacement = Fixnum.getValue(displacedIndexOffset);
+        } else {
+          displacement = 0;
+        }
+        if (rank == 1)
+          {
+            AbstractVector v = null; // FIXME needed to get the compiler not to warn
+            LispObject arrayElementType = array.getElementType();
+            if (arrayElementType == Symbol.CHARACTER) {
+              v = new ComplexString(dimv[0], array, displacement);
+            } else if (arrayElementType == Symbol.BIT) {
+              v = new ComplexBitVector(dimv[0], array, displacement);
+            } else if (arrayElementType.equal(UNSIGNED_BYTE_8)) {
+              if (Java.Buffers.active.equals(AllocationPolicy.NIO)) {
+                // an abstract array doesn't have a directAllocation  ???
+                v = new ComplexVector_ByteBuffer(dimv[0], array, displacement, directAllocation); 
+              } else { // if (Java.Buffers.active.equals(AllocationPolicy.PRIMITIVE_ARRAY)) 
+                v = new ComplexVector_UnsignedByte8(dimv[0], array, displacement);
+              }
+            } else if (arrayElementType.equal(UNSIGNED_BYTE_32)) {
+              if (Java.Buffers.active.equals(AllocationPolicy.NIO)) {
+                // an abstract array doesn't have a directAllocation  ???
+                v = new ComplexVector_IntBuffer(dimv[0], array, displacement, directAllocation);
+              } else { //if (Java.Buffers.active.equals(AllocationPolicy.PRIMITIVE_ARRAY))
+                v = new ComplexVector_UnsignedByte32(dimv[0], array, displacement);
+              }
+            } else {
+              v = new ComplexVector(dimv[0], array, displacement);
+            }
+            if (fillPointer != NIL) {
+              v.setFillPointer(fillPointer);
+            }
+            return v;
+          }
+        return new ComplexArray(dimv, array, displacement);
+    }
+
+    LispObject upgradedType = getUpgradedArrayElementType(elementType);
+    if (rank == 0) {
+        LispObject data;
+        if (initialElementProvided != NIL) {
+          data = initialElement;
+        } else {
+          data = initialContents;
+        }
+        return new ZeroRankArray(upgradedType, data, adjustable != NIL);
+    } else if (rank == 1) {
+      final int size = dimv[0];
+      if (size < 0 || size >= ARRAY_DIMENSION_MAX) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("The size specified for this array (");
+        sb.append(size);
+        sb.append(')');
+        if (size >= ARRAY_DIMENSION_MAX) {
+          sb.append(" is >= ARRAY-DIMENSION-LIMIT (");
+          sb.append(ARRAY_DIMENSION_MAX);
+          sb.append(").");
+        } else {
+          sb.append(" is negative.");}
+        return error(new LispError(sb.toString()));
+      }
+      final AbstractVector v;
+      final LispObject defaultInitialElement;
+      if (upgradedType == Symbol.CHARACTER) {
+        if (fillPointer != NIL || adjustable != NIL) {
+          v = new ComplexString(size);
+        } else {
+          v = new SimpleString(size);
+        }
+        defaultInitialElement = LispCharacter.getInstance('\0');
+      } else if (upgradedType == Symbol.BIT) {
+        if (fillPointer != NIL || adjustable != NIL) {
+          v = new ComplexBitVector(size);
+        } else {
+          v = new SimpleBitVector(size);
+        }
+        defaultInitialElement = Fixnum.ZERO;
+      } else if (upgradedType.equal(UNSIGNED_BYTE_8)) {
+        if (fillPointer != NIL || adjustable != NIL) {
+          if (Java.Buffers.active.equals(AllocationPolicy.NIO)) {
+            v = new ComplexVector_ByteBuffer(size, directAllocation);
+          } else { //if (Java.Buffers.active.equals(AllocationPolicy.PRIMITIVE_ARRAY)) {
+            v = new ComplexVector_UnsignedByte8(size);
+          }
+        } else {
+          if (Java.Buffers.active.equals(AllocationPolicy.NIO)) {
+            if (!nioBuffer.equals(NIL)) {
+              v = new BasicVector_ByteBuffer((java.nio.ByteBuffer)(((JavaObject)nioBuffer).getObject()),
+                                             directAllocation);
+            } else {
+              v = new BasicVector_ByteBuffer(size, directAllocation);
+            }
+          } else { //if (Java.Buffers.active.equals(AllocationPolicy.PRIMITIVE_ARRAY)) {
+            v = new BasicVector_UnsignedByte8(size);
+          }
+        }
+        defaultInitialElement = Fixnum.ZERO;
+      } else if (upgradedType.equal(UNSIGNED_BYTE_16)
+                 && fillPointer == NIL && adjustable == NIL) {
+        if (Java.Buffers.active.equals(AllocationPolicy.NIO)) {
+          if (!nioBuffer.equals(NIL)) {
+            Object o = ((JavaObject)nioBuffer).getObject();
+            if (o instanceof java.nio.CharBuffer) {
+              v = new BasicVector_CharBuffer((java.nio.CharBuffer) o, directAllocation);
+            } else if (o instanceof java.nio.ByteBuffer) {
+              v = new BasicVector_CharBuffer((java.nio.ByteBuffer)o, directAllocation); // FIXME warn on coercion?
+            } else {
+              return type_error(nioBuffer, JavaObject.getInstance(java.nio.CharBuffer.class));
+            }
+          } else {
+            v = new BasicVector_CharBuffer(size, directAllocation);
+          }
+        } else { //if (Java.Buffers.active.equals(AllocationPolicy.PRIMITIVE_ARRAY)) {
+          v = new BasicVector_UnsignedByte16(size);
+        }
+        defaultInitialElement = Fixnum.ZERO;
+      } else if (upgradedType.equal(UNSIGNED_BYTE_32)) {
+        if (fillPointer != NIL || adjustable != NIL) {
+          if (Java.Buffers.active.equals(AllocationPolicy.NIO)) {
+            v = new ComplexVector_IntBuffer(size);
+          } else {
+            v = new ComplexVector_UnsignedByte32(size);
+          }
+        } else {
+          if (Java.Buffers.active.equals(AllocationPolicy.NIO)) {
+            if (!nioBuffer.equals(NIL)) {
+              Object o = ((JavaObject)nioBuffer).getObject();
+              if (o instanceof java.nio.IntBuffer) {
+                v = new BasicVector_IntBuffer((java.nio.IntBuffer)o, directAllocation);
+              } else if (o instanceof java.nio.ByteBuffer) {
+                v = new BasicVector_IntBuffer((java.nio.ByteBuffer)o, directAllocation);
+              } else {
+                return type_error(nioBuffer, JavaObject.getInstance(java.nio.IntBuffer.class));
+              }
+            } else {
+              v = new BasicVector_IntBuffer(size, directAllocation);
+            }
+          } else { //if (Java.Buffers.active.equals(AllocationPolicy.PRIMITIVE_ARRAY)) {
+            v = new BasicVector_UnsignedByte32(size);
+          }
+        }
+        defaultInitialElement = Fixnum.ZERO;
+      } else if (upgradedType == NIL) {
+        v = new NilVector(size);
+        defaultInitialElement = null;
+      } else {
+        if (fillPointer != NIL || adjustable != NIL) {
+          v = new ComplexVector(size);
+        } else {
+          v = new SimpleVector(size);
+        }
+        defaultInitialElement = NIL;
+      }
+      
+      if (nioBuffer != NIL) {
+        // v should have been allocated with a nioBuffer reference…
+        ;
+      } else if (initialElementProvided != NIL) {
+        // Initial element was specified.
+        v.fill(initialElement);
+      } else if (initialContents != NIL) {
+        if (initialContents.listp()) {
+          LispObject list = initialContents;
+          for (int i = 0; i < size; i++) {
+            v.aset(i, list.car());
+            list = list.cdr();
+          }
+        } else if (initialContents.vectorp()) {
+          for (int i = 0; i < size; i++) {
+            v.aset(i, initialContents.elt(i));
+          }
+        } else {
+          return type_error(initialContents, Symbol.SEQUENCE);
+        }
+      } else {
+        if (defaultInitialElement != null) {
+          v.fill(defaultInitialElement);
+        }
+      }
+      if (fillPointer != NIL) {
+        v.setFillPointer(fillPointer);
+      }
+        return v;
+    } else { // rank > 1
+      AbstractArray array;
+      if (adjustable == NIL) {
+        if (upgradedType.equal(UNSIGNED_BYTE_8)) {
+          if (initialContents != NIL) {
+            if (Java.Buffers.active.equals(AllocationPolicy.NIO)) {
+              array = new SimpleArray_ByteBuffer(dimv, initialContents, directAllocation);
+            } else { //if (Java.Buffers.active.equals(AllocationPolicy.PRIMITIVE_ARRAY)) {
+              array = new SimpleArray_UnsignedByte8(dimv, initialContents);
+            }
+          } else {
+            if (Java.Buffers.active.equals(AllocationPolicy.NIO)) {
+              array = new SimpleArray_ByteBuffer(dimv, directAllocation);
+            } else { //if (Java.Buffers.active.equals(AllocationPolicy.PRIMITIVE_ARRAY)) {
+              array = new SimpleArray_UnsignedByte8(dimv);
+            }
+            if (initialElementProvided != NIL) {
+              array.fill(initialElement);
+            } else {
+              array.fill(Fixnum.ZERO);
+            }
+          }
+        } else if (upgradedType.equal(UNSIGNED_BYTE_16)) {
+          if (initialContents != NIL) {
+            if (Java.Buffers.active.equals(AllocationPolicy.NIO)) {
+              array = new SimpleArray_CharBuffer(dimv, initialContents, directAllocation);
+            } else { //if (Java.Buffers.active.equals(AllocationPolicy.PRIMITIVE_ARRAY)) {
+              array = new SimpleArray_UnsignedByte16(dimv, initialContents);
+            }
+          } else {
+            if (Java.Buffers.active.equals(AllocationPolicy.NIO)) {
+              array = new SimpleArray_CharBuffer(dimv, directAllocation);
+            } else { //if (Java.Buffers.active.equals(AllocationPolicy.PRIMITIVE_ARRAY)) {
+              array = new SimpleArray_UnsignedByte16(dimv);
+            }
+            if (initialElementProvided != NIL) {
+              array.fill(initialElement);
+            } else {
+              array.fill(Fixnum.ZERO);
+            }
+          }
+        } else if (upgradedType.equal(UNSIGNED_BYTE_32)) {
+          if (initialContents != NIL) {
+            if (Java.Buffers.active.equals(AllocationPolicy.NIO)) {
+              array = new SimpleArray_IntBuffer(dimv, initialContents, directAllocation);
+            } else { //if (Java.Buffers.active.equals(AllocationPolicy.PRIMITIVE_ARRAY)) {
+              array = new SimpleArray_UnsignedByte32(dimv, initialContents);
+            }
+          } else {
+            if (Java.Buffers.active.equals(AllocationPolicy.NIO)) {
+              array = new SimpleArray_IntBuffer(dimv, directAllocation);
+            } else {
+              array = new SimpleArray_UnsignedByte32(dimv);
+            }
+            if (initialElementProvided != NIL) {
+              array.fill(initialElement);
+            } else {
+              array.fill(Fixnum.ZERO);
+            }
+          }
+        } else {
+          if (initialContents != NIL) {
+            array = new SimpleArray_T(dimv, upgradedType, initialContents);
+          } else {
+            array = new SimpleArray_T(dimv, upgradedType);
+            if (initialElementProvided != NIL) {
+              array.fill(initialElement);
+            } else {
+              array.fill(NIL);
+            }
+          }
+        }
+      } else { // Adjustable.
+        if (upgradedType.equal(UNSIGNED_BYTE_8)) {
+          if (initialContents != NIL) {
+            if (Java.Buffers.active.equals(AllocationPolicy.NIO)) {
+              array = new ComplexArray_ByteBuffer(dimv, initialContents);
+            } else {  //if (Java.Buffers.active.equals(AllocationPolicy.PRIMITIVE_ARRAY)) {
+              array = new ComplexArray_UnsignedByte8(dimv, initialContents);
+            }
+          } else {
+            if (Java.Buffers.active.equals(AllocationPolicy.NIO)) {
+              array = new ComplexArray_ByteBuffer(dimv);
+            } else  { //if (Java.Buffers.active.equals(AllocationPolicy.PRIMITIVE_ARRAY)) {
+              array = new ComplexArray_UnsignedByte8(dimv);
+            }
+            if (initialElementProvided != NIL) {
+              array.fill(initialElement);
+            } else {
+              array.fill(Fixnum.ZERO);
+            }
+          } // FIXME add specialization on (unsigned-byte 16)
+        } else if (upgradedType.equal(UNSIGNED_BYTE_32)) {
+          if (initialContents != NIL) {
+            if (Java.Buffers.active.equals(AllocationPolicy.NIO)) {
+              array = new ComplexArray_IntBuffer(dimv, initialContents, directAllocation);
+            } else {  //if (Java.Buffers.active.equals(AllocationPolicy.PRIMITIVE_ARRAY)) {
+              array = new ComplexArray_UnsignedByte32(dimv, initialContents);
+            }
+          } else {
+            if (Java.Buffers.active.equals(AllocationPolicy.NIO)) {
+              array = new ComplexArray_IntBuffer(dimv, directAllocation);
+            } else {  //if (Java.Buffers.active.equals(AllocationPolicy.PRIMITIVE_ARRAY)) {
+              array = new ComplexArray_UnsignedByte32(dimv);
+            }
+            if (initialElementProvided != NIL) {
+              array.fill(initialElement);
+            } else {
+              array.fill(Fixnum.ZERO);
+            }
+          }
+        } else {
+          if (initialContents != NIL) {
+            array = new ComplexArray(dimv, upgradedType, initialContents);
+          } else {
+            array = new ComplexArray(dimv, upgradedType);
+            if (initialElementProvided != NIL) {
+              array.fill(initialElement);
+            } else {
+              array.fill(NIL);
+            }
+          }
+        }
+      }
+      return array;
+    }
+  }
+
+  private static final Primitive _MAKE_ARRAY = new make_array();
+}

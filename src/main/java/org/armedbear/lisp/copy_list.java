@@ -1,73 +1,67 @@
-/*    */ package org.armedbear.lisp;
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ public final class copy_list
-/*    */   extends Primitive
-/*    */ {
-/*    */   private copy_list() {
-/* 43 */     super(Symbol.COPY_LIST, "list");
-/*    */   }
-/*    */ 
-/*    */ 
-/*    */   
-/*    */   public LispObject execute(LispObject arg) {
-/* 49 */     if (arg == Lisp.NIL)
-/* 50 */       return Lisp.NIL; 
-/* 51 */     Cons result = new Cons(arg.car());
-/* 52 */     Cons splice = result;
-/* 53 */     arg = arg.cdr();
-/* 54 */     while (arg instanceof Cons) {
-/*    */       
-/* 56 */       Cons cons = (Cons)arg;
-/* 57 */       Cons temp = new Cons(cons.car);
-/* 58 */       splice.cdr = temp;
-/* 59 */       splice = temp;
-/* 60 */       arg = cons.cdr;
-/*    */     } 
-/* 62 */     splice.cdr = arg;
-/* 63 */     return result;
-/*    */   }
-/*    */   
-/* 66 */   private static final Primitive COPY_LIST = new copy_list();
-/*    */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/copy_list.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * copy_list.java
+ *
+ * Copyright (C) 2005 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+// ### copy-list list => copy
+public final class copy_list extends Primitive
+{
+  private copy_list()
+  {
+    super(Symbol.COPY_LIST, "list");
+  }
+
+  @Override
+  public LispObject execute(LispObject arg)
+  {
+    if (arg == NIL)
+      return NIL;
+    Cons result = new Cons(arg.car());
+    Cons splice = result;
+    arg = arg.cdr();
+    while (arg instanceof Cons)
+      {
+        Cons cons = (Cons) arg;
+        Cons temp = new Cons(cons.car);
+        splice.cdr = temp;
+        splice = temp;
+        arg = cons.cdr;
+      }
+    splice.cdr = arg;
+    return result;
+  }
+
+  private static final Primitive COPY_LIST = new copy_list();
+};

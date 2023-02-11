@@ -1,282 +1,277 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ import java.io.BufferedReader;
-/*     */ import java.io.IOException;
-/*     */ import java.io.InputStream;
-/*     */ import java.io.InputStreamReader;
-/*     */ import java.util.ArrayList;
-/*     */ import java.util.List;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public final class ShellCommand
-/*     */   implements Runnable
-/*     */ {
-/*     */   private final String command;
-/*     */   private final String directory;
-/*     */   private final Stream outputStream;
-/*     */   private final StringBuffer output;
-/*  52 */   private int exitValue = -1;
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public ShellCommand(String command, String directory, Stream outputStream) {
-/*  57 */     this.command = command;
-/*  58 */     this.directory = directory;
-/*  59 */     this.outputStream = outputStream;
-/*  60 */     this.output = (outputStream == null) ? new StringBuffer() : null;
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public final String getOutput() {
-/*  65 */     return (this.output != null) ? this.output.toString() : "";
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   final int exitValue() {
-/*  70 */     return this.exitValue;
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   void processOutput(String s) {
-/*  75 */     if (this.outputStream != null) {
-/*  76 */       this.outputStream._writeString(s);
-/*     */     } else {
-/*  78 */       this.output.append(s);
-/*     */     } 
-/*     */   }
-/*     */   
-/*     */   public void run() {
-/*  83 */     Process process = null;
-/*     */     try {
-/*  85 */       if (this.command != null) {
-/*  86 */         if (Utilities.isPlatformUnix) {
-/*  87 */           if (this.directory != null) {
-/*  88 */             StringBuilder sb = new StringBuilder("\\cd \"");
-/*  89 */             sb.append(this.directory);
-/*  90 */             sb.append("\" && ");
-/*  91 */             sb.append(this.command);
-/*  92 */             String[] cmdarray = { "/bin/sh", "-c", sb.toString() };
-/*  93 */             process = Runtime.getRuntime().exec(cmdarray);
-/*     */           } else {
-/*  95 */             String[] cmdarray = { "/bin/sh", "-c", this.command };
-/*  96 */             process = Runtime.getRuntime().exec(cmdarray);
-/*     */           } 
-/*  98 */         } else if (Utilities.isPlatformWindows) {
-/*  99 */           ArrayList<String> list = new ArrayList<>();
-/* 100 */           list.add("cmd.exe");
-/* 101 */           list.add("/c");
-/* 102 */           if (this.directory != null) {
-/* 103 */             StringBuilder sb = new StringBuilder("cd /d \"");
-/* 104 */             sb.append(this.directory);
-/* 105 */             sb.append("\" && ");
-/* 106 */             sb.append(this.command);
-/* 107 */             list.addAll(tokenize(sb.toString()));
-/*     */           } else {
-/* 109 */             list.addAll(tokenize(this.command));
-/* 110 */           }  int size = list.size();
-/* 111 */           String[] cmdarray = new String[size];
-/* 112 */           for (int i = 0; i < size; i++)
-/* 113 */             cmdarray[i] = list.get(i); 
-/* 114 */           process = Runtime.getRuntime().exec(cmdarray);
-/*     */         }
-/*     */       
-/*     */       }
-/* 118 */     } catch (IOException e) {
-/* 119 */       Debug.trace(e);
-/*     */     } 
-/* 121 */     if (process != null) {
-/*     */       
-/* 123 */       ReaderThread stdoutThread = new ReaderThread(process.getInputStream());
-/* 124 */       stdoutThread.start();
-/*     */       
-/* 126 */       ReaderThread stderrThread = new ReaderThread(process.getErrorStream());
-/* 127 */       stderrThread.start();
-/*     */       try {
-/* 129 */         this.exitValue = process.waitFor();
-/*     */       }
-/* 131 */       catch (InterruptedException e) {
-/* 132 */         Debug.trace(e);
-/*     */       } 
-/*     */       try {
-/* 135 */         stdoutThread.join();
-/*     */       }
-/* 137 */       catch (InterruptedException e) {
-/* 138 */         Debug.trace(e);
-/*     */       } 
-/*     */       try {
-/* 141 */         stderrThread.join();
-/*     */       }
-/* 143 */       catch (InterruptedException e) {
-/* 144 */         Debug.trace(e);
-/*     */       } 
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   private static List<String> tokenize(String s) {
-/* 152 */     ArrayList<String> list = new ArrayList<>();
-/* 153 */     StringBuffer sb = new StringBuffer();
-/* 154 */     boolean inQuote = false;
-/* 155 */     int limit = s.length();
-/* 156 */     for (int i = 0; i < limit; i++) {
-/* 157 */       char c = s.charAt(i);
-/* 158 */       switch (c) {
-/*     */         case ' ':
-/* 160 */           if (inQuote) {
-/* 161 */             sb.append(c); break;
-/* 162 */           }  if (sb.length() > 0) {
-/* 163 */             list.add(sb.toString());
-/* 164 */             sb.setLength(0);
-/*     */           } 
-/*     */           break;
-/*     */         case '"':
-/* 168 */           if (inQuote) {
-/* 169 */             if (sb.length() > 0) {
-/* 170 */               list.add(sb.toString());
-/* 171 */               sb.setLength(0);
-/*     */             } 
-/* 173 */             inQuote = false; break;
-/*     */           } 
-/* 175 */           inQuote = true;
-/*     */           break;
-/*     */         default:
-/* 178 */           sb.append(c);
-/*     */           break;
-/*     */       } 
-/*     */     } 
-/* 182 */     if (sb.length() > 0)
-/* 183 */       list.add(sb.toString()); 
-/* 184 */     return list;
-/*     */   }
-/*     */   
-/*     */   private class ReaderThread
-/*     */     extends Thread {
-/* 189 */     private char[] buf = new char[4096];
-/*     */     
-/*     */     private final InputStream inputStream;
-/*     */     private final BufferedReader reader;
-/*     */     private boolean done = false;
-/*     */     
-/*     */     public ReaderThread(InputStream inputStream) {
-/* 196 */       this.inputStream = inputStream;
-/* 197 */       this.reader = new BufferedReader(new InputStreamReader(inputStream));
-/*     */     }
-/*     */ 
-/*     */ 
-/*     */     
-/*     */     public void run() {
-/* 203 */       while (!this.done) {
-/* 204 */         String s = read();
-/* 205 */         if (s == null)
-/*     */           return; 
-/* 207 */         ShellCommand.this.processOutput(s);
-/*     */       } 
-/*     */     }
-/*     */ 
-/*     */     
-/*     */     private String read() {
-/* 213 */       StringBuffer sb = new StringBuffer();
-/*     */       try {
-/*     */         do {
-/* 216 */           int numChars = this.reader.read(this.buf, 0, this.buf.length);
-/* 217 */           if (numChars < 0) {
-/* 218 */             this.done = true;
-/*     */             break;
-/*     */           } 
-/* 221 */           if (numChars > 0)
-/* 222 */             sb.append(this.buf, 0, numChars); 
-/* 223 */           Thread.sleep(10L);
-/* 224 */         } while (this.reader.ready());
-/*     */       }
-/* 226 */       catch (IOException e) {
-/* 227 */         return null;
-/*     */       }
-/* 229 */       catch (InterruptedException e) {
-/* 230 */         return null;
-/*     */       } 
-/* 232 */       return sb.toString();
-/*     */     }
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/* 238 */   private static final Primitive _RUN_SHELL_COMMAND = new pf_run_shell_command();
-/*     */   
-/*     */   private static class pf_run_shell_command extends Primitive { pf_run_shell_command() {
-/* 241 */       super("%run-shell-command", Lisp.PACKAGE_SYS, false, "command directory output => exit-code");
-/*     */     }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */     
-/*     */     public LispObject execute(LispObject first, LispObject second, LispObject third) {
-/* 250 */       if (!Utilities.isPlatformUnix && !Utilities.isPlatformWindows) {
-/* 251 */         return Lisp.error(new LispError("run-shell-command not implemented for " + 
-/* 252 */               System.getProperty("os.name")));
-/*     */       }
-/*     */       
-/* 255 */       String command = first.getStringValue();
-/* 256 */       String namestring = null;
-/* 257 */       Stream outputStream = null;
-/* 258 */       if (second != Lisp.NIL) {
-/* 259 */         Pathname pathname = Lisp.coerceToPathname(second);
-/* 260 */         namestring = pathname.getNamestring();
-/* 261 */         if (namestring == null) {
-/* 262 */           return Lisp.error(new FileError("Pathname has no namestring: " + pathname.princToString(), pathname));
-/*     */         }
-/*     */       } 
-/*     */       
-/* 266 */       if (third != Lisp.NIL)
-/* 267 */         outputStream = Lisp.checkStream(third); 
-/* 268 */       ShellCommand shellCommand = new ShellCommand(command, namestring, outputStream);
-/*     */       
-/* 270 */       shellCommand.run();
-/* 271 */       if (outputStream != null)
-/* 272 */         outputStream._finishOutput(); 
-/* 273 */       return Lisp.number(shellCommand.exitValue());
-/*     */     } }
-/*     */ 
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/ShellCommand.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * ShellCommand.java
+ *
+ * Copyright (C) 2000-2005 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+public final class ShellCommand implements Runnable
+{
+    private final String command;
+    private final String directory;
+    private final Stream outputStream;
+    private final StringBuffer output;
+
+    private int exitValue = -1;
+
+    public ShellCommand(String command, String directory, Stream outputStream)
+
+    {
+        this.command = command;
+        this.directory = directory;
+        this.outputStream = outputStream;
+        this.output = (outputStream == null) ? new StringBuffer() : null;
+    }
+
+    public final String getOutput()
+    {
+        return (output != null) ? output.toString() : "";
+    }
+
+    final int exitValue()
+    {
+        return exitValue;
+    }
+
+    void processOutput(String s)
+    {
+        if (outputStream != null)
+            outputStream._writeString(s);
+        else
+            output.append(s);
+    }
+
+    public void run()
+    {
+        Process process = null;
+        try {
+            if (command != null) {
+                if (Utilities.isPlatformUnix) {
+                    if (directory != null) {
+                        StringBuilder sb = new StringBuilder("\\cd \"");
+                        sb.append(directory);
+                        sb.append("\" && ");
+                        sb.append(command);
+                        String[] cmdarray = {"/bin/sh", "-c", sb.toString()};
+                        process = Runtime.getRuntime().exec(cmdarray);
+                    } else {
+                        String[] cmdarray = {"/bin/sh", "-c", command};
+                        process = Runtime.getRuntime().exec(cmdarray);
+                    }
+                } else if (Utilities.isPlatformWindows) {
+                    ArrayList<String> list = new ArrayList<String>();
+                    list.add("cmd.exe");
+                    list.add("/c");
+                    if (directory != null) {
+                        StringBuilder sb = new StringBuilder("cd /d \"");
+                        sb.append(directory);
+                        sb.append("\" && ");
+                        sb.append(command);
+                        list.addAll(tokenize(sb.toString()));
+                    } else
+                        list.addAll(tokenize(command));
+                    final int size = list.size();
+                    String[] cmdarray = new String[size];
+                    for (int i = 0; i < size; i++)
+                        cmdarray[i] = (String) list.get(i);
+                    process = Runtime.getRuntime().exec(cmdarray);
+                }
+            }
+        }
+        catch (IOException e) {
+            Debug.trace(e);
+        }
+        if (process != null) {
+            ReaderThread stdoutThread =
+                new ReaderThread(process.getInputStream());
+            stdoutThread.start();
+            ReaderThread stderrThread =
+                new ReaderThread(process.getErrorStream());
+            stderrThread.start();
+            try {
+                exitValue = process.waitFor();
+            }
+            catch (InterruptedException e) {
+                Debug.trace(e);
+            }
+            try {
+                stdoutThread.join();
+            }
+            catch (InterruptedException e) {
+                Debug.trace(e);
+            }
+            try {
+                stderrThread.join();
+            }
+            catch (InterruptedException e) {
+                Debug.trace(e);
+            }
+        }
+    }
+
+    // Does not handle embedded single-quoted strings.
+    private static List<String> tokenize(String s)
+    {
+        ArrayList<String> list = new ArrayList<String>();
+        StringBuffer sb = new StringBuffer();
+        boolean inQuote = false;
+        final int limit = s.length();
+        for (int i = 0; i < limit; i++) {
+            char c = s.charAt(i);
+            switch (c) {
+                case ' ':
+                    if (inQuote)
+                        sb.append(c);
+                    else if (sb.length() > 0) {
+                        list.add(sb.toString());
+                        sb.setLength(0);
+                    }
+                    break;
+                case '"':
+                    if (inQuote) {
+                        if (sb.length() > 0) {
+                            list.add(sb.toString());
+                            sb.setLength(0);
+                        }
+                        inQuote = false;
+                    } else
+                        inQuote = true;
+                    break;
+                default:
+                    sb.append(c);
+                    break;
+            }
+        }
+        if (sb.length() > 0)
+            list.add(sb.toString());
+        return list;
+    }
+
+    private class ReaderThread extends Thread
+    {
+        private char[] buf = new char[4096];
+        private final InputStream inputStream;
+        private final BufferedReader reader;
+        private boolean done = false;
+
+        public ReaderThread(InputStream inputStream)
+        {
+            this.inputStream = inputStream;
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+        }
+
+        @Override
+        public void run()
+        {
+            while (!done) {
+                String s = read();
+                if (s == null)
+                    return;
+                processOutput(s);
+            }
+        }
+
+        private String read()
+        {
+            StringBuffer sb = new StringBuffer();
+            try {
+                do {
+                    int numChars = reader.read(buf, 0, buf.length); // Blocks.
+                    if (numChars < 0) {
+                        done = true;
+                        break;
+                    }
+                    if (numChars > 0)
+                        sb.append(buf, 0, numChars);
+                    Thread.sleep(10);
+                } while (reader.ready());
+            }
+            catch (IOException e) {
+                return null;
+            }
+            catch (InterruptedException e) {
+                return null;
+            }
+            return sb.toString();
+        }
+    }
+
+    // run-shell-command command &key directory (output *standard-output*)
+    // ### %run-shell-command command directory output => exit-code
+    private static final Primitive _RUN_SHELL_COMMAND = new pf_run_shell_command();
+    private static class pf_run_shell_command extends Primitive {
+        pf_run_shell_command() {
+            super("%run-shell-command", PACKAGE_SYS, false,
+                  "command directory output => exit-code");
+        }
+        
+        @Override
+        public LispObject execute(LispObject first, LispObject second,
+                                  LispObject third)
+
+        {
+            if (!(Utilities.isPlatformUnix || Utilities.isPlatformWindows)) {
+              return error(new LispError("run-shell-command not implemented for "
+                                       + System.getProperty("os.name")));
+            }
+            else {
+                String command = first.getStringValue();
+                String namestring = null;
+                Stream outputStream = null;
+                if (second != NIL) {
+                    Pathname pathname = coerceToPathname(second);
+                    namestring = pathname.getNamestring();
+                    if (namestring == null) {
+                        return error(new FileError("Pathname has no namestring: " + pathname.princToString(),
+                                                    pathname));
+                    }
+                }
+                if (third != NIL)
+                    outputStream = checkStream(third);
+                ShellCommand shellCommand = new ShellCommand(command, namestring,
+                                                             outputStream);
+                shellCommand.run();
+                if (outputStream != null)
+                    outputStream._finishOutput();
+                return number(shellCommand.exitValue());
+            }
+        }
+    };
+}

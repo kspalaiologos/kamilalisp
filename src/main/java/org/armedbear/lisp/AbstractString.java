@@ -1,132 +1,127 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public abstract class AbstractString
-/*     */   extends AbstractVector
-/*     */ {
-/*     */   public LispObject typep(LispObject type) {
-/*  43 */     if (type instanceof Symbol) {
-/*  44 */       if (type == Symbol.STRING)
-/*  45 */         return Lisp.T; 
-/*  46 */       if (type == Symbol.BASE_STRING)
-/*  47 */         return Lisp.T; 
-/*     */     } 
-/*  49 */     if (type == BuiltInClass.STRING)
-/*  50 */       return Lisp.T; 
-/*  51 */     if (type == BuiltInClass.BASE_STRING)
-/*  52 */       return Lisp.T; 
-/*  53 */     return super.typep(type);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public final boolean stringp() {
-/*  59 */     return true;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject getElementType() {
-/*  65 */     return Symbol.CHARACTER;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public final boolean isSimpleVector() {
-/*  71 */     return false;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public final LispObject STRING() {
-/*  77 */     return this;
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public abstract void fill(char paramChar);
-/*     */ 
-/*     */   
-/*     */   public abstract char charAt(int paramInt);
-/*     */   
-/*     */   public abstract void setCharAt(int paramInt, char paramChar);
-/*     */   
-/*     */   public final String printObject(int beginIndex, int endIndex) {
-/*  89 */     if (beginIndex < 0) {
-/*  90 */       beginIndex = 0;
-/*     */     }
-/*  92 */     int limit = length();
-/*  93 */     if (endIndex > limit)
-/*  94 */       endIndex = limit; 
-/*  95 */     LispThread thread = LispThread.currentThread();
-/*  96 */     if (Symbol.PRINT_ESCAPE.symbolValue(thread) != Lisp.NIL || Symbol.PRINT_READABLY
-/*  97 */       .symbolValue(thread) != Lisp.NIL) {
-/*     */       
-/*  99 */       StringBuilder sb = new StringBuilder("\"");
-/* 100 */       for (int i = beginIndex; i < endIndex; i++) {
-/* 101 */         char c = charAt(i);
-/* 102 */         if (c == '"' || c == '\\')
-/* 103 */           sb.append('\\'); 
-/* 104 */         sb.append(c);
-/*     */       } 
-/* 106 */       sb.append('"');
-/* 107 */       return sb.toString();
-/*     */     } 
-/* 109 */     return getStringValue().substring(beginIndex, endIndex);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public String printObject() {
-/* 115 */     return printObject(0, length());
-/*     */   }
-/*     */   
-/*     */   public String toString() {
-/* 119 */     int length = length();
-/* 120 */     StringBuilder sb = new StringBuilder(length);
-/* 121 */     for (int i = 0; i < length; i++) {
-/* 122 */       sb.append(charAt(i));
-/*     */     }
-/* 124 */     return sb.toString();
-/*     */   }
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/AbstractString.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * AbstractString.java
+ *
+ * Copyright (C) 2004 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+public abstract class AbstractString extends AbstractVector
+{
+    @Override
+    public LispObject typep(LispObject type)
+    {
+        if (type instanceof Symbol) {
+            if (type == Symbol.STRING)
+                return T;
+            if (type == Symbol.BASE_STRING)
+                return T;
+        }
+        if (type == BuiltInClass.STRING)
+            return T;
+        if (type == BuiltInClass.BASE_STRING)
+            return T;
+        return super.typep(type);
+    }
+
+    @Override
+    public final boolean stringp()
+    {
+        return true;
+    }
+
+    @Override
+    public LispObject getElementType()
+    {
+        return Symbol.CHARACTER;
+    }
+
+    @Override
+    public final boolean isSimpleVector()
+    {
+        return false;
+    }
+
+    @Override
+    public final LispObject STRING()
+    {
+        return this;
+    }
+
+    public abstract void fill(char c);
+
+    public abstract char charAt(int index);
+
+    public abstract void setCharAt(int index, char c);
+
+    public final String printObject(int beginIndex, int endIndex)
+
+    {
+        if (beginIndex < 0)
+            beginIndex = 0;
+        final int limit;
+        limit = length();
+        if (endIndex > limit)
+            endIndex = limit;
+        final LispThread thread = LispThread.currentThread();
+        if (Symbol.PRINT_ESCAPE.symbolValue(thread) != NIL ||
+            Symbol.PRINT_READABLY.symbolValue(thread) != NIL)
+        {
+            StringBuilder sb = new StringBuilder("\"");
+            for (int i = beginIndex; i < endIndex; i++) {
+                char c = charAt(i);
+                if (c == '\"' || c == '\\')
+                    sb.append('\\');
+                sb.append(c);
+            }
+            sb.append('"');
+            return sb.toString();
+        } else
+            return getStringValue().substring(beginIndex, endIndex);
+    }
+
+    @Override
+    public String printObject()
+    {
+        return printObject(0, length());
+    }
+
+    public String toString() {
+            int length = length();
+            StringBuilder sb = new StringBuilder(length);
+            for(int i = 0; i < length; ++i) {
+                        sb.append(charAt(i));
+            }
+            return sb.toString();
+    }
+
+}

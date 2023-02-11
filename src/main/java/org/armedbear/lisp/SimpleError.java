@@ -1,92 +1,86 @@
-/*    */ package org.armedbear.lisp;
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ public final class SimpleError
-/*    */   extends LispError
-/*    */ {
-/*    */   public SimpleError(LispObject formatControl, LispObject formatArguments) {
-/* 43 */     super(StandardClass.SIMPLE_ERROR);
-/* 44 */     setFormatControl(formatControl);
-/* 45 */     setFormatArguments(formatArguments);
-/*    */   }
-/*    */ 
-/*    */   
-/*    */   public SimpleError(LispObject initArgs) {
-/* 50 */     super(StandardClass.SIMPLE_ERROR);
-/* 51 */     initialize(initArgs);
-/*    */   }
-/*    */ 
-/*    */   
-/*    */   public SimpleError(String message) {
-/* 56 */     super(StandardClass.SIMPLE_ERROR);
-/* 57 */     setFormatControl(message.replaceAll("~", "~~"));
-/* 58 */     setFormatArguments(Lisp.NIL);
-/*    */   }
-/*    */ 
-/*    */ 
-/*    */   
-/*    */   public LispObject typeOf() {
-/* 64 */     return Symbol.SIMPLE_ERROR;
-/*    */   }
-/*    */ 
-/*    */ 
-/*    */   
-/*    */   public LispObject classOf() {
-/* 70 */     return StandardClass.SIMPLE_ERROR;
-/*    */   }
-/*    */ 
-/*    */ 
-/*    */   
-/*    */   public LispObject typep(LispObject type) {
-/* 76 */     if (type == Symbol.SIMPLE_ERROR)
-/* 77 */       return Lisp.T; 
-/* 78 */     if (type == StandardClass.SIMPLE_ERROR)
-/* 79 */       return Lisp.T; 
-/* 80 */     if (type == Symbol.SIMPLE_CONDITION)
-/* 81 */       return Lisp.T; 
-/* 82 */     if (type == StandardClass.SIMPLE_CONDITION)
-/* 83 */       return Lisp.T; 
-/* 84 */     return super.typep(type);
-/*    */   }
-/*    */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/SimpleError.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * SimpleError.java
+ *
+ * Copyright (C) 2003-2005 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+public final class SimpleError extends LispError
+{
+    public SimpleError(LispObject formatControl, LispObject formatArguments)
+
+    {
+        super(StandardClass.SIMPLE_ERROR);
+        setFormatControl(formatControl);
+        setFormatArguments(formatArguments);
+    }
+
+    public SimpleError(LispObject initArgs)
+    {
+        super(StandardClass.SIMPLE_ERROR);
+        initialize(initArgs);
+    }
+
+    public SimpleError(String message)
+    {
+        super(StandardClass.SIMPLE_ERROR);
+        setFormatControl(message.replaceAll("~","~~"));
+        setFormatArguments(NIL);
+    }
+
+    @Override
+    public LispObject typeOf()
+    {
+        return Symbol.SIMPLE_ERROR;
+    }
+
+    @Override
+    public LispObject classOf()
+    {
+        return StandardClass.SIMPLE_ERROR;
+    }
+
+    @Override
+    public LispObject typep(LispObject type)
+    {
+        if (type == Symbol.SIMPLE_ERROR)
+            return T;
+        if (type == StandardClass.SIMPLE_ERROR)
+            return T;
+        if (type == Symbol.SIMPLE_CONDITION)
+            return T;
+        if (type == StandardClass.SIMPLE_CONDITION)
+            return T;
+        return super.typep(type);
+    }
+}

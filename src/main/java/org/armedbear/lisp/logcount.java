@@ -1,69 +1,63 @@
-/*    */ package org.armedbear.lisp;
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ public final class logcount
-/*    */   extends Primitive
-/*    */ {
-/*    */   private logcount() {
-/* 45 */     super("logcount", "integer");
-/*    */   }
-/*    */ 
-/*    */ 
-/*    */   
-/*    */   public LispObject execute(LispObject arg) {
-/*    */     int n;
-/* 52 */     if (arg instanceof Fixnum) {
-/* 53 */       int value = ((Fixnum)arg).value;
-/* 54 */       n = Integer.bitCount((value < 0) ? (value ^ 0xFFFFFFFF) : value);
-/* 55 */     } else if (arg instanceof Bignum) {
-/* 56 */       n = ((Bignum)arg).value.bitCount();
-/*    */     } else {
-/* 58 */       return Lisp.type_error(arg, Symbol.INTEGER);
-/* 59 */     }  return Fixnum.getInstance(n);
-/*    */   }
-/*    */   
-/* 62 */   private static final Primitive LOGCOUNT = new logcount();
-/*    */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/logcount.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * logcount.java
+ *
+ * Copyright (C) 2003-2005 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+import java.math.BigInteger;
+
+// ### logcount integer => number-of-on-bits
+public final class logcount extends Primitive
+{
+    private logcount()
+    {
+        super("logcount","integer");
+    }
+
+    @Override
+    public LispObject execute(LispObject arg)
+    {
+        int n;
+        if (arg instanceof Fixnum) {
+            int value = ((Fixnum)arg).value;
+            n = Integer.bitCount(value < 0 ? ~value : value);
+        } else if (arg instanceof Bignum)
+            n = ((Bignum)arg).value.bitCount();
+        else
+            return type_error(arg, Symbol.INTEGER);
+        return Fixnum.getInstance(n);
+    }
+
+    private static final Primitive LOGCOUNT = new logcount();
+}

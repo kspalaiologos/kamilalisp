@@ -1,245 +1,239 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public class Closure
-/*     */   extends Function
-/*     */ {
-/*     */   public static final int REQUIRED = 0;
-/*     */   public static final int OPTIONAL = 1;
-/*     */   public static final int KEYWORD = 2;
-/*     */   public static final int REST = 3;
-/*     */   public static final int AUX = 4;
-/*     */   private final LispObject body;
-/*     */   private final LispObject executionBody;
-/*     */   private final Environment environment;
-/*     */   private final Symbol[] freeSpecials;
-/*     */   private final ArgumentListProcessor arglist;
-/*     */   
-/*     */   public Closure(ArgumentListProcessor arglist) {
-/*  68 */     this.body = null;
-/*  69 */     this.executionBody = null;
-/*  70 */     this.environment = null;
-/*  71 */     this.arglist = arglist;
-/*  72 */     this.freeSpecials = new Symbol[0];
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public Closure(LispObject lambdaExpression, Environment env) {
-/*  78 */     this(null, lambdaExpression, env);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public Closure(LispObject name, LispObject lambdaExpression, Environment env) {
-/*  85 */     super(name, lambdaExpression.cadr());
-/*  86 */     LispObject lambdaList = lambdaExpression.cadr();
-/*  87 */     setLambdaList(lambdaList);
-/*  88 */     if (lambdaList != Lisp.NIL && !(lambdaList instanceof Cons)) {
-/*  89 */       Lisp.program_error("The lambda list " + lambdaList.princToString() + " is invalid.");
-/*     */     }
-/*  91 */     this.body = lambdaExpression.cddr();
-/*  92 */     LispObject bodyAndDecls = Lisp.parseBody(this.body, false);
-/*  93 */     this.executionBody = bodyAndDecls.car();
-/*  94 */     LispObject specials = Lisp.parseSpecials(bodyAndDecls.NTH(1));
-/*     */     
-/*  96 */     this.environment = env;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */     
-/* 104 */     this
-/* 105 */       .arglist = new ArgumentListProcessor(this, lambdaList, specials, (lambdaExpression.car() == Symbol.MACRO_FUNCTION) ? ArgumentListProcessor.LambdaListType.MACRO : ArgumentListProcessor.LambdaListType.ORDINARY);
-/*     */ 
-/*     */     
-/* 108 */     this.freeSpecials = this.arglist.freeSpecials(specials);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typep(LispObject typeSpecifier) {
-/* 114 */     if (typeSpecifier == Symbol.COMPILED_FUNCTION)
-/* 115 */       return Lisp.NIL; 
-/* 116 */     return super.typep(typeSpecifier);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public final LispObject getVariableList() {
-/* 121 */     Symbol[] variables = this.arglist.getVariables();
-/* 122 */     LispObject result = Lisp.NIL;
-/* 123 */     for (int i = variables.length; i-- > 0;)
-/* 124 */       result = new Cons(variables[i], result); 
-/* 125 */     return result;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public final LispObject getBody() {
-/* 131 */     return this.body;
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public final Environment getEnvironment() {
-/* 136 */     return this.environment;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute() {
-/* 142 */     return execute(new LispObject[0]);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject arg) {
-/* 148 */     return execute(new LispObject[] { arg });
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second) {
-/* 154 */     return execute(new LispObject[] { first, second });
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second, LispObject third) {
-/* 161 */     return execute(new LispObject[] { first, second, third });
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second, LispObject third, LispObject fourth) {
-/* 168 */     return execute(new LispObject[] { first, second, third, fourth });
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second, LispObject third, LispObject fourth, LispObject fifth) {
-/* 176 */     return execute(new LispObject[] { first, second, third, fourth, fifth });
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second, LispObject third, LispObject fourth, LispObject fifth, LispObject sixth) {
-/* 184 */     return execute(new LispObject[] { first, second, third, fourth, fifth, sixth });
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second, LispObject third, LispObject fourth, LispObject fifth, LispObject sixth, LispObject seventh) {
-/* 194 */     return execute(new LispObject[] { first, second, third, fourth, fifth, sixth, seventh });
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second, LispObject third, LispObject fourth, LispObject fifth, LispObject sixth, LispObject seventh, LispObject eighth) {
-/* 204 */     return execute(new LispObject[] { first, second, third, fourth, fifth, sixth, seventh, eighth });
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject[] args) {
-/* 211 */     LispThread thread = LispThread.currentThread();
-/* 212 */     SpecialBindingsMark mark = thread.markSpecialBindings();
-/* 213 */     Environment ext = new Environment(this.environment);
-/* 214 */     args = this.arglist.match(args, this.environment, ext, thread);
-/* 215 */     this.arglist.bindVars(args, ext, thread);
-/* 216 */     for (Symbol special : this.freeSpecials) {
-/* 217 */       ext.declareSpecial(special);
-/*     */     }
-/*     */     try {
-/* 220 */       return Lisp.progn(this.executionBody, ext, thread);
-/*     */     }
-/*     */     finally {
-/*     */       
-/* 224 */       thread.resetSpecialBindings(mark);
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   protected final LispObject[] processArgs(LispObject[] args, LispThread thread) {
-/* 230 */     return this.arglist.match(args, this.environment, this.environment, thread);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   protected boolean shouldSerializeByName() {
-/* 237 */     return false;
-/*     */   }
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/Closure.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * Closure.java
+ *
+ * Copyright (C) 2002-2008 Peter Graves
+ * Copyright (C) 2008 Ville Voutilainen
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+public class Closure extends Function
+{
+  // Parameter types.
+  public static final int REQUIRED = 0;
+  public static final int OPTIONAL = 1;
+  public static final int KEYWORD  = 2;
+  public static final int REST     = 3;
+  public static final int AUX      = 4;
+
+  private final LispObject body;
+  private final LispObject executionBody;
+  private final Environment environment;
+
+  private final Symbol[] freeSpecials;
+  private final ArgumentListProcessor arglist;
+
+    /** Construct a closure object with a lambda-list described
+     * by these parameters.
+     *
+     *
+     * @param required Required parameters or an empty array for none
+     * @param optional Optional parameters or an empty array for none
+     * @param keyword Keyword parameters or an empty array for none
+     * @param keys NIL if the lambda-list doesn't contain &amp;key, T otherwise
+     * @param rest the &amp;rest parameter, or NIL if none
+     * @param moreKeys NIL if &amp;allow-other-keys not present, T otherwise
+     */
+  public Closure(ArgumentListProcessor arglist) {
+      // stuff we don't need: we're a compiled function
+      body = null;
+      executionBody = null;
+      environment = null;
+      this.arglist = arglist;
+      freeSpecials = new Symbol[0];
+  }
+
+
+  public Closure(LispObject lambdaExpression, Environment env)
+  {
+    this(null, lambdaExpression, env);
+  }
+
+  public Closure(final LispObject name, final LispObject lambdaExpression,
+                 final Environment env)
+
+  {
+    super(name, lambdaExpression.cadr());
+    final LispObject lambdaList = lambdaExpression.cadr();
+    setLambdaList(lambdaList);
+    if (!(lambdaList == NIL || lambdaList instanceof Cons))
+      program_error("The lambda list " + lambdaList.princToString()
+                    + " is invalid.");
+    this.body = lambdaExpression.cddr();
+    LispObject bodyAndDecls = parseBody(this.body, false);
+    this.executionBody = bodyAndDecls.car();
+    LispObject specials = parseSpecials(bodyAndDecls.NTH(1));
+
+    this.environment = env;
+
+    /* In the bootstrapping process, functions with MACRO LAMBDA LIST
+     * lambda list types are being generated using the MACRO_FUNCTION instead
+     * of the LAMBDA or NAMED_LAMBDA keys.
+     * 
+     * Use that to perform argument list lambda list keyword checking.
+     */
+    arglist = new ArgumentListProcessor(this, lambdaList, specials,
+            (lambdaExpression.car() == Symbol.MACRO_FUNCTION) ?
+            ArgumentListProcessor.LambdaListType.MACRO
+            : ArgumentListProcessor.LambdaListType.ORDINARY);
+    freeSpecials = arglist.freeSpecials(specials);
+  }
+
+  @Override
+  public LispObject typep(LispObject typeSpecifier)
+  {
+    if (typeSpecifier == Symbol.COMPILED_FUNCTION)
+      return NIL;
+    return super.typep(typeSpecifier);
+  }
+
+  public final LispObject getVariableList()
+  {
+    Symbol[] variables = arglist.getVariables();
+    LispObject result = NIL;
+    for (int i = variables.length; i-- > 0;)
+      result = new Cons(variables[i], result);
+    return result;
+  }
+
+  // Returns body as a list.
+  public final LispObject getBody()
+  {
+    return body;
+  }
+
+  public final Environment getEnvironment()
+  {
+    return environment;
+  }
+
+  @Override
+  public LispObject execute()
+  {
+      return execute(new LispObject[0]);
+  }
+    
+  @Override
+  public LispObject execute(LispObject arg)
+  {
+        return execute(new LispObject[] {arg});
+  }
+
+  @Override
+  public LispObject execute(LispObject first, LispObject second)
+  {
+        return execute(new LispObject[] {first, second});
+  }
+
+  @Override
+  public LispObject execute(LispObject first, LispObject second,
+                            LispObject third)
+  {
+        return execute(new LispObject[] {first, second, third});
+  }
+
+  @Override
+  public LispObject execute(LispObject first, LispObject second,
+                            LispObject third, LispObject fourth)
+  {
+        return execute(new LispObject[] {first, second, third, fourth});
+  }
+
+  @Override
+  public LispObject execute(LispObject first, LispObject second,
+                            LispObject third, LispObject fourth,
+                            LispObject fifth)
+  {
+        return execute(new LispObject[] {first, second, third, fourth, fifth});
+  }
+
+  @Override
+  public LispObject execute(LispObject first, LispObject second,
+                            LispObject third, LispObject fourth,
+                            LispObject fifth, LispObject sixth)
+  {
+        return execute(new LispObject[] {first, second, third, fourth, fifth,
+                                  sixth});
+  }
+
+  @Override
+  public LispObject execute(LispObject first, LispObject second,
+                            LispObject third, LispObject fourth,
+                            LispObject fifth, LispObject sixth,
+                            LispObject seventh)
+  {
+        return execute(new LispObject[] {first, second, third, fourth, fifth,
+                                  sixth, seventh});
+  }
+
+  @Override
+  public LispObject execute(LispObject first, LispObject second,
+                            LispObject third, LispObject fourth,
+                            LispObject fifth, LispObject sixth,
+                            LispObject seventh, LispObject eighth)
+  {
+        return execute(new LispObject[] {first, second, third, fourth, fifth,
+                                  sixth, seventh, eighth});
+  }
+
+  @Override
+  public LispObject execute(LispObject[] args)
+  {
+    final LispThread thread = LispThread.currentThread();
+    final SpecialBindingsMark mark = thread.markSpecialBindings();
+    Environment ext = new Environment(environment);
+    args = arglist.match(args, environment, ext, thread);
+    arglist.bindVars(args, ext, thread);
+    for (Symbol special : freeSpecials)
+      ext.declareSpecial(special);
+    try
+      {
+        return progn(executionBody, ext, thread);
+      }
+    finally
+      {
+        thread.resetSpecialBindings(mark);
+      }
+  }
+
+  protected final LispObject[] processArgs(LispObject[] args, LispThread thread)
+  {
+    return arglist.match(args, environment, environment, thread);
+  }
+
+  //Serialization
+
+  @Override
+  protected boolean shouldSerializeByName() {
+    return false; //Closures have an environment that we must serialize, even if they're top-level function
+  }
+}

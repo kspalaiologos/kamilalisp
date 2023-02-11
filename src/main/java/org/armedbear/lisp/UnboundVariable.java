@@ -1,94 +1,88 @@
-/*    */ package org.armedbear.lisp;
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ public final class UnboundVariable
-/*    */   extends CellError
-/*    */ {
-/*    */   public UnboundVariable(LispObject obj) {
-/* 43 */     super(StandardClass.UNBOUND_VARIABLE);
-/* 44 */     if (obj instanceof Cons) {
-/* 45 */       initialize(obj);
-/*    */     } else {
-/* 47 */       setCellName(obj);
-/*    */     } 
-/*    */   }
-/*    */ 
-/*    */   
-/*    */   public String getMessage() {
-/* 53 */     LispThread thread = LispThread.currentThread();
-/* 54 */     SpecialBindingsMark mark = thread.markSpecialBindings();
-/* 55 */     thread.bindSpecial(Symbol.PRINT_ESCAPE, Lisp.T);
-/* 56 */     StringBuffer sb = new StringBuffer("The variable ");
-/*    */     try {
-/* 58 */       sb.append(getCellName().princToString());
-/*    */     } finally {
-/*    */       
-/* 61 */       thread.resetSpecialBindings(mark);
-/*    */     } 
-/* 63 */     sb.append(" is unbound.");
-/* 64 */     return sb.toString();
-/*    */   }
-/*    */ 
-/*    */ 
-/*    */   
-/*    */   public LispObject typeOf() {
-/* 70 */     return Symbol.UNBOUND_VARIABLE;
-/*    */   }
-/*    */ 
-/*    */ 
-/*    */   
-/*    */   public LispObject classOf() {
-/* 76 */     return StandardClass.UNBOUND_VARIABLE;
-/*    */   }
-/*    */ 
-/*    */ 
-/*    */   
-/*    */   public LispObject typep(LispObject type) {
-/* 82 */     if (type == Symbol.UNBOUND_VARIABLE)
-/* 83 */       return Lisp.T; 
-/* 84 */     if (type == StandardClass.UNBOUND_VARIABLE)
-/* 85 */       return Lisp.T; 
-/* 86 */     return super.typep(type);
-/*    */   }
-/*    */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/UnboundVariable.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * UnboundVariable.java
+ *
+ * Copyright (C) 2002-2006 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+public final class UnboundVariable extends CellError
+{
+  // obj is either the unbound variable itself or an initArgs list.
+  public UnboundVariable(LispObject obj)
+  {
+    super(StandardClass.UNBOUND_VARIABLE);
+    if (obj instanceof Cons)
+      initialize(obj);
+    else
+      setCellName(obj);
+  }
+
+  @Override
+  public String getMessage()
+  {
+    LispThread thread = LispThread.currentThread();
+    final SpecialBindingsMark mark = thread.markSpecialBindings();
+    thread.bindSpecial(Symbol.PRINT_ESCAPE, T);
+    StringBuffer sb = new StringBuffer("The variable ");
+    try {
+        sb.append(getCellName().princToString());
+    }
+    finally {
+        thread.resetSpecialBindings(mark);
+    }
+    sb.append(" is unbound.");
+    return sb.toString();
+  }
+
+  @Override
+  public LispObject typeOf()
+  {
+    return Symbol.UNBOUND_VARIABLE;
+  }
+
+  @Override
+  public LispObject classOf()
+  {
+    return StandardClass.UNBOUND_VARIABLE;
+  }
+
+  @Override
+  public LispObject typep(LispObject type)
+  {
+    if (type == Symbol.UNBOUND_VARIABLE)
+      return T;
+    if (type == StandardClass.UNBOUND_VARIABLE)
+      return T;
+    return super.typep(type);
+  }
+}

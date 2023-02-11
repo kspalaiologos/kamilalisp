@@ -1,271 +1,266 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ import java.io.File;
-/*     */ import java.io.FileInputStream;
-/*     */ import java.io.FileNotFoundException;
-/*     */ import java.io.FileOutputStream;
-/*     */ import java.io.IOException;
-/*     */ import java.util.HashSet;
-/*     */ import java.util.Set;
-/*     */ import java.util.zip.ZipEntry;
-/*     */ import java.util.zip.ZipOutputStream;
-/*     */ import org.armedbear.lisp.protocol.Hashtable;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ @DocString(name = "zip", args = "pathname pathnames &optional topdir", doc = "Creates a zip archive at PATHNAME whose entries enumerated via the list of PATHNAMES.\nIf the optional TOPDIR argument is specified, the archive will preserve the hierarchy of PATHNAMES relative to TOPDIR.  Without TOPDIR, there will be no sub-directories in the archive, i.e. it will be flat.")
-/*     */ public final class zip
-/*     */   extends Primitive
-/*     */ {
-/*     */   private zip() {
-/*  59 */     super("zip", Lisp.PACKAGE_SYS, true);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second) {
-/*  66 */     Pathname zipfilePathname = Lisp.coerceToPathname(first);
-/*  67 */     if (second instanceof Hashtable) {
-/*  68 */       return execute(zipfilePathname, (Hashtable)second);
-/*     */     }
-/*  70 */     byte[] buffer = new byte[4096];
-/*     */     try {
-/*  72 */       String zipfileNamestring = zipfilePathname.getNamestring();
-/*  73 */       if (zipfileNamestring == null)
-/*  74 */         return Lisp.error(new SimpleError("Pathname has no namestring: " + zipfilePathname
-/*  75 */               .princToString())); 
-/*  76 */       ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipfileNamestring));
-/*     */       
-/*  78 */       LispObject list = second;
-/*  79 */       while (list != Lisp.NIL) {
-/*  80 */         Pathname pathname = Lisp.coerceToPathname(list.car());
-/*  81 */         String namestring = pathname.getNamestring();
-/*  82 */         if (namestring == null) {
-/*     */           
-/*  84 */           out.close();
-/*  85 */           File zipfile = new File(zipfileNamestring);
-/*  86 */           zipfile.delete();
-/*  87 */           return Lisp.error(new SimpleError("Pathname has no namestring: " + pathname
-/*  88 */                 .princToString()));
-/*     */         } 
-/*  90 */         File file = new File(namestring);
-/*  91 */         makeEntry(out, file);
-/*  92 */         list = list.cdr();
-/*     */       } 
-/*  94 */       out.close();
-/*     */     }
-/*  96 */     catch (IOException e) {
-/*  97 */       return Lisp.error(new LispError(e.getMessage()));
-/*     */     } 
-/*  99 */     return zipfilePathname;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second, LispObject third) {
-/* 107 */     Pathname zipfilePathname = Lisp.coerceToPathname(first);
-/*     */     try {
-/* 109 */       String zipfileNamestring = zipfilePathname.getNamestring();
-/* 110 */       if (zipfileNamestring == null)
-/* 111 */         return Lisp.error(new SimpleError("Pathname has no namestring: " + zipfilePathname
-/* 112 */               .princToString())); 
-/* 113 */       ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipfileNamestring));
-/*     */       
-/* 115 */       Pathname root = (Pathname)Symbol.PROBE_FILE.execute(third);
-/* 116 */       String rootPath = root.getDirectoryNamestring();
-/* 117 */       int rootPathLength = rootPath.length();
-/* 118 */       Set<String> directories = new HashSet<>();
-/* 119 */       LispObject list = second;
-/* 120 */       while (list != Lisp.NIL) {
-/* 121 */         Pathname pathname = (Pathname)Symbol.PROBE_FILE.execute(list.car());
-/* 122 */         String namestring = pathname.getNamestring();
-/* 123 */         if (namestring == null) {
-/*     */           
-/* 125 */           out.close();
-/* 126 */           File zipfile = new File(zipfileNamestring);
-/* 127 */           zipfile.delete();
-/* 128 */           return Lisp.error(new SimpleError("Pathname has no namestring: " + pathname
-/* 129 */                 .princToString()));
-/*     */         } 
-/* 131 */         String directory = "";
-/* 132 */         String dir = pathname.getDirectoryNamestring();
-/* 133 */         if (dir.length() > rootPathLength) {
-/* 134 */           String d = dir.substring(rootPathLength);
-/* 135 */           int i = 0;
-/*     */           int j;
-/* 137 */           while ((j = d.indexOf('/', i)) != -1) {
-/* 138 */             i = j + 1;
-/* 139 */             directory = d.substring(0, j) + '/';
-/* 140 */             if (!directories.contains(directory)) {
-/* 141 */               directories.add(directory);
-/* 142 */               ZipEntry entry = new ZipEntry(directory);
-/* 143 */               out.putNextEntry(entry);
-/* 144 */               out.closeEntry();
-/*     */             } 
-/*     */           } 
-/*     */         } 
-/* 148 */         File file = new File(namestring);
-/* 149 */         if (file.isDirectory()) {
-/* 150 */           list = list.cdr();
-/*     */           continue;
-/*     */         } 
-/* 153 */         makeEntry(out, file, directory + file.getName());
-/* 154 */         list = list.cdr();
-/*     */       } 
-/* 156 */       out.close();
-/*     */     }
-/* 158 */     catch (IOException e) {
-/* 159 */       return Lisp.error(new LispError(e.getMessage()));
-/*     */     } 
-/* 161 */     return zipfilePathname;
-/*     */   }
-/*     */   
-/*     */   static class Directories
-/*     */     extends HashSet<String> {
-/*     */     ZipOutputStream out;
-/*     */     
-/*     */     private Directories() {}
-/*     */     
-/*     */     public Directories(ZipOutputStream out) {
-/* 171 */       this.out = out;
-/*     */     }
-/*     */ 
-/*     */ 
-/*     */     
-/*     */     public void ensure(String path) throws IOException {
-/* 177 */       int i = 0;
-/*     */       int j;
-/* 179 */       while ((j = path.indexOf('/', i)) != -1) {
-/* 180 */         i = j + 1;
-/* 181 */         String directory = path.substring(0, j) + '/';
-/* 182 */         if (!contains(directory)) {
-/* 183 */           add(directory);
-/* 184 */           ZipEntry entry = new ZipEntry(directory);
-/* 185 */           this.out.putNextEntry(entry);
-/* 186 */           this.out.closeEntry();
-/*     */         } 
-/*     */       } 
-/*     */     }
-/*     */   }
-/*     */   
-/*     */   public LispObject execute(Pathname zipfilePathname, Hashtable table) {
-/* 193 */     LispObject entriesObject = table.getEntries();
-/* 194 */     if (!(entriesObject instanceof Cons)) {
-/* 195 */       return Lisp.NIL;
-/*     */     }
-/* 197 */     Cons entries = (Cons)entriesObject;
-/*     */     
-/* 199 */     String zipfileNamestring = zipfilePathname.getNamestring();
-/* 200 */     if (zipfileNamestring == null)
-/* 201 */       return Lisp.error(new SimpleError("Pathname has no namestring: " + zipfilePathname
-/* 202 */             .princToString())); 
-/* 203 */     ZipOutputStream out = null;
-/*     */     try {
-/* 205 */       out = new ZipOutputStream(new FileOutputStream(zipfileNamestring));
-/* 206 */     } catch (FileNotFoundException e) {
-/* 207 */       return Lisp.error(new FileError("Failed to create file for writing zip archive", zipfilePathname));
-/*     */     } 
-/* 209 */     Directories directories = new Directories(out);
-/*     */ 
-/*     */     
-/* 212 */     for (LispObject head = entries; head != Lisp.NIL; head = head.cdr()) {
-/* 213 */       LispObject key = head.car().car();
-/* 214 */       LispObject value = head.car().cdr();
-/*     */       
-/* 216 */       Pathname source = Lisp.coerceToPathname(key);
-/* 217 */       Pathname destination = Lisp.coerceToPathname(value);
-/* 218 */       File file = source.getFile();
-/*     */       try {
-/* 220 */         String jarEntry = destination.getNamestring();
-/* 221 */         if (jarEntry.startsWith("/")) {
-/* 222 */           jarEntry = jarEntry.substring(1);
-/*     */         }
-/* 224 */         directories.ensure(jarEntry);
-/* 225 */         makeEntry(out, file, jarEntry);
-/* 226 */       } catch (FileNotFoundException e) {
-/* 227 */         return Lisp.error(new FileError("Failed to read file for incoporation in zip archive.", source));
-/* 228 */       } catch (IOException e) {
-/* 229 */         return Lisp.error(new FileError("Failed to add file to zip archive.", source));
-/*     */       } 
-/*     */     } 
-/*     */     try {
-/* 233 */       out.close();
-/* 234 */     } catch (IOException ex) {
-/* 235 */       return Lisp.error(new FileError("Failed to close zip archive.", zipfilePathname));
-/*     */     } 
-/* 237 */     return zipfilePathname;
-/*     */   }
-/*     */   
-/* 240 */   private static final Primitive zip = new zip();
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   private void makeEntry(ZipOutputStream zipOutputStream, File file) throws FileNotFoundException, IOException {
-/* 245 */     makeEntry(zipOutputStream, file, file.getName());
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   private void makeEntry(ZipOutputStream zipOutputStream, File file, String name) throws FileNotFoundException, IOException {
-/* 251 */     byte[] buffer = new byte[4096];
-/* 252 */     long lastModified = file.lastModified();
-/* 253 */     FileInputStream in = new FileInputStream(file);
-/* 254 */     ZipEntry entry = new ZipEntry(name);
-/* 255 */     if (lastModified > 0L) {
-/* 256 */       entry.setTime(lastModified);
-/*     */     }
-/* 258 */     zipOutputStream.putNextEntry(entry);
-/*     */     int n;
-/* 260 */     while ((n = in.read(buffer)) > 0)
-/* 261 */       zipOutputStream.write(buffer, 0, n); 
-/* 262 */     zipOutputStream.closeEntry();
-/* 263 */     in.close();
-/*     */   }
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/zip.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * zip.java
+ *
+ * Copyright (C) 2005 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+@DocString(name="zip",
+           args="pathname pathnames &optional topdir",
+           doc="Creates a zip archive at PATHNAME whose entries enumerated via the list of PATHNAMES.\n"
+           + "If the optional TOPDIR argument is specified, the archive will "
+           + "preserve the hierarchy of PATHNAMES relative to TOPDIR.  Without "
+           + "TOPDIR, there will be no sub-directories in the archive, i.e. it will "
+           + "be flat.")
+public final class zip extends Primitive
+{
+    private zip()
+    {
+        super("zip", PACKAGE_SYS, true);
+    }
+    
+
+    @Override
+    public LispObject execute(LispObject first, LispObject second)
+    {
+        Pathname zipfilePathname = coerceToPathname(first);
+        if (second instanceof org.armedbear.lisp.protocol.Hashtable) {
+            return execute(zipfilePathname, (org.armedbear.lisp.protocol.Hashtable)second);
+        }
+        byte[] buffer = new byte[4096];
+        try {
+            String zipfileNamestring = zipfilePathname.getNamestring();
+            if (zipfileNamestring == null)
+                return error(new SimpleError("Pathname has no namestring: " +
+                                              zipfilePathname.princToString()));
+            ZipOutputStream out =
+                new ZipOutputStream(new FileOutputStream(zipfileNamestring));
+            LispObject list = second;
+            while (list != NIL) {
+                Pathname pathname = coerceToPathname(list.car());
+                String namestring = pathname.getNamestring();
+                if (namestring == null) {
+                    // Clean up before signalling error.
+                    out.close();
+                    File zipfile = new File(zipfileNamestring);
+                    zipfile.delete();
+                    return error(new SimpleError("Pathname has no namestring: "
+                                                 + pathname.princToString()));
+                }
+                File file = new File(namestring);
+                makeEntry(out, file);
+                list = list.cdr();
+            }
+            out.close();
+        }
+        catch (IOException e) {
+            return error(new LispError(e.getMessage()));
+        }
+        return zipfilePathname;
+    }
+
+    
+
+    @Override
+    public LispObject execute(LispObject first, LispObject second, LispObject third)
+    {
+        Pathname zipfilePathname = coerceToPathname(first);
+        try {
+            String zipfileNamestring = zipfilePathname.getNamestring();
+            if (zipfileNamestring == null)
+                return error(new SimpleError("Pathname has no namestring: " +
+                                              zipfilePathname.princToString()));
+            ZipOutputStream out =
+                new ZipOutputStream(new FileOutputStream(zipfileNamestring));
+            Pathname root = (Pathname) Symbol.PROBE_FILE.execute(third);
+            String rootPath = root.getDirectoryNamestring();
+            int rootPathLength = rootPath.length();
+            Set<String> directories = new HashSet<String>();
+            LispObject list = second;
+            while (list != NIL) {
+              Pathname pathname = (Pathname) Symbol.PROBE_FILE.execute(list.car());
+                String namestring = pathname.getNamestring();
+                if (namestring == null) {
+                    // Clean up before signalling error.
+                    out.close();
+                    File zipfile = new File(zipfileNamestring);
+                    zipfile.delete();
+                    return error(new SimpleError("Pathname has no namestring: " +
+                                                  pathname.princToString()));
+                }
+                String directory = "";
+                String dir = pathname.getDirectoryNamestring();
+                if (dir.length() > rootPathLength) {
+                  String d = dir.substring(rootPathLength);
+                  int i = 0;
+                  int j;
+                  while ((j = d.indexOf(Pathname.directoryDelimiter, i)) != -1) {
+                    i = j + 1;
+                    directory = d.substring(0, j) + Pathname.directoryDelimiter;
+                    if (!directories.contains(directory)) {
+                      directories.add(directory);
+                      ZipEntry entry = new ZipEntry(directory);
+                      out.putNextEntry(entry);
+                      out.closeEntry();
+                    }
+                  }
+                }
+                File file = new File(namestring);
+                if (file.isDirectory()) {
+                    list = list.cdr();
+                    continue;
+                }
+                makeEntry(out, file, directory + file.getName());
+                list = list.cdr();
+            }
+            out.close();
+        }
+        catch (IOException e) {
+            return error(new LispError(e.getMessage()));
+        }
+        return zipfilePathname;
+    }
+
+    static class Directories extends HashSet<String> {
+        private Directories() {
+            super();
+        }
+        
+        ZipOutputStream out;
+        public Directories(ZipOutputStream out) {
+            this.out = out;
+        }
+            
+        public void ensure(String path) 
+            throws IOException
+        {
+            int i = 0;
+            int j;
+            while ((j = path.indexOf(Pathname.directoryDelimiter, i)) != -1) {
+                i = j + 1;
+                final String directory = path.substring(0, j) + Pathname.directoryDelimiter;
+                if (!contains(directory)) {
+                    add(directory);
+                    ZipEntry entry = new ZipEntry(directory);
+                    out.putNextEntry(entry);
+                    out.closeEntry();
+                }
+            }
+        }
+    }
+
+    public LispObject execute(final Pathname zipfilePathname, final org.armedbear.lisp.protocol.Hashtable table) {
+        LispObject entriesObject = (LispObject)table.getEntries();
+        if (!(entriesObject instanceof Cons)) {
+            return NIL;
+        }
+        Cons entries = (Cons)entriesObject;
+
+        String zipfileNamestring = zipfilePathname.getNamestring();
+        if (zipfileNamestring == null)
+            return error(new SimpleError("Pathname has no namestring: " +
+                                         zipfilePathname.princToString()));
+        ZipOutputStream out = null;
+        try {
+            out = new ZipOutputStream(new FileOutputStream(zipfileNamestring));
+        } catch (FileNotFoundException e) {
+            return error(new FileError("Failed to create file for writing zip archive", zipfilePathname));
+        }
+        Directories directories = new Directories(out);
+
+
+        for (LispObject head = entries; head != NIL; head = head.cdr()) {
+            final LispObject key = head.car().car();
+            final LispObject value = head.car().cdr();
+
+            final Pathname source = Lisp.coerceToPathname(key);
+            final Pathname destination = Lisp.coerceToPathname(value);
+            final File file = source.getFile();
+            try {
+                String jarEntry = destination.getNamestring();
+                if (jarEntry.startsWith("/")) {
+                    jarEntry = jarEntry.substring(1);
+                }
+                directories.ensure(jarEntry);
+                makeEntry(out, file, jarEntry);
+            } catch (FileNotFoundException e) {
+                return error(new FileError("Failed to read file for incoporation in zip archive.", source));
+            } catch (IOException e) {
+                return error(new FileError("Failed to add file to zip archive.", source));
+            }
+        } 
+        try {
+            out.close();
+        } catch (IOException ex) {
+            return error(new FileError("Failed to close zip archive.", zipfilePathname));
+        }
+        return zipfilePathname;
+    }
+
+    private static final Primitive zip = new zip();
+
+    private void makeEntry(ZipOutputStream zip, File file) 
+        throws FileNotFoundException, IOException
+    {
+        makeEntry(zip, file, file.getName());
+    }
+
+    private void makeEntry(ZipOutputStream zip, File file, String name) 
+        throws FileNotFoundException, IOException
+    {
+        byte[] buffer = new byte[4096];
+        long lastModified = file.lastModified();
+        FileInputStream in = new FileInputStream(file);
+        ZipEntry entry = new ZipEntry(name);
+        if (lastModified > 0) {
+            entry.setTime(lastModified);
+        }
+        zip.putNextEntry(entry);
+        int n;
+        while ((n = in.read(buffer)) > 0)
+            zip.write(buffer, 0, n);
+        zip.closeEntry();
+        in.close();
+    }
+        
+}

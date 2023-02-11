@@ -1,271 +1,265 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public final class NilVector
-/*     */   extends AbstractString
-/*     */ {
-/*     */   private int capacity;
-/*     */   
-/*     */   public NilVector(int capacity) {
-/*  44 */     this.capacity = capacity;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public char[] chars() {
-/*  50 */     if (this.capacity != 0)
-/*  51 */       accessError(); 
-/*  52 */     return new char[0];
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public char[] getStringChars() {
-/*  58 */     if (this.capacity != 0)
-/*  59 */       accessError(); 
-/*  60 */     return new char[0];
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public String getStringValue() {
-/*  66 */     if (this.capacity != 0)
-/*  67 */       accessError(); 
-/*  68 */     return "";
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typeOf() {
-/*  74 */     return Lisp.list(Symbol.NIL_VECTOR, new LispObject[] { Fixnum.getInstance(this.capacity) });
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject classOf() {
-/*  80 */     return BuiltInClass.NIL_VECTOR;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typep(LispObject type) {
-/*  86 */     if (type == Symbol.NIL_VECTOR)
-/*  87 */       return Lisp.T; 
-/*  88 */     if (type == Symbol.SIMPLE_STRING)
-/*  89 */       return Lisp.T; 
-/*  90 */     if (type == Symbol.SIMPLE_ARRAY)
-/*  91 */       return Lisp.T; 
-/*  92 */     if (type == BuiltInClass.NIL_VECTOR)
-/*  93 */       return Lisp.T; 
-/*  94 */     if (type == BuiltInClass.SIMPLE_STRING)
-/*  95 */       return Lisp.T; 
-/*  96 */     if (type == BuiltInClass.SIMPLE_ARRAY)
-/*  97 */       return Lisp.T; 
-/*  98 */     return super.typep(type);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject SIMPLE_STRING_P() {
-/* 104 */     return Lisp.T;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean equal(LispObject obj) {
-/* 110 */     if (obj instanceof NilVector) {
-/* 111 */       if (this.capacity != ((NilVector)obj).capacity)
-/* 112 */         return false; 
-/* 113 */       if (this.capacity != 0) {
-/* 114 */         accessError();
-/*     */         
-/* 116 */         return false;
-/*     */       } 
-/* 118 */       return true;
-/*     */     } 
-/* 120 */     if (obj instanceof AbstractString) {
-/* 121 */       if (this.capacity != obj.length())
-/* 122 */         return false; 
-/* 123 */       if (this.capacity != 0) {
-/* 124 */         accessError();
-/*     */         
-/* 126 */         return false;
-/*     */       } 
-/* 128 */       return true;
-/*     */     } 
-/* 130 */     return false;
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public String getValue() {
-/* 135 */     if (this.capacity == 0)
-/* 136 */       return ""; 
-/* 137 */     accessError();
-/*     */     
-/* 139 */     return null;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public int length() {
-/* 145 */     return this.capacity;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public int capacity() {
-/* 151 */     return this.capacity;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject getElementType() {
-/* 157 */     return Lisp.NIL;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject CHAR(int index) {
-/* 163 */     return accessError();
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject SCHAR(int index) {
-/* 169 */     return accessError();
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject AREF(int index) {
-/* 175 */     return accessError();
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public void aset(int index, LispObject newValue) {
-/* 181 */     storeError(newValue);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public char charAt(int index) {
-/* 187 */     accessError();
-/*     */     
-/* 189 */     return Character.MIN_VALUE;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public void setCharAt(int index, char c) {
-/* 195 */     storeError(LispCharacter.getInstance(c));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject subseq(int start, int end) {
-/* 201 */     if (this.capacity == 0 && start == 0 && end == 0)
-/* 202 */       return this; 
-/* 203 */     return accessError();
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public void fill(LispObject obj) {
-/* 209 */     storeError(obj);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public void fill(char c) {
-/* 215 */     storeError(LispCharacter.getInstance(c));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public void shrink(int n) {}
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject reverse() {
-/* 226 */     return accessError();
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public LispObject accessError() {
-/* 231 */     return Lisp.error(new TypeError("Attempt to access an array of element type NIL."));
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   private void storeError(LispObject obj) {
-/* 236 */     Lisp.error(new TypeError(String.valueOf(obj) + " is not of type NIL."));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public int sxhash() {
-/* 242 */     return 0;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public AbstractVector adjustArray(int newCapacity, LispObject initialElement, LispObject initialContents) {
-/* 251 */     accessError();
-/*     */     
-/* 253 */     return null;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public AbstractVector adjustArray(int size, AbstractArray displacedTo, int displacement) {
-/* 261 */     accessError();
-/*     */     
-/* 263 */     return null;
-/*     */   }
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/NilVector.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * NilVector.java
+ *
+ * Copyright (C) 2004-2005 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+public final class NilVector extends AbstractString
+{
+    private int capacity;
+
+    public NilVector(int capacity)
+    {
+        this.capacity = capacity;
+    }
+
+    @Override
+    public char[] chars()
+    {
+        if (capacity != 0)
+            accessError();
+        return new char[0];
+    }
+
+    @Override
+    public char[] getStringChars()
+    {
+        if (capacity != 0)
+            accessError();
+        return new char[0];
+    }
+
+    @Override
+    public String getStringValue()
+    {
+        if (capacity != 0)
+            accessError();
+        return "";
+    }
+
+    @Override
+    public LispObject typeOf()
+    {
+        return list(Symbol.NIL_VECTOR, Fixnum.getInstance(capacity));
+    }
+
+    @Override
+    public LispObject classOf()
+    {
+        return BuiltInClass.NIL_VECTOR;
+    }
+
+    @Override
+    public LispObject typep(LispObject type)
+    {
+        if (type == Symbol.NIL_VECTOR)
+            return T;
+        if (type == Symbol.SIMPLE_STRING)
+            return T;
+        if (type == Symbol.SIMPLE_ARRAY)
+            return T;
+        if (type == BuiltInClass.NIL_VECTOR)
+            return T;
+        if (type == BuiltInClass.SIMPLE_STRING)
+            return T;
+        if (type == BuiltInClass.SIMPLE_ARRAY)
+            return T;
+        return super.typep(type);
+    }
+
+    @Override
+    public LispObject SIMPLE_STRING_P()
+    {
+        return T;
+    }
+
+    @Override
+    public boolean equal(LispObject obj)
+    {
+        if (obj instanceof NilVector) {
+            if (capacity != ((NilVector)obj).capacity)
+                return false;
+            if (capacity != 0) {
+                accessError();
+                // Not reached.
+                return false;
+            }
+            return true;
+        }
+        if (obj instanceof AbstractString) {
+            if (capacity != obj.length())
+                return false;
+            if (capacity != 0) {
+                accessError();
+                // Not reached.
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public String getValue()
+    {
+        if (capacity == 0)
+            return "";
+        accessError();
+        // Not reached.
+        return null;
+    }
+
+    @Override
+    public int length()
+    {
+        return capacity;
+    }
+
+    @Override
+    public int capacity()
+    {
+        return capacity;
+    }
+
+    @Override
+    public LispObject getElementType()
+    {
+        return NIL;
+    }
+
+    @Override
+    public LispObject CHAR(int index)
+    {
+        return accessError();
+    }
+
+    @Override
+    public LispObject SCHAR(int index)
+    {
+        return accessError();
+    }
+
+    @Override
+    public LispObject AREF(int index)
+    {
+        return accessError();
+    }
+
+    @Override
+    public void aset(int index, LispObject newValue)
+    {
+        storeError(newValue);
+    }
+
+    @Override
+    public char charAt(int index)
+    {
+        accessError();
+        // Not reached.
+        return 0;
+    }
+
+    @Override
+    public void setCharAt(int index, char c)
+    {
+        storeError(LispCharacter.getInstance(c));
+    }
+
+    @Override
+    public LispObject subseq(int start, int end)
+    {
+        if (capacity == 0 && start == 0 && end == 0)
+            return this;
+        return accessError();
+    }
+
+    @Override
+    public void fill(LispObject obj)
+    {
+        storeError(obj);
+    }
+
+    @Override
+    public void fill(char c)
+    {
+        storeError(LispCharacter.getInstance(c));
+    }
+
+    @Override
+    public void shrink(int n)
+    {
+    }
+
+    @Override
+    public LispObject reverse()
+    {
+        return accessError();
+    }
+
+    public LispObject accessError()
+    {
+        return error(new TypeError("Attempt to access an array of element type NIL."));
+    }
+
+    private void storeError(LispObject obj)
+    {
+        error(new TypeError(String.valueOf(obj) + " is not of type NIL."));
+    }
+
+    @Override
+    public int sxhash()
+    {
+        return 0;
+    }
+
+    @Override
+    public AbstractVector adjustArray(int newCapacity,
+                                       LispObject initialElement,
+                                       LispObject initialContents)
+
+    {
+        accessError();
+        // Not reached.
+        return null;
+    }
+
+    @Override
+    public AbstractVector adjustArray(int size, AbstractArray displacedTo,
+                                       int displacement)
+
+    {
+        accessError();
+        // Not reached.
+        return null;
+    }
+}

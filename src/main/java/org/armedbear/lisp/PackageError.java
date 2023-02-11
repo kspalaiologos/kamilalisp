@@ -1,150 +1,144 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public final class PackageError
-/*     */   extends LispError
-/*     */ {
-/*     */   public PackageError(LispObject initArgs) {
-/*  42 */     super(StandardClass.PACKAGE_ERROR);
-/*  43 */     initialize(initArgs);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   protected void initialize(LispObject initArgs) {
-/*  49 */     super.initialize(initArgs);
-/*     */     
-/*  51 */     if (initArgs.listp() && initArgs.car().stringp()) {
-/*  52 */       setFormatControl(initArgs.car().getStringValue());
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */       
-/*  60 */       for (LispObject arg = initArgs.cdr(); arg != Lisp.NIL; arg = arg.cdr()) {
-/*  61 */         if (arg.car() instanceof Symbol)
-/*  62 */           arg.setCar(new SimpleString(((Symbol)arg.car()).getQualifiedName())); 
-/*     */       } 
-/*  64 */       setFormatArguments(initArgs.cdr());
-/*  65 */       setPackage(Lisp.NIL);
-/*     */       
-/*     */       return;
-/*     */     } 
-/*     */     
-/*  70 */     LispObject pkg = Lisp.NIL;
-/*     */     
-/*  72 */     while (initArgs != Lisp.NIL) {
-/*  73 */       LispObject first = initArgs.car();
-/*  74 */       initArgs = initArgs.cdr();
-/*  75 */       LispObject second = initArgs.car();
-/*  76 */       initArgs = initArgs.cdr();
-/*  77 */       if (first == Keyword.PACKAGE)
-/*  78 */         pkg = second; 
-/*     */     } 
-/*  80 */     setPackage(pkg);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public PackageError(String message) {
-/*  85 */     super(StandardClass.PACKAGE_ERROR);
-/*  86 */     setFormatControl(message);
-/*  87 */     setPackage(Lisp.NIL);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public PackageError(String message, LispObject pkg) {
-/*  92 */     super(StandardClass.PACKAGE_ERROR);
-/*  93 */     setFormatControl(message);
-/*  94 */     setPackage(pkg);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typeOf() {
-/* 100 */     return Symbol.PACKAGE_ERROR;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject classOf() {
-/* 106 */     return StandardClass.PACKAGE_ERROR;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typep(LispObject type) {
-/* 112 */     if (type == Symbol.PACKAGE_ERROR)
-/* 113 */       return Lisp.T; 
-/* 114 */     if (type == StandardClass.PACKAGE_ERROR)
-/* 115 */       return Lisp.T; 
-/* 116 */     return super.typep(type);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public LispObject getPackage() {
-/* 121 */     return getInstanceSlotValue(Symbol.PACKAGE);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public void setPackage(LispObject pkg) {
-/* 126 */     setInstanceSlotValue(Symbol.PACKAGE, pkg);
-/*     */   }
-/*     */ 
-/*     */   
-/* 130 */   private static final Primitive PACKAGE_ERROR_PACKAGE = new Primitive("package-error-package", "condition")
-/*     */     {
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject arg)
-/*     */       {
-/* 136 */         if (arg.typep(Symbol.PACKAGE_ERROR) == Lisp.NIL) {
-/* 137 */           return Lisp.type_error(arg, Symbol.PACKAGE_ERROR);
-/*     */         }
-/*     */         
-/* 140 */         StandardObject obj = (StandardObject)arg;
-/* 141 */         return obj.getInstanceSlotValue(Symbol.PACKAGE);
-/*     */       }
-/*     */     };
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/PackageError.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * PackageError.java
+ *
+ * Copyright (C) 2003-2005 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+public final class PackageError extends LispError
+{
+    public PackageError(LispObject initArgs)
+    {
+        super(StandardClass.PACKAGE_ERROR);
+        initialize(initArgs);
+    }
+
+    @Override
+    protected void initialize(LispObject initArgs)
+    {
+        super.initialize(initArgs);
+
+        if (initArgs.listp() && initArgs.car().stringp()) {
+           setFormatControl(initArgs.car().getStringValue());
+           // When printing an error string, presumably, if the string contains
+           // a symbol, we'll want to complain about its full name, not the accessible
+           // name, because it may omit an (important) package name part.
+           // Two problems: (1) symbols can be contained in sublists
+           //               (2) symbols may not be printed, but used otherwise.
+           // ### FIXME: why special-case that here: binding *PRINT-ESCAPE* to T
+           // will do exactly this, if the reader requests it.
+           for (LispObject arg = initArgs.cdr(); arg != NIL; arg = arg.cdr()) {
+              if (arg.car() instanceof Symbol)
+                 arg.setCar(new SimpleString(((Symbol)arg.car()).getQualifiedName()));
+           }
+           setFormatArguments(initArgs.cdr());
+           setPackage(NIL);
+
+           return;
+        }
+
+        LispObject pkg = NIL;
+        LispObject first, second;
+        while (initArgs != NIL) {
+            first = initArgs.car();
+            initArgs = initArgs.cdr();
+            second = initArgs.car();
+            initArgs = initArgs.cdr();
+            if (first == Keyword.PACKAGE)
+                pkg = second;
+        }
+        setPackage(pkg);
+    }
+
+    public PackageError(String message)
+    {
+        super(StandardClass.PACKAGE_ERROR);
+        setFormatControl(message);
+        setPackage(NIL);
+    }
+
+    public PackageError(String message, LispObject pkg)
+    {
+        super(StandardClass.PACKAGE_ERROR);
+        setFormatControl(message);
+        setPackage(pkg);
+    }
+
+    @Override
+    public LispObject typeOf()
+    {
+        return Symbol.PACKAGE_ERROR;
+    }
+
+    @Override
+    public LispObject classOf()
+    {
+        return StandardClass.PACKAGE_ERROR;
+    }
+
+    @Override
+    public LispObject typep(LispObject type)
+    {
+        if (type == Symbol.PACKAGE_ERROR)
+            return T;
+        if (type == StandardClass.PACKAGE_ERROR)
+            return T;
+        return super.typep(type);
+    }
+
+    public LispObject getPackage()
+    {
+        return getInstanceSlotValue(Symbol.PACKAGE);
+    }
+
+    public void setPackage(LispObject pkg)
+    {
+        setInstanceSlotValue(Symbol.PACKAGE, pkg);
+    }
+
+    // ### package-error-package
+    private static final Primitive PACKAGE_ERROR_PACKAGE =
+        new Primitive("package-error-package", "condition")
+    {
+        @Override
+        public LispObject execute(LispObject arg)
+        {
+            if (arg.typep(Symbol.PACKAGE_ERROR) == NIL) {
+                return type_error(arg, Symbol.PACKAGE_ERROR);
+            }
+
+            final StandardObject obj = (StandardObject) arg;
+            return obj.getInstanceSlotValue(Symbol.PACKAGE);
+        }
+    };
+}

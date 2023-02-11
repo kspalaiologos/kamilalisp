@@ -1,115 +1,109 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ import java.io.File;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public final class delete_file
-/*     */   extends Primitive
-/*     */ {
-/*     */   private delete_file() {
-/*  45 */     super("delete-file", "filespec");
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject arg) {
-/*     */     File file;
-/*  54 */     Pathname pathname = Lisp.coerceToPathname(arg);
-/*  55 */     if (arg instanceof Stream)
-/*  56 */       ((Stream)arg)._close(); 
-/*  57 */     if (pathname instanceof LogicalPathname)
-/*  58 */       pathname = LogicalPathname.translateLogicalPathname((LogicalPathname)pathname); 
-/*  59 */     if (pathname.isWild()) {
-/*  60 */       return Lisp.error(new FileError("Bad place for a wild pathname.", pathname));
-/*     */     }
-/*     */     
-/*  63 */     Pathname defaultedPathname = Pathname.mergePathnames(pathname, 
-/*  64 */         Lisp.coerceToPathname(Symbol.DEFAULT_PATHNAME_DEFAULTS.symbolValue()), Lisp.NIL);
-/*     */ 
-/*     */ 
-/*     */     
-/*  68 */     if (defaultedPathname.isRemote())
-/*  69 */       return Lisp.error(new FileError("Unable to delete remote pathnames", defaultedPathname)); 
-/*  70 */     if (defaultedPathname instanceof JarPathname) {
-/*  71 */       JarPathname jar = (JarPathname)defaultedPathname;
-/*  72 */       Pathname root = (Pathname)jar.getRootJar();
-/*  73 */       Cons jars = (Cons)jar.getJars();
-/*     */       
-/*  75 */       if (jar.isArchiveEntry() || jars
-/*  76 */         .length() > 1) {
-/*  77 */         return Lisp.error(new FileError("Unable to delete entries within JAR-PATHNAME", jar));
-/*     */       }
-/*  79 */       ZipCache.remove(jar);
-/*  80 */       file = root.getFile();
-/*     */     } else {
-/*  82 */       file = defaultedPathname.getFile();
-/*     */     } 
-/*     */     
-/*  85 */     if (file.exists()) {
-/*     */       
-/*  87 */       for (int i = 0; i < 2; i++) {
-/*  88 */         if (file.delete()) {
-/*  89 */           return Lisp.T;
-/*     */         }
-/*     */         
-/*  92 */         ZipCache.remove(defaultedPathname);
-/*  93 */         System.gc();
-/*  94 */         Thread.yield();
-/*     */       } 
-/*  96 */       Pathname truename = Pathname.create(file.getAbsolutePath());
-/*  97 */       StringBuilder sb = new StringBuilder("Unable to delete ");
-/*  98 */       sb.append(file.isDirectory() ? "directory " : "file ");
-/*  99 */       sb.append(truename.princToString());
-/* 100 */       sb.append('.');
-/* 101 */       return Lisp.error(new FileError(sb.toString(), truename));
-/*     */     } 
-/*     */     
-/* 104 */     return Lisp.T;
-/*     */   }
-/*     */ 
-/*     */   
-/* 108 */   private static final Primitive DELETE_FILE = new delete_file();
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/delete_file.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * delete_file.java
+ *
+ * Copyright (C) 2003-2005 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+import java.io.File;
+import java.io.IOException;
+
+public final class delete_file extends Primitive
+{
+    private delete_file()
+    {
+        super("delete-file", "filespec");
+    }
+
+    // ### delete-file filespec => t
+    @Override
+    public LispObject execute(LispObject arg)
+    {
+      // Don't follow symlinks! We want to delete the symlink itself, not
+      // the linked-to file.
+      Pathname pathname = coerceToPathname(arg);
+      if (arg instanceof Stream)
+        ((Stream)arg)._close();
+      if (pathname instanceof LogicalPathname)
+        pathname = LogicalPathname.translateLogicalPathname((LogicalPathname)pathname);
+      if (pathname.isWild())
+        return error(new FileError("Bad place for a wild pathname.",
+                                   pathname));
+      final Pathname defaultedPathname 
+              = Pathname.mergePathnames(pathname,
+                                coerceToPathname(Symbol.DEFAULT_PATHNAME_DEFAULTS.symbolValue()),
+                                NIL);
+
+      File file;
+      if (defaultedPathname.isRemote()) {
+        return error(new FileError("Unable to delete remote pathnames", defaultedPathname));
+      } else if (defaultedPathname instanceof JarPathname) {
+        JarPathname jar = (JarPathname)defaultedPathname;
+        Pathname root = (Pathname)jar.getRootJar();
+        Cons jars = (Cons)jar.getJars();
+          
+        if (jar.isArchiveEntry()
+            || jars.length() > 1) {
+          return error(new FileError("Unable to delete entries within JAR-PATHNAME", jar));
+        }
+        ZipCache.remove(jar);
+        file = root.getFile();
+      } else {
+        file = defaultedPathname.getFile();
+      }
+        
+      if (file.exists()) {
+        // File exists.
+        for (int i = 0; i < 2; i++) {
+          if (file.delete()) {
+            return T;
+          }
+          // Under Windows our fasls get placed in the ZipCache when compiled
+          ZipCache.remove(defaultedPathname);
+          System.gc();
+          Thread.yield();
+        }
+        Pathname truename = (Pathname)Pathname.create(file.getAbsolutePath());
+        StringBuilder sb = new StringBuilder("Unable to delete ");
+        sb.append(file.isDirectory() ? "directory " : "file ");
+        sb.append(truename.princToString());
+        sb.append('.');
+        return error(new FileError(sb.toString(), truename));
+      } else {
+        // File does not exist.
+        return T;
+      }
+    }
+
+    private static final Primitive DELETE_FILE = new delete_file();
+}

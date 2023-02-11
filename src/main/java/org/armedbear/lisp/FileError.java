@@ -1,137 +1,131 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public final class FileError
-/*     */   extends LispError
-/*     */ {
-/*     */   public FileError(LispObject initArgs) {
-/*  43 */     super(StandardClass.FILE_ERROR);
-/*  44 */     if (initArgs instanceof Cons) {
-/*  45 */       initialize(initArgs);
-/*     */     } else {
-/*  47 */       setPathname(initArgs);
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   protected void initialize(LispObject initArgs) {
-/*  53 */     super.initialize(initArgs);
-/*  54 */     LispObject pathname = Lisp.NIL;
-/*  55 */     while (initArgs != Lisp.NIL) {
-/*  56 */       LispObject first = initArgs.car();
-/*  57 */       initArgs = initArgs.cdr();
-/*  58 */       if (first == Keyword.PATHNAME) {
-/*  59 */         pathname = initArgs.car();
-/*     */         break;
-/*     */       } 
-/*  62 */       initArgs = initArgs.cdr();
-/*     */     } 
-/*  64 */     setPathname(pathname);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public FileError(String message) {
-/*  69 */     super(StandardClass.FILE_ERROR);
-/*  70 */     setFormatControl(message.replaceAll("~", "~~"));
-/*  71 */     setFormatArguments(Lisp.NIL);
-/*  72 */     setPathname(Lisp.NIL);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public FileError(String message, LispObject pathname) {
-/*  78 */     super(StandardClass.FILE_ERROR);
-/*  79 */     setFormatControl(message.replaceAll("~", "~~"));
-/*  80 */     setFormatArguments(Lisp.NIL);
-/*  81 */     setPathname(pathname);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public LispObject getPathname() {
-/*  86 */     return getInstanceSlotValue(Symbol.PATHNAME);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   private void setPathname(LispObject pathname) {
-/*  91 */     setInstanceSlotValue(Symbol.PATHNAME, pathname);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typeOf() {
-/*  97 */     return Symbol.FILE_ERROR;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject classOf() {
-/* 103 */     return StandardClass.FILE_ERROR;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typep(LispObject type) {
-/* 109 */     if (type == Symbol.FILE_ERROR)
-/* 110 */       return Lisp.T; 
-/* 111 */     if (type == StandardClass.FILE_ERROR)
-/* 112 */       return Lisp.T; 
-/* 113 */     return super.typep(type);
-/*     */   }
-/*     */ 
-/*     */   
-/* 117 */   private static final Primitive FILE_ERROR_PATHNAME = new Primitive("file-error-pathname", "condition")
-/*     */     {
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject arg)
-/*     */       {
-/* 123 */         if (arg.typep(Symbol.FILE_ERROR) == Lisp.NIL) {
-/* 124 */           return Lisp.type_error(arg, Symbol.FILE_ERROR);
-/*     */         }
-/*     */         
-/* 127 */         StandardObject obj = (StandardObject)arg;
-/* 128 */         return obj.getInstanceSlotValue(Symbol.PATHNAME);
-/*     */       }
-/*     */     };
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/FileError.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * FileError.java
+ *
+ * Copyright (C) 2004-2005 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+public final class FileError extends LispError
+{
+    // initArgs is either a normal initArgs list or a pathname.
+    public FileError(LispObject initArgs)
+    {
+        super(StandardClass.FILE_ERROR);
+        if (initArgs instanceof Cons)
+            initialize(initArgs);
+        else
+            setPathname(initArgs);
+    }
+
+    @Override
+    protected void initialize(LispObject initArgs)
+    {
+        super.initialize(initArgs);
+        LispObject pathname = NIL;
+        while (initArgs != NIL) {
+            LispObject first = initArgs.car();
+            initArgs = initArgs.cdr();
+            if (first == Keyword.PATHNAME) {
+                pathname = initArgs.car();
+                break;
+            }
+            initArgs = initArgs.cdr();
+        }
+        setPathname(pathname);
+    }
+
+    public FileError(String message)
+    {
+        super(StandardClass.FILE_ERROR);
+        setFormatControl(message.replaceAll("~","~~"));
+        setFormatArguments(NIL);
+        setPathname(NIL);
+    }
+
+    public FileError(String message, LispObject pathname)
+
+    {
+        super(StandardClass.FILE_ERROR);
+        setFormatControl(message.replaceAll("~","~~"));
+        setFormatArguments(NIL);
+        setPathname(pathname);
+    }
+
+    public LispObject getPathname()
+    {
+        return getInstanceSlotValue(Symbol.PATHNAME);
+    }
+
+    private void setPathname(LispObject pathname)
+    {
+        setInstanceSlotValue(Symbol.PATHNAME, pathname);
+    }
+
+    @Override
+    public LispObject typeOf()
+    {
+        return Symbol.FILE_ERROR;
+    }
+
+    @Override
+    public LispObject classOf()
+    {
+        return StandardClass.FILE_ERROR;
+    }
+
+    @Override
+    public LispObject typep(LispObject type)
+    {
+        if (type == Symbol.FILE_ERROR)
+            return T;
+        if (type == StandardClass.FILE_ERROR)
+            return T;
+        return super.typep(type);
+    }
+
+    // ### file-error-pathname
+    private static final Primitive FILE_ERROR_PATHNAME =
+        new Primitive("file-error-pathname", "condition")
+    {
+        @Override
+        public LispObject execute(LispObject arg)
+        {
+            if (arg.typep(Symbol.FILE_ERROR) == NIL) {
+                return type_error(arg, Symbol.FILE_ERROR);
+            }
+
+            final StandardObject obj = (StandardObject) arg;
+            return obj.getInstanceSlotValue(Symbol.PATHNAME);
+        }
+    };
+}

@@ -1,178 +1,173 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ import java.util.HashMap;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public class MemoryClassLoader
-/*     */   extends JavaClassLoader
-/*     */ {
-/*  43 */   private final HashMap<String, JavaObject> hashtable = new HashMap<>();
-/*  44 */   private final JavaObject boxedThis = new JavaObject(this);
-/*     */   private final String internalNamePrefix;
-/*     */   
-/*     */   public MemoryClassLoader() {
-/*  48 */     this("org/armedbear/lisp/");
-/*     */   }
-/*     */   
-/*     */   public MemoryClassLoader(String internalNamePrefix) {
-/*  52 */     this.internalNamePrefix = internalNamePrefix;
-/*     */   }
-/*     */   
-/*     */   public MemoryClassLoader(JavaClassLoader parent) {
-/*  56 */     super(parent);
-/*  57 */     this.internalNamePrefix = "";
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-/*  72 */     if (this.hashtable.containsKey(name)) {
-/*  73 */       String internalName = this.internalNamePrefix + name;
-/*  74 */       Class<?> c = findLoadedClass(internalName);
-/*     */       
-/*  76 */       if (c == null) {
-/*  77 */         c = findClass(name);
-/*     */       }
-/*  79 */       if (c != null) {
-/*  80 */         if (resolve) {
-/*  81 */           resolveClass(c);
-/*     */         }
-/*  83 */         return c;
-/*     */       } 
-/*     */     } 
-/*     */     
-/*  87 */     if (checkPreCompiledClassLoader) {
-/*  88 */       Class<?> c = findPrecompiledClassOrNull(name);
-/*  89 */       if (c != null) {
-/*  90 */         return c;
-/*     */       }
-/*     */     } 
-/*     */ 
-/*     */     
-/*  95 */     return super.loadClass(name, resolve);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   protected Class<?> findClass(String name) throws ClassNotFoundException {
-/*     */     try {
-/* 101 */       if (checkPreCompiledClassLoader) {
-/* 102 */         Class<?> c = findPrecompiledClassOrNull(name);
-/* 103 */         if (c != null)
-/* 104 */           return c; 
-/*     */       } 
-/* 106 */       byte[] b = getFunctionClassBytes(name);
-/* 107 */       return defineLispClass(name, b, 0, b.length);
-/* 108 */     } catch (Throwable e) {
-/* 109 */       e.printStackTrace();
-/* 110 */       if (e instanceof ControlTransfer) throw (ControlTransfer)e; 
-/* 111 */       throw new ClassNotFoundException("Function class not found: " + name, e);
-/*     */     } 
-/*     */   }
-/*     */   
-/*     */   public byte[] getFunctionClassBytes(String name) {
-/* 116 */     if (this.hashtable.containsKey(name)) {
-/* 117 */       return (byte[])((JavaObject)this.hashtable.get(name)).javaInstance();
-/*     */     }
-/* 119 */     return super.getFunctionClassBytes(name);
-/*     */   }
-/*     */   
-/*     */   public LispObject loadFunction(String name) {
-/*     */     try {
-/* 124 */       Class<?> clz = loadClass(name);
-/* 125 */       Function f = (Function)clz.newInstance();
-/* 126 */       getFunctionClassBytes(f);
-/* 127 */       return f;
-/* 128 */     } catch (Throwable e) {
-/* 129 */       if (e instanceof ControlTransfer) throw (ControlTransfer)e; 
-/* 130 */       Debug.trace(e);
-/* 131 */       return Lisp.error(new LispError("Compiled function can't be loaded: " + name + " from memory"));
-/*     */     } 
-/*     */   }
-/*     */   
-/* 135 */   private static final Primitive MAKE_MEMORY_CLASS_LOADER = new pf_make_memory_class_loader();
-/*     */   
-/*     */   private static final class pf_make_memory_class_loader extends Primitive { pf_make_memory_class_loader() {
-/* 138 */       super("make-memory-class-loader", Lisp.PACKAGE_SYS, false);
-/*     */     }
-/*     */ 
-/*     */     
-/*     */     public LispObject execute() {
-/* 143 */       return (new MemoryClassLoader()).boxedThis;
-/*     */     } }
-/*     */ 
-/*     */   
-/* 147 */   public static final Primitive PUT_MEMORY_FUNCTION = new pf_put_memory_function();
-/*     */   
-/*     */   private static final class pf_put_memory_function extends Primitive { pf_put_memory_function() {
-/* 150 */       super("put-memory-function", Lisp.PACKAGE_SYS, false, "loader class-name class-bytes");
-/*     */     }
-/*     */ 
-/*     */     
-/*     */     public LispObject execute(LispObject loader, LispObject className, LispObject classBytes) {
-/* 155 */       MemoryClassLoader l = (MemoryClassLoader)loader.javaInstance(MemoryClassLoader.class);
-/* 156 */       return l.hashtable.put(className.getStringValue(), classBytes);
-/*     */     } }
-/*     */ 
-/*     */   
-/* 160 */   private static final Primitive GET_MEMORY_FUNCTION = new pf_get_memory_function();
-/*     */   
-/*     */   private static final class pf_get_memory_function extends Primitive { pf_get_memory_function() {
-/* 163 */       super("get-memory-function", Lisp.PACKAGE_SYS, false, "loader class-name");
-/*     */     }
-/*     */ 
-/*     */     
-/*     */     public LispObject execute(LispObject loader, LispObject name) {
-/* 168 */       MemoryClassLoader l = (MemoryClassLoader)loader.javaInstance(MemoryClassLoader.class);
-/* 169 */       return l.loadFunction(name.getStringValue());
-/*     */     } }
-/*     */ 
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/MemoryClassLoader.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * MemoryClassLoader.java
+ *
+ * Copyright (C) 2011 Erik Huelsmann
+ * Copyright (C) 2010 Alessio Stalla
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+import java.util.*;
+
+public class MemoryClassLoader extends JavaClassLoader {
+
+    private final HashMap<String, JavaObject> hashtable = new HashMap<String, JavaObject>();
+    private final JavaObject boxedThis = new JavaObject(this);
+    private final String internalNamePrefix;
+
+    public MemoryClassLoader() {
+        this("org/armedbear/lisp/");
+    }
+
+    public MemoryClassLoader(String internalNamePrefix) {
+        this.internalNamePrefix = internalNamePrefix;
+    }
+
+    public MemoryClassLoader(JavaClassLoader parent) {
+        super(parent);
+        this.internalNamePrefix = "";
+    }
+
+    @Override
+    protected Class<?> loadClass(String name, boolean resolve)
+            throws ClassNotFoundException {
+        /* First we check if we should load the class ourselves,
+         * allowing the default handlers to kick in if we don't...
+         *
+         * This strategy eliminates ClassNotFound exceptions inside
+         * the inherited loadClass() eliminated ~80k exceptions during
+         * Maxima compilation. Generally, creation of an exception object
+         * is a pretty heavy operation, because it processes the call stack,
+         * which - in ABCL - is pretty deep, most of the time.
+         */
+        if (hashtable.containsKey(name)) {
+            String internalName = internalNamePrefix + name;
+            Class<?> c = this.findLoadedClass(internalName);
+
+            if (c == null) {
+                c = findClass(name);
+            }
+            if (c != null) {
+                if (resolve) {
+                    resolveClass(c);
+                }
+                return c;
+            }
+        }
+        
+        if (checkPreCompiledClassLoader) {
+            Class<?> c = findPrecompiledClassOrNull(name);
+            if (c != null) {
+                return c;     
+            }
+        }
+
+        // Fall through to our super's default handling
+        return super.loadClass(name, resolve);
+    }
+
+    @Override
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        try {
+            if (checkPreCompiledClassLoader) {
+                Class<?> c = findPrecompiledClassOrNull(name);
+                if (c != null)
+                        return c;                       
+            }
+            byte[] b = getFunctionClassBytes(name);
+            return defineLispClass(name, b, 0, b.length);
+        } catch(Throwable e) { //TODO handle this better, readFunctionBytes uses Debug.assert() but should return null
+            e.printStackTrace();
+            if(e instanceof ControlTransfer) { throw (ControlTransfer) e; }
+            throw new ClassNotFoundException("Function class not found: " + name, e);
+        }
+    }
+
+    public byte[] getFunctionClassBytes(String name) {
+        if (hashtable.containsKey(name)) {
+            return (byte[])hashtable.get(name).javaInstance();
+        }
+        return super.getFunctionClassBytes(name);
+    }
+
+    public LispObject loadFunction(String name) {
+        try {
+            Class clz = loadClass(name);
+            Function f = (Function) clz.newInstance();
+            getFunctionClassBytes(f); //as a side effect it sets them
+            return f;
+        } catch(Throwable e) {
+            if(e instanceof ControlTransfer) { throw (ControlTransfer) e; }
+            Debug.trace(e);
+            return error(new LispError("Compiled function can't be loaded: " + name + " from memory"));
+        }
+    }
+
+    private static final Primitive MAKE_MEMORY_CLASS_LOADER = new pf_make_memory_class_loader();
+    private static final class pf_make_memory_class_loader extends Primitive {
+        pf_make_memory_class_loader() {
+            super("make-memory-class-loader", PACKAGE_SYS, false);
+        }
+
+        @Override
+        public LispObject execute() {
+            return new MemoryClassLoader().boxedThis;
+        }
+    };
+
+    public static final Primitive PUT_MEMORY_FUNCTION = new pf_put_memory_function();
+    private static final class pf_put_memory_function extends Primitive {
+        pf_put_memory_function() {
+            super("put-memory-function", PACKAGE_SYS, false, "loader class-name class-bytes");
+        }
+
+        @Override
+        public LispObject execute(LispObject loader, LispObject className, LispObject classBytes) {
+            MemoryClassLoader l = (MemoryClassLoader) loader.javaInstance(MemoryClassLoader.class);
+            return (LispObject)l.hashtable.put(className.getStringValue(), (JavaObject)classBytes);
+        }
+    };
+    
+    private static final Primitive GET_MEMORY_FUNCTION = new pf_get_memory_function();
+    private static final class pf_get_memory_function extends Primitive {
+        pf_get_memory_function() {
+            super("get-memory-function", PACKAGE_SYS, false, "loader class-name");
+        }
+
+        @Override
+        public LispObject execute(LispObject loader, LispObject name) {
+            MemoryClassLoader l = (MemoryClassLoader) loader.javaInstance(MemoryClassLoader.class);
+            return l.loadFunction(name.getStringValue());
+        }
+    };
+}
+

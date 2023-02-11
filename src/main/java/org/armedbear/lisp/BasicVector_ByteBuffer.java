@@ -1,334 +1,328 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ import java.nio.BufferOverflowException;
-/*     */ import java.nio.ByteBuffer;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public final class BasicVector_ByteBuffer
-/*     */   extends AbstractVector
-/*     */ {
-/*     */   private int capacity;
-/*     */   private ByteBuffer elements;
-/*     */   private boolean directAllocation;
-/*     */   
-/*     */   public BasicVector_ByteBuffer(int capacity) {
-/*  51 */     this(capacity, false);
-/*     */   }
-/*     */   
-/*     */   public BasicVector_ByteBuffer(int capacity, boolean directAllocation) {
-/*  55 */     this.directAllocation = directAllocation;
-/*  56 */     if (directAllocation) {
-/*  57 */       this.elements = ByteBuffer.allocateDirect(capacity);
-/*     */     } else {
-/*  59 */       this.elements = ByteBuffer.allocate(capacity);
-/*     */     } 
-/*  61 */     this.capacity = capacity;
-/*     */   }
-/*     */   
-/*     */   public BasicVector_ByteBuffer(byte[] array, boolean directAllocation) {
-/*  65 */     this.capacity = array.length;
-/*  66 */     this.directAllocation = directAllocation;
-/*  67 */     this.elements = ByteBuffer.wrap(array);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public BasicVector_ByteBuffer(LispObject[] array, boolean directAllocation) {
-/*  74 */     this.directAllocation = directAllocation;
-/*  75 */     this.capacity = array.length;
-/*  76 */     if (directAllocation) {
-/*  77 */       this.elements = ByteBuffer.allocateDirect(array.length);
-/*     */     } else {
-/*  79 */       this.elements = ByteBuffer.allocate(array.length);
-/*     */     } 
-/*  81 */     for (int i = array.length; i-- > 0;)
-/*     */     {
-/*  83 */       this.elements.put(i, Lisp.coerceToJavaByte(array[i]));
-/*     */     }
-/*     */   }
-/*     */   
-/*     */   public BasicVector_ByteBuffer(ByteBuffer buffer, boolean directAllocation) {
-/*  88 */     this.elements = buffer;
-/*  89 */     this.directAllocation = directAllocation;
-/*  90 */     this.capacity = buffer.limit();
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public LispObject typeOf() {
-/*  95 */     return Lisp.list(Symbol.SIMPLE_ARRAY, new LispObject[] { Lisp.UNSIGNED_BYTE_8, new Cons(
-/*  96 */             Fixnum.getInstance(this.capacity)) });
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public LispObject classOf() {
-/* 101 */     return BuiltInClass.VECTOR;
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public LispObject typep(LispObject type) {
-/* 106 */     if (type == Symbol.SIMPLE_ARRAY)
-/* 107 */       return Lisp.T; 
-/* 108 */     if (type == BuiltInClass.SIMPLE_ARRAY)
-/* 109 */       return Lisp.T; 
-/* 110 */     return super.typep(type);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public LispObject getElementType() {
-/* 115 */     return Lisp.UNSIGNED_BYTE_8;
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public boolean isSimpleVector() {
-/* 120 */     return false;
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public boolean hasFillPointer() {
-/* 125 */     return false;
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public boolean isAdjustable() {
-/* 130 */     return false;
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public int capacity() {
-/* 135 */     return this.capacity;
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public int length() {
-/* 140 */     return this.capacity;
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public LispObject elt(int index) {
-/*     */     try {
-/* 146 */       return Lisp.coerceFromJavaByte(this.elements.get(index));
-/* 147 */     } catch (IndexOutOfBoundsException e) {
-/* 148 */       badIndex(index, this.capacity);
-/* 149 */       return Lisp.NIL;
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public int aref(int index) {
-/*     */     try {
-/* 156 */       return this.elements.get(index) & 0xFF;
-/* 157 */     } catch (IndexOutOfBoundsException e) {
-/* 158 */       badIndex(index, this.elements.limit());
-/*     */       
-/* 160 */       return 0;
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public LispObject AREF(int index) {
-/*     */     try {
-/* 167 */       return Lisp.coerceFromJavaByte(this.elements.get(index));
-/* 168 */     } catch (IndexOutOfBoundsException e) {
-/* 169 */       badIndex(index, this.elements.limit());
-/* 170 */       return Lisp.NIL;
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public void aset(int index, int n) {
-/*     */     try {
-/* 177 */       this.elements.put(index, (byte)n);
-/* 178 */     } catch (IndexOutOfBoundsException e) {
-/* 179 */       badIndex(index, this.capacity);
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public void aset(int index, LispObject value) {
-/*     */     try {
-/* 186 */       this.elements.put(index, Lisp.coerceToJavaByte(value));
-/* 187 */     } catch (IndexOutOfBoundsException e) {
-/* 188 */       badIndex(index, this.capacity);
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject subseq(int start, int end) {
-/* 195 */     BasicVector_ByteBuffer v = new BasicVector_ByteBuffer(end - start, this.directAllocation);
-/* 196 */     ByteBuffer view = this.elements.asReadOnlyBuffer();
-/* 197 */     view.position(start);
-/* 198 */     view.limit(end);
-/*     */     try {
-/* 200 */       v.elements.put(view);
-/* 201 */       v.elements.position(0);
-/* 202 */       return v;
-/* 203 */     } catch (BufferOverflowException e) {
-/* 204 */       return Lisp.error(new TypeError("Could not form a subseq from " + start + " to " + end));
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public void fill(LispObject obj) {
-/* 210 */     if (!(obj instanceof Fixnum)) {
-/* 211 */       Lisp.type_error(obj, Symbol.FIXNUM);
-/*     */       
-/*     */       return;
-/*     */     } 
-/* 215 */     int n = ((Fixnum)obj).value;
-/* 216 */     if (n < 0 || n > 255) {
-/* 217 */       Lisp.type_error(obj, Lisp.UNSIGNED_BYTE_8);
-/*     */       
-/*     */       return;
-/*     */     } 
-/*     */     
-/* 222 */     for (int i = length(); i-- > 0;) {
-/* 223 */       this.elements.put(i, (byte)n);
-/*     */     }
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public void shrink(int n) {
-/* 233 */     if (n < length()) {
-/* 234 */       this.elements.limit(n);
-/* 235 */       this.capacity = n;
-/*     */       return;
-/*     */     } 
-/* 238 */     if (n == length()) {
-/*     */       return;
-/*     */     }
-/* 241 */     Lisp.error(new LispError("Attempted to shrink an array to a size greater than its capacity"));
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public LispObject reverse() {
-/* 246 */     BasicVector_ByteBuffer result = new BasicVector_ByteBuffer(length(), this.directAllocation);
-/*     */     
-/* 248 */     for (int i = 0, j = length() - 1; i < length(); i++, j--) {
-/* 249 */       result.elements.put(i, this.elements.get(j));
-/*     */     }
-/* 251 */     return result;
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public LispObject nreverse() {
-/* 256 */     int i = 0;
-/* 257 */     int j = capacity() - 1;
-/* 258 */     while (i < j) {
-/* 259 */       byte temp = this.elements.get(i);
-/* 260 */       this.elements.put(i, this.elements.get(j));
-/* 261 */       this.elements.put(j, temp);
-/* 262 */       i++;
-/* 263 */       j--;
-/*     */     } 
-/* 265 */     return this;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public AbstractVector adjustArray(int newCapacity, LispObject initialElement, LispObject initialContents) {
-/* 272 */     if (initialContents != null) {
-/*     */       ByteBuffer newElements;
-/* 274 */       if (this.directAllocation) {
-/* 275 */         newElements = ByteBuffer.allocateDirect(newCapacity);
-/*     */       } else {
-/* 277 */         newElements = ByteBuffer.allocate(newCapacity);
-/*     */       } 
-/*     */       
-/* 280 */       if (initialContents.listp()) {
-/* 281 */         LispObject list = initialContents;
-/* 282 */         for (int i = 0; i < newCapacity; i++) {
-/* 283 */           newElements.put(i, Lisp.coerceToJavaByte(list.car()));
-/* 284 */           list = list.cdr();
-/*     */         } 
-/* 286 */       } else if (initialContents.vectorp()) {
-/* 287 */         for (int i = 0; i < newCapacity; i++)
-/* 288 */           newElements.put(i, Lisp.coerceToJavaByte(initialContents.elt(i))); 
-/*     */       } else {
-/* 290 */         Lisp.type_error(initialContents, Symbol.SEQUENCE);
-/* 291 */       }  return new BasicVector_ByteBuffer(newElements, this.directAllocation);
-/*     */     } 
-/* 293 */     if (length() != newCapacity) {
-/*     */       ByteBuffer newElements;
-/* 295 */       if (this.directAllocation) {
-/* 296 */         newElements = ByteBuffer.allocateDirect(newCapacity);
-/*     */       } else {
-/* 298 */         newElements = ByteBuffer.allocate(newCapacity);
-/*     */       } 
-/*     */       
-/* 301 */       if (this.elements.hasArray()) {
-/* 302 */         newElements.put(this.elements.array(), 0, Math.min(length(), newCapacity));
-/*     */       } else {
-/*     */         
-/* 305 */         int limit = Math.min(length(), newCapacity);
-/* 306 */         for (int i = 0; i < limit; i++) {
-/* 307 */           newElements.put(i, this.elements.get(i));
-/*     */         }
-/*     */       } 
-/*     */       
-/* 311 */       if (initialElement != null) {
-/* 312 */         byte initValue = (byte)(initialElement.intValue() & 0xFF);
-/* 313 */         for (int i = length(); i < newCapacity; i++)
-/* 314 */           newElements.put(i, initValue); 
-/*     */       } 
-/* 316 */       return new BasicVector_ByteBuffer(newElements, this.directAllocation);
-/*     */     } 
-/*     */     
-/* 319 */     return this;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public AbstractVector adjustArray(int newCapacity, AbstractArray displacedTo, int displacement) {
-/* 326 */     return new ComplexVector(newCapacity, displacedTo, displacement);
-/*     */   }
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/BasicVector_ByteBuffer.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * BasicVector_ByteBuffer.java
+ *
+ * Copyright (C) 2020 @easye
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+import java.nio.ByteBuffer;
+import java.nio.BufferOverflowException;
+
+
+// A basic vector is a specialized vector that is not displaced to another
+// array, has no fill pointer, and is not expressly adjustable.
+public final class BasicVector_ByteBuffer
+  extends AbstractVector
+{
+  private int capacity;
+  private ByteBuffer elements;
+  private boolean directAllocation;
+
+  public BasicVector_ByteBuffer(int capacity) {
+    this(capacity, false);
+  }
+  
+  public BasicVector_ByteBuffer(int capacity, boolean directAllocation) {
+    this.directAllocation = directAllocation;
+    if (directAllocation) {
+      elements = ByteBuffer.allocateDirect(capacity);
+    } else {
+      elements = ByteBuffer.allocate(capacity);
+    }
+    this.capacity = capacity;
+  }
+
+  public BasicVector_ByteBuffer(byte[] array, boolean directAllocation) {
+    capacity = array.length;
+    this.directAllocation = directAllocation; 
+    elements = ByteBuffer.wrap(array);
+    // ??? Note somehow that we were constructed from a wrapped primitive array 
+  }
+  
+  public BasicVector_ByteBuffer(LispObject[] array, boolean directAllocation) {
+    // FIXME: for now we assume that we're being handled an array of
+    // primitive bytes
+    this.directAllocation = directAllocation;
+    capacity = array.length;
+    if (directAllocation) {
+      elements = ByteBuffer.allocateDirect(array.length);
+    } else {
+      elements = ByteBuffer.allocate(array.length);
+    }
+    for (int i = array.length; i-- > 0;) {
+      // Faster please!
+      elements.put(i, (byte)coerceToJavaByte(array[i]));
+    }
+  }
+
+  public BasicVector_ByteBuffer(ByteBuffer buffer, boolean directAllocation) {
+    elements = buffer;
+    this.directAllocation = directAllocation;
+    capacity = ((java.nio.Buffer)buffer).limit();  
+  }
+
+  @Override
+  public LispObject typeOf() {
+    return list(Symbol.SIMPLE_ARRAY, UNSIGNED_BYTE_8,
+                new Cons(Fixnum.getInstance(capacity)));
+  }
+
+  @Override
+  public LispObject classOf() {
+    return BuiltInClass.VECTOR;
+  }
+
+  @Override
+  public LispObject typep(LispObject type) {
+    if (type == Symbol.SIMPLE_ARRAY)
+      return T;
+    if (type == BuiltInClass.SIMPLE_ARRAY)
+      return T;
+    return super.typep(type);
+  }
+
+  @Override
+  public LispObject getElementType() {
+    return UNSIGNED_BYTE_8;
+  }
+
+  @Override
+  public boolean isSimpleVector() {
+    return false;
+  }
+
+  @Override
+  public boolean hasFillPointer() {
+    return false;
+  }
+
+  @Override
+  public boolean isAdjustable() {
+    return false;
+  }
+
+  @Override
+  public int capacity() {
+    return capacity;
+  }
+
+  @Override
+  public int length() {
+    return capacity;
+  }
+
+  @Override
+  public LispObject elt(int index) {
+    try {
+      return coerceFromJavaByte(elements.get(index));
+    } catch (IndexOutOfBoundsException e) {
+      badIndex(index, capacity);
+      return NIL; // Not reached.
+    }
+  }
+
+  @Override
+  public int aref(int index) {
+    try {
+      return (((int)elements.get(index) & 0xff)); // XXX Hmmm
+    } catch (IndexOutOfBoundsException e) {
+      badIndex(index, ((java.nio.Buffer)elements).limit()); 
+      // Not reached.
+      return 0;
+    }
+  }
+
+  @Override
+  public LispObject AREF(int index) {
+    try {
+      return coerceFromJavaByte(elements.get(index));
+    } catch (IndexOutOfBoundsException e) {
+      badIndex(index, ((java.nio.Buffer)elements).limit()); 
+      return NIL; // Not reached.
+    }
+  }
+
+  @Override
+  public void aset(int index, int n) {
+    try {
+      elements.put(index, (byte) n);
+    } catch (IndexOutOfBoundsException e) {
+      badIndex(index, capacity);
+    }
+  }
+
+  @Override
+  public void aset(int index, LispObject value) {
+    try {
+        elements.put(index, coerceToJavaByte(value));
+    } catch (IndexOutOfBoundsException e) {
+      badIndex(index, capacity);
+    }
+  }
+
+  @Override
+  public LispObject subseq(int start, int end) {
+    // ??? Do we need to check that start, end are valid?
+    BasicVector_ByteBuffer v = new BasicVector_ByteBuffer(end - start, directAllocation);
+    ByteBuffer view = elements.asReadOnlyBuffer();
+    ((java.nio.Buffer)view).position(start);
+    ((java.nio.Buffer)view).limit(end);
+    try {
+      v.elements.put(view);
+      v.elements.position(0);
+      return v;
+    } catch (BufferOverflowException e) {
+      return error(new TypeError("Could not form a subseq from " + start + " to " + end));
+    }
+  }
+
+  @Override
+  public void fill(LispObject obj) {
+    if (!(obj instanceof Fixnum)) {
+      type_error(obj, Symbol.FIXNUM);
+      // Not reached.
+      return;
+    }
+    int n = ((Fixnum) obj).value;
+    if (n < 0 || n > 255) {
+      type_error(obj, UNSIGNED_BYTE_8);
+      // Not reached.
+      return;
+    }
+
+    for (int i = length(); i-- > 0;) {
+      elements.put(i, (byte) n);
+    }
+  }
+
+  @Override
+  public void shrink(int n) {
+    // One cannot shrink a ByteBuffer physically, and the elements
+    // field may refer to malloc()d memory that we shouldn't touch, so
+    // use the java.nio.Buffer limit pointer.  Not totally sure that
+    // this strategy will work out…
+    if (n < length()) {
+        ((java.nio.Buffer)elements).limit(n);
+        capacity = n;
+        return;
+    }
+    if (n == length()) {
+      return;
+    }
+    error(new LispError("Attempted to shrink an array to a size greater than its capacity"));
+  }
+
+  @Override
+  public LispObject reverse() {
+    BasicVector_ByteBuffer result = new BasicVector_ByteBuffer(length(), directAllocation);
+    int i, j;
+    for (i = 0, j = length() - 1; i < length(); i++, j--) {
+      result.elements.put(i, elements.get(j));
+    }
+    return result;
+  }
+
+  @Override
+  public LispObject nreverse() {
+    int i = 0;
+    int j = capacity() - 1;
+    while (i < j) {
+      byte temp = elements.get(i);
+      elements.put(i, elements.get(j));
+      elements.put(j, temp);
+      ++i;
+      --j;
+    }
+    return this;
+  }
+
+  @Override
+  public AbstractVector adjustArray(int newCapacity,
+                                    LispObject initialElement,
+                                    LispObject initialContents) {
+    if (initialContents != null) {
+      ByteBuffer newElements;
+      if (directAllocation) {
+        newElements = ByteBuffer.allocateDirect(newCapacity);
+      } else {
+        newElements = ByteBuffer.allocate(newCapacity);
+      }
+
+      if (initialContents.listp()) {
+        LispObject list = initialContents;
+        for (int i = 0; i < newCapacity; i++) {
+          newElements.put(i, coerceToJavaByte(list.car()));
+          list = list.cdr();
+        }
+      } else if (initialContents.vectorp()) {
+        for (int i = 0; i < newCapacity; i++)
+          newElements.put(i, coerceToJavaByte(initialContents.elt(i)));
+      } else
+        type_error(initialContents, Symbol.SEQUENCE);
+      return new BasicVector_ByteBuffer(newElements, directAllocation);
+    }
+    if (length() != newCapacity) {
+      ByteBuffer newElements;
+      if (directAllocation) {
+        newElements = ByteBuffer.allocateDirect(newCapacity);
+      } else {
+        newElements = ByteBuffer.allocate(newCapacity);
+      }
+
+      if (elements.hasArray()) {
+        newElements.put(elements.array(), 0, Math.min(length(), newCapacity));
+      } else {
+        // FIXME: a more efficient version when we don't have a backing array
+        int limit = Math.min(length(), newCapacity);
+        for (int i = 0; i < limit; i++) {
+          newElements.put(i, elements.get(i));
+        }
+      }
+        
+      if (initialElement != null) {
+        byte initValue = (byte)(initialElement.intValue() & 0xFF);
+        for (int i = length(); i < newCapacity; i++)
+          newElements.put(i, initValue);
+      }
+      return new BasicVector_ByteBuffer(newElements, directAllocation);
+    }
+    // No change.
+    return this;
+  }
+
+  @Override
+  public AbstractVector adjustArray(int newCapacity,
+                                    AbstractArray displacedTo,
+                                    int displacement) {
+    return new ComplexVector(newCapacity, displacedTo, displacement);
+  }
+}

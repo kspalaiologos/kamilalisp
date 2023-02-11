@@ -2,11 +2,11 @@ package org.armedbear.lisp.protocol;
 
 import org.armedbear.lisp.LispObject;
 
-public interface Hashtable extends LispObject {
-  LispObject getEntries();
+public abstract class Hashtable extends LispObject {
+  public abstract LispObject getEntries();
   
   @Deprecated
-  LispObject ENTRIES();
+  protected abstract LispObject ENTRIES();
 }
 
 

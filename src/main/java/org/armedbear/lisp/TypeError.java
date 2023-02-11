@@ -1,224 +1,218 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public class TypeError
-/*     */   extends LispError
-/*     */ {
-/*     */   public TypeError() {
-/*  42 */     super(StandardClass.TYPE_ERROR);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   protected TypeError(LispClass cls) {
-/*  47 */     super(cls);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public TypeError(LispObject datum, LispObject expectedType) {
-/*  53 */     super(StandardClass.TYPE_ERROR);
-/*  54 */     setDatum(datum);
-/*  55 */     setExpectedType(expectedType);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public TypeError(LispObject initArgs) {
-/*  60 */     super(StandardClass.TYPE_ERROR);
-/*  61 */     initialize(initArgs);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   protected void initialize(LispObject initArgs) {
-/*  67 */     super.initialize(initArgs);
-/*  68 */     LispObject datum = null;
-/*  69 */     LispObject expectedType = null;
-/*     */     
-/*  71 */     while (initArgs != Lisp.NIL) {
-/*  72 */       LispObject first = initArgs.car();
-/*  73 */       initArgs = initArgs.cdr();
-/*  74 */       LispObject second = initArgs.car();
-/*  75 */       initArgs = initArgs.cdr();
-/*  76 */       if (first == Keyword.DATUM) {
-/*  77 */         if (datum == null)
-/*  78 */           datum = second;  continue;
-/*  79 */       }  if (first == Keyword.EXPECTED_TYPE && 
-/*  80 */         expectedType == null) {
-/*  81 */         expectedType = second;
-/*     */       }
-/*     */     } 
-/*  84 */     if (datum != null)
-/*  85 */       setDatum(datum); 
-/*  86 */     if (expectedType != null) {
-/*  87 */       setExpectedType(expectedType);
-/*     */     }
-/*     */   }
-/*     */   
-/*     */   public TypeError(String message) {
-/*  92 */     super(StandardClass.TYPE_ERROR);
-/*  93 */     setFormatControl(message);
-/*  94 */     setDatum(Lisp.NIL);
-/*  95 */     setExpectedType(Lisp.NIL);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public TypeError(String message, LispObject datum, LispObject expectedType) {
-/* 101 */     super(StandardClass.TYPE_ERROR);
-/* 102 */     setFormatControl(message);
-/* 103 */     setDatum(datum);
-/* 104 */     setExpectedType(expectedType);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typeOf() {
-/* 110 */     return Symbol.TYPE_ERROR;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject classOf() {
-/* 116 */     return StandardClass.TYPE_ERROR;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typep(LispObject type) {
-/* 122 */     if (type == Symbol.TYPE_ERROR)
-/* 123 */       return Lisp.T; 
-/* 124 */     if (type == StandardClass.TYPE_ERROR)
-/* 125 */       return Lisp.T; 
-/* 126 */     return super.typep(type);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public String getMessage() {
-/* 132 */     LispThread thread = LispThread.currentThread();
-/* 133 */     SpecialBindingsMark mark = thread.markSpecialBindings();
-/* 134 */     thread.bindSpecial(Symbol.PRINT_ESCAPE, Lisp.T);
-/*     */     try {
-/* 136 */       String s = super.getMessage();
-/* 137 */       if (s != null)
-/* 138 */         return s; 
-/* 139 */       LispObject datum = getDatum();
-/* 140 */       LispObject expectedType = getExpectedType();
-/* 141 */       StringBuilder sb = new StringBuilder();
-/* 142 */       String name = (datum != null) ? datum.princToString() : null;
-/* 143 */       String type = null;
-/* 144 */       if (expectedType != null)
-/* 145 */         type = expectedType.princToString(); 
-/* 146 */       if (type != null) {
-/* 147 */         if (name != null) {
-/* 148 */           sb.append("The value ");
-/* 149 */           sb.append(name);
-/*     */         } else {
-/* 151 */           sb.append("Value");
-/* 152 */         }  sb.append(" is not of type ");
-/* 153 */         sb.append(type);
-/* 154 */       } else if (name != null) {
-/* 155 */         sb.append("Wrong type: ");
-/* 156 */         sb.append(name);
-/*     */       } 
-/* 158 */       sb.append('.');
-/* 159 */       return sb.toString();
-/*     */     } finally {
-/*     */       
-/* 162 */       thread.resetSpecialBindings(mark);
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public final LispObject getDatum() {
-/* 168 */     return getInstanceSlotValue(Symbol.DATUM);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   private final void setDatum(LispObject datum) {
-/* 173 */     setInstanceSlotValue(Symbol.DATUM, datum);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public final LispObject getExpectedType() {
-/* 178 */     return getInstanceSlotValue(Symbol.EXPECTED_TYPE);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   private final void setExpectedType(LispObject expectedType) {
-/* 184 */     setInstanceSlotValue(Symbol.EXPECTED_TYPE, expectedType);
-/*     */   }
-/*     */ 
-/*     */   
-/* 188 */   private static final Primitive TYPE_ERROR_DATUM = new Primitive(Symbol.TYPE_ERROR_DATUM, "condition")
-/*     */     {
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject arg)
-/*     */       {
-/* 194 */         if (arg.typep(Symbol.TYPE_ERROR) == Lisp.NIL) {
-/* 195 */           return Lisp.type_error(arg, Symbol.TYPE_ERROR);
-/*     */         }
-/*     */         
-/* 198 */         StandardObject obj = (StandardObject)arg;
-/* 199 */         return obj.getInstanceSlotValue(Symbol.DATUM);
-/*     */       }
-/*     */     };
-/*     */ 
-/*     */   
-/* 204 */   private static final Primitive TYPE_ERROR_EXPECTED_TYPE = new Primitive(Symbol.TYPE_ERROR_EXPECTED_TYPE, "condition")
-/*     */     {
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject arg)
-/*     */       {
-/* 210 */         if (arg.typep(Symbol.TYPE_ERROR) == Lisp.NIL) {
-/* 211 */           return Lisp.type_error(arg, Symbol.TYPE_ERROR);
-/*     */         }
-/*     */         
-/* 214 */         StandardObject obj = (StandardObject)arg;
-/* 215 */         return obj.getInstanceSlotValue(Symbol.EXPECTED_TYPE);
-/*     */       }
-/*     */     };
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/TypeError.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * TypeError.java
+ *
+ * Copyright (C) 2002-2005 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+public class TypeError extends LispError
+{
+    public TypeError()
+    {
+        super(StandardClass.TYPE_ERROR);
+    }
+
+    protected TypeError(LispClass cls)
+    {
+        super(cls);
+    }
+
+    public TypeError(LispObject datum, LispObject expectedType)
+
+    {
+        super(StandardClass.TYPE_ERROR);
+        setDatum(datum);
+        setExpectedType(expectedType);
+    }
+
+    public TypeError(LispObject initArgs)
+    {
+        super(StandardClass.TYPE_ERROR);
+        initialize(initArgs);
+    }
+
+    @Override
+    protected void initialize(LispObject initArgs)
+    {
+        super.initialize(initArgs);
+        LispObject datum = null;
+        LispObject expectedType = null;
+        LispObject first, second;
+        while (initArgs != NIL) {
+            first = initArgs.car();
+            initArgs = initArgs.cdr();
+            second = initArgs.car();
+            initArgs = initArgs.cdr();
+            if (first == Keyword.DATUM) {
+                if (datum == null)
+                    datum = second;
+            } else if (first == Keyword.EXPECTED_TYPE) {
+                if (expectedType == null)
+                    expectedType = second;
+            }
+        }
+        if (datum != null)
+            setDatum(datum);
+        if (expectedType != null)
+            setExpectedType(expectedType);
+    }
+
+    public TypeError(String message)
+    {
+        super(StandardClass.TYPE_ERROR);
+        setFormatControl(message);
+        setDatum(NIL);
+        setExpectedType(NIL);
+    }
+
+    public TypeError(String message, LispObject datum, LispObject expectedType)
+
+    {
+        super(StandardClass.TYPE_ERROR);
+        setFormatControl(message);
+        setDatum(datum);
+        setExpectedType(expectedType);
+    }
+
+    @Override
+    public LispObject typeOf()
+    {
+        return Symbol.TYPE_ERROR;
+    }
+
+    @Override
+    public LispObject classOf()
+    {
+        return StandardClass.TYPE_ERROR;
+    }
+
+    @Override
+    public LispObject typep(LispObject type)
+    {
+        if (type == Symbol.TYPE_ERROR)
+            return T;
+        if (type == StandardClass.TYPE_ERROR)
+            return T;
+        return super.typep(type);
+    }
+
+    @Override
+    public String getMessage()
+    {
+        final LispThread thread = LispThread.currentThread();
+        final SpecialBindingsMark mark = thread.markSpecialBindings();
+        thread.bindSpecial(Symbol.PRINT_ESCAPE, T);
+        try {
+            String s = super.getMessage();
+            if (s != null)
+                return s;
+            final LispObject datum = getDatum();
+            final LispObject expectedType = getExpectedType();
+            StringBuilder sb = new StringBuilder();
+            String name = datum != null ? datum.princToString() : null;
+            String type = null;
+            if (expectedType != null)
+                type = expectedType.princToString();
+            if (type != null) {
+                if (name != null) {
+                    sb.append("The value ");
+                    sb.append(name);
+                } else
+                    sb.append("Value");
+                sb.append(" is not of type ");
+                sb.append(type);
+            } else if (name != null) {
+                sb.append("Wrong type: ");
+                sb.append(name);
+            }
+            sb.append('.');
+            return sb.toString();
+        }
+        finally {
+            thread.resetSpecialBindings(mark);
+        }
+    }
+
+    public final LispObject getDatum()
+    {
+        return getInstanceSlotValue(Symbol.DATUM);
+    }
+
+    private final void setDatum(LispObject datum)
+    {
+        setInstanceSlotValue(Symbol.DATUM, datum);
+    }
+
+    public final LispObject getExpectedType()
+    {
+        return getInstanceSlotValue(Symbol.EXPECTED_TYPE);
+    }
+
+    private final void setExpectedType(LispObject expectedType)
+
+    {
+        setInstanceSlotValue(Symbol.EXPECTED_TYPE, expectedType);
+    }
+
+    // ### type-error-datum
+    private static final Primitive TYPE_ERROR_DATUM =
+        new Primitive(Symbol.TYPE_ERROR_DATUM, "condition")
+    {
+        @Override
+        public LispObject execute(LispObject arg)
+        {
+            if (arg.typep(Symbol.TYPE_ERROR) == NIL) {
+                return type_error(arg, Symbol.TYPE_ERROR);
+            }
+
+            final StandardObject obj = (StandardObject) arg;
+            return obj.getInstanceSlotValue(Symbol.DATUM);
+        }
+    };
+
+    // ### type-error-expected-type
+    private static final Primitive TYPE_ERROR_EXPECTED_TYPE =
+        new Primitive(Symbol.TYPE_ERROR_EXPECTED_TYPE, "condition")
+    {
+        @Override
+        public LispObject execute(LispObject arg)
+        {
+            if (arg.typep(Symbol.TYPE_ERROR) == NIL) {
+                return type_error(arg, Symbol.TYPE_ERROR);
+            }
+
+            final StandardObject obj = (StandardObject) arg;
+            return obj.getInstanceSlotValue(Symbol.EXPECTED_TYPE);
+        }
+    };
+}

@@ -1,166 +1,160 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public final class dotimes
-/*     */   extends SpecialOperator
-/*     */ {
-/*     */   private dotimes() {
-/*  42 */     super(Symbol.DOTIMES);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject args, Environment env) {
-/*  49 */     LispObject bodyForm = args.cdr();
-/*  50 */     args = args.car();
-/*  51 */     Symbol var = Lisp.checkSymbol(args.car());
-/*  52 */     LispObject countForm = args.cadr();
-/*  53 */     LispThread thread = LispThread.currentThread();
-/*  54 */     LispObject resultForm = args.cdr().cdr().car();
-/*  55 */     SpecialBindingsMark mark = thread.markSpecialBindings();
-/*     */     
-/*  57 */     LispObject bodyAndDecls = Lisp.parseBody(bodyForm, false);
-/*  58 */     LispObject specials = Lisp.parseSpecials(bodyAndDecls.NTH(1));
-/*  59 */     bodyForm = bodyAndDecls.car();
-/*     */     
-/*  61 */     LispObject blockId = new LispObject();
-/*  62 */     Environment ext = new Environment(env);
-/*  63 */     thread.envStack.push(ext); try {
-/*     */       LispObject result;
-/*     */       Object binding;
-/*  66 */       ext.addBlock(Lisp.NIL, blockId);
-/*     */       
-/*  68 */       LispObject limit = Lisp.eval(countForm, ext, thread);
-/*  69 */       LispObject localTags = Lisp.preprocessTagBody(bodyForm, ext);
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */       
-/*  74 */       if (specials != Lisp.NIL && Lisp.memq(var, specials)) {
-/*     */         
-/*  76 */         thread.bindSpecial(var, null);
-/*  77 */         binding = thread.getSpecialBinding(var);
-/*  78 */         ext.declareSpecial(var);
-/*     */       }
-/*  80 */       else if (var.isSpecialVariable()) {
-/*     */         
-/*  82 */         thread.bindSpecial(var, null);
-/*  83 */         binding = thread.getSpecialBinding(var);
-/*     */       }
-/*     */       else {
-/*     */         
-/*  87 */         ext.bind(var, null);
-/*  88 */         binding = ext.getBinding(var);
-/*     */       } 
-/*  90 */       while (specials != Lisp.NIL) {
-/*     */         
-/*  92 */         ext.declareSpecial(Lisp.checkSymbol(specials.car()));
-/*  93 */         specials = specials.cdr();
-/*     */       } 
-/*  95 */       if (limit instanceof Fixnum) {
-/*     */         
-/*  97 */         int count = ((Fixnum)limit).value;
-/*     */         int i;
-/*  99 */         for (i = 0; i < count; i++) {
-/*     */           
-/* 101 */           if (binding instanceof SpecialBinding) {
-/* 102 */             ((SpecialBinding)binding).value = Fixnum.getInstance(i);
-/*     */           } else {
-/* 104 */             ((Binding)binding).value = Fixnum.getInstance(i);
-/*     */           } 
-/* 106 */           Lisp.processTagBody(bodyForm, localTags, ext);
-/*     */           
-/* 108 */           if (Lisp.interrupted)
-/* 109 */             Lisp.handleInterrupt(); 
-/*     */         } 
-/* 111 */         if (binding instanceof SpecialBinding) {
-/* 112 */           ((SpecialBinding)binding).value = Fixnum.getInstance(i);
-/*     */         } else {
-/* 114 */           ((Binding)binding).value = Fixnum.getInstance(i);
-/* 115 */         }  result = Lisp.eval(resultForm, ext, thread);
-/*     */       }
-/* 117 */       else if (limit instanceof Bignum) {
-/*     */         
-/* 119 */         LispObject i = Fixnum.ZERO;
-/* 120 */         while (i.isLessThan(limit)) {
-/*     */           
-/* 122 */           if (binding instanceof SpecialBinding) {
-/* 123 */             ((SpecialBinding)binding).value = i;
-/*     */           } else {
-/* 125 */             ((Binding)binding).value = i;
-/*     */           } 
-/* 127 */           Lisp.processTagBody(bodyForm, localTags, ext);
-/*     */           
-/* 129 */           i = i.incr();
-/* 130 */           if (Lisp.interrupted)
-/* 131 */             Lisp.handleInterrupt(); 
-/*     */         } 
-/* 133 */         if (binding instanceof SpecialBinding) {
-/* 134 */           ((SpecialBinding)binding).value = i;
-/*     */         } else {
-/* 136 */           ((Binding)binding).value = i;
-/* 137 */         }  result = Lisp.eval(resultForm, ext, thread);
-/*     */       } else {
-/*     */         
-/* 140 */         return Lisp.type_error(limit, Symbol.INTEGER);
-/* 141 */       }  return result;
-/*     */     }
-/* 143 */     catch (Return ret) {
-/*     */       
-/* 145 */       if (ret.getBlock() == blockId)
-/*     */       {
-/* 147 */         return ret.getResult();
-/*     */       }
-/* 149 */       throw ret;
-/*     */     }
-/*     */     finally {
-/*     */       
-/* 153 */       thread.resetSpecialBindings(mark);
-/* 154 */       ext.inactive = true;
-/* 155 */       while (thread.envStack.pop() != ext);
-/*     */     } 
-/*     */   }
-/*     */   
-/* 159 */   private static final dotimes DOTIMES = new dotimes();
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/dotimes.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * dotimes.java
+ *
+ * Copyright (C) 2003-2006 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+public final class dotimes extends SpecialOperator
+{
+  private dotimes()
+  {
+    super(Symbol.DOTIMES);
+  }
+
+  @Override
+  public LispObject execute(LispObject args, Environment env)
+
+  {
+    LispObject bodyForm = args.cdr();
+    args = args.car();
+    Symbol var = checkSymbol(args.car());
+    LispObject countForm = args.cadr();
+    final LispThread thread = LispThread.currentThread();
+    LispObject resultForm = args.cdr().cdr().car();
+    final SpecialBindingsMark mark = thread.markSpecialBindings();
+
+    LispObject bodyAndDecls = parseBody(bodyForm, false);
+    LispObject specials = parseSpecials(bodyAndDecls.NTH(1));
+    bodyForm = bodyAndDecls.car();
+
+    LispObject blockId = new LispObject();
+    final Environment ext = new Environment(env);
+    thread.envStack.push(ext);
+    try
+      {
+        ext.addBlock(NIL, blockId);
+
+        LispObject limit = eval(countForm, ext, thread);
+        LispObject localTags = preprocessTagBody(bodyForm, ext);
+
+        LispObject result;
+        // Establish a reusable binding.
+        final Object binding;
+        if (specials != NIL && memq(var, specials))
+          {
+            thread.bindSpecial(var, null);
+            binding = thread.getSpecialBinding(var);
+            ext.declareSpecial(var);
+          }
+        else if (var.isSpecialVariable())
+          {
+            thread.bindSpecial(var, null);
+            binding = thread.getSpecialBinding(var);
+          }
+        else
+          {
+            ext.bind(var, null);
+            binding = ext.getBinding(var);
+          }
+        while (specials != NIL)
+          {
+            ext.declareSpecial(checkSymbol(specials.car()));
+            specials = specials.cdr();
+          }
+        if (limit instanceof Fixnum)
+          {
+            int count = ((Fixnum)limit).value;
+            int i;
+            for (i = 0; i < count; i++)
+              {
+                if (binding instanceof SpecialBinding)
+                  ((SpecialBinding)binding).value = Fixnum.getInstance(i);
+                else
+                  ((Binding)binding).value = Fixnum.getInstance(i);
+
+                processTagBody(bodyForm, localTags, ext);
+
+                if (interrupted)
+                  handleInterrupt();
+              }
+            if (binding instanceof SpecialBinding)
+              ((SpecialBinding)binding).value = Fixnum.getInstance(i);
+            else
+              ((Binding)binding).value = Fixnum.getInstance(i);
+            result = eval(resultForm, ext, thread);
+          }
+        else if (limit instanceof Bignum)
+          {
+            LispObject i = Fixnum.ZERO;
+            while (i.isLessThan(limit))
+              {
+                if (binding instanceof SpecialBinding)
+                  ((SpecialBinding)binding).value = i;
+                else
+                  ((Binding)binding).value = i;
+
+                processTagBody(bodyForm, localTags, ext);
+
+                i = i.incr();
+                if (interrupted)
+                  handleInterrupt();
+              }
+            if (binding instanceof SpecialBinding)
+              ((SpecialBinding)binding).value = i;
+            else
+              ((Binding)binding).value = i;
+            result = eval(resultForm, ext, thread);
+          }
+        else
+          return type_error(limit, Symbol.INTEGER);
+        return result;
+      }
+    catch (Return ret)
+      {
+        if (ret.getBlock() == blockId)
+          {
+            return ret.getResult();
+          }
+        throw ret;
+      }
+    finally
+      {
+        thread.resetSpecialBindings(mark);
+        ext.inactive = true;
+        while (thread.envStack.pop() != ext) {};
+      }
+  }
+
+  private static final dotimes DOTIMES = new dotimes();
+}

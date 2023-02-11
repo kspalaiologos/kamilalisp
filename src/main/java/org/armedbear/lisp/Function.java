@@ -1,474 +1,468 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ import java.io.ByteArrayInputStream;
-/*     */ import java.io.ByteArrayOutputStream;
-/*     */ import java.io.IOException;
-/*     */ import java.io.InputStream;
-/*     */ import java.io.InvalidObjectException;
-/*     */ import java.io.ObjectInputStream;
-/*     */ import java.io.ObjectOutputStream;
-/*     */ import java.io.ObjectStreamClass;
-/*     */ import java.io.ObjectStreamException;
-/*     */ import java.io.Serializable;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public abstract class Function
-/*     */   extends Operator
-/*     */   implements Serializable
-/*     */ {
-/*  43 */   private LispObject propertyList = Lisp.NIL;
-/*     */   
-/*     */   private int callCount;
-/*     */   
-/*     */   private int hotCount;
-/*     */   
-/*     */   public final LispObject loadedFrom;
-/*     */ 
-/*     */   
-/*     */   protected Function() {
-/*  53 */     LispObject loadTruename = Symbol.LOAD_TRUENAME.symbolValueNoThrow();
-/*  54 */     LispObject loadTruenameFasl = Symbol.LOAD_TRUENAME_FASL.symbolValueNoThrow();
-/*  55 */     this.loadedFrom = (loadTruenameFasl != null) ? loadTruenameFasl : ((loadTruename != null) ? loadTruename : Lisp.NIL);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public Function(String name) {
-/*  60 */     this(name, (String)null);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public Function(String name, String arglist) {
-/*  65 */     this();
-/*  66 */     if (arglist != null)
-/*  67 */       setLambdaList(new SimpleString(arglist)); 
-/*  68 */     if (name != null) {
-/*  69 */       Symbol symbol = Symbol.addFunction(name.toUpperCase(), this);
-/*  70 */       if (Lisp.cold)
-/*  71 */         symbol.setBuiltInFunction(true); 
-/*  72 */       setLambdaName(symbol);
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public Function(Symbol symbol) {
-/*  78 */     this(symbol, (String)null, (String)null);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public Function(Symbol symbol, String arglist) {
-/*  83 */     this(symbol, arglist, (String)null);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public Function(Symbol symbol, String arglist, String docstring) {
-/*  88 */     this();
-/*  89 */     symbol.setSymbolFunction(this);
-/*  90 */     if (Lisp.cold)
-/*  91 */       symbol.setBuiltInFunction(true); 
-/*  92 */     setLambdaName(symbol);
-/*  93 */     if (arglist != null)
-/*  94 */       setLambdaList(new SimpleString(arglist)); 
-/*  95 */     if (docstring != null) {
-/*  96 */       symbol.setDocumentation(Symbol.FUNCTION, new SimpleString(docstring));
-/*     */     }
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public Function(String name, Package pkg) {
-/* 102 */     this(name, pkg, false);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public Function(String name, Package pkg, boolean exported) {
-/* 107 */     this(name, pkg, exported, (String)null, (String)null);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public Function(String name, Package pkg, boolean exported, String arglist) {
-/* 113 */     this(name, pkg, exported, arglist, (String)null);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public Function(String name, Package pkg, boolean exported, String arglist, String docstring) {
-/* 119 */     this();
-/* 120 */     if (arglist instanceof String)
-/* 121 */       setLambdaList(new SimpleString(arglist)); 
-/* 122 */     if (name != null) {
-/*     */       Symbol symbol;
-/* 124 */       if (exported) {
-/* 125 */         symbol = pkg.internAndExport(name.toUpperCase());
-/*     */       } else {
-/* 127 */         symbol = pkg.intern(name.toUpperCase());
-/* 128 */       }  symbol.setSymbolFunction(this);
-/* 129 */       if (Lisp.cold)
-/* 130 */         symbol.setBuiltInFunction(true); 
-/* 131 */       setLambdaName(symbol);
-/* 132 */       if (docstring != null) {
-/* 133 */         symbol.setDocumentation(Symbol.FUNCTION, new SimpleString(docstring));
-/*     */       }
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public Function(LispObject name) {
-/* 140 */     this();
-/* 141 */     setLambdaName(name);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public Function(LispObject name, LispObject lambdaList) {
-/* 146 */     this();
-/* 147 */     setLambdaName(name);
-/* 148 */     setLambdaList(lambdaList);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typeOf() {
-/* 154 */     return Symbol.FUNCTION;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject classOf() {
-/* 160 */     return BuiltInClass.FUNCTION;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typep(LispObject typeSpecifier) {
-/* 166 */     if (typeSpecifier == Symbol.FUNCTION)
-/* 167 */       return Lisp.T; 
-/* 168 */     if (typeSpecifier == Symbol.COMPILED_FUNCTION)
-/* 169 */       return Lisp.T; 
-/* 170 */     if (typeSpecifier == BuiltInClass.FUNCTION)
-/* 171 */       return Lisp.T; 
-/* 172 */     return super.typep(typeSpecifier);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public final LispObject getPropertyList() {
-/* 178 */     if (this.propertyList == null)
-/* 179 */       this.propertyList = Lisp.NIL; 
-/* 180 */     return this.propertyList;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public final void setPropertyList(LispObject obj) {
-/* 186 */     if (obj == null)
-/* 187 */       throw new NullPointerException(); 
-/* 188 */     this.propertyList = obj;
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public final void setClassBytes(byte[] bytes) {
-/* 193 */     this.propertyList = Lisp.putf(this.propertyList, Symbol.CLASS_BYTES, new JavaObject(bytes));
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public final LispObject getClassBytes() {
-/* 198 */     LispObject o = Lisp.getf(this.propertyList, Symbol.CLASS_BYTES, Lisp.NIL);
-/* 199 */     if (o != Lisp.NIL) {
-/* 200 */       return o;
-/*     */     }
-/* 202 */     ClassLoader c = getClass().getClassLoader();
-/* 203 */     if (c instanceof JavaClassLoader) {
-/* 204 */       LispThread thread = LispThread.currentThread();
-/* 205 */       SpecialBindingsMark mark = thread.markSpecialBindings();
-/*     */       try {
-/* 207 */         thread.bindSpecial(Symbol.LOAD_TRUENAME, this.loadedFrom);
-/* 208 */         return new JavaObject(((JavaClassLoader)c).getFunctionClassBytes(this));
-/* 209 */       } catch (Throwable t) {
-/*     */ 
-/*     */         
-/* 212 */         if (t instanceof ControlTransfer) {
-/* 213 */           throw (ControlTransfer)t;
-/*     */         }
-/* 215 */         return Lisp.NIL;
-/*     */       } finally {
-/*     */         
-/* 218 */         thread.resetSpecialBindings(mark);
-/*     */       } 
-/*     */     } 
-/* 221 */     return Lisp.NIL;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/* 226 */   public static final Primitive FUNCTION_CLASS_BYTES = new pf_function_class_bytes();
-/*     */   
-/*     */   public static final class pf_function_class_bytes extends Primitive { public pf_function_class_bytes() {
-/* 229 */       super("function-class-bytes", Lisp.PACKAGE_SYS, false, "function");
-/*     */     }
-/*     */     
-/*     */     public LispObject execute(LispObject arg) {
-/* 233 */       if (arg instanceof Function) {
-/* 234 */         return ((Function)arg).getClassBytes();
-/*     */       }
-/* 236 */       return Lisp.type_error(arg, Symbol.FUNCTION);
-/*     */     } }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute() {
-/* 243 */     return Lisp.error(new WrongNumberOfArgumentsException(this, 0));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject arg) {
-/* 249 */     return Lisp.error(new WrongNumberOfArgumentsException(this, 1));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second) {
-/* 256 */     return Lisp.error(new WrongNumberOfArgumentsException(this, 2));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second, LispObject third) {
-/* 264 */     return Lisp.error(new WrongNumberOfArgumentsException(this, 3));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second, LispObject third, LispObject fourth) {
-/* 272 */     return Lisp.error(new WrongNumberOfArgumentsException(this, 4));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second, LispObject third, LispObject fourth, LispObject fifth) {
-/* 281 */     return Lisp.error(new WrongNumberOfArgumentsException(this, 5));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second, LispObject third, LispObject fourth, LispObject fifth, LispObject sixth) {
-/* 290 */     return Lisp.error(new WrongNumberOfArgumentsException(this, 6));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second, LispObject third, LispObject fourth, LispObject fifth, LispObject sixth, LispObject seventh) {
-/* 300 */     return Lisp.error(new WrongNumberOfArgumentsException(this, 7));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject first, LispObject second, LispObject third, LispObject fourth, LispObject fifth, LispObject sixth, LispObject seventh, LispObject eighth) {
-/* 310 */     return Lisp.error(new WrongNumberOfArgumentsException(this, 8));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject execute(LispObject[] args) {
-/* 316 */     return Lisp.error(new WrongNumberOfArgumentsException(this));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public String printObject() {
-/* 322 */     LispObject name = getLambdaName();
-/* 323 */     if (name != null && name != Lisp.NIL) {
-/* 324 */       return unreadableString(name.princToString());
-/*     */     }
-/*     */     
-/* 327 */     LispObject lambdaList = getLambdaList();
-/* 328 */     if (lambdaList != null) {
-/* 329 */       StringBuilder sb = new StringBuilder("FUNCTION ");
-/* 330 */       sb.append("(LAMBDA ");
-/* 331 */       if (lambdaList == Lisp.NIL) {
-/* 332 */         sb.append("()");
-/*     */       } else {
-/* 334 */         LispThread thread = LispThread.currentThread();
-/* 335 */         SpecialBindingsMark mark = thread.markSpecialBindings();
-/* 336 */         thread.bindSpecial(Symbol.PRINT_LENGTH, Fixnum.THREE);
-/*     */         try {
-/* 338 */           sb.append(lambdaList.printObject());
-/*     */         } finally {
-/*     */           
-/* 341 */           thread.resetSpecialBindings(mark);
-/*     */         } 
-/*     */       } 
-/* 344 */       sb.append(")");
-/* 345 */       return unreadableString(sb.toString());
-/*     */     } 
-/* 347 */     return unreadableString("FUNCTION");
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public final void argCountError() {
-/* 353 */     Lisp.error(new WrongNumberOfArgumentsException(this));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public final int getCallCount() {
-/* 360 */     return this.callCount;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public void setCallCount(int n) {
-/* 366 */     this.callCount = n;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public final void incrementCallCount() {
-/* 372 */     this.callCount++;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public final int getHotCount() {
-/* 378 */     return this.hotCount;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public void setHotCount(int n) {
-/* 384 */     this.hotCount = n;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public final void incrementHotCount() {
-/* 390 */     this.hotCount++;
-/*     */   }
-/*     */   
-/*     */   public static class SerializedNamedFunction implements Serializable {
-/*     */     private final Symbol name;
-/*     */     
-/*     */     public SerializedNamedFunction(Symbol name) {
-/* 397 */       this.name = name;
-/*     */     }
-/*     */     
-/*     */     public Object readResolve() {
-/* 401 */       return this.name.getSymbolFunctionOrDie();
-/*     */     } }
-/*     */   
-/*     */   public static class ObjectInputStreamWithClassLoader extends ObjectInputStream {
-/*     */     private final ClassLoader classLoader;
-/*     */     
-/*     */     public ObjectInputStreamWithClassLoader(InputStream in, ClassLoader classLoader) throws IOException {
-/* 408 */       super(in);
-/* 409 */       this.classLoader = classLoader;
-/*     */     }
-/*     */ 
-/*     */     
-/*     */     protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
-/* 414 */       return Class.forName(desc.getName(), false, this.classLoader);
-/*     */     }
-/*     */   }
-/*     */   
-/*     */   public static class SerializedLocalFunction implements Serializable {
-/*     */     final LispObject className;
-/*     */     final LispObject classBytes;
-/*     */     final byte[] serializedFunction;
-/*     */     
-/*     */     public SerializedLocalFunction(Function function) {
-/* 424 */       this.className = new SimpleString(function.getClass().getName());
-/* 425 */       this.classBytes = function.getClassBytes();
-/* 426 */       Function.serializingClosure.set(Boolean.valueOf(true));
-/*     */       try {
-/* 428 */         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-/* 429 */         (new ObjectOutputStream(baos)).writeObject(function);
-/* 430 */         this.serializedFunction = baos.toByteArray();
-/* 431 */       } catch (IOException e) {
-/* 432 */         throw new RuntimeException(e);
-/*     */       } finally {
-/* 434 */         Function.serializingClosure.remove();
-/*     */       } 
-/*     */     }
-/*     */     
-/*     */     public Object readResolve() throws InvalidObjectException {
-/* 439 */       MemoryClassLoader loader = new MemoryClassLoader();
-/* 440 */       MemoryClassLoader.PUT_MEMORY_FUNCTION.execute(JavaObject.getInstance(loader), this.className, this.classBytes);
-/*     */       try {
-/* 442 */         ByteArrayInputStream in = new ByteArrayInputStream(this.serializedFunction);
-/* 443 */         return (new Function.ObjectInputStreamWithClassLoader(in, loader)).readObject();
-/* 444 */       } catch (Exception e) {
-/* 445 */         InvalidObjectException ex = new InvalidObjectException("Could not read the serialized function back");
-/* 446 */         ex.initCause(e);
-/* 447 */         throw ex;
-/*     */       } 
-/*     */     }
-/*     */   }
-/*     */   
-/* 452 */   private static final ThreadLocal<Boolean> serializingClosure = new ThreadLocal<>();
-/*     */   
-/*     */   public Object writeReplace() throws ObjectStreamException {
-/* 455 */     if (shouldSerializeByName())
-/* 456 */       return new SerializedNamedFunction((Symbol)getLambdaName()); 
-/* 457 */     if (getClassBytes() == Lisp.NIL || serializingClosure.get() != null) {
-/* 458 */       return this;
-/*     */     }
-/* 460 */     return new SerializedLocalFunction(this);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   protected boolean shouldSerializeByName() {
-/* 465 */     LispObject lambdaName = getLambdaName();
-/* 466 */     return (lambdaName instanceof Symbol && lambdaName.getSymbolFunction() == this);
-/*     */   }
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/Function.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * Function.java
+ *
+ * Copyright (C) 2002-2005 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
+import static org.armedbear.lisp.Lisp.*;
+
+public abstract class Function extends Operator implements Serializable {
+    private LispObject propertyList = NIL;
+    private int callCount;
+    private int hotCount;
+    /**
+     * The value of *load-truename* which was current when this function
+     * was loaded, used for fetching the class bytes in case of disassembly.
+     */
+    public final LispObject loadedFrom;
+
+    protected Function() {
+        LispObject loadTruename = Symbol.LOAD_TRUENAME.symbolValueNoThrow();
+        LispObject loadTruenameFasl = Symbol.LOAD_TRUENAME_FASL.symbolValueNoThrow();
+        loadedFrom = loadTruenameFasl != null ? loadTruenameFasl : (loadTruename != null ? loadTruename : NIL);
+    }
+
+    public Function(String name)
+    {
+        this(name, (String)null);
+    }
+
+    public Function(String name, String arglist)
+    {
+        this();
+        if(arglist != null)
+            setLambdaList(new SimpleString(arglist));
+        if (name != null) {
+            Symbol symbol = Symbol.addFunction(name.toUpperCase(), this);
+            if (cold)
+                symbol.setBuiltInFunction(true);
+            setLambdaName(symbol);
+        }
+    }
+
+    public Function(Symbol symbol)
+    {
+        this(symbol, null, null);
+    }
+
+    public Function(Symbol symbol, String arglist)
+    {
+        this(symbol, arglist, null);
+    }
+
+    public Function(Symbol symbol, String arglist, String docstring)
+    {
+        this();
+        symbol.setSymbolFunction(this);
+        if (cold)
+            symbol.setBuiltInFunction(true);
+        setLambdaName(symbol);
+        if(arglist != null)
+            setLambdaList(new SimpleString(arglist));
+        if (docstring != null)
+            symbol.setDocumentation(Symbol.FUNCTION,
+                                    new SimpleString(docstring));
+    }
+
+    public Function(String name, Package pkg)
+    {
+        this(name, pkg, false);
+    }
+
+    public Function(String name, Package pkg, boolean exported)
+    {
+        this(name, pkg, exported, null, null);
+    }
+
+    public Function(String name, Package pkg, boolean exported,
+                    String arglist)
+    {
+        this(name, pkg, exported, arglist, null);
+    }
+
+    public Function(String name, Package pkg, boolean exported,
+                    String arglist, String docstring)
+    {
+        this();
+        if (arglist instanceof String)
+            setLambdaList(new SimpleString(arglist));
+        if (name != null) {
+            Symbol symbol;
+            if (exported)
+                symbol = pkg.internAndExport(name.toUpperCase());
+            else
+                symbol = pkg.intern(name.toUpperCase());
+            symbol.setSymbolFunction(this);
+            if (cold)
+                symbol.setBuiltInFunction(true);
+            setLambdaName(symbol);
+            if (docstring != null)
+                symbol.setDocumentation(Symbol.FUNCTION,
+                                        new SimpleString(docstring));
+        }
+    }
+
+    public Function(LispObject name)
+    {
+        this();
+        setLambdaName(name);
+    }
+
+    public Function(LispObject name, LispObject lambdaList)
+    {
+        this();
+        setLambdaName(name);
+        setLambdaList(lambdaList);
+    }
+
+    @Override
+    public LispObject typeOf()
+    {
+        return Symbol.FUNCTION;
+    }
+
+    @Override
+    public LispObject classOf()
+    {
+        return BuiltInClass.FUNCTION;
+    }
+
+    @Override
+    public LispObject typep(LispObject typeSpecifier)
+    {
+        if (typeSpecifier == Symbol.FUNCTION)
+            return T;
+        if (typeSpecifier == Symbol.COMPILED_FUNCTION)
+            return T;
+        if (typeSpecifier == BuiltInClass.FUNCTION)
+            return T;
+        return super.typep(typeSpecifier);
+    }
+
+    @Override
+    public final LispObject getPropertyList()
+    {
+        if (propertyList == null)
+            propertyList = NIL;
+        return propertyList;
+    }
+
+    @Override
+    public final void setPropertyList(LispObject obj)
+    {
+        if (obj == null)
+            throw new NullPointerException();
+        propertyList = obj;
+    }
+
+    public final void setClassBytes(byte[] bytes)
+    {
+        propertyList = putf(propertyList, Symbol.CLASS_BYTES,
+                            new JavaObject(bytes));
+    }
+
+    public final LispObject getClassBytes() {
+        LispObject o = getf(propertyList, Symbol.CLASS_BYTES, NIL);
+        if(o != NIL) {
+            return o;
+        } else {
+            ClassLoader c = getClass().getClassLoader();
+            if(c instanceof JavaClassLoader) {
+                final LispThread thread = LispThread.currentThread();
+                SpecialBindingsMark mark = thread.markSpecialBindings();
+                try {
+                    thread.bindSpecial(Symbol.LOAD_TRUENAME, loadedFrom);
+                    return new JavaObject(((JavaClassLoader) c).getFunctionClassBytes(this));
+                } catch(Throwable t) {
+                    //This is because unfortunately getFunctionClassBytes uses
+                    //Debug.assertTrue(false) to signal errors
+                    if(t instanceof ControlTransfer) {
+                        throw (ControlTransfer) t;
+                    } else {
+                        return NIL;
+                    }
+                } finally {
+                    thread.resetSpecialBindings(mark);
+                }
+            } else {
+                return NIL;
+            }
+        }
+    }
+
+    public static final Primitive FUNCTION_CLASS_BYTES = new pf_function_class_bytes();
+    public static final class pf_function_class_bytes extends Primitive {
+        public pf_function_class_bytes() {
+            super("function-class-bytes", PACKAGE_SYS, false, "function");
+        }
+        @Override
+        public LispObject execute(LispObject arg) {
+            if (arg instanceof Function) {
+                return ((Function) arg).getClassBytes();
+            }
+            return type_error(arg, Symbol.FUNCTION);
+        }
+    }
+
+    @Override
+    public LispObject execute()
+    {
+        return error(new WrongNumberOfArgumentsException(this, 0));
+    }
+
+    @Override
+    public LispObject execute(LispObject arg)
+    {
+        return error(new WrongNumberOfArgumentsException(this, 1));
+    }
+
+    @Override
+    public LispObject execute(LispObject first, LispObject second)
+
+    {
+        return error(new WrongNumberOfArgumentsException(this, 2));
+    }
+
+    @Override
+    public LispObject execute(LispObject first, LispObject second,
+                              LispObject third)
+
+    {
+        return error(new WrongNumberOfArgumentsException(this, 3));
+    }
+
+    @Override
+    public LispObject execute(LispObject first, LispObject second,
+                              LispObject third, LispObject fourth)
+
+    {
+        return error(new WrongNumberOfArgumentsException(this, 4));
+    }
+
+    @Override
+    public LispObject execute(LispObject first, LispObject second,
+                              LispObject third, LispObject fourth,
+                              LispObject fifth)
+
+    {
+        return error(new WrongNumberOfArgumentsException(this, 5));
+    }
+
+    @Override
+    public LispObject execute(LispObject first, LispObject second,
+                              LispObject third, LispObject fourth,
+                              LispObject fifth, LispObject sixth)
+
+    {
+        return error(new WrongNumberOfArgumentsException(this, 6));
+    }
+
+    @Override
+    public LispObject execute(LispObject first, LispObject second,
+                              LispObject third, LispObject fourth,
+                              LispObject fifth, LispObject sixth,
+                              LispObject seventh)
+
+    {
+        return error(new WrongNumberOfArgumentsException(this, 7));
+    }
+
+    @Override
+    public LispObject execute(LispObject first, LispObject second,
+                              LispObject third, LispObject fourth,
+                              LispObject fifth, LispObject sixth,
+                              LispObject seventh, LispObject eighth)
+
+    {
+        return error(new WrongNumberOfArgumentsException(this, 8));
+    }
+
+    @Override
+    public LispObject execute(LispObject[] args)
+    {
+        return error(new WrongNumberOfArgumentsException(this));
+    }
+
+    @Override
+    public String printObject()
+    {
+        LispObject name = getLambdaName();
+        if (name != null && name != NIL) {
+            return unreadableString(name.princToString());
+        }
+        // No name.
+        LispObject lambdaList = getLambdaList();
+        if (lambdaList != null) {
+            StringBuilder sb = new StringBuilder("FUNCTION ");
+            sb.append("(LAMBDA ");
+            if (lambdaList == NIL) {
+                sb.append("()");
+            } else {
+                final LispThread thread = LispThread.currentThread();
+                final SpecialBindingsMark mark = thread.markSpecialBindings();
+                thread.bindSpecial(Symbol.PRINT_LENGTH, Fixnum.THREE);
+                try {
+                    sb.append(lambdaList.printObject());
+                }
+                finally {
+                    thread.resetSpecialBindings(mark);
+                }
+            }
+            sb.append(")");
+            return unreadableString(sb.toString());
+        }
+        return unreadableString("FUNCTION");
+    }
+
+    // Used by the JVM compiler.
+    public final void argCountError()
+    {
+        error(new WrongNumberOfArgumentsException(this));
+    }
+
+    // Profiling.
+    @Override
+    public final int getCallCount()
+    {
+        return callCount;
+    }
+
+    @Override
+    public void setCallCount(int n)
+    {
+        callCount = n;
+    }
+
+    @Override
+    public final void incrementCallCount()
+    {
+        ++callCount;
+    }
+
+    @Override
+    public final int getHotCount()
+    {
+        return hotCount;
+    }
+
+    @Override
+    public void setHotCount(int n)
+    {
+        hotCount = n;
+    }
+
+    @Override
+    public final void incrementHotCount()
+    {
+        ++hotCount;
+    }
+
+    //Serialization
+    public static class SerializedNamedFunction implements Serializable {
+        private final Symbol name;
+        public SerializedNamedFunction(Symbol name) {
+            this.name = name;
+        }
+
+        public Object readResolve() {
+            return name.getSymbolFunctionOrDie();
+        }
+    }
+
+    public static class ObjectInputStreamWithClassLoader extends ObjectInputStream {
+        private final ClassLoader classLoader;
+        public ObjectInputStreamWithClassLoader(InputStream in, ClassLoader classLoader) throws IOException {
+            super(in);
+            this.classLoader = classLoader;
+        }
+
+        @Override
+        protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+            return Class.forName(desc.getName(), false, classLoader);
+        }
+    }
+
+    public static class SerializedLocalFunction implements Serializable {
+        final LispObject className;
+        final LispObject classBytes;
+        final byte[] serializedFunction;
+
+        public SerializedLocalFunction(Function function) {
+            this.className = new SimpleString(function.getClass().getName());
+            this.classBytes = function.getClassBytes();
+            serializingClosure.set(true);
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                new ObjectOutputStream(baos).writeObject(function);
+                serializedFunction = baos.toByteArray();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } finally {
+                serializingClosure.remove();
+            }
+        }
+
+        public Object readResolve() throws InvalidObjectException {
+            MemoryClassLoader loader = new MemoryClassLoader();
+            MemoryClassLoader.PUT_MEMORY_FUNCTION.execute(JavaObject.getInstance(loader), className, classBytes);
+            try {
+                ByteArrayInputStream in = new ByteArrayInputStream(serializedFunction);
+                return new ObjectInputStreamWithClassLoader(in, loader).readObject();
+            } catch (Exception e) {
+                InvalidObjectException ex = new InvalidObjectException("Could not read the serialized function back");
+                ex.initCause(e);
+                throw ex;
+            }
+        }
+    }
+
+    private static final ThreadLocal<Boolean> serializingClosure = new ThreadLocal<Boolean>();
+
+    public Object writeReplace() throws ObjectStreamException {
+        if(shouldSerializeByName()) {
+            return new SerializedNamedFunction((Symbol) getLambdaName());
+        } else if(getClassBytes() == NIL || serializingClosure.get() != null) {
+            return this;
+        } else {
+            return new SerializedLocalFunction(this);
+        }
+    }
+
+    protected boolean shouldSerializeByName() {
+        LispObject lambdaName = getLambdaName();
+        return lambdaName instanceof Symbol && lambdaName.getSymbolFunction() == this;
+    }
+}

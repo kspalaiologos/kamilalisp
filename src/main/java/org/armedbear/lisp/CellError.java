@@ -1,132 +1,126 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public class CellError
-/*     */   extends LispError
-/*     */ {
-/*     */   protected CellError(LispClass cls) {
-/*  42 */     super(cls);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public CellError(LispObject initArgs) {
-/*  47 */     super(StandardClass.CELL_ERROR);
-/*  48 */     initialize(initArgs);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   protected void initialize(LispObject initArgs) {
-/*  54 */     super.initialize(initArgs);
-/*  55 */     LispObject name = Lisp.NIL;
-/*  56 */     while (initArgs != Lisp.NIL) {
-/*  57 */       LispObject first = initArgs.car();
-/*  58 */       initArgs = initArgs.cdr();
-/*  59 */       if (first == Keyword.NAME) {
-/*  60 */         name = initArgs.car();
-/*     */         break;
-/*     */       } 
-/*  63 */       initArgs = initArgs.cdr();
-/*     */     } 
-/*  65 */     setCellName(name);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public final LispObject getCellName() {
-/*  70 */     return getInstanceSlotValue(Symbol.NAME);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   protected final void setCellName(LispObject name) {
-/*  75 */     setInstanceSlotValue(Symbol.NAME, name);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typeOf() {
-/*  81 */     return Symbol.CELL_ERROR;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject classOf() {
-/*  87 */     return StandardClass.CELL_ERROR;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typep(LispObject type) {
-/*  93 */     if (type == Symbol.CELL_ERROR)
-/*  94 */       return Lisp.T; 
-/*  95 */     if (type == StandardClass.CELL_ERROR)
-/*  96 */       return Lisp.T; 
-/*  97 */     return super.typep(type);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public String getMessage() {
-/* 103 */     if (Symbol.PRINT_ESCAPE.symbolValue() == Lisp.NIL)
-/* 104 */       return super.getMessage(); 
-/* 105 */     StringBuffer sb = new StringBuffer(typeOf().princToString());
-/* 106 */     sb.append(' ');
-/* 107 */     sb.append(getCellName().princToString());
-/* 108 */     return unreadableString(sb.toString());
-/*     */   }
-/*     */ 
-/*     */   
-/* 112 */   private static final Primitive CELL_ERROR_NAME = new Primitive("cell-error-name", "condition")
-/*     */     {
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject arg)
-/*     */       {
-/* 118 */         if (arg.typep(Symbol.CELL_ERROR) == Lisp.NIL) {
-/* 119 */           return Lisp.type_error(arg, Symbol.CELL_ERROR);
-/*     */         }
-/*     */         
-/* 122 */         StandardObject obj = (StandardObject)arg;
-/* 123 */         return obj.getInstanceSlotValue(Symbol.NAME);
-/*     */       }
-/*     */     };
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/CellError.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * CellError.java
+ *
+ * Copyright (C) 2003-2005 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+public class CellError extends LispError
+{
+    protected CellError(LispClass cls)
+    {
+        super(cls);
+    }
+
+    public CellError(LispObject initArgs)
+    {
+        super(StandardClass.CELL_ERROR);
+        initialize(initArgs);
+    }
+
+    @Override
+    protected void initialize(LispObject initArgs)
+    {
+        super.initialize(initArgs);
+        LispObject name = NIL;
+        while (initArgs != NIL) {
+            LispObject first = initArgs.car();
+            initArgs = initArgs.cdr();
+            if (first == Keyword.NAME) {
+                name = initArgs.car();
+                break;
+            }
+            initArgs = initArgs.cdr();
+        }
+        setCellName(name);
+    }
+
+    public final LispObject getCellName()
+    {
+        return getInstanceSlotValue(Symbol.NAME);
+    }
+
+    protected final void setCellName(LispObject name)
+    {
+        setInstanceSlotValue(Symbol.NAME, name);
+    }
+
+    @Override
+    public LispObject typeOf()
+    {
+        return Symbol.CELL_ERROR;
+    }
+
+    @Override
+    public LispObject classOf()
+    {
+        return StandardClass.CELL_ERROR;
+    }
+
+    @Override
+    public LispObject typep(LispObject type)
+    {
+        if (type == Symbol.CELL_ERROR)
+            return T;
+        if (type == StandardClass.CELL_ERROR)
+            return T;
+        return super.typep(type);
+    }
+
+    @Override
+    public String getMessage()
+    {
+        if (Symbol.PRINT_ESCAPE.symbolValue() == NIL)
+            return super.getMessage();
+        StringBuffer sb = new StringBuffer(typeOf().princToString());
+        sb.append(' ');
+        sb.append(getCellName().princToString());
+        return unreadableString(sb.toString());
+    }
+
+    // ### cell-error-name
+    private static final Primitive CELL_ERROR_NAME =
+        new Primitive("cell-error-name", "condition")
+    {
+        @Override
+        public LispObject execute(LispObject arg)
+        {
+            if (arg.typep(Symbol.CELL_ERROR) == NIL) {
+                return type_error(arg, Symbol.CELL_ERROR);
+            }
+
+            final StandardObject obj = (StandardObject) arg;
+            return obj.getInstanceSlotValue(Symbol.NAME);
+        }
+    };
+}

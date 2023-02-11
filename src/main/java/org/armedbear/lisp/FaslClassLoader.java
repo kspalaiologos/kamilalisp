@@ -1,174 +1,169 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ import java.io.InputStream;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public class FaslClassLoader
-/*     */   extends JavaClassLoader
-/*     */ {
-/*     */   private final String baseName;
-/*  43 */   private final JavaObject boxedThis = new JavaObject(this);
-/*     */   
-/*     */   public FaslClassLoader(String baseName) {
-/*  46 */     this.baseName = baseName;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-/*  61 */     if (name.startsWith(this.baseName + "_")) {
-/*  62 */       String internalName = name.replace(".", "/");
-/*  63 */       if (!internalName.contains("/")) internalName = "org/armedbear/lisp/" + internalName; 
-/*  64 */       Class<?> c = findLoadedClass(internalName);
-/*     */       
-/*  66 */       if (c == null && checkPreCompiledClassLoader) {
-/*  67 */         c = findPrecompiledClassOrNull(name);
-/*     */         
-/*  69 */         if (c != null)
-/*  70 */           return c; 
-/*     */       } 
-/*  72 */       if (c == null) {
-/*  73 */         c = findClass(name);
-/*     */       }
-/*  75 */       if (c != null) {
-/*  76 */         if (resolve) {
-/*  77 */           resolveClass(c);
-/*     */         }
-/*  79 */         return c;
-/*     */       } 
-/*     */     } 
-/*     */ 
-/*     */     
-/*  84 */     return super.loadClass(name, resolve);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   protected Class<?> findClass(String name) throws ClassNotFoundException {
-/*     */     try {
-/*  90 */       if (checkPreCompiledClassLoader) {
-/*  91 */         Class<?> c = findPrecompiledClassOrNull(name);
-/*  92 */         if (c != null)
-/*  93 */           return c; 
-/*     */       } 
-/*  95 */       byte[] b = getFunctionClassBytes(name);
-/*  96 */       return defineLispClass(name, b, 0, b.length);
-/*  97 */     } catch (Throwable e) {
-/*  98 */       e.printStackTrace();
-/*  99 */       if (e instanceof ControlTransfer) throw (ControlTransfer)e; 
-/* 100 */       throw new ClassNotFoundException("Function class not found: " + name, e);
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public InputStream getResourceAsStream(String resourceName) {
-/* 106 */     LispThread thread = LispThread.currentThread();
-/*     */     
-/* 108 */     Pathname name = Pathname.create(resourceName.substring("org/armedbear/lisp/".length()));
-/* 109 */     LispObject truenameFasl = Symbol.LOAD_TRUENAME_FASL.symbolValue(thread);
-/* 110 */     LispObject truename = Symbol.LOAD_TRUENAME.symbolValue(thread);
-/*     */     
-/* 112 */     if (truenameFasl instanceof Pathname)
-/* 113 */       return Pathname.mergePathnames(name, (Pathname)truenameFasl, Keyword.NEWEST)
-/* 114 */         .getInputStream(); 
-/* 115 */     if (truename instanceof Pathname)
-/* 116 */       return Pathname.mergePathnames(name, (Pathname)truename, Keyword.NEWEST)
-/* 117 */         .getInputStream(); 
-/* 118 */     if (!Symbol.PROBE_FILE.execute(name).equals(Lisp.NIL)) {
-/* 119 */       return name.getInputStream();
-/*     */     }
-/*     */     
-/* 122 */     return null;
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public LispObject loadFunction(int fnNumber) {
-/* 127 */     String name = this.baseName + "_" + (fnNumber + 1);
-/*     */     try {
-/* 129 */       Class<?> clz = loadClass(name);
-/* 130 */       Function f = (Function)clz.newInstance();
-/* 131 */       if (clz.getClassLoader() instanceof JavaClassLoader)
-/*     */       {
-/* 133 */         f.setClassBytes(getFunctionClassBytes(name));
-/*     */       }
-/* 135 */       return f;
-/* 136 */     } catch (Throwable e) {
-/* 137 */       if (e instanceof ControlTransfer) throw (ControlTransfer)e; 
-/* 138 */       Debug.trace(e);
-/* 139 */       return Lisp.error(new LispError("Compiled function can't be loaded: " + name + " from " + Symbol.LOAD_TRUENAME.symbolValue()));
-/*     */     } 
-/*     */   }
-/*     */   
-/* 143 */   private static final Primitive MAKE_FASL_CLASS_LOADER = new pf_make_fasl_class_loader();
-/*     */   
-/*     */   private static final class pf_make_fasl_class_loader extends Primitive { pf_make_fasl_class_loader() {
-/* 146 */       super("make-fasl-class-loader", Lisp.PACKAGE_SYS, false, "base-name");
-/*     */     }
-/*     */ 
-/*     */     
-/*     */     public LispObject execute(LispObject baseName) {
-/* 151 */       return (new FaslClassLoader(baseName.getStringValue())).boxedThis;
-/*     */     } }
-/*     */ 
-/*     */ 
-/*     */   
-/* 156 */   private static final Primitive GET_FASL_FUNCTION = new pf_get_fasl_function();
-/*     */   
-/*     */   private static final class pf_get_fasl_function extends Primitive { pf_get_fasl_function() {
-/* 159 */       super("get-fasl-function", Lisp.PACKAGE_SYS, false, "loader function-number");
-/*     */     }
-/*     */ 
-/*     */     
-/*     */     public LispObject execute(LispObject loader, LispObject fnNumber) {
-/* 164 */       FaslClassLoader l = (FaslClassLoader)loader.javaInstance(FaslClassLoader.class);
-/* 165 */       return l.loadFunction(fnNumber.intValue());
-/*     */     } }
-/*     */ 
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/FaslClassLoader.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * JavaClassLoader.java
+ *
+ * Copyright (C) 2010 Alessio Stalla
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import java.io.InputStream;
+import static org.armedbear.lisp.Lisp.*;
+
+
+public class FaslClassLoader extends JavaClassLoader {
+
+    private final String baseName;
+    private final JavaObject boxedThis = new JavaObject(this);
+
+    public FaslClassLoader(String baseName) {
+        this.baseName = baseName;
+    }
+
+    @Override
+    protected Class<?> loadClass(String name, boolean resolve)
+            throws ClassNotFoundException {
+        /* First we check if we should load the class ourselves,
+         * allowing the default handlers to kick in if we don't...
+         *
+         * This strategy eliminates ClassNotFound exceptions inside
+         * the inherited loadClass() eliminated ~80k exceptions during
+         * Maxima compilation. Generally, creation of an exception object
+         * is a pretty heavy operation, because it processes the call stack,
+         * which - in ABCL - is pretty deep, most of the time.
+         */
+        if (name.startsWith(baseName + "_")) {
+            String internalName = name.replace(".", "/");
+            if (!internalName.contains("/")) internalName = "org/armedbear/lisp/" + internalName;
+            Class<?> c = this.findLoadedClass(internalName);
+
+            if (c == null && checkPreCompiledClassLoader) {
+                c = findPrecompiledClassOrNull(name);
+                // Oh, we have to return here so we don't become the owning class loader?
+                if (c != null)
+                  return c;
+            }            
+            if (c == null) {
+                c = findClass(name);
+            }
+            if (c != null) {
+                if (resolve) {
+                    resolveClass(c);
+                }
+                return c;
+            }
+        }
+
+        // Fall through to our super's default handling
+        return super.loadClass(name, resolve);
+    }
+
+    @Override
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        try {
+            if (checkPreCompiledClassLoader) {
+                Class<?> c = findPrecompiledClassOrNull(name);
+                if (c != null)
+                        return c;                       
+            }
+            byte[] b = getFunctionClassBytes(name);
+            return defineLispClass(name, b, 0, b.length);
+        } catch(Throwable e) { //TODO handle this better, readFunctionBytes uses Debug.assert() but should return null
+            e.printStackTrace();
+            if(e instanceof ControlTransfer) { throw (ControlTransfer) e; }
+            throw new ClassNotFoundException("Function class not found: " + name, e);
+        }
+    }
+
+    @Override
+    public InputStream getResourceAsStream(String resourceName) {
+      final LispThread thread = LispThread.currentThread();
+
+      Pathname name = (Pathname)Pathname.create(resourceName.substring("org/armedbear/lisp/".length()));
+      LispObject truenameFasl = Symbol.LOAD_TRUENAME_FASL.symbolValue(thread);
+      LispObject truename = Symbol.LOAD_TRUENAME.symbolValue(thread);
+      
+      if (truenameFasl instanceof Pathname) {
+          return (Pathname.mergePathnames(name, (Pathname)truenameFasl, Keyword.NEWEST))
+                    .getInputStream();
+      } else if (truename instanceof Pathname) {
+          return (Pathname.mergePathnames(name, (Pathname) truename, Keyword.NEWEST))
+                  .getInputStream();
+      } else if (!Symbol.PROBE_FILE.execute(name).equals(NIL)) {
+        return name.getInputStream();
+      }
+
+      return null;
+    }
+
+    public LispObject loadFunction(int fnNumber) {
+        //Function name is fnIndex + 1
+        String name = baseName + "_" + (fnNumber + 1);
+        try {
+            Class clz = loadClass(name);
+            Function f = (Function) clz.newInstance();
+            if (clz.getClassLoader() instanceof JavaClassLoader) {
+                // Don't do this for system classes (though probably dont need this for other classes) 
+                f.setClassBytes(getFunctionClassBytes(name));
+            }
+            return f;
+        } catch(Throwable e) {
+            if(e instanceof ControlTransfer) { throw (ControlTransfer) e; }
+            Debug.trace(e);
+            return error(new LispError("Compiled function can't be loaded: " + name + " from " + Symbol.LOAD_TRUENAME.symbolValue()));
+        }
+    }
+
+    private static final Primitive MAKE_FASL_CLASS_LOADER = new pf_make_fasl_class_loader();
+    private static final class pf_make_fasl_class_loader extends Primitive {
+        pf_make_fasl_class_loader() {
+            super("make-fasl-class-loader", PACKAGE_SYS, false, "base-name");
+        }
+
+        @Override
+        public LispObject execute(LispObject baseName) {
+            return new FaslClassLoader(baseName.getStringValue()).boxedThis;
+        }
+
+    };
+
+    private static final Primitive GET_FASL_FUNCTION = new pf_get_fasl_function();
+    private static final class pf_get_fasl_function extends Primitive {
+        pf_get_fasl_function() {
+            super("get-fasl-function", PACKAGE_SYS, false, "loader function-number");
+        }
+
+        @Override
+        public LispObject execute(LispObject loader, LispObject fnNumber) {
+            FaslClassLoader l = (FaslClassLoader) loader.javaInstance(FaslClassLoader.class);
+            return l.loadFunction(fnNumber.intValue());
+        }
+    };
+
+}

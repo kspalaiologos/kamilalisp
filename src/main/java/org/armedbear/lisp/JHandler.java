@@ -1,174 +1,168 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ import java.util.HashMap;
-/*     */ import java.util.Map;
-/*     */ import java.util.WeakHashMap;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public final class JHandler
-/*     */ {
-/*  44 */   static final Map<Object, Map<String, Entry>> table = new WeakHashMap<>();
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public static void callLisp(String s, Object o) {
-/*  49 */     callLisp(s, o, "");
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public static void callLisp(String s, Object o, String s1) {
-/*  54 */     callLisp(s, o, s1, new int[0]);
-/*     */   }
-/*     */   
-/*     */   public static void callLisp(String s, Object o, String s1, int[] ai) {
-/*  58 */     callLisp(s, o, new String[] { s1 }, ai);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public static void callLisp(String s, Object o, String[] as) {
-/*  63 */     callLisp(s, o, as, new int[0]);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public static void callLisp(String s, Object o, String[] as, int[] ai) {
-/*  68 */     if (table.containsKey(o)) {
-/*  69 */       Map<String, Entry> entryTable = table.get(o);
-/*  70 */       if (entryTable.containsKey(s)) {
-/*  71 */         Entry entry = entryTable.get(s);
-/*  72 */         Function f = entry.getHandler();
-/*  73 */         LispObject data = entry.getData();
-/*  74 */         Fixnum count = entry.getCount();
-/*  75 */         Fixnum[] lispAi = new Fixnum[ai.length];
-/*  76 */         for (int i = 0; i < ai.length; i++) {
-/*  77 */           lispAi[i] = Fixnum.getInstance(ai[i]);
-/*     */         }
-/*  79 */         LispObject lispAiVector = new SimpleVector((LispObject[])lispAi);
-/*  80 */         SimpleString[] lispAs = new SimpleString[as.length];
-/*  81 */         for (int j = 0; j < as.length; j++) {
-/*  82 */           lispAs[j] = new SimpleString(as[j]);
-/*     */         }
-/*  84 */         LispObject lispAsVector = new SimpleVector((LispObject[])lispAs);
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */         
-/*  91 */         LispObject[] args = { data, new JavaObject(o), lispAiVector, lispAsVector, Lisp.internKeyword(s), count };
-/*     */         
-/*  93 */         f.execute(args);
-/*     */       } 
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */   
-/*  99 */   private static final Primitive _JREGISTER_HANDLER = new Primitive("%jregister-handler", Lisp.PACKAGE_JAVA)
-/*     */     {
-/*     */ 
-/*     */       
-/*     */       public LispObject execute(LispObject[] args)
-/*     */       {
-/* 105 */         if (args.length != 5)
-/* 106 */           return Lisp.error(new WrongNumberOfArgumentsException(this, 5)); 
-/* 107 */         Map<String, JHandler.Entry> entryTable = null;
-/* 108 */         Object object = args[0].javaInstance();
-/* 109 */         String event = ((Symbol)args[1]).getName();
-/* 110 */         if (!JHandler.table.containsKey(object)) {
-/* 111 */           entryTable = new HashMap<>();
-/* 112 */           JHandler.table.put(object, entryTable);
-/*     */         } else {
-/* 114 */           entryTable = JHandler.table.get(object);
-/*     */         } 
-/* 116 */         JHandler.Entry entry = new JHandler.Entry((Function)args[2], args[3], event, entryTable);
-/* 117 */         if (args[4] != Lisp.NIL)
-/* 118 */           entry.addCount(((Fixnum)args[4]).value); 
-/* 119 */         entryTable.put(event, entry);
-/* 120 */         return Lisp.T;
-/*     */       }
-/*     */     };
-/*     */   
-/*     */   private static class Entry
-/*     */   {
-/*     */     Function handler;
-/*     */     LispObject data;
-/* 128 */     int count = -1;
-/*     */     
-/*     */     Map<String, Entry> entryTable;
-/*     */     
-/*     */     String event;
-/*     */     
-/*     */     public Entry(Function handler, LispObject data, String event, Map<String, Entry> entryTable) {
-/* 135 */       this.entryTable = entryTable;
-/* 136 */       this.event = event;
-/* 137 */       this.handler = handler;
-/* 138 */       this.data = data;
-/*     */     }
-/*     */ 
-/*     */     
-/*     */     public Function getHandler() {
-/* 143 */       return this.handler;
-/*     */     }
-/*     */ 
-/*     */     
-/*     */     public void addData(LispObject data) {
-/* 148 */       this.data = data;
-/*     */     }
-/*     */ 
-/*     */     
-/*     */     public LispObject getData() {
-/* 153 */       return this.data;
-/*     */     }
-/*     */ 
-/*     */     
-/*     */     public void addCount(int count) {
-/* 158 */       this.count = count;
-/*     */     }
-/*     */ 
-/*     */     
-/*     */     public Fixnum getCount() {
-/* 163 */       if (this.count == 0)
-/* 164 */         this.entryTable.remove(this.event); 
-/* 165 */       return Fixnum.getInstance(this.count--);
-/*     */     }
-/*     */   }
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/JHandler.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * JHandler.java
+ *
+ * Copyright (C) 2003-2005 Andras Simon, Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.WeakHashMap;
+
+public final class JHandler
+{
+    static final Map<Object,Map<String,Entry>> table =
+       new WeakHashMap<Object,Map<String,Entry>>();
+
+    public static void callLisp (String s, Object o)
+    {
+        callLisp(s, o, "");
+    }
+
+    public static void callLisp (String s, Object o, String s1)
+    {
+        callLisp(s, o, s1, new int[] {});
+    }
+
+    public static void callLisp (String s, Object o, String s1, int ai[]) {
+        callLisp(s, o, new String[] { s1 }, ai);
+    }
+
+    public static void callLisp (String s, Object o, String as[])
+    {
+        callLisp(s, o, as, new int[] {});
+    }
+
+    public static void callLisp (String s, Object o, String as[], int ai[])
+    {
+        if (table.containsKey(o)) {
+            Map<String,Entry> entryTable = table.get(o);
+            if (entryTable.containsKey(s)) {
+                final Entry entry = entryTable.get(s);
+                final Function f = entry.getHandler();
+                final LispObject data = entry.getData();
+                final Fixnum count = entry.getCount();
+                final Fixnum[] lispAi = new Fixnum[ai.length];
+                for (int i = 0; i < ai.length; i++) {
+                    lispAi[i] = Fixnum.getInstance(ai[i]);
+                }
+                final LispObject lispAiVector = new SimpleVector(lispAi);
+                final SimpleString[] lispAs = new SimpleString[as.length];
+                for (int i = 0; i < as.length; i++) {
+                    lispAs[i] = new SimpleString(as[i]);
+                }
+                final LispObject lispAsVector = new SimpleVector(lispAs);
+                LispObject[] args =
+                    new LispObject[] //FIXME: count -> seq_num
+                    { data,
+                      new JavaObject(o),
+                      lispAiVector,
+                      lispAsVector,
+                      internKeyword(s),
+                      count };
+                f.execute(args);
+            }
+        }
+    }
+
+    // jregister-handler1 object event handler data count
+    private static final Primitive _JREGISTER_HANDLER =
+        new Primitive("%jregister-handler", PACKAGE_JAVA)
+    {
+        @Override
+        public LispObject execute(LispObject[] args)
+        {
+            if (args.length != 5)
+                return error(new WrongNumberOfArgumentsException(this, 5));
+            Map<String,Entry> entryTable = null;
+            Object object = args[0].javaInstance();
+            String event = ((Symbol)args[1]).getName();
+            if (!table.containsKey(object)) {
+                entryTable = new HashMap<String,Entry>();
+                table.put(object,entryTable);
+            } else {
+                entryTable = (Map<String,Entry>)table.get(object);
+            }
+            Entry entry = new Entry((Function) args[2], args[3], event, entryTable);
+            if (args[4] != NIL)
+                entry.addCount(((Fixnum)args[4]).value);
+            entryTable.put(event,entry);
+            return T;
+        }
+    };
+
+    private static class Entry
+    {
+        Function handler;
+        LispObject data;
+        int count = -1;
+        Map<String,Entry> entryTable;
+        String event;
+
+        public Entry (Function handler, LispObject data, String event,
+                      Map<String,Entry> entryTable)
+        {
+            this.entryTable = entryTable;
+            this.event = event;
+            this.handler = handler;
+            this.data = data;
+        }
+
+        public Function getHandler ()
+        {
+            return handler;
+        }
+
+        public void addData (LispObject data)
+        {
+            this.data = data;
+        }
+
+        public LispObject getData ()
+        {
+            return data;
+        }
+
+        public void addCount (int count)
+        {
+            this.count = count;
+        }
+
+        public Fixnum getCount ()
+        {
+            if (count == 0)
+                entryTable.remove(event);
+            return (Fixnum.getInstance (count--));
+        }
+    }
+}

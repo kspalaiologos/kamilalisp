@@ -1,387 +1,381 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public final class SimpleArray_UnsignedByte32
-/*     */   extends AbstractArray
-/*     */ {
-/*     */   private final int[] dimv;
-/*     */   private final int totalSize;
-/*     */   final LispObject[] data;
-/*     */   
-/*     */   public SimpleArray_UnsignedByte32(int[] dimv) {
-/*  74 */     this.dimv = dimv;
-/*  75 */     this.totalSize = computeTotalSize(dimv);
-/*  76 */     this.data = new LispObject[this.totalSize];
-/*  77 */     for (int i = this.totalSize; i-- > 0;) {
-/*  78 */       this.data[i] = Fixnum.ZERO;
-/*     */     }
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public SimpleArray_UnsignedByte32(int[] dimv, LispObject initialContents) {
-/*  84 */     this.dimv = dimv;
-/*  85 */     int rank = dimv.length;
-/*  86 */     LispObject rest = initialContents;
-/*  87 */     for (int i = 0; i < rank; i++) {
-/*  88 */       dimv[i] = rest.length();
-/*  89 */       rest = rest.elt(0);
-/*     */     } 
-/*  91 */     this.totalSize = computeTotalSize(dimv);
-/*  92 */     this.data = new LispObject[this.totalSize];
-/*  93 */     setInitialContents(0, dimv, initialContents, 0);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public SimpleArray_UnsignedByte32(int rank, LispObject initialContents) {
-/*  99 */     if (rank < 2)
-/* 100 */       Debug.assertTrue(false); 
-/* 101 */     this.dimv = new int[rank];
-/* 102 */     LispObject rest = initialContents;
-/* 103 */     for (int i = 0; i < rank; i++) {
-/* 104 */       this.dimv[i] = rest.length();
-/* 105 */       if (rest == Lisp.NIL || rest.length() == 0)
-/*     */         break; 
-/* 107 */       rest = rest.elt(0);
-/*     */     } 
-/* 109 */     this.totalSize = computeTotalSize(this.dimv);
-/* 110 */     this.data = new LispObject[this.totalSize];
-/* 111 */     setInitialContents(0, this.dimv, initialContents, 0);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   private int setInitialContents(int axis, int[] dims, LispObject contents, int index) {
-/* 118 */     if (dims.length == 0) {
-/*     */       try {
-/* 120 */         this.data[index] = contents;
-/*     */       }
-/* 122 */       catch (ArrayIndexOutOfBoundsException e) {
-/* 123 */         Lisp.error(new LispError("Bad initial contents for array."));
-/* 124 */         return -1;
-/*     */       } 
-/* 126 */       index++;
-/*     */     } else {
-/* 128 */       int dim = dims[0];
-/* 129 */       if (dim != contents.length()) {
-/* 130 */         Lisp.error(new LispError("Bad initial contents for array."));
-/* 131 */         return -1;
-/*     */       } 
-/* 133 */       int[] newDims = new int[dims.length - 1]; int i;
-/* 134 */       for (i = 1; i < dims.length; i++)
-/* 135 */         newDims[i - 1] = dims[i]; 
-/* 136 */       if (contents.listp()) {
-/* 137 */         for (i = contents.length(); i-- > 0; ) {
-/* 138 */           LispObject content = contents.car();
-/*     */           
-/* 140 */           index = setInitialContents(axis + 1, newDims, content, index);
-/* 141 */           contents = contents.cdr();
-/*     */         } 
-/*     */       } else {
-/* 144 */         AbstractVector v = Lisp.checkVector(contents);
-/* 145 */         int length = v.length();
-/* 146 */         for (int j = 0; j < length; j++) {
-/* 147 */           LispObject content = v.AREF(j);
-/*     */           
-/* 149 */           index = setInitialContents(axis + 1, newDims, content, index);
-/*     */         } 
-/*     */       } 
-/*     */     } 
-/* 153 */     return index;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typeOf() {
-/* 159 */     return Lisp.list(Symbol.SIMPLE_ARRAY, new LispObject[] { Lisp.UNSIGNED_BYTE_32, getDimensions() });
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject classOf() {
-/* 165 */     return BuiltInClass.SIMPLE_ARRAY;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typep(LispObject typeSpecifier) {
-/* 171 */     if (typeSpecifier == Symbol.SIMPLE_ARRAY)
-/* 172 */       return Lisp.T; 
-/* 173 */     if (typeSpecifier == BuiltInClass.SIMPLE_ARRAY)
-/* 174 */       return Lisp.T; 
-/* 175 */     return super.typep(typeSpecifier);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public int getRank() {
-/* 181 */     return this.dimv.length;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject getDimensions() {
-/* 187 */     LispObject result = Lisp.NIL;
-/* 188 */     for (int i = this.dimv.length; i-- > 0;)
-/* 189 */       result = new Cons(Fixnum.getInstance(this.dimv[i]), result); 
-/* 190 */     return result;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public int getDimension(int n) {
-/*     */     try {
-/* 197 */       return this.dimv[n];
-/*     */     }
-/* 199 */     catch (ArrayIndexOutOfBoundsException e) {
-/* 200 */       Lisp.error(new TypeError("Bad array dimension " + n + "."));
-/* 201 */       return -1;
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject getElementType() {
-/* 208 */     return Lisp.UNSIGNED_BYTE_32;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public int getTotalSize() {
-/* 214 */     return this.totalSize;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean isAdjustable() {
-/* 220 */     return false;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject AREF(int index) {
-/*     */     try {
-/* 227 */       return this.data[index];
-/*     */     }
-/* 229 */     catch (ArrayIndexOutOfBoundsException e) {
-/* 230 */       return Lisp.error(new TypeError("Bad row major index " + index + "."));
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public void aset(int index, LispObject newValue) {
-/*     */     try {
-/* 238 */       this.data[index] = newValue;
-/*     */     }
-/* 240 */     catch (ArrayIndexOutOfBoundsException e) {
-/* 241 */       Lisp.error(new TypeError("Bad row major index " + index + "."));
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public int getRowMajorIndex(int[] subscripts) {
-/* 248 */     int rank = this.dimv.length;
-/* 249 */     if (rank != subscripts.length) {
-/* 250 */       StringBuffer sb = new StringBuffer("Wrong number of subscripts (");
-/* 251 */       sb.append(subscripts.length);
-/* 252 */       sb.append(") for array of rank ");
-/* 253 */       sb.append(rank);
-/* 254 */       sb.append('.');
-/* 255 */       Lisp.program_error(sb.toString());
-/*     */     } 
-/* 257 */     int sum = 0;
-/* 258 */     int size = 1;
-/* 259 */     for (int i = rank; i-- > 0; ) {
-/* 260 */       int dim = this.dimv[i];
-/* 261 */       int lastSize = size;
-/* 262 */       size *= dim;
-/* 263 */       int n = subscripts[i];
-/* 264 */       if (n < 0 || n >= dim) {
-/* 265 */         StringBuffer sb = new StringBuffer("Invalid index ");
-/* 266 */         sb.append(n);
-/* 267 */         sb.append(" for array ");
-/* 268 */         sb.append(this);
-/* 269 */         sb.append('.');
-/* 270 */         Lisp.program_error(sb.toString());
-/*     */       } 
-/* 272 */       sum += n * lastSize;
-/*     */     } 
-/* 274 */     return sum;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject get(int[] subscripts) {
-/*     */     try {
-/* 281 */       return this.data[getRowMajorIndex(subscripts)];
-/*     */     }
-/* 283 */     catch (ArrayIndexOutOfBoundsException e) {
-/* 284 */       return Lisp.error(new TypeError("Bad row major index " + 
-/* 285 */             getRowMajorIndex(subscripts) + "."));
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public void set(int[] subscripts, LispObject newValue) {
-/*     */     try {
-/* 294 */       this.data[getRowMajorIndex(subscripts)] = newValue;
-/*     */     }
-/* 296 */     catch (ArrayIndexOutOfBoundsException e) {
-/* 297 */       Lisp.error(new TypeError("Bad row major index " + 
-/* 298 */             getRowMajorIndex(subscripts) + "."));
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public void fill(LispObject obj) {
-/* 305 */     if (!(obj instanceof LispInteger)) {
-/* 306 */       Lisp.type_error(obj, Symbol.INTEGER);
-/*     */       
-/*     */       return;
-/*     */     } 
-/* 310 */     if (obj.isLessThan(Fixnum.ZERO) || obj.isGreaterThan(Lisp.UNSIGNED_BYTE_32_MAX_VALUE)) {
-/* 311 */       Lisp.type_error(obj, Lisp.UNSIGNED_BYTE_32);
-/*     */     }
-/* 313 */     for (int i = this.totalSize; i-- > 0;) {
-/* 314 */       this.data[i] = obj;
-/*     */     }
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public String printObject() {
-/* 320 */     if (Symbol.PRINT_READABLY.symbolValue() != Lisp.NIL) {
-/* 321 */       Lisp.error(new PrintNotReadable(Lisp.list(Keyword.OBJECT, new LispObject[] { this })));
-/*     */       
-/* 323 */       return null;
-/*     */     } 
-/* 325 */     return printObject(this.dimv);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public AbstractArray adjustArray(int[] dimv, LispObject initialElement, LispObject initialContents) {
-/* 332 */     if (initialContents != null)
-/* 333 */       return new SimpleArray_UnsignedByte32(dimv, initialContents); 
-/* 334 */     for (int i = 0; i < dimv.length; i++) {
-/* 335 */       if (dimv[i] != this.dimv[i]) {
-/* 336 */         SimpleArray_UnsignedByte32 newArray = new SimpleArray_UnsignedByte32(dimv);
-/*     */         
-/* 338 */         if (initialElement != null)
-/* 339 */           newArray.fill(initialElement); 
-/* 340 */         copyArray(this, newArray);
-/* 341 */         return newArray;
-/*     */       } 
-/*     */     } 
-/*     */     
-/* 345 */     return this;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   static void copyArray(AbstractArray a1, AbstractArray a2) {
-/* 352 */     Debug.assertTrue((a1.getRank() == a2.getRank()));
-/* 353 */     int[] subscripts = new int[a1.getRank()];
-/* 354 */     int axis = 0;
-/* 355 */     copySubArray(a1, a2, subscripts, axis);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   private static void copySubArray(AbstractArray a1, AbstractArray a2, int[] subscripts, int axis) {
-/* 362 */     if (axis < subscripts.length) {
-/*     */       
-/* 364 */       int limit = Math.min(a1.getDimension(axis), a2.getDimension(axis));
-/* 365 */       for (int i = 0; i < limit; i++) {
-/* 366 */         subscripts[axis] = i;
-/* 367 */         copySubArray(a1, a2, subscripts, axis + 1);
-/*     */       } 
-/*     */     } else {
-/* 370 */       int i1 = a1.getRowMajorIndex(subscripts);
-/* 371 */       int i2 = a2.getRowMajorIndex(subscripts);
-/* 372 */       a2.aset(i2, a1.AREF(i1));
-/*     */     } 
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public AbstractArray adjustArray(int[] dimv, AbstractArray displacedTo, int displacement) {
-/* 379 */     return new ComplexArray(dimv, displacedTo, displacement);
-/*     */   }
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/SimpleArray_UnsignedByte32.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * SimpleArray_UnsignedByte32.java
+ *
+ * Copyright (C) 2003-2005 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+/*
+ N.b. this implementation has problems somewhere with converting bytes
+
+      Not fixing currently, as this type is unused with NIO
+
+(let* ((unspecialized
+         #(2025373960 3099658457 3238582529 148439321
+           3099658456 3238582528 3000000000 1000000000
+           2000000000 2900000000 2400000000 2800000000
+           0 1))
+       (array 
+         (make-array (length unspecialized)
+                     :element-type '(unsigned-byte 32) 
+                     :initial-contents unspecialized)))
+  (prove:plan (length array))
+  (loop :for i :below (length array)
+        :doing
+           (let ((x0
+                   (elt unspecialized i))
+                 (x1
+                   (elt array i)))
+           (prove:ok
+            (equal x0 x1)
+            (format nil "~a: ~a equals ~a" i x0 x1)))))
+*/
+
+public final class SimpleArray_UnsignedByte32 extends AbstractArray
+{
+    private final int[] dimv;
+    private final int totalSize;
+
+    // FIXME We should really use an array of unboxed values!
+    final LispObject[] data;
+
+    public SimpleArray_UnsignedByte32(int[] dimv)
+    {
+        this.dimv = dimv;
+        totalSize = computeTotalSize(dimv);
+        data = new LispObject[totalSize];
+        for (int i = totalSize; i-- > 0;)
+            data[i] = Fixnum.ZERO;
+    }
+
+    public SimpleArray_UnsignedByte32(int[] dimv, LispObject initialContents)
+
+    {
+        this.dimv = dimv;
+        final int rank = dimv.length;
+        LispObject rest = initialContents;
+        for (int i = 0; i < rank; i++) {
+            dimv[i] = rest.length();
+            rest = rest.elt(0);
+        }
+        totalSize = computeTotalSize(dimv);
+        data = new LispObject[totalSize];
+        setInitialContents(0, dimv, initialContents, 0);
+    }
+
+    public SimpleArray_UnsignedByte32(int rank, LispObject initialContents)
+
+    {
+        if (rank < 2)
+            Debug.assertTrue(false);
+        dimv = new int[rank];
+        LispObject rest = initialContents;
+        for (int i = 0; i < rank; i++) {
+            dimv[i] = rest.length();
+            if (rest == NIL || rest.length() == 0)
+                break;
+            rest = rest.elt(0);
+        }
+        totalSize = computeTotalSize(dimv);
+        data = new LispObject[totalSize];
+        setInitialContents(0, dimv, initialContents, 0);
+    }
+
+    private int setInitialContents(int axis, int[] dims, LispObject contents,
+                                   int index)
+
+    {
+        if (dims.length == 0) {
+            try {
+                data[index] = contents;
+            }
+            catch (ArrayIndexOutOfBoundsException e) {
+                error(new LispError("Bad initial contents for array."));
+                return -1;
+            }
+            ++index;
+        } else {
+            int dim = dims[0];
+            if (dim != contents.length()) {
+                error(new LispError("Bad initial contents for array."));
+                return -1;
+            }
+            int[] newDims = new int[dims.length-1];
+            for (int i = 1; i < dims.length; i++)
+                newDims[i-1] = dims[i];
+            if (contents.listp()) {
+                for (int i = contents.length();i-- > 0;) {
+                    LispObject content = contents.car();
+                    index =
+                        setInitialContents(axis + 1, newDims, content, index);
+                    contents = contents.cdr();
+                }
+            } else {
+                AbstractVector v = checkVector(contents);
+                final int length = v.length();
+                for (int i = 0; i < length; i++) {
+                    LispObject content = v.AREF(i);
+                    index =
+                        setInitialContents(axis + 1, newDims, content, index);
+                }
+            }
+        }
+        return index;
+    }
+
+    @Override
+    public LispObject typeOf()
+    {
+        return list(Symbol.SIMPLE_ARRAY, UNSIGNED_BYTE_32, getDimensions());
+    }
+
+    @Override
+    public LispObject classOf()
+    {
+        return BuiltInClass.SIMPLE_ARRAY;
+    }
+
+    @Override
+    public LispObject typep(LispObject typeSpecifier)
+    {
+        if (typeSpecifier == Symbol.SIMPLE_ARRAY)
+            return T;
+        if (typeSpecifier == BuiltInClass.SIMPLE_ARRAY)
+            return T;
+        return super.typep(typeSpecifier);
+    }
+
+    @Override
+    public int getRank()
+    {
+        return dimv.length;
+    }
+
+    @Override
+    public LispObject getDimensions()
+    {
+        LispObject result = NIL;
+        for (int i = dimv.length; i-- > 0;)
+            result = new Cons(Fixnum.getInstance(dimv[i]), result);
+        return result;
+    }
+
+    @Override
+    public int getDimension(int n)
+    {
+        try {
+            return dimv[n];
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
+            error(new TypeError("Bad array dimension " + n + "."));
+            return -1;
+        }
+    }
+
+    @Override
+    public LispObject getElementType()
+    {
+        return UNSIGNED_BYTE_32;
+    }
+
+    @Override
+    public int getTotalSize()
+    {
+        return totalSize;
+    }
+
+    @Override
+    public boolean isAdjustable()
+    {
+        return false;
+    }
+
+    @Override
+    public LispObject AREF(int index)
+    {
+        try {
+            return data[index];
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
+            return error(new TypeError("Bad row major index " + index + "."));
+        }
+    }
+
+    @Override
+    public void aset(int index, LispObject newValue)
+    {
+        try {
+            data[index] = newValue;
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
+            error(new TypeError("Bad row major index " + index + "."));
+        }
+    }
+
+    @Override
+    public int getRowMajorIndex(int[] subscripts)
+    {
+        final int rank = dimv.length;
+        if (rank != subscripts.length) {
+            StringBuffer sb = new StringBuffer("Wrong number of subscripts (");
+            sb.append(subscripts.length);
+            sb.append(") for array of rank ");
+            sb.append(rank);
+            sb.append('.');
+            program_error(sb.toString());
+        }
+        int sum = 0;
+        int size = 1;
+        for (int i = rank; i-- > 0;) {
+            final int dim = dimv[i];
+            final int lastSize = size;
+            size *= dim;
+            int n = subscripts[i];
+            if (n < 0 || n >= dim) {
+                StringBuffer sb = new StringBuffer("Invalid index ");
+                sb.append(n);
+                sb.append(" for array ");
+                sb.append(this);
+                sb.append('.');
+                program_error(sb.toString());
+            }
+            sum += n * lastSize;
+        }
+        return sum;
+    }
+
+    @Override
+    public LispObject get(int[] subscripts)
+    {
+        try {
+            return data[getRowMajorIndex(subscripts)];
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
+            return error(new TypeError("Bad row major index " +
+                                        getRowMajorIndex(subscripts) + "."));
+        }
+    }
+
+    @Override
+    public void set(int[] subscripts, LispObject newValue)
+
+    {
+        try {
+            data[getRowMajorIndex(subscripts)] = newValue;
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
+            error(new TypeError("Bad row major index " +
+                                 getRowMajorIndex(subscripts) + "."));
+        }
+    }
+
+    @Override
+    public void fill(LispObject obj)
+    {
+        if (!(obj instanceof LispInteger)) {
+            type_error(obj, Symbol.INTEGER);
+            // Not reached.
+            return;
+        }
+        if (obj.isLessThan(Fixnum.ZERO) || obj.isGreaterThan(UNSIGNED_BYTE_32_MAX_VALUE)) {
+            type_error(obj, UNSIGNED_BYTE_32);
+        }
+        for (int i = totalSize; i-- > 0;)
+            data[i] = obj;
+    }
+
+    @Override
+    public String printObject()
+    {
+        if (Symbol.PRINT_READABLY.symbolValue() != NIL) {
+            error(new PrintNotReadable(list(Keyword.OBJECT, this)));
+            // Not reached.
+            return null;
+        }
+        return printObject(dimv);
+    }
+
+    public AbstractArray adjustArray(int[] dimv, LispObject initialElement,
+                                     LispObject initialContents)
+
+    {
+        if (initialContents != null)
+            return new SimpleArray_UnsignedByte32(dimv, initialContents);
+        for (int i = 0; i < dimv.length; i++) {
+            if (dimv[i] != this.dimv[i]) {
+                SimpleArray_UnsignedByte32 newArray =
+                    new SimpleArray_UnsignedByte32(dimv);
+                if (initialElement != null)
+                    newArray.fill(initialElement);
+                copyArray(this, newArray);
+                return newArray;
+            }
+        }
+        // New dimensions are identical to old dimensions.
+        return this;
+    }
+
+    // Copy a1 to a2 for index tuples that are valid for both arrays.
+    static void copyArray(AbstractArray a1, AbstractArray a2)
+
+    {
+        Debug.assertTrue(a1.getRank() == a2.getRank());
+        int[] subscripts = new int[a1.getRank()];
+        int axis = 0;
+        copySubArray(a1, a2, subscripts, axis);
+    }
+
+    private static void copySubArray(AbstractArray a1, AbstractArray a2,
+                                     int[] subscripts, int axis)
+
+    {
+        if (axis < subscripts.length) {
+            final int limit =
+                Math.min(a1.getDimension(axis), a2.getDimension(axis));
+            for (int i = 0; i < limit; i++) {
+                subscripts[axis] = i;
+                copySubArray(a1, a2, subscripts, axis + 1);
+            }
+        } else {
+            int i1 = a1.getRowMajorIndex(subscripts);
+            int i2 = a2.getRowMajorIndex(subscripts);
+            a2.aset(i2, a1.AREF(i1));
+        }
+    }
+
+    public AbstractArray adjustArray(int[] dimv, AbstractArray displacedTo,
+                                     int displacement)
+    {
+        return new ComplexArray(dimv, displacedTo, displacement);
+    }
+}

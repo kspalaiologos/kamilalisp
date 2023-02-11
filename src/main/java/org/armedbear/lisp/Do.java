@@ -1,198 +1,192 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public final class Do
-/*     */ {
-/*  40 */   private static final SpecialOperator DO = new sf_do();
-/*     */   
-/*     */   private static final class sf_do extends SpecialOperator { sf_do() {
-/*  43 */       super(Symbol.DO, "varlist endlist &body body");
-/*     */     }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */     
-/*     */     public LispObject execute(LispObject args, Environment env) {
-/*  50 */       return Do._do(args, env, false);
-/*     */     } }
-/*     */ 
-/*     */ 
-/*     */   
-/*  55 */   private static final SpecialOperator DO_STAR = new sf_do_star();
-/*     */   
-/*     */   private static final class sf_do_star extends SpecialOperator { sf_do_star() {
-/*  58 */       super(Symbol.DO_STAR, "varlist endlist &body body");
-/*     */     }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */     
-/*     */     public LispObject execute(LispObject args, Environment env) {
-/*  65 */       return Do._do(args, env, true);
-/*     */     } }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   static final LispObject _do(LispObject args, Environment env, boolean sequential) {
-/*  73 */     LispObject varlist = args.car();
-/*  74 */     LispObject second = args.cadr();
-/*  75 */     LispObject end_test_form = second.car();
-/*  76 */     LispObject result_forms = second.cdr();
-/*  77 */     LispObject body = args.cddr();
-/*     */     
-/*  79 */     int numvars = varlist.length();
-/*  80 */     Symbol[] vars = new Symbol[numvars];
-/*  81 */     LispObject[] initforms = new LispObject[numvars];
-/*  82 */     LispObject[] stepforms = new LispObject[numvars];
-/*  83 */     for (int i = 0; i < numvars; i++) {
-/*  84 */       LispObject varspec = varlist.car();
-/*  85 */       if (varspec instanceof Cons) {
-/*  86 */         vars[i] = Lisp.checkSymbol(varspec.car());
-/*  87 */         initforms[i] = varspec.cadr();
-/*     */         
-/*  89 */         if (varspec.cddr() != Lisp.NIL) {
-/*  90 */           stepforms[i] = varspec.caddr();
-/*     */         }
-/*     */       } else {
-/*  93 */         vars[i] = Lisp.checkSymbol(varspec);
-/*  94 */         initforms[i] = Lisp.NIL;
-/*     */       } 
-/*  96 */       varlist = varlist.cdr();
-/*     */     } 
-/*  98 */     LispThread thread = LispThread.currentThread();
-/*  99 */     SpecialBindingsMark mark = thread.markSpecialBindings();
-/*     */ 
-/*     */     
-/* 102 */     LispObject bodyAndDecls = Lisp.parseBody(body, false);
-/* 103 */     LispObject specials = Lisp.parseSpecials(bodyAndDecls.NTH(1));
-/* 104 */     body = bodyAndDecls.car();
-/*     */     
-/* 106 */     Environment ext = new Environment(env);
-/* 107 */     for (int j = 0; j < numvars; j++) {
-/* 108 */       Symbol var = vars[j];
-/* 109 */       LispObject value = Lisp.eval(initforms[j], sequential ? ext : env, thread);
-/* 110 */       ext = new Environment(ext);
-/* 111 */       if (specials != Lisp.NIL && Lisp.memq(var, specials)) {
-/* 112 */         thread.bindSpecial(var, value);
-/* 113 */       } else if (var.isSpecialVariable()) {
-/* 114 */         thread.bindSpecial(var, value);
-/*     */       } else {
-/* 116 */         ext.bind(var, value);
-/*     */       } 
-/* 118 */     }  LispObject list = specials;
-/* 119 */     while (list != Lisp.NIL) {
-/* 120 */       ext.declareSpecial(Lisp.checkSymbol(list.car()));
-/* 121 */       list = list.cdr();
-/*     */     } 
-/*     */     
-/* 124 */     LispObject localTags = Lisp.preprocessTagBody(body, ext);
-/* 125 */     LispObject blockId = new LispObject();
-/*     */     try {
-/* 127 */       thread.envStack.push(ext);
-/*     */       
-/* 129 */       ext.addBlock(Lisp.NIL, blockId);
-/*     */ 
-/*     */ 
-/*     */       
-/* 133 */       while (Lisp.eval(end_test_form, ext, thread) == Lisp.NIL) {
-/*     */ 
-/*     */         
-/* 136 */         Lisp.processTagBody(body, localTags, ext);
-/*     */ 
-/*     */         
-/* 139 */         if (sequential) {
-/* 140 */           for (int k = 0; k < numvars; k++) {
-/* 141 */             LispObject step = stepforms[k];
-/* 142 */             if (step != null) {
-/* 143 */               Symbol symbol = vars[k];
-/* 144 */               LispObject value = Lisp.eval(step, ext, thread);
-/* 145 */               if (symbol.isSpecialVariable() || ext
-/* 146 */                 .isDeclaredSpecial(symbol)) {
-/* 147 */                 thread.rebindSpecial(symbol, value);
-/*     */               } else {
-/* 149 */                 ext.rebind(symbol, value);
-/*     */               } 
-/*     */             } 
-/*     */           } 
-/*     */         } else {
-/* 154 */           LispObject[] results = new LispObject[numvars]; int k;
-/* 155 */           for (k = 0; k < numvars; k++) {
-/* 156 */             LispObject step = stepforms[k];
-/* 157 */             if (step != null) {
-/* 158 */               LispObject lispObject = Lisp.eval(step, ext, thread);
-/* 159 */               results[k] = lispObject;
-/*     */             } 
-/*     */           } 
-/*     */           
-/* 163 */           for (k = 0; k < numvars; k++) {
-/* 164 */             if (results[k] != null) {
-/* 165 */               Symbol symbol = vars[k];
-/* 166 */               LispObject value = results[k];
-/* 167 */               if (symbol.isSpecialVariable() || ext
-/* 168 */                 .isDeclaredSpecial(symbol)) {
-/* 169 */                 thread.rebindSpecial(symbol, value);
-/*     */               } else {
-/* 171 */                 ext.rebind(symbol, value);
-/*     */               } 
-/*     */             } 
-/*     */           } 
-/* 175 */         }  if (Lisp.interrupted)
-/* 176 */           Lisp.handleInterrupt(); 
-/*     */       } 
-/* 178 */       LispObject result = Lisp.progn(result_forms, ext, thread);
-/* 179 */       return result;
-/* 180 */     } catch (Return ret) {
-/* 181 */       if (ret.getBlock() == blockId) {
-/* 182 */         return ret.getResult();
-/*     */       }
-/* 184 */       throw ret;
-/*     */     } finally {
-/*     */       
-/* 187 */       while (thread.envStack.pop() != ext);
-/* 188 */       thread.resetSpecialBindings(mark);
-/* 189 */       ext.inactive = true;
-/*     */     } 
-/*     */   }
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/Do.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * Do.java
+ *
+ * Copyright (C) 2003-2006 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+public final class Do {
+    // ### do
+    private static final SpecialOperator DO = new sf_do();
+    private static final class sf_do extends SpecialOperator {
+        sf_do() {
+            super(Symbol.DO, "varlist endlist &body body");
+        }
+
+        @Override
+        public LispObject execute(LispObject args, Environment env)
+
+        {
+            return _do(args, env, false);
+        }
+    };
+
+    // ### do*
+    private static final SpecialOperator DO_STAR = new sf_do_star();
+    private static final class sf_do_star extends SpecialOperator {
+        sf_do_star() {
+            super(Symbol.DO_STAR, "varlist endlist &body body");
+        }
+
+        @Override
+        public LispObject execute(LispObject args, Environment env)
+
+        {
+            return _do(args, env, true);
+        }
+    };
+
+    static final LispObject _do(LispObject args, Environment env,
+                                        boolean sequential)
+
+    {
+        LispObject varlist = args.car();
+        LispObject second = args.cadr();
+        LispObject end_test_form = second.car();
+        LispObject result_forms = second.cdr();
+        LispObject body = args.cddr();
+        // Process variable specifications.
+        final int numvars = varlist.length();
+        Symbol[] vars = new Symbol[numvars];
+        LispObject[] initforms = new LispObject[numvars];
+        LispObject[] stepforms = new LispObject[numvars];
+        for (int i = 0; i < numvars; i++) {
+            final LispObject varspec = varlist.car();
+            if (varspec instanceof Cons) {
+                vars[i] = checkSymbol(varspec.car());
+                initforms[i] = varspec.cadr();
+                // Is there a step form?
+                if (varspec.cddr() != NIL)
+                    stepforms[i] = varspec.caddr();
+            } else {
+                // Not a cons, must be a symbol.
+                vars[i] = checkSymbol(varspec);
+                initforms[i] = NIL;
+            }
+            varlist = varlist.cdr();
+        }
+        final LispThread thread = LispThread.currentThread();
+        final SpecialBindingsMark mark = thread.markSpecialBindings();
+        // Process declarations.
+
+        final LispObject bodyAndDecls = parseBody(body, false);
+        LispObject specials = parseSpecials(bodyAndDecls.NTH(1));
+        body = bodyAndDecls.car();
+
+        Environment ext = new Environment(env);
+        for (int i = 0; i < numvars; i++) {
+            Symbol var = vars[i];
+            LispObject value = eval(initforms[i], (sequential ? ext : env), thread);
+            ext = new Environment(ext);
+            if (specials != NIL && memq(var, specials))
+                thread.bindSpecial(var, value);
+            else if (var.isSpecialVariable())
+                thread.bindSpecial(var, value);
+            else
+                ext.bind(var, value);
+        }
+        LispObject list = specials;
+        while (list != NIL) {
+            ext.declareSpecial(checkSymbol(list.car()));
+            list = list.cdr();
+        }
+        // Look for tags.
+        LispObject localTags = preprocessTagBody(body, ext);
+        LispObject blockId = new LispObject();
+        try {
+            thread.envStack.push(ext);
+            // Implicit block.
+            ext.addBlock(NIL, blockId);
+            while (true) {
+                // Execute body.
+                // Test for termination.
+                if (eval(end_test_form, ext, thread) != NIL)
+                    break;
+
+                processTagBody(body, localTags, ext);
+
+                // Update variables.
+                if (sequential) {
+                    for (int i = 0; i < numvars; i++) {
+                        LispObject step = stepforms[i];
+                        if (step != null) {
+                            Symbol symbol = vars[i];
+                            LispObject value = eval(step, ext, thread);
+                            if (symbol.isSpecialVariable()
+                                    || ext.isDeclaredSpecial(symbol))
+                                thread.rebindSpecial(symbol, value);
+                            else
+                                ext.rebind(symbol, value);
+                        }
+                    }
+                } else {
+                    // Evaluate step forms.
+                    LispObject results[] = new LispObject[numvars];
+                    for (int i = 0; i < numvars; i++) {
+                        LispObject step = stepforms[i];
+                        if (step != null) {
+                            LispObject result = eval(step, ext, thread);
+                            results[i] = result;
+                        }
+                    }
+                    // Update variables.
+                    for (int i = 0; i < numvars; i++) {
+                        if (results[i] != null) {
+                            Symbol symbol = vars[i];
+                            LispObject value = results[i];
+                            if (symbol.isSpecialVariable()
+                                    || ext.isDeclaredSpecial(symbol))
+                                thread.rebindSpecial(symbol, value);
+                            else
+                                ext.rebind(symbol, value);
+                        }
+                    }
+                }
+                if (interrupted)
+                    handleInterrupt();
+            }
+            LispObject result = progn(result_forms, ext, thread);
+            return result;
+        } catch (Return ret) {
+            if (ret.getBlock() == blockId) {
+                return ret.getResult();
+            }
+            throw ret;
+        }
+        finally {
+            while (thread.envStack.pop() != ext) {}
+            thread.resetSpecialBindings(mark);
+            ext.inactive = true;
+        }
+    }
+}

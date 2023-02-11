@@ -1,803 +1,797 @@
-/*     */ package org.armedbear.lisp;
-/*     */ 
-/*     */ import java.math.BigInteger;
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */ public final class Bignum
-/*     */   extends LispInteger
-/*     */ {
-/*     */   public final BigInteger value;
-/*  45 */   private static BigInteger MOST_NEGATIVE_FIXNUM = BigInteger.valueOf(-2147483648L);
-/*     */   
-/*  47 */   private static BigInteger MOST_POSITIVE_FIXNUM = BigInteger.valueOf(2147483647L);
-/*     */   
-/*     */   public static LispInteger getInstance(long l) {
-/*  50 */     if (-2147483648L <= l && l <= 2147483647L) {
-/*  51 */       return Fixnum.getInstance(l);
-/*     */     }
-/*  53 */     return new Bignum(l);
-/*     */   }
-/*     */   
-/*     */   public static LispInteger getInstance(BigInteger n) {
-/*  57 */     if (MOST_NEGATIVE_FIXNUM.compareTo(n) < 0 || MOST_POSITIVE_FIXNUM
-/*  58 */       .compareTo(n) > 0) {
-/*  59 */       return new Bignum(n);
-/*     */     }
-/*  61 */     return Fixnum.getInstance(n.intValue());
-/*     */   }
-/*     */   
-/*     */   public static LispInteger getInstance(String s, int radix) {
-/*  65 */     BigInteger value = new BigInteger(s, radix);
-/*     */     
-/*  67 */     return getInstance(value);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   private Bignum(long l) {
-/*  72 */     this.value = BigInteger.valueOf(l);
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   private Bignum(BigInteger n) {
-/*  77 */     this.value = n;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public Object javaInstance() {
-/*  83 */     return this.value;
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public Object javaInstance(Class<Byte> c) {
-/*  88 */     if (c == Byte.class || c == byte.class)
-/*  89 */       return Byte.valueOf((byte)this.value.intValue()); 
-/*  90 */     if (c == Short.class || c == short.class)
-/*  91 */       return Short.valueOf((short)this.value.intValue()); 
-/*  92 */     if (c == Integer.class || c == int.class)
-/*  93 */       return Integer.valueOf(this.value.intValue()); 
-/*  94 */     if (c == Long.class || c == long.class)
-/*  95 */       return Long.valueOf(this.value.longValue()); 
-/*  96 */     return javaInstance();
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typeOf() {
-/* 103 */     if (this.value.signum() > 0) {
-/* 104 */       return Lisp.list(Symbol.INTEGER, new LispObject[] { new Bignum(2147483648L) });
-/*     */     }
-/* 106 */     return Symbol.BIGNUM;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject classOf() {
-/* 112 */     return BuiltInClass.BIGNUM;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject typep(LispObject type) {
-/* 118 */     if (type instanceof Symbol) {
-/*     */       
-/* 120 */       if (type == Symbol.BIGNUM)
-/* 121 */         return Lisp.T; 
-/* 122 */       if (type == Symbol.INTEGER)
-/* 123 */         return Lisp.T; 
-/* 124 */       if (type == Symbol.RATIONAL)
-/* 125 */         return Lisp.T; 
-/* 126 */       if (type == Symbol.REAL)
-/* 127 */         return Lisp.T; 
-/* 128 */       if (type == Symbol.NUMBER)
-/* 129 */         return Lisp.T; 
-/* 130 */       if (type == Symbol.SIGNED_BYTE)
-/* 131 */         return Lisp.T; 
-/* 132 */       if (type == Symbol.UNSIGNED_BYTE) {
-/* 133 */         return (this.value.signum() >= 0) ? Lisp.T : Lisp.NIL;
-/*     */       }
-/* 135 */     } else if (type instanceof LispClass) {
-/*     */       
-/* 137 */       if (type == BuiltInClass.BIGNUM)
-/* 138 */         return Lisp.T; 
-/* 139 */       if (type == BuiltInClass.INTEGER)
-/* 140 */         return Lisp.T; 
-/* 141 */       if (type == BuiltInClass.RATIONAL)
-/* 142 */         return Lisp.T; 
-/* 143 */       if (type == BuiltInClass.REAL)
-/* 144 */         return Lisp.T; 
-/* 145 */       if (type == BuiltInClass.NUMBER) {
-/* 146 */         return Lisp.T;
-/*     */       }
-/* 148 */     } else if (type instanceof Cons) {
-/*     */       
-/* 150 */       if (type.equal(Lisp.UNSIGNED_BYTE_8))
-/* 151 */         return Lisp.NIL; 
-/* 152 */       if (type.equal(Lisp.UNSIGNED_BYTE_32)) {
-/*     */         
-/* 154 */         if (minusp())
-/* 155 */           return Lisp.NIL; 
-/* 156 */         return isLessThanOrEqualTo(Lisp.UNSIGNED_BYTE_32_MAX_VALUE) ? Lisp.T : Lisp.NIL;
-/*     */       } 
-/*     */     } 
-/* 159 */     return super.typep(type);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean numberp() {
-/* 165 */     return true;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean integerp() {
-/* 171 */     return true;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean rationalp() {
-/* 177 */     return true;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean realp() {
-/* 183 */     return true;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean eql(LispObject obj) {
-/* 189 */     if (this == obj)
-/* 190 */       return true; 
-/* 191 */     if (obj instanceof Bignum)
-/*     */     {
-/* 193 */       if (this.value.equals(((Bignum)obj).value))
-/* 194 */         return true; 
-/*     */     }
-/* 196 */     return false;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean equal(LispObject obj) {
-/* 202 */     if (this == obj)
-/* 203 */       return true; 
-/* 204 */     if (obj instanceof Bignum)
-/*     */     {
-/* 206 */       if (this.value.equals(((Bignum)obj).value))
-/* 207 */         return true; 
-/*     */     }
-/* 209 */     return false;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean equalp(LispObject obj) {
-/* 215 */     if (obj != null && obj.numberp())
-/* 216 */       return isEqualTo(obj); 
-/* 217 */     return false;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject ABS() {
-/* 223 */     if (this.value.signum() >= 0)
-/* 224 */       return this; 
-/* 225 */     return new Bignum(this.value.negate());
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject NUMERATOR() {
-/* 231 */     return this;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject DENOMINATOR() {
-/* 237 */     return Fixnum.ONE;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean evenp() {
-/* 243 */     return !this.value.testBit(0);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean oddp() {
-/* 249 */     return this.value.testBit(0);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean plusp() {
-/* 255 */     return (this.value.signum() > 0);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean minusp() {
-/* 261 */     return (this.value.signum() < 0);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean zerop() {
-/* 267 */     return false;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public int intValue() {
-/* 273 */     return this.value.intValue();
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public long longValue() {
-/* 279 */     return this.value.longValue();
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public float floatValue() {
-/* 285 */     float f = this.value.floatValue();
-/* 286 */     if (Float.isInfinite(f)) {
-/* 287 */       Lisp.error(new TypeError("The value " + princToString() + " is too large to be converted to a single float."));
-/*     */     }
-/* 289 */     return f;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public double doubleValue() {
-/* 295 */     double d = this.value.doubleValue();
-/* 296 */     if (Double.isInfinite(d)) {
-/* 297 */       Lisp.error(new TypeError("The value " + princToString() + " is too large to be converted to a double float."));
-/*     */     }
-/* 299 */     return d;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public static BigInteger getValue(LispObject obj) {
-/* 305 */     if (obj instanceof Bignum)
-/*     */     {
-/* 307 */       return ((Bignum)obj).value;
-/*     */     }
-/* 309 */     Lisp.type_error(obj, Symbol.BIGNUM);
-/*     */     
-/* 311 */     return null;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public final LispObject incr() {
-/* 317 */     return Lisp.number(this.value.add(BigInteger.ONE));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public final LispObject decr() {
-/* 323 */     return Lisp.number(this.value.subtract(BigInteger.ONE));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject add(int n) {
-/* 329 */     return Lisp.number(this.value.add(BigInteger.valueOf(n)));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject add(LispObject obj) {
-/* 335 */     if (obj instanceof Fixnum)
-/* 336 */       return Lisp.number(this.value.add(Fixnum.getBigInteger(obj))); 
-/* 337 */     if (obj instanceof Bignum)
-/* 338 */       return Lisp.number(this.value.add(((Bignum)obj).value)); 
-/* 339 */     if (obj instanceof Ratio) {
-/*     */       
-/* 341 */       BigInteger numerator = ((Ratio)obj).numerator();
-/* 342 */       BigInteger denominator = ((Ratio)obj).denominator();
-/* 343 */       return Lisp.number(this.value.multiply(denominator).add(numerator), denominator);
-/*     */     } 
-/*     */     
-/* 346 */     if (obj instanceof SingleFloat)
-/* 347 */       return new SingleFloat(floatValue() + ((SingleFloat)obj).value); 
-/* 348 */     if (obj instanceof DoubleFloat)
-/* 349 */       return new DoubleFloat(doubleValue() + ((DoubleFloat)obj).value); 
-/* 350 */     if (obj instanceof Complex) {
-/*     */       
-/* 352 */       Complex c = (Complex)obj;
-/* 353 */       return Complex.getInstance(add(c.getRealPart()), c.getImaginaryPart());
-/*     */     } 
-/* 355 */     return Lisp.type_error(obj, Symbol.NUMBER);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject subtract(LispObject obj) {
-/* 361 */     if (obj instanceof Fixnum)
-/* 362 */       return Lisp.number(this.value.subtract(Fixnum.getBigInteger(obj))); 
-/* 363 */     if (obj instanceof Bignum)
-/* 364 */       return Lisp.number(this.value.subtract(((Bignum)obj).value)); 
-/* 365 */     if (obj instanceof Ratio) {
-/*     */       
-/* 367 */       BigInteger numerator = ((Ratio)obj).numerator();
-/* 368 */       BigInteger denominator = ((Ratio)obj).denominator();
-/* 369 */       return Lisp.number(this.value.multiply(denominator).subtract(numerator), denominator);
-/*     */     } 
-/*     */     
-/* 372 */     if (obj instanceof SingleFloat)
-/* 373 */       return new SingleFloat(floatValue() - ((SingleFloat)obj).value); 
-/* 374 */     if (obj instanceof DoubleFloat)
-/* 375 */       return new DoubleFloat(doubleValue() - ((DoubleFloat)obj).value); 
-/* 376 */     if (obj instanceof Complex) {
-/*     */       
-/* 378 */       Complex c = (Complex)obj;
-/* 379 */       return Complex.getInstance(subtract(c.getRealPart()), Fixnum.ZERO
-/* 380 */           .subtract(c.getImaginaryPart()));
-/*     */     } 
-/* 382 */     return Lisp.type_error(obj, Symbol.NUMBER);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject multiplyBy(int n) {
-/* 388 */     if (n == 0)
-/* 389 */       return Fixnum.ZERO; 
-/* 390 */     if (n == 1)
-/* 391 */       return this; 
-/* 392 */     return new Bignum(this.value.multiply(BigInteger.valueOf(n)));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject multiplyBy(LispObject obj) {
-/* 398 */     if (obj instanceof Fixnum) {
-/*     */       
-/* 400 */       int n = ((Fixnum)obj).value;
-/* 401 */       if (n == 0)
-/* 402 */         return Fixnum.ZERO; 
-/* 403 */       if (n == 1)
-/* 404 */         return this; 
-/* 405 */       return new Bignum(this.value.multiply(BigInteger.valueOf(n)));
-/*     */     } 
-/* 407 */     if (obj instanceof Bignum)
-/* 408 */       return new Bignum(this.value.multiply(((Bignum)obj).value)); 
-/* 409 */     if (obj instanceof Ratio) {
-/*     */       
-/* 411 */       BigInteger n = ((Ratio)obj).numerator();
-/* 412 */       return Lisp.number(n.multiply(this.value), ((Ratio)obj).denominator());
-/*     */     } 
-/* 414 */     if (obj instanceof SingleFloat)
-/* 415 */       return new SingleFloat(floatValue() * ((SingleFloat)obj).value); 
-/* 416 */     if (obj instanceof DoubleFloat)
-/* 417 */       return new DoubleFloat(doubleValue() * ((DoubleFloat)obj).value); 
-/* 418 */     if (obj instanceof Complex) {
-/*     */       
-/* 420 */       Complex c = (Complex)obj;
-/* 421 */       return Complex.getInstance(multiplyBy(c.getRealPart()), 
-/* 422 */           multiplyBy(c.getImaginaryPart()));
-/*     */     } 
-/* 424 */     return Lisp.type_error(obj, Symbol.NUMBER);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject divideBy(LispObject obj) {
-/* 430 */     if (obj instanceof Fixnum)
-/* 431 */       return Lisp.number(this.value, Fixnum.getBigInteger(obj)); 
-/* 432 */     if (obj instanceof Bignum)
-/* 433 */       return Lisp.number(this.value, ((Bignum)obj).value); 
-/* 434 */     if (obj instanceof Ratio) {
-/*     */       
-/* 436 */       BigInteger d = ((Ratio)obj).denominator();
-/* 437 */       return Lisp.number(d.multiply(this.value), ((Ratio)obj).numerator());
-/*     */     } 
-/* 439 */     if (obj instanceof SingleFloat)
-/* 440 */       return new SingleFloat(floatValue() / ((SingleFloat)obj).value); 
-/* 441 */     if (obj instanceof DoubleFloat)
-/* 442 */       return new DoubleFloat(doubleValue() / ((DoubleFloat)obj).value); 
-/* 443 */     if (obj instanceof Complex) {
-/*     */       
-/* 445 */       Complex c = (Complex)obj;
-/* 446 */       LispObject realPart = c.getRealPart();
-/* 447 */       LispObject imagPart = c.getImaginaryPart();
-/*     */       
-/* 449 */       LispObject denominator = realPart.multiplyBy(realPart).add(imagPart.multiplyBy(imagPart));
-/* 450 */       return Complex.getInstance(multiplyBy(realPart).divideBy(denominator), Fixnum.ZERO
-/* 451 */           .subtract(multiplyBy(imagPart).divideBy(denominator)));
-/*     */     } 
-/* 453 */     return Lisp.type_error(obj, Symbol.NUMBER);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean isEqualTo(LispObject obj) {
-/* 459 */     if (obj instanceof Bignum)
-/* 460 */       return this.value.equals(((Bignum)obj).value); 
-/* 461 */     if (obj instanceof SingleFloat)
-/* 462 */       return isEqualTo(((SingleFloat)obj).rational()); 
-/* 463 */     if (obj instanceof DoubleFloat)
-/* 464 */       return isEqualTo(((DoubleFloat)obj).rational()); 
-/* 465 */     if (obj.numberp())
-/* 466 */       return false; 
-/* 467 */     Lisp.type_error(obj, Symbol.NUMBER);
-/*     */     
-/* 469 */     return false;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean isNotEqualTo(LispObject obj) {
-/* 475 */     if (obj instanceof Bignum)
-/* 476 */       return !this.value.equals(((Bignum)obj).value); 
-/* 477 */     if (obj instanceof SingleFloat)
-/* 478 */       return isNotEqualTo(((SingleFloat)obj).rational()); 
-/* 479 */     if (obj instanceof DoubleFloat)
-/* 480 */       return isNotEqualTo(((DoubleFloat)obj).rational()); 
-/* 481 */     if (obj.numberp())
-/* 482 */       return true; 
-/* 483 */     Lisp.type_error(obj, Symbol.NUMBER);
-/*     */     
-/* 485 */     return false;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean isLessThan(LispObject obj) {
-/* 491 */     if (obj instanceof Fixnum)
-/* 492 */       return (this.value.compareTo(Fixnum.getBigInteger(obj)) < 0); 
-/* 493 */     if (obj instanceof Bignum)
-/* 494 */       return (this.value.compareTo(((Bignum)obj).value) < 0); 
-/* 495 */     if (obj instanceof Ratio) {
-/*     */       
-/* 497 */       BigInteger n = this.value.multiply(((Ratio)obj).denominator());
-/* 498 */       return (n.compareTo(((Ratio)obj).numerator()) < 0);
-/*     */     } 
-/* 500 */     if (obj instanceof SingleFloat)
-/* 501 */       return isLessThan(((SingleFloat)obj).rational()); 
-/* 502 */     if (obj instanceof DoubleFloat)
-/* 503 */       return isLessThan(((DoubleFloat)obj).rational()); 
-/* 504 */     Lisp.type_error(obj, Symbol.REAL);
-/*     */     
-/* 506 */     return false;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean isGreaterThan(LispObject obj) {
-/* 512 */     if (obj instanceof Fixnum)
-/* 513 */       return (this.value.compareTo(Fixnum.getBigInteger(obj)) > 0); 
-/* 514 */     if (obj instanceof Bignum)
-/* 515 */       return (this.value.compareTo(((Bignum)obj).value) > 0); 
-/* 516 */     if (obj instanceof Ratio) {
-/*     */       
-/* 518 */       BigInteger n = this.value.multiply(((Ratio)obj).denominator());
-/* 519 */       return (n.compareTo(((Ratio)obj).numerator()) > 0);
-/*     */     } 
-/* 521 */     if (obj instanceof SingleFloat)
-/* 522 */       return isGreaterThan(((SingleFloat)obj).rational()); 
-/* 523 */     if (obj instanceof DoubleFloat)
-/* 524 */       return isGreaterThan(((DoubleFloat)obj).rational()); 
-/* 525 */     Lisp.type_error(obj, Symbol.REAL);
-/*     */     
-/* 527 */     return false;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean isLessThanOrEqualTo(LispObject obj) {
-/* 533 */     if (obj instanceof Fixnum)
-/* 534 */       return (this.value.compareTo(Fixnum.getBigInteger(obj)) <= 0); 
-/* 535 */     if (obj instanceof Bignum)
-/* 536 */       return (this.value.compareTo(((Bignum)obj).value) <= 0); 
-/* 537 */     if (obj instanceof Ratio) {
-/*     */       
-/* 539 */       BigInteger n = this.value.multiply(((Ratio)obj).denominator());
-/* 540 */       return (n.compareTo(((Ratio)obj).numerator()) <= 0);
-/*     */     } 
-/* 542 */     if (obj instanceof SingleFloat)
-/* 543 */       return isLessThanOrEqualTo(((SingleFloat)obj).rational()); 
-/* 544 */     if (obj instanceof DoubleFloat)
-/* 545 */       return isLessThanOrEqualTo(((DoubleFloat)obj).rational()); 
-/* 546 */     Lisp.type_error(obj, Symbol.REAL);
-/*     */     
-/* 548 */     return false;
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public boolean isGreaterThanOrEqualTo(LispObject obj) {
-/* 554 */     if (obj instanceof Fixnum)
-/* 555 */       return (this.value.compareTo(Fixnum.getBigInteger(obj)) >= 0); 
-/* 556 */     if (obj instanceof Bignum)
-/* 557 */       return (this.value.compareTo(((Bignum)obj).value) >= 0); 
-/* 558 */     if (obj instanceof Ratio) {
-/*     */       
-/* 560 */       BigInteger n = this.value.multiply(((Ratio)obj).denominator());
-/* 561 */       return (n.compareTo(((Ratio)obj).numerator()) >= 0);
-/*     */     } 
-/* 563 */     if (obj instanceof SingleFloat)
-/* 564 */       return isGreaterThanOrEqualTo(((SingleFloat)obj).rational()); 
-/* 565 */     if (obj instanceof DoubleFloat)
-/* 566 */       return isGreaterThanOrEqualTo(((DoubleFloat)obj).rational()); 
-/* 567 */     Lisp.type_error(obj, Symbol.REAL);
-/*     */     
-/* 569 */     return false;
-/*     */   }
-/*     */ 
-/*     */   
-/*     */   public LispObject truncate(LispObject obj) {
-/*     */     LispObject value1, value2;
-/* 575 */     LispThread thread = LispThread.currentThread();
-/*     */ 
-/*     */     
-/*     */     try {
-/* 579 */       if (obj instanceof Fixnum) {
-/*     */         
-/* 581 */         BigInteger divisor = ((Fixnum)obj).getBigInteger();
-/* 582 */         BigInteger[] results = this.value.divideAndRemainder(divisor);
-/* 583 */         BigInteger quotient = results[0];
-/* 584 */         BigInteger remainder = results[1];
-/* 585 */         value1 = Lisp.number(quotient);
-/* 586 */         value2 = (remainder.signum() == 0) ? Fixnum.ZERO : Lisp.number(remainder);
-/*     */       }
-/* 588 */       else if (obj instanceof Bignum) {
-/*     */         
-/* 590 */         BigInteger divisor = ((Bignum)obj).value;
-/* 591 */         BigInteger[] results = this.value.divideAndRemainder(divisor);
-/* 592 */         BigInteger quotient = results[0];
-/* 593 */         BigInteger remainder = results[1];
-/* 594 */         value1 = Lisp.number(quotient);
-/* 595 */         value2 = (remainder.signum() == 0) ? Fixnum.ZERO : Lisp.number(remainder);
-/*     */       }
-/* 597 */       else if (obj instanceof Ratio) {
-/*     */         
-/* 599 */         Ratio divisor = (Ratio)obj;
-/*     */         
-/* 601 */         LispObject quotient = multiplyBy(divisor.DENOMINATOR()).truncate(divisor.NUMERATOR());
-/*     */         
-/* 603 */         LispObject remainder = subtract(quotient.multiplyBy(divisor));
-/* 604 */         value1 = quotient;
-/* 605 */         value2 = remainder;
-/*     */       } else {
-/* 607 */         if (obj instanceof SingleFloat)
-/*     */         {
-/*     */ 
-/*     */ 
-/*     */           
-/* 612 */           return (new SingleFloat(floatValue())).truncate(obj);
-/*     */         }
-/* 614 */         if (obj instanceof DoubleFloat)
-/*     */         {
-/*     */ 
-/*     */ 
-/*     */           
-/* 619 */           return (new DoubleFloat(doubleValue())).truncate(obj);
-/*     */         }
-/*     */         
-/* 622 */         return Lisp.type_error(obj, Symbol.REAL);
-/*     */       } 
-/* 624 */     } catch (ArithmeticException e) {
-/*     */       
-/* 626 */       if (obj.zerop()) {
-/* 627 */         LispObject operands = new Cons(this, new Cons(obj));
-/* 628 */         LispObject args = new Cons(Keyword.OPERATION, new Cons(Symbol.TRUNCATE, new Cons(Keyword.OPERANDS, new Cons(operands))));
-/*     */ 
-/*     */ 
-/*     */ 
-/*     */         
-/* 633 */         return Lisp.error(new DivisionByZero(args));
-/*     */       } 
-/*     */       
-/* 636 */       return Lisp.error(new ArithmeticError(e.getMessage()));
-/*     */     } 
-/* 638 */     return thread.setValues(value1, value2);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject ash(LispObject obj) {
-/* 644 */     BigInteger n = this.value;
-/* 645 */     if (obj instanceof Fixnum) {
-/*     */       
-/* 647 */       int count = ((Fixnum)obj).value;
-/* 648 */       if (count == 0) {
-/* 649 */         return this;
-/*     */       }
-/*     */       
-/* 652 */       if (count == Integer.MIN_VALUE)
-/* 653 */         return (n.signum() >= 0) ? Fixnum.ZERO : Fixnum.MINUS_ONE; 
-/* 654 */       return Lisp.number(n.shiftLeft(count));
-/*     */     } 
-/* 656 */     if (obj instanceof Bignum) {
-/*     */       
-/* 658 */       BigInteger count = ((Bignum)obj).value;
-/* 659 */       if (count.signum() > 0)
-/* 660 */         return Lisp.error(new LispError("Can't represent result of left shift.")); 
-/* 661 */       if (count.signum() < 0)
-/* 662 */         return (n.signum() >= 0) ? Fixnum.ZERO : Fixnum.MINUS_ONE; 
-/* 663 */       Debug.bug();
-/*     */     } 
-/* 665 */     return Lisp.type_error(obj, Symbol.INTEGER);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject LOGNOT() {
-/* 671 */     return Lisp.number(this.value.not());
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject LOGAND(int n) {
-/* 677 */     if (n >= 0) {
-/* 678 */       return Fixnum.getInstance(this.value.intValue() & n);
-/*     */     }
-/* 680 */     return Lisp.number(this.value.and(BigInteger.valueOf(n)));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject LOGAND(LispObject obj) {
-/* 686 */     if (obj instanceof Fixnum) {
-/*     */       
-/* 688 */       int n = ((Fixnum)obj).value;
-/* 689 */       if (n >= 0) {
-/* 690 */         return Fixnum.getInstance(this.value.intValue() & n);
-/*     */       }
-/* 692 */       return Lisp.number(this.value.and(BigInteger.valueOf(n)));
-/*     */     } 
-/* 694 */     if (obj instanceof Bignum) {
-/*     */       
-/* 696 */       BigInteger n = ((Bignum)obj).value;
-/* 697 */       return Lisp.number(this.value.and(n));
-/*     */     } 
-/*     */     
-/* 700 */     return Lisp.type_error(obj, Symbol.INTEGER);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject LOGIOR(int n) {
-/* 706 */     return Lisp.number(this.value.or(BigInteger.valueOf(n)));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject LOGIOR(LispObject obj) {
-/* 712 */     if (obj instanceof Fixnum) {
-/*     */       
-/* 714 */       BigInteger n = ((Fixnum)obj).getBigInteger();
-/* 715 */       return Lisp.number(this.value.or(n));
-/*     */     } 
-/* 717 */     if (obj instanceof Bignum) {
-/*     */       
-/* 719 */       BigInteger n = ((Bignum)obj).value;
-/* 720 */       return Lisp.number(this.value.or(n));
-/*     */     } 
-/*     */     
-/* 723 */     return Lisp.type_error(obj, Symbol.INTEGER);
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject LOGXOR(int n) {
-/* 729 */     return Lisp.number(this.value.xor(BigInteger.valueOf(n)));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject LOGXOR(LispObject obj) {
-/*     */     BigInteger n;
-/* 736 */     if (obj instanceof Fixnum) {
-/* 737 */       n = ((Fixnum)obj).getBigInteger();
-/* 738 */     } else if (obj instanceof Bignum) {
-/* 739 */       n = ((Bignum)obj).value;
-/*     */     } else {
-/* 741 */       return Lisp.type_error(obj, Symbol.INTEGER);
-/* 742 */     }  return Lisp.number(this.value.xor(n));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public LispObject LDB(int size, int position) {
-/* 748 */     BigInteger n = this.value.shiftRight(position);
-/* 749 */     BigInteger mask = BigInteger.ONE.shiftLeft(size).subtract(BigInteger.ONE);
-/* 750 */     return Lisp.number(n.and(mask));
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public int hashCode() {
-/* 756 */     return this.value.hashCode();
-/*     */   }
-/*     */ 
-/*     */ 
-/*     */   
-/*     */   public String printObject() {
-/* 762 */     LispThread thread = LispThread.currentThread();
-/* 763 */     int base = Fixnum.getValue(Symbol.PRINT_BASE.symbolValue(thread));
-/* 764 */     String s = this.value.toString(base).toUpperCase();
-/* 765 */     if (Symbol.PRINT_RADIX.symbolValue(thread) != Lisp.NIL) {
-/*     */       
-/* 767 */       StringBuffer sb = new StringBuffer();
-/* 768 */       switch (base) {
-/*     */         
-/*     */         case 2:
-/* 771 */           sb.append("#b");
-/* 772 */           sb.append(s);
-/*     */           break;
-/*     */         case 8:
-/* 775 */           sb.append("#o");
-/* 776 */           sb.append(s);
-/*     */           break;
-/*     */         case 10:
-/* 779 */           sb.append(s);
-/* 780 */           sb.append('.');
-/*     */           break;
-/*     */         case 16:
-/* 783 */           sb.append("#x");
-/* 784 */           sb.append(s);
-/*     */           break;
-/*     */         default:
-/* 787 */           sb.append('#');
-/* 788 */           sb.append(String.valueOf(base));
-/* 789 */           sb.append('r');
-/* 790 */           sb.append(s);
-/*     */           break;
-/*     */       } 
-/* 793 */       s = sb.toString();
-/*     */     } 
-/* 795 */     return s;
-/*     */   }
-/*     */ }
-
-
-/* Location:              /home/palaiologos/Desktop/abcl.jar!/org/armedbear/lisp/Bignum.class
- * Java compiler version: 8 (52.0)
- * JD-Core Version:       1.1.3
+/*
+ * Bignum.java
+ *
+ * Copyright (C) 2003-2007 Peter Graves
+ * $Id$
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * As a special exception, the copyright holders of this library give you
+ * permission to link this library with independent modules to produce an
+ * executable, regardless of the license terms of these independent
+ * modules, and to copy and distribute the resulting executable under
+ * terms of your choice, provided that you also meet, for each linked
+ * independent module, the terms and conditions of the license of that
+ * module.  An independent module is a module which is not derived from
+ * or based on this library.  If you modify this library, you may extend
+ * this exception to your version of the library, but you are not
+ * obligated to do so.  If you do not wish to do so, delete this
+ * exception statement from your version.
  */
+
+package org.armedbear.lisp;
+
+import static org.armedbear.lisp.Lisp.*;
+
+import java.math.BigInteger;
+
+public final class Bignum extends LispInteger
+{
+  public final BigInteger value;
+
+  private static BigInteger MOST_NEGATIVE_FIXNUM =
+          BigInteger.valueOf(Integer.MIN_VALUE);
+  private static BigInteger MOST_POSITIVE_FIXNUM =
+          BigInteger.valueOf(Integer.MAX_VALUE);
+
+  public static LispInteger getInstance(long l) {
+      if (Integer.MIN_VALUE <= l && l <= Integer.MAX_VALUE)
+          return Fixnum.getInstance(l);
+      else
+          return new Bignum(l);
+  }
+
+  public static LispInteger getInstance(BigInteger n) {
+      if (MOST_NEGATIVE_FIXNUM.compareTo(n) < 0 ||
+              MOST_POSITIVE_FIXNUM.compareTo(n) > 0)
+          return new Bignum(n);
+      else
+          return Fixnum.getInstance(n.intValue());
+  }
+
+  public static LispInteger getInstance(String s, int radix) {
+      BigInteger value = new BigInteger(s, radix);
+
+      return Bignum.getInstance(value);
+  }
+
+  private Bignum(long l)
+  {
+    value = BigInteger.valueOf(l);
+  }
+
+  private Bignum(BigInteger n)
+  {
+    value = n;
+  }
+
+  @Override
+  public Object javaInstance()
+  {
+    return value;
+  }
+
+  @Override
+  public Object javaInstance(Class c) {
+    if (c == Byte.class || c == byte.class)
+      return Byte.valueOf((byte)value.intValue());
+    if (c == Short.class || c == short.class)
+      return Short.valueOf((short)value.intValue());
+    if (c == Integer.class || c == int.class)
+      return Integer.valueOf(value.intValue());
+    if (c == Long.class || c == long.class)
+      return Long.valueOf((long)value.longValue());
+    return javaInstance();
+  }
+
+
+  @Override
+  public LispObject typeOf()
+  {
+    if (value.signum() > 0)
+      return list(Symbol.INTEGER,
+                   new Bignum((long)Integer.MAX_VALUE + 1));
+    return Symbol.BIGNUM;
+  }
+
+  @Override
+  public LispObject classOf()
+  {
+    return BuiltInClass.BIGNUM;
+  }
+
+  @Override
+  public LispObject typep(LispObject type)
+  {
+    if (type instanceof Symbol)
+      {
+        if (type == Symbol.BIGNUM)
+          return T;
+        if (type == Symbol.INTEGER)
+          return T;
+        if (type == Symbol.RATIONAL)
+          return T;
+        if (type == Symbol.REAL)
+          return T;
+        if (type == Symbol.NUMBER)
+          return T;
+        if (type == Symbol.SIGNED_BYTE)
+          return T;
+        if (type == Symbol.UNSIGNED_BYTE)
+          return value.signum() >= 0 ? T : NIL;
+      }
+    else if (type instanceof LispClass)
+      {
+        if (type == BuiltInClass.BIGNUM)
+          return T;
+        if (type == BuiltInClass.INTEGER)
+          return T;
+        if (type == BuiltInClass.RATIONAL)
+          return T;
+        if (type == BuiltInClass.REAL)
+          return T;
+        if (type == BuiltInClass.NUMBER)
+          return T;
+      }
+    else if (type instanceof Cons)
+      {
+        if (type.equal(UNSIGNED_BYTE_8))
+          return NIL;
+        if (type.equal(UNSIGNED_BYTE_32))
+          {
+            if (minusp())
+              return NIL;
+            return isLessThanOrEqualTo(UNSIGNED_BYTE_32_MAX_VALUE) ? T : NIL;
+          }
+      }
+    return super.typep(type);
+  }
+
+  @Override
+  public boolean numberp()
+  {
+    return true;
+  }
+
+  @Override
+  public boolean integerp()
+  {
+    return true;
+  }
+
+  @Override
+  public boolean rationalp()
+  {
+    return true;
+  }
+
+  @Override
+  public boolean realp()
+  {
+    return true;
+  }
+
+  @Override
+  public boolean eql(LispObject obj)
+  {
+    if (this == obj)
+      return true;
+    if (obj instanceof Bignum)
+      {
+        if (value.equals(((Bignum)obj).value))
+          return true;
+      }
+    return false;
+  }
+
+  @Override
+  public boolean equal(LispObject obj)
+  {
+    if (this == obj)
+      return true;
+    if (obj instanceof Bignum)
+      {
+        if (value.equals(((Bignum)obj).value))
+          return true;
+      }
+    return false;
+  }
+
+  @Override
+  public boolean equalp(LispObject obj)
+  {
+    if (obj != null && obj.numberp())
+      return isEqualTo(obj);
+    return false;
+  }
+
+  @Override
+  public LispObject ABS()
+  {
+    if (value.signum() >= 0)
+      return this;
+    return new Bignum(value.negate());
+  }
+
+  @Override
+  public LispObject NUMERATOR()
+  {
+    return this;
+  }
+
+  @Override
+  public LispObject DENOMINATOR()
+  {
+    return Fixnum.ONE;
+  }
+
+  @Override
+  public boolean evenp()
+  {
+    return !value.testBit(0);
+  }
+
+  @Override
+  public boolean oddp()
+  {
+    return value.testBit(0);
+  }
+
+  @Override
+  public boolean plusp()
+  {
+    return value.signum() > 0;
+  }
+
+  @Override
+  public boolean minusp()
+  {
+    return value.signum() < 0;
+  }
+
+  @Override
+  public boolean zerop()
+  {
+    return false;
+  }
+
+  @Override
+  public int intValue()
+  {
+    return value.intValue();
+  }
+
+  @Override
+  public long longValue()
+  {
+    return value.longValue();
+  }
+
+  @Override
+  public float floatValue()
+  {
+    float f = value.floatValue();
+    if (Float.isInfinite(f))
+      error(new TypeError("The value " + princToString() +
+                           " is too large to be converted to a single float."));
+    return f;
+  }
+
+  @Override
+  public double doubleValue()
+  {
+    double d = value.doubleValue();
+    if (Double.isInfinite(d))
+      error(new TypeError("The value " + princToString() +
+                           " is too large to be converted to a double float."));
+    return d;
+  }
+
+  public static BigInteger getValue(LispObject obj)
+  {
+
+    if (obj instanceof Bignum)
+      {
+        return ((Bignum)obj).value;
+      }
+        type_error(obj, Symbol.BIGNUM);
+        // Not reached.
+        return null;
+  }
+
+  @Override
+  public final LispObject incr()
+  {
+    return number(value.add(BigInteger.ONE));
+  }
+
+  @Override
+  public final LispObject decr()
+  {
+    return number(value.subtract(BigInteger.ONE));
+  }
+
+  @Override
+  public LispObject add(int n)
+  {
+    return number(value.add(BigInteger.valueOf(n)));
+  }
+
+  @Override
+  public LispObject add(LispObject obj)
+  {
+    if (obj instanceof Fixnum)
+      return number(value.add(Fixnum.getBigInteger(obj)));
+    if (obj instanceof Bignum)
+      return number(value.add(((Bignum)obj).value));
+    if (obj instanceof Ratio)
+      {
+        BigInteger numerator = ((Ratio)obj).numerator();
+        BigInteger denominator = ((Ratio)obj).denominator();
+        return number(value.multiply(denominator).add(numerator),
+                      denominator);
+      }
+    if (obj instanceof SingleFloat)
+      return new SingleFloat(floatValue() + ((SingleFloat)obj).value);
+    if (obj instanceof DoubleFloat)
+      return new DoubleFloat(doubleValue() + ((DoubleFloat)obj).value);
+    if (obj instanceof Complex)
+      {
+        Complex c = (Complex) obj;
+        return Complex.getInstance(add(c.getRealPart()), c.getImaginaryPart());
+      }
+    return type_error(obj, Symbol.NUMBER);
+  }
+
+  @Override
+  public LispObject subtract(LispObject obj)
+  {
+    if (obj instanceof Fixnum)
+      return number(value.subtract(Fixnum.getBigInteger(obj)));
+    if (obj instanceof Bignum)
+      return number(value.subtract(((Bignum)obj).value));
+    if (obj instanceof Ratio)
+      {
+        BigInteger numerator = ((Ratio)obj).numerator();
+        BigInteger denominator = ((Ratio)obj).denominator();
+        return number(value.multiply(denominator).subtract(numerator),
+                      denominator);
+      }
+    if (obj instanceof SingleFloat)
+      return new SingleFloat(floatValue() - ((SingleFloat)obj).value);
+    if (obj instanceof DoubleFloat)
+      return new DoubleFloat(doubleValue() - ((DoubleFloat)obj).value);
+    if (obj instanceof Complex)
+      {
+        Complex c = (Complex) obj;
+        return Complex.getInstance(subtract(c.getRealPart()),
+                                   Fixnum.ZERO.subtract(c.getImaginaryPart()));
+      }
+    return type_error(obj, Symbol.NUMBER);
+  }
+
+  @Override
+  public LispObject multiplyBy(int n)
+  {
+    if (n == 0)
+      return Fixnum.ZERO;
+    if (n == 1)
+      return this;
+    return new Bignum(value.multiply(BigInteger.valueOf(n)));
+  }
+
+  @Override
+  public LispObject multiplyBy(LispObject obj)
+  {
+    if (obj instanceof Fixnum)
+      {
+        int n = ((Fixnum)obj).value;
+        if (n == 0)
+          return Fixnum.ZERO;
+        if (n == 1)
+          return this;
+        return new Bignum(value.multiply(BigInteger.valueOf(n)));
+      }
+    if (obj instanceof Bignum)
+      return new Bignum(value.multiply(((Bignum)obj).value));
+    if (obj instanceof Ratio)
+      {
+        BigInteger n = ((Ratio)obj).numerator();
+        return number(n.multiply(value), ((Ratio)obj).denominator());
+      }
+    if (obj instanceof SingleFloat)
+      return new SingleFloat(floatValue() * ((SingleFloat)obj).value);
+    if (obj instanceof DoubleFloat)
+      return new DoubleFloat(doubleValue() * ((DoubleFloat)obj).value);
+    if (obj instanceof Complex)
+      {
+        Complex c = (Complex) obj;
+        return Complex.getInstance(multiplyBy(c.getRealPart()),
+                                   multiplyBy(c.getImaginaryPart()));
+      }
+    return type_error(obj, Symbol.NUMBER);
+  }
+
+  @Override
+  public LispObject divideBy(LispObject obj)
+  {
+    if (obj instanceof Fixnum)
+      return number(value, Fixnum.getBigInteger(obj));
+    if (obj instanceof Bignum)
+      return number(value, ((Bignum)obj).value);
+    if (obj instanceof Ratio)
+      {
+        BigInteger d = ((Ratio)obj).denominator();
+        return number(d.multiply(value), ((Ratio)obj).numerator());
+      }
+    if (obj instanceof SingleFloat)
+      return new SingleFloat(floatValue() / ((SingleFloat)obj).value);
+    if (obj instanceof DoubleFloat)
+      return new DoubleFloat(doubleValue() / ((DoubleFloat)obj).value);
+    if (obj instanceof Complex)
+      {
+        Complex c = (Complex) obj;
+        LispObject realPart = c.getRealPart();
+        LispObject imagPart = c.getImaginaryPart();
+        LispObject denominator =
+          realPart.multiplyBy(realPart).add(imagPart.multiplyBy(imagPart));
+        return Complex.getInstance(multiplyBy(realPart).divideBy(denominator),
+                                   Fixnum.ZERO.subtract(multiplyBy(imagPart).divideBy(denominator)));
+      }
+    return type_error(obj, Symbol.NUMBER);
+  }
+
+  @Override
+  public boolean isEqualTo(LispObject obj)
+  {
+    if (obj instanceof Bignum)
+      return value.equals(((Bignum)obj).value);
+    if (obj instanceof SingleFloat)
+      return isEqualTo(((SingleFloat)obj).rational());
+    if (obj instanceof DoubleFloat)
+      return isEqualTo(((DoubleFloat)obj).rational());
+    if (obj.numberp())
+      return false;
+    type_error(obj, Symbol.NUMBER);
+    // Not reached.
+    return false;
+  }
+
+  @Override
+  public boolean isNotEqualTo(LispObject obj)
+  {
+    if (obj instanceof Bignum)
+      return !value.equals(((Bignum)obj).value);
+    if (obj instanceof SingleFloat)
+      return isNotEqualTo(((SingleFloat)obj).rational());
+    if (obj instanceof DoubleFloat)
+      return isNotEqualTo(((DoubleFloat)obj).rational());
+    if (obj.numberp())
+      return true;
+    type_error(obj, Symbol.NUMBER);
+    // Not reached.
+    return false;
+  }
+
+  @Override
+  public boolean isLessThan(LispObject obj)
+  {
+    if (obj instanceof Fixnum)
+      return value.compareTo(Fixnum.getBigInteger(obj)) < 0;
+    if (obj instanceof Bignum)
+      return value.compareTo(((Bignum)obj).value) < 0;
+    if (obj instanceof Ratio)
+      {
+        BigInteger n = value.multiply(((Ratio)obj).denominator());
+        return n.compareTo(((Ratio)obj).numerator()) < 0;
+      }
+    if (obj instanceof SingleFloat)
+      return isLessThan(((SingleFloat)obj).rational());
+    if (obj instanceof DoubleFloat)
+      return isLessThan(((DoubleFloat)obj).rational());
+    type_error(obj, Symbol.REAL);
+    // Not reached.
+    return false;
+  }
+
+  @Override
+  public boolean isGreaterThan(LispObject obj)
+  {
+    if (obj instanceof Fixnum)
+      return value.compareTo(Fixnum.getBigInteger(obj)) > 0;
+    if (obj instanceof Bignum)
+      return value.compareTo(((Bignum)obj).value) > 0;
+    if (obj instanceof Ratio)
+      {
+        BigInteger n = value.multiply(((Ratio)obj).denominator());
+        return n.compareTo(((Ratio)obj).numerator()) > 0;
+      }
+    if (obj instanceof SingleFloat)
+      return isGreaterThan(((SingleFloat)obj).rational());
+    if (obj instanceof DoubleFloat)
+      return isGreaterThan(((DoubleFloat)obj).rational());
+    type_error(obj, Symbol.REAL);
+    // Not reached.
+    return false;
+  }
+
+  @Override
+  public boolean isLessThanOrEqualTo(LispObject obj)
+  {
+    if (obj instanceof Fixnum)
+      return value.compareTo(Fixnum.getBigInteger(obj)) <= 0;
+    if (obj instanceof Bignum)
+      return value.compareTo(((Bignum)obj).value) <= 0;
+    if (obj instanceof Ratio)
+      {
+        BigInteger n = value.multiply(((Ratio)obj).denominator());
+        return n.compareTo(((Ratio)obj).numerator()) <= 0;
+      }
+    if (obj instanceof SingleFloat)
+      return isLessThanOrEqualTo(((SingleFloat)obj).rational());
+    if (obj instanceof DoubleFloat)
+      return isLessThanOrEqualTo(((DoubleFloat)obj).rational());
+    type_error(obj, Symbol.REAL);
+    // Not reached.
+    return false;
+  }
+
+  @Override
+  public boolean isGreaterThanOrEqualTo(LispObject obj)
+  {
+    if (obj instanceof Fixnum)
+      return value.compareTo(Fixnum.getBigInteger(obj)) >= 0;
+    if (obj instanceof Bignum)
+      return value.compareTo(((Bignum)obj).value) >= 0;
+    if (obj instanceof Ratio)
+      {
+        BigInteger n = value.multiply(((Ratio)obj).denominator());
+        return n.compareTo(((Ratio)obj).numerator()) >= 0;
+      }
+    if (obj instanceof SingleFloat)
+      return isGreaterThanOrEqualTo(((SingleFloat)obj).rational());
+    if (obj instanceof DoubleFloat)
+      return isGreaterThanOrEqualTo(((DoubleFloat)obj).rational());
+    type_error(obj, Symbol.REAL);
+    // Not reached.
+    return false;
+  }
+
+  @Override
+  public LispObject truncate(LispObject obj)
+  {
+    final LispThread thread = LispThread.currentThread();
+    LispObject value1, value2;
+    try
+      {
+        if (obj instanceof Fixnum)
+          {
+            BigInteger divisor = ((Fixnum)obj).getBigInteger();
+            BigInteger[] results = value.divideAndRemainder(divisor);
+            BigInteger quotient = results[0];
+            BigInteger remainder = results[1];
+            value1 = number(quotient);
+            value2 = (remainder.signum() == 0) ? Fixnum.ZERO : number(remainder);
+          }
+        else if (obj instanceof Bignum)
+          {
+            BigInteger divisor = ((Bignum)obj).value;
+            BigInteger[] results = value.divideAndRemainder(divisor);
+            BigInteger quotient = results[0];
+            BigInteger remainder = results[1];
+            value1 = number(quotient);
+            value2 = (remainder.signum() == 0) ? Fixnum.ZERO : number(remainder);
+          }
+        else if (obj instanceof Ratio)
+          {
+            Ratio divisor = (Ratio) obj;
+            LispObject quotient =
+              multiplyBy(divisor.DENOMINATOR()).truncate(divisor.NUMERATOR());
+            LispObject remainder =
+              subtract(quotient.multiplyBy(divisor));
+            value1 = quotient;
+            value2 = remainder;
+          }
+        else if (obj instanceof SingleFloat)
+          {
+            // "When rationals and floats are combined by a numerical
+            // function, the rational is first converted to a float of the
+            // same format." 12.1.4.1
+            return new SingleFloat(floatValue()).truncate(obj);
+          }
+        else if (obj instanceof DoubleFloat)
+          {
+            // "When rationals and floats are combined by a numerical
+            // function, the rational is first converted to a float of the
+            // same format." 12.1.4.1
+            return new DoubleFloat(doubleValue()).truncate(obj);
+          }
+        else
+          return type_error(obj, Symbol.REAL);
+      }
+    catch (ArithmeticException e)
+      {
+        if (obj.zerop()) {
+          LispObject operands = new Cons(this, new Cons(obj));
+          LispObject args = new Cons(Keyword.OPERATION,
+                                     new Cons(Symbol.TRUNCATE,
+                                              new Cons(Keyword.OPERANDS,
+                                                       new Cons(operands))));
+
+          return error(new DivisionByZero(args));
+        }
+        else
+          return error(new ArithmeticError(e.getMessage()));
+      }
+    return thread.setValues(value1, value2);
+  }
+
+  @Override
+  public LispObject ash(LispObject obj)
+  {
+    BigInteger n = value;
+    if (obj instanceof Fixnum)
+      {
+        int count = ((Fixnum)obj).value;
+        if (count == 0)
+          return this;
+        // BigInteger.shiftLeft() succumbs to a stack overflow if count
+        // is Integer.MIN_VALUE, so...
+        if (count == Integer.MIN_VALUE)
+          return n.signum() >= 0 ? Fixnum.ZERO : Fixnum.MINUS_ONE;
+        return number(n.shiftLeft(count));
+      }
+    if (obj instanceof Bignum)
+      {
+        BigInteger count = ((Bignum)obj).value;
+        if (count.signum() > 0)
+          return error(new LispError("Can't represent result of left shift."));
+        if (count.signum() < 0)
+          return n.signum() >= 0 ? Fixnum.ZERO : Fixnum.MINUS_ONE;
+        Debug.bug(); // Shouldn't happen.
+      }
+    return type_error(obj, Symbol.INTEGER);
+  }
+
+  @Override
+  public LispObject LOGNOT()
+  {
+    return number(value.not());
+  }
+
+  @Override
+  public LispObject LOGAND(int n)
+  {
+    if (n >= 0)
+      return Fixnum.getInstance(value.intValue() & n);
+    else
+      return number(value.and(BigInteger.valueOf(n)));
+  }
+
+  @Override
+  public LispObject LOGAND(LispObject obj)
+  {
+    if (obj instanceof Fixnum)
+      {
+        int n = ((Fixnum)obj).value;
+        if (n >= 0)
+          return Fixnum.getInstance(value.intValue() & n);
+        else
+          return number(value.and(BigInteger.valueOf(n)));
+      }
+    else if (obj instanceof Bignum)
+      {
+        final BigInteger n = ((Bignum)obj).value;
+        return number(value.and(n));
+      }
+    else
+      return type_error(obj, Symbol.INTEGER);
+  }
+
+  @Override
+  public LispObject LOGIOR(int n)
+  {
+    return number(value.or(BigInteger.valueOf(n)));
+  }
+
+  @Override
+  public LispObject LOGIOR(LispObject obj)
+  {
+    if (obj instanceof Fixnum)
+      {
+        final BigInteger n = ((Fixnum)obj).getBigInteger();
+        return number(value.or(n));
+      }
+    else if (obj instanceof Bignum)
+      {
+        final BigInteger n = ((Bignum)obj).value;
+        return number(value.or(n));
+      }
+    else
+      return type_error(obj, Symbol.INTEGER);
+  }
+
+  @Override
+  public LispObject LOGXOR(int n)
+  {
+    return number(value.xor(BigInteger.valueOf(n)));
+  }
+
+  @Override
+  public LispObject LOGXOR(LispObject obj)
+  {
+    final BigInteger n;
+    if (obj instanceof Fixnum)
+      n = ((Fixnum)obj).getBigInteger();
+    else if (obj instanceof Bignum)
+      n = ((Bignum)obj).value;
+    else
+      return type_error(obj, Symbol.INTEGER);
+    return number(value.xor(n));
+  }
+
+  @Override
+  public LispObject LDB(int size, int position)
+  {
+    BigInteger n = value.shiftRight(position);
+    BigInteger mask = BigInteger.ONE.shiftLeft(size).subtract(BigInteger.ONE);
+    return number(n.and(mask));
+  }
+
+  @Override
+  public int hashCode()
+  {
+    return value.hashCode();
+  }
+
+  @Override
+  public String printObject()
+  {
+    final LispThread thread = LispThread.currentThread();
+    final int base = Fixnum.getValue(Symbol.PRINT_BASE.symbolValue(thread));
+    String s = value.toString(base).toUpperCase();
+    if (Symbol.PRINT_RADIX.symbolValue(thread) != NIL)
+      {
+        StringBuffer sb = new StringBuffer();
+        switch (base)
+          {
+          case 2:
+            sb.append("#b");
+            sb.append(s);
+            break;
+          case 8:
+            sb.append("#o");
+            sb.append(s);
+            break;
+          case 10:
+            sb.append(s);
+            sb.append('.');
+            break;
+          case 16:
+            sb.append("#x");
+            sb.append(s);
+            break;
+          default:
+            sb.append('#');
+            sb.append(String.valueOf(base));
+            sb.append('r');
+            sb.append(s);
+            break;
+          }
+        s = sb.toString();
+      }
+    return s;
+  }
+}
