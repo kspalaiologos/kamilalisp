@@ -27,7 +27,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-target/
 
 ## ANTLR stuff ##
 src/main/java/palaiologos/kamilalisp/parser/Grammar.interp
@@ -41,9 +40,16 @@ src/main/java/palaiologos/kamilalisp/parser/GrammarListener.java
 src/main/java/palaiologos/kamilalisp/parser/GrammarParser.java
 src/main/java/palaiologos/kamilalisp/parser/GrammarVisitor.java
 
-## IDE stuff ##
-.idea/
-dependency-reduced-pom.xml
+src/main/java/palaiologos/kamilalisp/parser/JSON.interp
+src/main/java/palaiologos/kamilalisp/parser/JSON.tokens
+src/main/java/palaiologos/kamilalisp/parser/JSONBaseListener.java
+src/main/java/palaiologos/kamilalisp/parser/JSONBaseVisitor.java
+src/main/java/palaiologos/kamilalisp/parser/JSONLexer.interp
+src/main/java/palaiologos/kamilalisp/parser/JSONLexer.java
+src/main/java/palaiologos/kamilalisp/parser/JSONLexer.tokens
+src/main/java/palaiologos/kamilalisp/parser/JSONListener.java
+src/main/java/palaiologos/kamilalisp/parser/JSONParser.java
+src/main/java/palaiologos/kamilalisp/parser/JSONVisitor.java
 
 ## LaTeX stuff ##
 doc/_minted-main/
@@ -54,22 +60,5 @@ doc/*.out
 doc/*.fls
 doc/*.fdb_latexmk
 
-src/main/java/palaiologos/kamilalisp/parser/JSON.interp
-
-src/main/java/palaiologos/kamilalisp/parser/JSON.tokens
-
-src/main/java/palaiologos/kamilalisp/parser/JSONBaseListener.java
-
-src/main/java/palaiologos/kamilalisp/parser/JSONBaseVisitor.java
-
-src/main/java/palaiologos/kamilalisp/parser/JSONLexer.interp
-
-src/main/java/palaiologos/kamilalisp/parser/JSONLexer.java
-
-src/main/java/palaiologos/kamilalisp/parser/JSONLexer.tokens
-
-src/main/java/palaiologos/kamilalisp/parser/JSONListener.java
-
-src/main/java/palaiologos/kamilalisp/parser/JSONParser.java
-
-src/main/java/palaiologos/kamilalisp/parser/JSONVisitor.java
+## Binaries ##
+target/
