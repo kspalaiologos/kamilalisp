@@ -280,6 +280,7 @@ public final class Load
                                                   boolean print,
                                                   boolean auto)
     {
+        System.out.println("Loading " + filename);
         InputStream in = null;
         Pathname pathname = null;
         Pathname truename = null;
