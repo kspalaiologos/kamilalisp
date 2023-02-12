@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -77,9 +78,10 @@ public class FriCAS {
         return new Pair<>(String.join("\n", result.subList(0, result.size() - 1)).trim(), result.get(result.size() - 1).trim());
     }
 
-    private EvaluationResult eval(String msg) {
+    public EvaluationResult eval(String msg) {
         msg.codePoints().forEach(cin::add);
         Pair<String, String> s = untilPrompt();
+        // XXX: Need to handle arithmetic display.
         boolean successful = s.fst().matches("^\\([0-9]+\\).*");
         String text, type;
         if(successful) {
@@ -94,8 +96,18 @@ public class FriCAS {
 
     public static void main(String[] args) {
         FriCAS cas = FriCAS.getInstance();
-        System.out.println(cas.eval("integrate(exp(1/x^2)/x^3,x)::InputForm\n").getResult());
-        System.out.println(cas.eval("limit(exp(-1/x^2),x=0)::InputForm\n").getResult());
-        System.out.println(cas.eval("limit(-x/x,x=%plusInfinity)::InputForm\n").getResult());
+        // System.out.println(cas.eval("integrate(exp(1/x^2)/x^3,x)::InputForm\n").getResult());
+        // System.out.println(cas.eval("limit(exp(-1/x^2),x=0)::InputForm\n").getResult());
+        // System.out.println(cas.eval("limit(-x/x,x=%plusInfinity)::InputForm\n").getResult());
+        Scanner s = new Scanner(System.in);
+        System.out.println("FriCAS REPL.");
+        while(s.hasNext()) {
+            String m = s.nextLine();
+            EvaluationResult r = cas.eval(m + "\n");
+            if(r.isSuccessful())
+                System.out.println(r.getResult() + "::" + r.getType());
+            else
+                System.out.println("Error: " + r.getResult());
+        }
     }
 }
