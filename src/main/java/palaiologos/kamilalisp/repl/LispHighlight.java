@@ -8,6 +8,7 @@ import org.jline.utils.AttributedString;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 import palaiologos.kamilalisp.atom.Environment;
+import palaiologos.kamilalisp.atom.Parser;
 import palaiologos.kamilalisp.parser.GrammarLexer;
 
 import java.util.regex.Pattern;
@@ -60,20 +61,26 @@ class LispHighlight implements Highlighter {
         AttributedStringBuilder b = new AttributedStringBuilder();
         if (s.isEmpty() || s.trim().isEmpty())
             return b.toAttributedString();
+        GrammarLexer lex;
+
         if(!s.startsWith("?")) {
-            GrammarLexer lex = new GrammarLexer(CharStreams.fromString(s));
-            lex.getAllTokens().forEach(x -> {
-                b.style(getStyleForToken(x, isKeyword(x.getText()), x.getText().trim().isEmpty()));
-                b.append(x.getText());
-            });
+            lex = new GrammarLexer(CharStreams.fromString(s));
         } else {
             b.style(EMPTY_STYLE);
             b.append("?");
-            GrammarLexer lex = new GrammarLexer(CharStreams.fromString(s.substring(1)));
-            lex.getAllTokens().forEach(x -> {
-                b.style(getStyleForToken(x, isKeyword(x.getText()), x.getText().trim().isEmpty()));
-                b.append(x.getText());
-            });
+            lex = new GrammarLexer(CharStreams.fromString(s.substring(1)));
+        }
+
+        lex.removeErrorListeners();
+        int written = 0;
+        for (Token x : lex.getAllTokens()) {
+            b.style(getStyleForToken(x, isKeyword(x.getText()), x.getText().trim().isEmpty()));
+            b.append(x.getText());
+            written += x.getText().length();
+        }
+        if(written != s.length()) {
+            b.style(EMPTY_STYLE);
+            b.append(s.substring(written));
         }
         return b.toAttributedString();
     }
