@@ -13,7 +13,7 @@ public class Absolute extends ShellFunction {
 
     @Override
     protected Atom execute(String flags, List<Atom> args) {
-        String p = args.get(0).toString();
+        String p = args.get(0).getString();
         return new Atom(new File(p).getAbsolutePath());
     }
 }
