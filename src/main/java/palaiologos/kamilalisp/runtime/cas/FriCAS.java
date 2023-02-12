@@ -2,6 +2,8 @@ package palaiologos.kamilalisp.runtime.cas;
 
 import org.armedbear.lisp.Interpreter;
 import palaiologos.kamilalisp.atom.Atom;
+import palaiologos.kamilalisp.atom.Evaluation;
+import palaiologos.kamilalisp.atom.Pair;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FriCAS {
     // Singleton API
@@ -58,7 +61,7 @@ public class FriCAS {
         untilPrompt();
     }
 
-    private String untilPrompt() {
+    private Pair<String, String> untilPrompt() {
         List<String> result = new ArrayList<>();
         while(true) {
             try {
@@ -71,18 +74,28 @@ public class FriCAS {
                 e.printStackTrace();
             }
         }
-        return String.join("\n", result).replaceFirst("\\([0-9]+\\)", "");
+        return new Pair<>(String.join("\n", result.subList(0, result.size() - 1)), result.get(result.size() - 1));
     }
 
-    private String eval(String msg) {
+    private EvaluationResult eval(String msg) {
         msg.codePoints().forEach(cin::add);
-        return untilPrompt().trim();
+        Pair<String, String> s = untilPrompt();
+        boolean successful = s.fst().matches("^\\([0-9]+\\)");
+        String text, type;
+        if(successful) {
+            text = s.fst().replaceFirst("\\([0-9]+\\)", "").trim();
+            type = s.snd().trim().replaceFirst("Type: ", "");
+        } else {
+            text = s.fst() + "\n" + s.snd();
+            type = "";
+        }
+        return new EvaluationResult(successful, text, type);
     }
 
     public static void main(String[] args) {
         FriCAS cas = FriCAS.getInstance();
-        System.out.println(cas.eval("integrate(exp(1/x^2)/x^3,x)::InputForm\n"));
-        System.out.println(cas.eval("limit(exp(-1/x^2),x=0)::InputForm\n"));
-        System.out.println(cas.eval("limit(-x/x,x=%plusInfinity)::InputForm\n"));
+        System.out.println(cas.eval("integrate(exp(1/x^2)/x^3,x)::InputForm\n").getResult());
+        System.out.println(cas.eval("limit(exp(-1/x^2),x=0)::InputForm\n").getResult());
+        System.out.println(cas.eval("limit(-x/x,x=%plusInfinity)::InputForm\n").getResult());
     }
 }
