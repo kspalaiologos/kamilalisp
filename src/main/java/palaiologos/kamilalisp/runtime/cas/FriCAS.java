@@ -16,13 +16,15 @@ import java.util.Scanner;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FriCAS {
     // Singleton API
     private static AtomicReference<FriCAS> instance = null;
-    public static synchronized FriCAS getInstance() {
+    private static synchronized FriCAS getInstance() {
         if (instance == null) {
             instance = new AtomicReference<>(new FriCAS());
         }
@@ -78,11 +80,11 @@ public class FriCAS {
         return new Pair<>(String.join("\n", result.subList(0, result.size() - 1)).trim(), result.get(result.size() - 1).trim());
     }
 
-    public EvaluationResult eval(String msg) {
+    private EvaluationResult eval(String msg) {
         msg.codePoints().forEach(cin::add);
         Pair<String, String> s = untilPrompt();
         // XXX: Need to handle arithmetic display.
-        boolean successful = s.fst().matches("^\\([0-9]+\\).*");
+        boolean successful = s.snd().matches("^Type: .*$");
         String text, type;
         if(successful) {
             text = s.fst().replaceFirst("\\([0-9]+\\)", "").trim();
@@ -92,6 +94,22 @@ public class FriCAS {
             type = "";
         }
         return new EvaluationResult(successful, text, type);
+    }
+
+    private static ReentrantLock lock = new ReentrantLock();
+
+    public static synchronized Object withFriCas(Function<Function<String, EvaluationResult>, Object> callback) {
+        lock.lock();
+        FriCAS cas = FriCAS.getInstance();
+        Object result;
+        try {
+            result = callback.apply(cas::eval);
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            lock.unlock();
+        }
+        return result;
     }
 
     public static void main(String[] args) {

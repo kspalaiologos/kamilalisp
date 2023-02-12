@@ -718,7 +718,7 @@
      (kernel::%function-name func))
     ('t func))))
 
-#+(or :sbcl :clisp :openmcl :ecl :lispworks :poplog)
+#+(or :sbcl :clisp :openmcl :ecl :lispworks :poplog :abcl)
 (defun BPINAME (func)
   (cond
       ((functionp func)
