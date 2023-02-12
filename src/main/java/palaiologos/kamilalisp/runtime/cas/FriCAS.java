@@ -74,17 +74,17 @@ public class FriCAS {
                 e.printStackTrace();
             }
         }
-        return new Pair<>(String.join("\n", result.subList(0, result.size() - 1)), result.get(result.size() - 1));
+        return new Pair<>(String.join("\n", result.subList(0, result.size() - 1)).trim(), result.get(result.size() - 1).trim());
     }
 
     private EvaluationResult eval(String msg) {
         msg.codePoints().forEach(cin::add);
         Pair<String, String> s = untilPrompt();
-        boolean successful = s.fst().matches("^\\([0-9]+\\)");
+        boolean successful = s.fst().matches("^\\([0-9]+\\).*");
         String text, type;
         if(successful) {
             text = s.fst().replaceFirst("\\([0-9]+\\)", "").trim();
-            type = s.snd().trim().replaceFirst("Type: ", "");
+            type = s.snd().replaceFirst("Type: ", "");
         } else {
             text = s.fst() + "\n" + s.snd();
             type = "";
