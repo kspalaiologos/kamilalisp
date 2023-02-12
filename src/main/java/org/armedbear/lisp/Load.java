@@ -280,7 +280,6 @@ public final class Load
                                                   boolean print,
                                                   boolean auto)
     {
-        System.out.println("Loading " + filename);
         InputStream in = null;
         Pathname pathname = null;
         Pathname truename = null;
@@ -320,9 +319,9 @@ public final class Load
                 }
             }
             if (url == null) {
-                return error(new LispError("Failed to find loadable system file "
+                throw new RuntimeException("Failed to find loadable system file "
                                            + "'" + path + "'"
-                                           + " in boot classpath."));
+                                           + " in boot classpath.");
             }                
             if (!bootPath.equals(NIL)) {
               Pathname urlPathname = (Pathname)URLPathname.create(url);
