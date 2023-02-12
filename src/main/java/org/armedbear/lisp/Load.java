@@ -328,8 +328,8 @@ public final class Load
               loadableFile = findLoadableFile(urlPathname);
               truename = (Pathname)Symbol.PROBE_FILE.execute(loadableFile);
               if (truename.equals(NIL)) {
-                return error(new LispError("Failed to find loadable system file in boot classpath "
-                                           + "'" + url + "'"));
+                throw new Error("Failed to find loadable system file in boot classpath "
+                                           + "'" + url + "'");
               }
             } else {
                 truename = null; // We can't represent the FASL in a Pathname (q.v. OSGi)
@@ -346,8 +346,8 @@ public final class Load
             if (t instanceof Pathname) {
                 truename = (Pathname)t;
             } else {
-                return error (new LispError("Failed to find loadable init FASL in "
-                                            + "'" + init.getNamestring() + "'"));
+                throw new Error("Failed to find loadable init FASL in "
+                                            + "'" + init.getNamestring() + "'");
             }
         }
 
@@ -358,10 +358,10 @@ public final class Load
                 Debug.assertTrue(url != null);
                 in = url.openStream();
             } catch (IOException e) {
-                error(new FileError("Failed to load system file: " 
+                throw new Error("Failed to load system file: "
                                     + "'" + filename + "'"
                                     + " from URL: " 
-                                    + "'" + url + "'"));
+                                    + "'" + url + "'");
             } 
         }
 
@@ -384,11 +384,10 @@ public final class Load
                 }
             }
         }
-        return error(new FileError("Failed to load system file: " 
+        throw new Error("Failed to load system file: "
                                    + "'" + filename + "'"
                                    + " resolved as " 
-                                   + "'" + mergedPathname + "'" , 
-                                   truename));
+                                   + "'" + mergedPathname + "'" + truename);
     }
 
     // ### *fasl-version*
