@@ -1,8 +1,6 @@
 package palaiologos.kamilalisp.runtime.cas;
 
 import org.armedbear.lisp.Interpreter;
-import palaiologos.kamilalisp.atom.Atom;
-import palaiologos.kamilalisp.atom.Evaluation;
 import palaiologos.kamilalisp.atom.Pair;
 
 import java.io.IOException;
@@ -24,7 +22,7 @@ import java.util.stream.Stream;
 public class FriCAS {
     // Singleton API
     private static AtomicReference<FriCAS> instance = null;
-    private static synchronized FriCAS getInstance() {
+    public static synchronized FriCAS getInstance() {
         if (instance == null) {
             instance = new AtomicReference<>(new FriCAS());
         }

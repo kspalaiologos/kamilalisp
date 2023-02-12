@@ -52,6 +52,17 @@ src/main/java/palaiologos/kamilalisp/parsers/JSONListener.java
 src/main/java/palaiologos/kamilalisp/parsers/JSONParser.java
 src/main/java/palaiologos/kamilalisp/parsers/JSONVisitor.java
 
+src/main/java/palaiologos/kamilalisp/parsers/FortranFormula.interp
+src/main/java/palaiologos/kamilalisp/parsers/FortranFormula.tokens
+src/main/java/palaiologos/kamilalisp/parsers/FortranFormulaBaseListener.java
+src/main/java/palaiologos/kamilalisp/parsers/FortranFormulaBaseVisitor.java
+src/main/java/palaiologos/kamilalisp/parsers/FortranFormulaLexer.interp
+src/main/java/palaiologos/kamilalisp/parsers/FortranFormulaLexer.java
+src/main/java/palaiologos/kamilalisp/parsers/FortranFormulaLexer.tokens
+src/main/java/palaiologos/kamilalisp/parsers/FortranFormulaListener.java
+src/main/java/palaiologos/kamilalisp/parsers/FortranFormulaParser.java
+src/main/java/palaiologos/kamilalisp/parsers/FortranFormulaVisitor.java
+
 ## IDE stuff ##
 .idea/
 dependency-reduced-pom.xml

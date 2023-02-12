@@ -6,10 +6,10 @@ grammar FortranFormula;
 
 main : toplevel_rule* EOF ;
 toplevel_rule
-    : ID '=' ID '=' expr
+    : ID '=' toplevel_rule
     | ID '=' expr
     | ID '(' NUMBER ')' '=' expr
-    | ID '(' NUMBER ')' '=' ID '=' expr
+    | ID '(' NUMBER ')' '=' toplevel_rule
     ;
 expr
     : '(' expr ',' expr ')'
@@ -25,7 +25,7 @@ expr
 
 ID : [A-Za-z_][A-Za-z0-9_]* ;
 
-FAILED : '"failed"' ;
+FAILED : '"failed"' | '"potentialPole"' ;
 
 fragment SIGN : ('+' | '-') ;
 fragment EXP : ('e' | 'E' | 'd' | 'D') SIGN? INUM+ ;
