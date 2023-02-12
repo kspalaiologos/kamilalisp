@@ -86,7 +86,6 @@ public class FunctionRegistry {
         env.setPrimitive("meta:env-keys", new Atom(new EnvKeys()));
         env.setPrimitive("meta:to-glyphs", new Atom(new ToGlyphs()));
         env.setPrimitive("meta:to-ascii", new Atom(new ToASCII()));
-        env.setPrimitive("levenshtein", "⍫≉", new Atom(new Levenshtein()));
         env.setPrimitive("shannon-entropy", "⍫⍴", new Atom(new Shannon()));
         env.setPrimitive("tally", "⍴", new Atom(new Tally()));
         env.setPrimitive("rank", "⍴⍴", new Atom(new Rank()));
@@ -161,6 +160,7 @@ public class FunctionRegistry {
         env.setPrimitive("str:escape", new Atom(new Escape()));
         env.setPrimitive("str:unescape", new Atom(new Unescape()));
         env.setPrimitive("str:contains", "⍫⊂←", new Atom(new Contains()));
+        env.setPrimitive("str:levenshtein", "⍫≉", new Atom(new Levenshtein()));
 
         env.setPrimitive("parallel:task", new Atom(new Task()));
         env.setPrimitive("parallel:daemon", new Atom(new Daemon()));
@@ -304,7 +304,7 @@ public class FunctionRegistry {
         env.setPrimitive("sh:basename", new Atom(new Basename()));
         env.setPrimitive("sh:mv", new Atom(new Mv()));
         env.setPrimitive("sh:access", new Atom(new Access()));
-        env.setPrimitive("sh:path-sep", new Atom(File.pathSeparator));
+        env.setPrimitive("sh:path-sep", new Atom(File.separator));
 
         env.setPrimitive("date:from", new Atom(new DateTimeFrom()));
         env.setPrimitive("time:from", new Atom(new TimeFrom()));
