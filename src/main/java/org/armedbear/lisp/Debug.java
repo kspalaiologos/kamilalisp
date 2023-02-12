@@ -67,7 +67,6 @@ public final class Debug
 
     public static final void trace(String s)
     {
-        System.err.println(s);
     }
 
     @SuppressWarnings("CallToThreadDumpStack")
