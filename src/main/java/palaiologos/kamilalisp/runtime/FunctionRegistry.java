@@ -305,6 +305,7 @@ public class FunctionRegistry {
         env.setPrimitive("sh:mv", new Atom(new Mv()));
         env.setPrimitive("sh:access", new Atom(new Access()));
         env.setPrimitive("sh:path-sep", new Atom(File.separator));
+        env.setPrimitive("sh:absolute", new Atom(new Absolute()));
 
         env.setPrimitive("date:from", new Atom(new DateTimeFrom()));
         env.setPrimitive("time:from", new Atom(new TimeFrom()));

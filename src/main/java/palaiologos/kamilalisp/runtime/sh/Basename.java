@@ -17,7 +17,7 @@ public class Basename extends ShellFunction {
     @Override
     protected Atom execute(String flags, List<Atom> args) {
         assertArity(args, 1);
-        String path = args.get(0).toString();
+        String path = args.get(0).getString();
         if(path.isEmpty() || path.endsWith(File.separator))
             return new Atom(args);
         String[] components = StringUtils.splitByWholeSeparator(path, File.separator);
