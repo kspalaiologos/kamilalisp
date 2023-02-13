@@ -5,7 +5,9 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Parser;
-import palaiologos.kamilalisp.parsers.*;
+import palaiologos.kamilalisp.parsers.DefaultFortranFormulaGrammarVisitor;
+import palaiologos.kamilalisp.parsers.FortranFormulaLexer;
+import palaiologos.kamilalisp.parsers.FortranFormulaParser;
 
 public class FortranParser {
     public static Atom parse(String s) {

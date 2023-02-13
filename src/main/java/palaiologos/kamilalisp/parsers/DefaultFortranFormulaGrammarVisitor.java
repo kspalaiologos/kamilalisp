@@ -115,6 +115,8 @@ public class DefaultFortranFormulaGrammarVisitor extends FortranFormulaBaseVisit
 
     @Override
     public Atom visitConstant(FortranFormulaParser.ConstantContext ctx) {
+        if(ctx.ID().getText().equals("infinity"))
+            return new Atom("oo", true);
         return new Atom(ctx.ID().getText(), true);
     }
 

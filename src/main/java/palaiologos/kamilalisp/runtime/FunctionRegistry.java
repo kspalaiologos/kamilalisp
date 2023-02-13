@@ -9,6 +9,7 @@ import palaiologos.kamilalisp.runtime.array.hof.*;
 import palaiologos.kamilalisp.runtime.array.sais.SacaBwt;
 import palaiologos.kamilalisp.runtime.array.sais.SacaSais;
 import palaiologos.kamilalisp.runtime.array.sais.SacaUnbwt;
+import palaiologos.kamilalisp.runtime.cas.Integral;
 import palaiologos.kamilalisp.runtime.dataformat.*;
 import palaiologos.kamilalisp.runtime.dataformat.archive.*;
 import palaiologos.kamilalisp.runtime.datetime.*;
@@ -190,6 +191,8 @@ public class FunctionRegistry {
         env.setPrimitive("bit:popcount", "⌶⍏", new Atom(new BitPopcount()));
         env.setPrimitive("bit:unpack", "⌶↓", new Atom(new BitUnpack()));
         env.setPrimitive("bit:pack", "⌶↑", new Atom(new BitPack()));
+
+        env.setPrimitive("cas:integral", "∫", new Atom(new Integral()));
 
         env.setPrimitive("abs", new Atom(new Abs()));
         env.setPrimitive("bernoulli", new Atom(new Bernoulli()));

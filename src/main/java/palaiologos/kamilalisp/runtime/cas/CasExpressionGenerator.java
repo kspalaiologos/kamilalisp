@@ -9,11 +9,23 @@ import java.util.Set;
 
 public class CasExpressionGenerator {
     private static Set<String> allowedFunctions = Set.of(
-            "sin"
+            "sin", "cos", "tan", "cot", "asin", "acos", "atan", "acot",
+            "exp", "log", "log2", "log10"
     );
 
-    private static Map<String, Integer> expectedArities = Map.of(
-            "sin", 1
+    private static Map<String, Integer> expectedArities = Map.ofEntries(
+            Map.entry("sin", 1),
+            Map.entry("cos", 1),
+            Map.entry("tan", 1),
+            Map.entry("cot", 1),
+            Map.entry("asin", 1),
+            Map.entry("acos", 1),
+            Map.entry("atan", 1),
+            Map.entry("acot", 1),
+            Map.entry("exp", 1),
+            Map.entry("log", 1),
+            Map.entry("log2", 1),
+            Map.entry("log10", 1)
     );
 
     public static String generateExpression(Environment e, Atom tree) {
@@ -27,6 +39,14 @@ public class CasExpressionGenerator {
                 return "%pi";
             } else if(id.equals("e")) {
                 return "%e";
+            } else if(id.equals("oo")) {
+                return "%plusInfinity";
+            } else if(id.equals("-oo")) {
+                return "(-%plusInfinity)";
+            } else {
+                if(!id.matches("[a-zA-Z]+"))
+                    throw new RuntimeException("Invalid identifier: " + id);
+                return id;
             }
         } else if(tree.getType() == Type.REAL) {
             return tree.getReal().toString();
@@ -65,7 +85,5 @@ public class CasExpressionGenerator {
         } else {
             throw new RuntimeException("Invalid expression. Unexpected component of type " + tree.getType());
         }
-
-        throw new RuntimeException("Internal error.");
     }
 }
