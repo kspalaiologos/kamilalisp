@@ -45,7 +45,7 @@ public class DefaultFortranFormulaGrammarVisitor extends FortranFormulaBaseVisit
     @Override
     public Atom visitMain(FortranFormulaParser.MainContext ctx) {
         HashMap<Atom, Atom> map = new HashMap();
-        ctx.toplevel_rule().stream().map(this::visit).forEach(x -> map.put(x.getList().get(0), x.getList().get(1)));
+        ctx.toplevel_rule().stream().map(this::visit).forEach(x -> map.put(x.getList().get(1), x.getList().get(2)));
         return new Atom(new HashMapUserData(HashTreePMap.from(map)));
     }
 
@@ -53,28 +53,28 @@ public class DefaultFortranFormulaGrammarVisitor extends FortranFormulaBaseVisit
     public Atom visitAssignRule(FortranFormulaParser.AssignRuleContext ctx) {
         String key = ctx.ID().getText();
         Atom value = visit(ctx.toplevel_rule());
-        return new Atom(List.of(new Atom(key), value));
+        return new Atom(List.of(new Atom("=", true), new Atom(key), value));
     }
 
     @Override
     public Atom visitAssignExpr(FortranFormulaParser.AssignExprContext ctx) {
         String key = ctx.ID().getText();
         Atom value = visit(ctx.expr());
-        return new Atom(List.of(new Atom(key), value));
+        return new Atom(List.of(new Atom("=", true), new Atom(key), value));
     }
 
     @Override
     public Atom visitAssignExprWithIndex(FortranFormulaParser.AssignExprWithIndexContext ctx) {
         String key = ctx.ID().getText() + "(" + ctx.NUMBER().getText() + ")";
         Atom value = visit(ctx.expr());
-        return new Atom(List.of(new Atom(key), value));
+        return new Atom(List.of(new Atom("=", true), new Atom(key), value));
     }
 
     @Override
     public Atom visitAssignRuleWithIndex(FortranFormulaParser.AssignRuleWithIndexContext ctx) {
         String key = ctx.ID().getText() + "(" + ctx.NUMBER().getText() + ")";
         Atom value = visit(ctx.toplevel_rule());
-        return new Atom(List.of(new Atom(key), value));
+        return new Atom(List.of(new Atom("=", true), new Atom(key), value));
     }
 
     @Override
