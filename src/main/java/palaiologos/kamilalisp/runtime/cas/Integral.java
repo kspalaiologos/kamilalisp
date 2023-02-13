@@ -89,7 +89,7 @@ public class Integral extends PrimitiveFunction implements SpecialForm {
                     a = FortranParser.parse(r.getResult()).getUserdata(HashMapUserData.class).value();
                 } catch (Exception e) {
                     if(StackFrame.isDebug())
-                        throw new RuntimeException("Failed to evaluate integral (parse), command=" + instruction + ", result=" + r.getResult());
+                        throw new RuntimeException("Failed to evaluate integral (parse), command=" + beginCode + " " + endCode + " " +instruction + ", result=" + r.getResult());
                     throw new RuntimeException("Failed to evaluate integral.");
                 }
                 if(a.size() == 0) {
@@ -115,7 +115,7 @@ public class Integral extends PrimitiveFunction implements SpecialForm {
                 }
             } else {
                 if(StackFrame.isDebug())
-                    throw new RuntimeException("Failed to evaluate integral, command=" + instruction + ", result=" + r.getResult());
+                    throw new RuntimeException("Failed to evaluate integral, command=" + beginCode + " " + endCode + " " + instruction + ", result=" + r.getResult());
                 throw new RuntimeException("Failed to evaluate integral.");
             }
         } else {

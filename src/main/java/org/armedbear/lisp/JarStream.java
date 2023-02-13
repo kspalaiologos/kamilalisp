@@ -76,10 +76,10 @@ public final class JarStream extends Stream
             bytesPerUnit = 1;
             InputStreamReader isr = new InputStreamReader(input);
             this.reader = (Reader) new BufferedReader(isr);
-            reader.mark(8 * 1024 * 1024);
+            reader.mark(10 * 1024 * 1024);
             initAsCharacterInputStream(this.reader);
         } else {
-            this.input.mark(8 * 1024 * 1024);
+            this.input.mark(10 * 1024 * 1024);
             isBinaryStream = true;
             int width = Fixnum.getValue(elementType.cadr());
             bytesPerUnit = width / 8;
@@ -133,7 +133,8 @@ public final class JarStream extends Stream
             setOpen(false);
         }
         catch (IOException e) {
-            error(new StreamError(this, e));
+            System.err.println("For file " + pathname.getNamestring());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -168,7 +169,8 @@ public final class JarStream extends Stream
             }
         }
         catch (IOException e) {
-            error(new StreamError(this, e));
+            System.err.println("For file " + pathname.getNamestring());
+            throw new RuntimeException(e.getMessage());
         }
         return true;
     }
