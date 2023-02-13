@@ -137,7 +137,10 @@ public class DefaultFortranFormulaGrammarVisitor extends FortranFormulaBaseVisit
 
     @Override
     public Atom visitUnaryPlus(FortranFormulaParser.UnaryPlusContext ctx) {
-        return new Atom(List.of(new Atom("+", true), visit(ctx.expr())));
+        Atom ch = visit(ctx.expr());
+        if(ch.isNumeric())
+            return ch;
+        return new Atom(List.of(new Atom("+", true), ch));
     }
 
     @Override
@@ -147,7 +150,17 @@ public class DefaultFortranFormulaGrammarVisitor extends FortranFormulaBaseVisit
 
     @Override
     public Atom visitUnaryMinus(FortranFormulaParser.UnaryMinusContext ctx) {
-        return new Atom(List.of(new Atom("-", true), visit(ctx.expr())));
+        Atom ch = visit(ctx.expr());
+        if(ch.isNumeric()) {
+            if(ch.getType() == Type.REAL)
+                return new Atom(ch.getReal().negate());
+            else if(ch.getType() == Type.INTEGER)
+                return new Atom(ch.getInteger().negate());
+            else {
+                return new Atom(BigComplex.valueOf(ch.getComplex().re.negate(), ch.getComplex().im));
+            }
+        }
+        return new Atom(List.of(new Atom("-", true), ch));
     }
 
     @Override

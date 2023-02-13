@@ -76,8 +76,10 @@ public final class JarStream extends Stream
             bytesPerUnit = 1;
             InputStreamReader isr = new InputStreamReader(input);
             this.reader = (Reader) new BufferedReader(isr);
+            reader.mark(8 * 1024 * 1024);
             initAsCharacterInputStream(this.reader);
         } else {
+            this.input.mark(8 * 1024 * 1024);
             isBinaryStream = true;
             int width = Fixnum.getValue(elementType.cadr());
             bytesPerUnit = width / 8;
@@ -133,6 +135,42 @@ public final class JarStream extends Stream
         catch (IOException e) {
             error(new StreamError(this, e));
         }
+    }
+
+    @Override
+    protected boolean _setFilePosition(LispObject arg)
+    {
+        try {
+            if(isBinaryStream) {
+                input.reset();
+                long pos = 0;
+                if (arg == Keyword.START)
+                    pos = 0;
+                else if (arg instanceof Fixnum)
+                    pos = ((Fixnum) arg).value * bytesPerUnit;
+                else if (arg instanceof Bignum)
+                    pos = ((Bignum) arg).longValue() * bytesPerUnit;
+                else
+                    type_error(arg, Symbol.INTEGER);
+                input.skip(pos);
+            } else {
+                reader.reset();
+                long pos = 0;
+                if (arg == Keyword.START)
+                    pos = 0;
+                else if (arg instanceof Fixnum)
+                    pos = ((Fixnum) arg).value * bytesPerUnit;
+                else if (arg instanceof Bignum)
+                    pos = arg.longValue() * bytesPerUnit;
+                else
+                    type_error(arg, Symbol.INTEGER);
+                reader.skip(pos);
+            }
+        }
+        catch (IOException e) {
+            error(new StreamError(this, e));
+        }
+        return true;
     }
 
     @Override

@@ -927,25 +927,9 @@ with this hack and will try to convince the GCL crowd to fix this.
          (if (probe-file filename) 0 -1))
      -1))
 
-#+:cmu
-(defun get-current-directory ()
-  (multiple-value-bind (win dir) (unix::unix-current-directory)
-                       (declare (ignore win))  dir))
-
-#+(or :ecl :GCL :sbcl :clisp :openmcl)
-(defun get-current-directory ()
-    (trim-directory-name (namestring (truename ""))))
-
-#+:poplog
 (defun get-current-directory ()
    (let ((name (namestring (truename "."))))
         (trim-directory-name (subseq name 0 (1- (length name))))))
-
-#+lispworks
-(defun get-current-directory ()
-  (let ((directory (namestring (system:current-directory))))
-    (trim-directory-name directory)))
-
 
 (defun |fricas_probe_file| (file)
 #|

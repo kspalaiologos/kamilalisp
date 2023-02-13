@@ -88,6 +88,9 @@ public final class probe_file
                                        p));
           }
 
+          if(arg.chars()[0] == '.' && arg.chars().length == 1)
+              return Symbol.DEFAULT_PATHNAME_DEFAULTS.getSymbolValue();
+
           // TODO: refactor Pathname{,Jar,URL}.truename() to be non-static?
           if (p instanceof JarPathname) {
             return JarPathname.truename(p, true);

@@ -32,7 +32,7 @@ public class Integral extends PrimitiveFunction implements SpecialForm {
                     a = FortranParser.parse(r.getResult()).getUserdata(HashMapUserData.class).value();
                 } catch (Exception e) {
                     if(StackFrame.isDebug())
-                        throw new RuntimeException("Failed to evaluate integral (parse), command=" + instruction + ", result=" + r.getResult());
+                        throw new RuntimeException("Failed to evaluate integral (parse), command=" + instruction + ", result=" + r.getResult() + ", why=" + e.getMessage());
                     throw new RuntimeException("Failed to evaluate integral.");
                 }
                 if(a.size() == 0) {

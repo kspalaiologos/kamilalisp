@@ -12,30 +12,30 @@ toplevel_rule
     | ID '(' NUMBER ')' '=' toplevel_rule # AssignRuleWithIndex
     ;
 expr
-    : ('+infinity'|'infinity') # Infinity
-    | '-infinity' # NegativeInfinity
-    | ID # Constant
-    | NUMBER # Number
-    | FAILED # Failed
-    | '(' expr ',' expr ')' # ComplexConstant
-    | '(' expr ')' # Parenthesis
-    | ID '(' expr (',' expr)* ')' # FunctionCall
-    | expr '**' expr # Exponent
+    : expr '**' expr # Exponent
     | expr '/' expr # Division
     | expr '*' expr # Multiplication
     | expr '+' expr # Addition
     | expr '-' expr # Subtraction
     | '+' expr # UnaryPlus
     | '-' expr # UnaryMinus
+    | '(' expr ',' expr ')' # ComplexConstant
+    | '(' expr ')' # Parenthesis
+    | ID '(' expr (',' expr)* ')' # FunctionCall
+    | 'infinity' # Infinity
+    | '-infinity' # NegativeInfinity
+    | FAILED # Failed
+    | ID # Constant
+    | NUMBER # Number
     ;
 
-ID : [A-Za-z_][A-Za-z0-9_]* ;
+ID : [A-Za-z_%][A-Za-z0-9_]* ;
 
 FAILED : '"failed"' | '"potentialPole"' ;
 
 fragment SIGN : ('+' | '-') ;
 fragment EXP : ('e' | 'E' | 'd' | 'D') SIGN? INUM+ ;
 fragment INUM : ('0' .. '9') ;
-NUMBER : SIGN? INUM+ ('.' INUM* EXP?)? ;
+NUMBER : INUM+ ('.' INUM* EXP?)? ;
 
 TRASH : [ \t\r\n]+ -> channel(HIDDEN) ;
