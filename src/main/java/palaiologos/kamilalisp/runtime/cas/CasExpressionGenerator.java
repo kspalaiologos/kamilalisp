@@ -42,7 +42,7 @@ public class CasExpressionGenerator {
             } else if(id.equals("oo")) {
                 return "%plusInfinity";
             } else if(id.equals("-oo")) {
-                return "(-%plusInfinity)";
+                return "%minusInfinity";
             } else {
                 if(!id.matches("[a-zA-Z]+"))
                     throw new RuntimeException("Invalid identifier: " + id);
@@ -64,12 +64,20 @@ public class CasExpressionGenerator {
             String id = head.getIdentifier();
             switch(id) {
                 case "+":
+                    if(tree.getList().size() == 2)
+                        return "conj(" + generateExpression(e, tree.getList().get(1)) + ")";
                     return tree.getList().stream().skip(1).map(x -> generateExpression(e, x)).reduce((x, y) -> "((" + x + ")+(" + y + "))").get();
                 case "-":
+                    if(tree.getList().size() == 2)
+                        return "-(" + generateExpression(e, tree.getList().get(1)) + ")";
                     return tree.getList().stream().skip(1).map(x -> generateExpression(e, x)).reduce((x, y) -> "((" + x + ")-(" + y + "))").get();
                 case "*":
+                    if(tree.getList().size() == 2)
+                        return "signum(" + generateExpression(e, tree.getList().get(1)) + ")";
                     return tree.getList().stream().skip(1).map(x -> generateExpression(e, x)).reduce((x, y) -> "((" + x + ")*(" + y + "))").get();
                 case "/":
+                    if(tree.getList().size() == 2)
+                        return "1/(" + generateExpression(e, tree.getList().get(1)) + ")";
                     return tree.getList().stream().skip(1).map(x -> generateExpression(e, x)).reduce((x, y) -> "((" + x + ")/(" + y + "))").get();
                 case "**":
                     return tree.getList().stream().skip(1).map(x -> generateExpression(e, x)).reduce((x, y) -> "((" + x + ")^(" + y + "))").get();

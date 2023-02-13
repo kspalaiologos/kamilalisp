@@ -104,6 +104,11 @@ public class DefaultFortranFormulaGrammarVisitor extends FortranFormulaBaseVisit
     }
 
     @Override
+    public Atom visitInfinity(FortranFormulaParser.InfinityContext ctx) {
+        return new Atom("oo", true);
+    }
+
+    @Override
     public Atom visitSubtraction(FortranFormulaParser.SubtractionContext ctx) {
         return new Atom(List.of(new Atom("-", true), visit(ctx.expr(0)), visit(ctx.expr(1))));
     }
@@ -128,6 +133,21 @@ public class DefaultFortranFormulaGrammarVisitor extends FortranFormulaBaseVisit
     @Override
     public Atom visitFailed(FortranFormulaParser.FailedContext ctx) {
         return new Atom(ctx.getText().replace("\"", ""));
+    }
+
+    @Override
+    public Atom visitUnaryPlus(FortranFormulaParser.UnaryPlusContext ctx) {
+        return new Atom(List.of(new Atom("+", true), visit(ctx.expr())));
+    }
+
+    @Override
+    public Atom visitNegativeInfinity(FortranFormulaParser.NegativeInfinityContext ctx) {
+        return new Atom("-oo", true);
+    }
+
+    @Override
+    public Atom visitUnaryMinus(FortranFormulaParser.UnaryMinusContext ctx) {
+        return new Atom(List.of(new Atom("-", true), visit(ctx.expr())));
     }
 
     @Override

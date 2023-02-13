@@ -12,7 +12,9 @@ toplevel_rule
     | ID '(' NUMBER ')' '=' toplevel_rule # AssignRuleWithIndex
     ;
 expr
-    : ID # Constant
+    : ('+infinity'|'infinity') # Infinity
+    | '-infinity' # NegativeInfinity
+    | ID # Constant
     | NUMBER # Number
     | FAILED # Failed
     | '(' expr ',' expr ')' # ComplexConstant
@@ -23,6 +25,8 @@ expr
     | expr '*' expr # Multiplication
     | expr '+' expr # Addition
     | expr '-' expr # Subtraction
+    | '+' expr # UnaryPlus
+    | '-' expr # UnaryMinus
     ;
 
 ID : [A-Za-z_][A-Za-z0-9_]* ;

@@ -11,7 +11,10 @@ import palaiologos.kamilalisp.parsers.FortranFormulaParser;
 
 public class FortranParser {
     public static Atom parse(String s) {
-        s = s.replaceAll("\\&[ \\t]+", "").replace("\r", "").replace("\n", "");
+        s = s.replaceAll("\\&[ \\t]+", "")
+                .replace("\r", "")
+                .replace("\n", "")
+                .replaceAll("NOTHING\\(\\)", "");
         FortranFormulaLexer lex = new FortranFormulaLexer(CharStreams.fromString(s));
         lex.removeErrorListeners();
         lex.addErrorListener(new Parser.ThrowingErrorListener(0));

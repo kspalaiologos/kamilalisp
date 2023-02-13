@@ -63,14 +63,18 @@ public class StackFrame {
             }
         }
 
-        String isDebug = System.getenv("DEBUG");
-        if ("true".equals(isDebug)) {
+        if (isDebug()) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             t.printStackTrace(pw);
             sb.append(sw);
         }
         return sb.toString();
+    }
+
+    public static boolean isDebug() {
+        String isDebug = System.getenv("DEBUG");
+        return "true".equals(isDebug);
     }
 
     public static void wipe() {
