@@ -39,6 +39,9 @@ class TestCAS {
         assertEquals(Common.runCode("""
             (cas:integral (* (sin x) (cos x) (tan x)) dx)
         """).toString(), "(/ (- (+ (* (cos x) (sin x)) x)) 2)");
+        assertEquals(Common.runCode("""
+            (cas:integral (/ (cos x)) dx)
+        """).toString(), "(/ (- (log (+ (sin x) 1)) (log (- (+ (sin x) 1)))) 2)");
     }
 
     @Test

@@ -35,9 +35,6 @@ public class Integral extends PrimitiveFunction implements SpecialForm {
                         throw new RuntimeException("Failed to evaluate integral (parse), command=" + instruction + ", result=" + r.getResult() + ", why=" + e.getMessage());
                     throw new RuntimeException("Failed to evaluate integral.");
                 }
-                System.out.println("\n" + instruction);
-                System.out.println(r.getResult());
-                System.out.println(a);
                 if(a.size() == 0) {
                     // No solution.
                     return Atom.NULL;
