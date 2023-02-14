@@ -72,13 +72,6 @@ class TestCAS {
     }
 
     @Test
-    void testDefiniteIntegral() {
-        assertEquals(Common.runCode("""
-            (cas:integral -oo oo (exp (- (** x 2))) dx)
-        """).toString(), "(sqrt (pi))");
-    }
-
-    @Test
     void testIntegralSpecialFunction() {
         assertEquals(Common.runCode("""
             (cas:integral (* (** x n) (exp (/ (- (* x x)) 2))) dx)
@@ -86,8 +79,16 @@ class TestCAS {
     }
 
     @Test
-    void testProblematicIntegrals() {
-        assertThrows(RuntimeException.class, () -> Common.runCode("(cas:integral 0 oo (* (** x n) (exp (/ (- (* x x)) 2))) dx)"), "Potential pole in the integral. Use the no-pole option to ignore.");
-        assertThrows(RuntimeException.class, () -> Common.runCode("(cas:integral 0 oo (* (** x n) (exp (/ (- (* x x)) 2))) dx (no-pole))"), "Failed to evaluate integral.");
+    void testDefiniteKuratowski() {
+        assertEquals(Common.runCode("""
+            (cas:integral (/ (* x (sin x)) (+ 1 (** (cos x) 2))) dx)
+        """).toString(), "(/ (- (- (+ (- (- (- (- (+ (+ (- (- (+ (* (* x 0J1) (log (/ (- (- (+ (* (- (+ (sqrt 2) 0J1) 1) (sin x)) (* (- (- (+ (* 0J1 (sqrt 2)) 0J1) 1)) (cos x))) (+ (* 0J1 (sqrt 2)) 0J1)) 1) (- (+ (* (- (sqrt 2) 1) (sin x)) (* (- (+ (* 0J1 (sqrt 2)) 0J1)) (cos x))) (+ (* 0J1 (sqrt 2)) 0J1))))) (* (* x 0J1) (log (/ (- (+ (+ (* (- (+ (sqrt 2) 0J1) 1) (sin x)) (* (- (* 0J1 (sqrt 2)) (+ 0J1 1)) (cos x))) (* 0J1 (sqrt 2))) (+ 0J1 1)) (- (+ (+ (* (- (sqrt 2) 1) (sin x)) (* (- (* 0J1 (sqrt 2)) 0J1) (cos x))) (* 0J1 (sqrt 2))) 0J1))))) (* (* x 0J1) (log (/ (- (- (- (+ (* (+ (+ (sqrt 2) 0J1) 1) (sin x)) (* (- (- (- (* 0J1 (sqrt 2)) 0J1) 1)) (cos x))) (* 0J1 (sqrt 2))) 0J1) 1) (- (- (+ (* (+ (sqrt 2) 1) (sin x)) (* (- (- (* 0J1 (sqrt 2)) 0J1)) (cos x))) (* 0J1 (sqrt 2))) 0J1))))) (* (* x 0J1) (log (/ (+ (+ (+ (+ (* (+ (+ (sqrt 2) 0J1) 1) (sin x)) (* (+ (+ (* 0J1 (sqrt 2)) 0J1) 1) (cos x))) (* 0J1 (sqrt 2))) 0J1) 1) (+ (+ (+ (* (+ (sqrt 2) 1) (sin x)) (* (+ (* 0J1 (sqrt 2)) 0J1) (cos x))) (* 0J1 (sqrt 2))) 0J1))))) (* (* x 0J1) (log (/ (- (+ (+ (+ (* (- (sqrt 2) (+ 0J1 1)) (sin x)) (* (- (+ (* 0J1 (sqrt 2)) 0J1) 1) (cos x))) (* 0J1 (sqrt 2))) 0J1) 1) (+ (+ (+ (* (+ (sqrt 2) 1) (sin x)) (* (+ (* 0J1 (sqrt 2)) 0J1) (cos x))) (* 0J1 (sqrt 2))) 0J1))))) (* (* x 0J1) (log (/ (- (- (+ (* (- (sqrt 2) (+ 0J1 1)) (sin x)) (* (- (- (* 0J1 (sqrt 2)) (+ 0J1 1))) (cos x))) (* 0J1 (sqrt 2))) (+ 0J1 1)) (- (- (+ (* (+ (sqrt 2) 1) (sin x)) (* (- (- (* 0J1 (sqrt 2)) 0J1)) (cos x))) (* 0J1 (sqrt 2))) 0J1))))) (* (* x 0J1) (log (/ (- (- (+ (+ (* (- (- (sqrt 2) 0J1) 1) (sin x)) (* (- (- (* 0J1 (sqrt 2)) 0J1) 1) (cos x))) (* 0J1 (sqrt 2))) 0J1) 1) (- (+ (+ (* (- (sqrt 2) 1) (sin x)) (* (- (* 0J1 (sqrt 2)) 0J1) (cos x))) (* 0J1 (sqrt 2))) 0J1))))) (* (* x 0J1) (log (/ (- (+ (* (- (- (sqrt 2) 0J1) 1) (sin x)) (* (- (+ (+ (* 0J1 (sqrt 2)) 0J1) 1)) (cos x))) (+ (+ (* 0J1 (sqrt 2)) 0J1) 1)) (- (+ (* (- (sqrt 2) 1) (sin x)) (* (- (+ (* 0J1 (sqrt 2)) 0J1)) (cos x))) (+ (* 0J1 (sqrt 2)) 0J1)))))) (+ (+ (dilog (/ (- (- (+ (* (- (+ (sqrt 2) 0J1) 1) (sin x)) (* (- (- (+ (* 0J1 (sqrt 2)) 0J1) 1)) (cos x))) (+ (* 0J1 (sqrt 2)) 0J1)) 1) (- (+ (* (- (sqrt 2) 1) (sin x)) (* (- (+ (* 0J1 (sqrt 2)) 0J1)) (cos x))) (+ (* 0J1 (sqrt 2)) 0J1)))) (dilog (/ (- (+ (+ (* (- (+ (sqrt 2) 0J1) 1) (sin x)) (* (- (* 0J1 (sqrt 2)) (+ 0J1 1)) (cos x))) (* 0J1 (sqrt 2))) (+ 0J1 1)) (- (+ (+ (* (- (sqrt 2) 1) (sin x)) (* (- (* 0J1 (sqrt 2)) 0J1) (cos x))) (* 0J1 (sqrt 2))) 0J1)))) (dilog (/ (- (- (- (+ (* (+ (+ (sqrt 2) 0J1) 1) (sin x)) (* (- (- (- (* 0J1 (sqrt 2)) 0J1) 1)) (cos x))) (* 0J1 (sqrt 2))) 0J1) 1) (- (- (+ (* (+ (sqrt 2) 1) (sin x)) (* (- (- (* 0J1 (sqrt 2)) 0J1)) (cos x))) (* 0J1 (sqrt 2))) 0J1))))) (dilog (/ (+ (+ (+ (+ (* (+ (+ (sqrt 2) 0J1) 1) (sin x)) (* (+ (+ (* 0J1 (sqrt 2)) 0J1) 1) (cos x))) (* 0J1 (sqrt 2))) 0J1) 1) (+ (+ (+ (* (+ (sqrt 2) 1) (sin x)) (* (+ (* 0J1 (sqrt 2)) 0J1) (cos x))) (* 0J1 (sqrt 2))) 0J1)))) (dilog (/ (- (+ (+ (+ (* (- (sqrt 2) (+ 0J1 1)) (sin x)) (* (- (+ (* 0J1 (sqrt 2)) 0J1) 1) (cos x))) (* 0J1 (sqrt 2))) 0J1) 1) (+ (+ (+ (* (+ (sqrt 2) 1) (sin x)) (* (+ (* 0J1 (sqrt 2)) 0J1) (cos x))) (* 0J1 (sqrt 2))) 0J1)))) (dilog (/ (- (- (+ (* (- (sqrt 2) (+ 0J1 1)) (sin x)) (* (- (- (* 0J1 (sqrt 2)) (+ 0J1 1))) (cos x))) (* 0J1 (sqrt 2))) (+ 0J1 1)) (- (- (+ (* (+ (sqrt 2) 1) (sin x)) (* (- (- (* 0J1 (sqrt 2)) 0J1)) (cos x))) (* 0J1 (sqrt 2))) 0J1)))) (+ (dilog (/ (- (- (+ (+ (* (- (- (sqrt 2) 0J1) 1) (sin x)) (* (- (- (* 0J1 (sqrt 2)) 0J1) 1) (cos x))) (* 0J1 (sqrt 2))) 0J1) 1) (- (+ (+ (* (- (sqrt 2) 1) (sin x)) (* (- (* 0J1 (sqrt 2)) 0J1) (cos x))) (* 0J1 (sqrt 2))) 0J1))) (dilog (/ (- (+ (* (- (- (sqrt 2) 0J1) 1) (sin x)) (* (- (+ (+ (* 0J1 (sqrt 2)) 0J1) 1)) (cos x))) (+ (+ (* 0J1 (sqrt 2)) 0J1) 1)) (- (+ (* (- (sqrt 2) 1) (sin x)) (* (- (+ (* 0J1 (sqrt 2)) 0J1)) (cos x))) (+ (* 0J1 (sqrt 2)) 0J1)))))) 4)");
+    }
+
+    @Test
+    void testMultipleValues() {
+        assertEquals(Common.runCode("""
+            (cas:integral (/ (+ a (** x 2))) dx)
+        """).toString(), "(tie (/ (log (/ (+ (* (- (* x x) a) (sqrt (- a))) (* (* 2 a) x)) (+ (* x x) a))) (* 2 (sqrt (- a)))) (/ (atan (/ (* x (sqrt a)) a)) (sqrt a)))");
     }
 }

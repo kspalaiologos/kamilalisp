@@ -8,13 +8,27 @@ import palaiologos.kamilalisp.atom.Parser;
 import palaiologos.kamilalisp.parsers.DefaultFortranFormulaGrammarVisitor;
 import palaiologos.kamilalisp.parsers.FortranFormulaLexer;
 import palaiologos.kamilalisp.parsers.FortranFormulaParser;
+import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
+
+import java.util.Iterator;
+import java.util.stream.Collectors;
 
 public class FortranParser {
     public static Atom parse(String s) {
+        // Skip until the first match of ^[A-Z][0-9]+=.
+        Iterator<String> it = s.lines().map(x -> x.trim().matches("^[A-Z][0-9]+(\\([0-9]+\\))?=.*") ? x : null).iterator();
+        int lineIdx = 0;
+        while (it.hasNext()) {
+            String q = it.next();
+            if (q != null)
+                break;
+            lineIdx++;
+        }
+        s = s.lines().skip(lineIdx).collect(Collectors.joining());
+
         s = s.replaceAll("[ \\t]+\\&[ \\t]*", "")
-                .replace("\r", "")
-                .replace("\n", "")
                 .replaceAll("NOTHING\\(\\)", "")
+                .replaceAll("DSQRT\\(\\-1\\.0D0\\)", "%i")
                 .replaceAll("DEXP\\(1\\)", "%e");
         FortranFormulaLexer lex = new FortranFormulaLexer(CharStreams.fromString(s));
         lex.removeErrorListeners();
@@ -29,7 +43,9 @@ public class FortranParser {
     }
 
     public static void main(String[] args) {
-        String s = "R2=(x*x*DEXP(1))/2";
-        System.out.println(parse(s));
+        String s = "      T1(1)=DLOG(((x*x-a)*DSQRT(-a)+2*a*x)/(x*x+a))/(2*DSQRT(-a))\n" +
+                "      T1(2)=DATAN((x*DSQRT(a))/a)/DSQRT(a)\n" +
+                "      R2=T1";
+        System.out.println(Integral.processSolution(parse(s).getUserdata(HashMapUserData.class).value()));
     }
 }

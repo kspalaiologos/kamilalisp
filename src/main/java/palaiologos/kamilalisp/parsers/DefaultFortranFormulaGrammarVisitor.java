@@ -126,7 +126,8 @@ public class DefaultFortranFormulaGrammarVisitor extends FortranFormulaBaseVisit
             return new Atom(List.of(new Atom("pi", true)));
         if(ctx.ID().getText().equals("%e") || ctx.ID().getText().equals("e"))
             return new Atom(List.of(new Atom("e", true)));
-
+        if(ctx.ID().getText().equals("%i") || ctx.ID().getText().equals("i"))
+            return new Atom(BigComplex.valueOf(BigDecimal.ZERO, BigDecimal.ONE));
         return new Atom(ctx.ID().getText(), true);
     }
 
