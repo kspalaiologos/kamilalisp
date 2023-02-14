@@ -85,6 +85,10 @@ public class CasExpressionGenerator {
                     return tree.getList().stream().skip(1).map(x -> generateExpression(e, x)).reduce((x, y) -> "((" + x + ")/(" + y + "))").get();
                 case "**":
                     return tree.getList().stream().skip(1).map(x -> generateExpression(e, x)).reduce((x, y) -> "((" + x + ")^(" + y + "))").get();
+                case "pi":
+                    return "%pi";
+                case "e":
+                    return "exp(1)";
                 default:
                     if(allowedFunctions.contains(id)) {
                         if(tree.getList().size() - 1 != expectedArities.get(id))

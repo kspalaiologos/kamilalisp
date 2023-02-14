@@ -48,6 +48,13 @@ class TestCAS {
     void testIntegralExpLog() {
         assertEquals(Common.runCode("""
             (cas:integral (exp (+ 1 (ln x))) dx)
-        """).toString(), "(/ (* (* x x) e) 2)");
+        """).toString(), "(/ (* (* x x) (e)) 2)");
+    }
+
+    @Test
+    void testDefiniteIntegral() {
+        assertEquals(Common.runCode("""
+            (cas:integral -oo oo (exp (- (** x 2))) dx)
+        """).toString(), "(sqrt (pi))");
     }
 }
