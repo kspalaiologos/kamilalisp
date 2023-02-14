@@ -39,9 +39,14 @@ class TestCAS {
         assertEquals(Common.runCode("""
             (cas:integral (* (sin x) (cos x) (tan x)) dx)
         """).toString(), "(/ (- (+ (* (cos x) (sin x)) x)) 2)");
+
         assertEquals(Common.runCode("""
             (cas:integral (/ (cos x)) dx)
         """).toString(), "(/ (- (log (+ (sin x) 1)) (log (- (+ (sin x) 1)))) 2)");
+
+        assertEquals(Common.runCode("""
+            (cas:integral (sqrt (tan x)) dx)
+        """).toString(), "(/ (- (- (- (* (* 4 (sqrt 2)) (atan (/ 1 (- (+ (sqrt (/ (- (+ (+ (* (* (* 2 (sqrt 2)) (cos x)) (sqrt (/ (sin x) (cos x)))) (* 2 (sin x))) (* 2 (cos x)))) (cos x))) (* (sqrt 2) (sqrt (/ (sin x) (cos x))))) 1)))) (* (* 4 (sqrt 2)) (atan (/ 1 (+ (+ (sqrt (/ (+ (+ (* (* (* 2 (sqrt 2)) (cos x)) (sqrt (/ (sin x) (cos x)))) (* 2 (sin x))) (* 2 (cos x))) (cos x))) (* (sqrt 2) (sqrt (/ (sin x) (cos x))))) 1))))) (+ (* (sqrt 2) (log (/ (+ (+ (* (* (* 2 (sqrt 2)) (cos x)) (sqrt (/ (sin x) (cos x)))) (* 2 (sin x))) (* 2 (cos x))) (cos x)))) (* (sqrt 2) (log (/ (- (+ (+ (* (* (* 2 (sqrt 2)) (cos x)) (sqrt (/ (sin x) (cos x)))) (* 2 (sin x))) (* 2 (cos x)))) (cos x))))))) 4)");
     }
 
     @Test
