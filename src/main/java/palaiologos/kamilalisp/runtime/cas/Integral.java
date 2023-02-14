@@ -51,7 +51,7 @@ public class Integral extends PrimitiveFunction implements SpecialForm {
                     } else {
                         return solution;
                     }
-                } else if(a.size() > 1) {
+                } else {
                     // More than one solution.
                     // Return a list of keys starting with T.
                     return new Atom(a.entrySet().stream().filter(x -> x.getKey().getString().startsWith("T")).map(x -> x.getValue()).toList());
@@ -108,7 +108,7 @@ public class Integral extends PrimitiveFunction implements SpecialForm {
                     } else {
                         return solution;
                     }
-                } else if(a.size() > 1) {
+                } else {
                     // More than one solution.
                     // Return a list of keys starting with T.
                     return new Atom(a.entrySet().stream().filter(x -> x.getKey().getString().startsWith("T")).map(x -> x.getValue()).toList());
@@ -121,8 +121,6 @@ public class Integral extends PrimitiveFunction implements SpecialForm {
         } else {
             throw new RuntimeException("Invalid number of arguments.");
         }
-
-        throw new RuntimeException("Internal error.");
     }
 
     @Override

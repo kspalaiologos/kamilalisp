@@ -10,7 +10,7 @@ import java.util.Set;
 public class CasExpressionGenerator {
     private static Set<String> allowedFunctions = Set.of(
             "sin", "cos", "tan", "cot", "asin", "acos", "atan", "acot",
-            "exp", "log", "log2", "log10"
+            "exp", "ln", "log2", "log10"
     );
 
     private static Map<String, Integer> expectedArities = Map.ofEntries(
@@ -23,9 +23,13 @@ public class CasExpressionGenerator {
             Map.entry("atan", 1),
             Map.entry("acot", 1),
             Map.entry("exp", 1),
-            Map.entry("log", 1),
+            Map.entry("ln", 1),
             Map.entry("log2", 1),
             Map.entry("log10", 1)
+    );
+
+    private static Map<String, String> primitiveTranslations = Map.ofEntries(
+            Map.entry("ln", "log")
     );
 
     public static String generateExpression(Environment e, Atom tree) {
@@ -38,7 +42,7 @@ public class CasExpressionGenerator {
             } else if(id.equals("pi")) {
                 return "%pi";
             } else if(id.equals("e")) {
-                return "%e";
+                return "exp(1)";
             } else if(id.equals("oo")) {
                 return "%plusInfinity";
             } else if(id.equals("-oo")) {
@@ -85,6 +89,8 @@ public class CasExpressionGenerator {
                     if(allowedFunctions.contains(id)) {
                         if(tree.getList().size() - 1 != expectedArities.get(id))
                             throw new RuntimeException("Invalid arity for function: " + id);
+                        if(primitiveTranslations.containsKey(id))
+                            id = primitiveTranslations.get(id);
                         return id + "(" + tree.getList().stream().skip(1).map(x -> generateExpression(e, x)).reduce((x, y) -> x + "," + y).get() + ")";
                     } else {
                         throw new RuntimeException("Unknown function: " + id);
