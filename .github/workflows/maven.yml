@@ -13,15 +13,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build with Maven
-      run: mvn -B package -P native --file pom.xml
-    - name: Compress the native image with UPX
-      run: upx --lzma target/kamilalisp
+      run: mvn -B package --file pom.xml
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.1
       with:
-        name: kamilalisp-0.2
-        path: |
-          target/kamilalisp-0.2.jar
-          target/kamilalisp
+        name: kamilalisp-0.2.jar
+        path: target/kamilalisp-0.2.jar
