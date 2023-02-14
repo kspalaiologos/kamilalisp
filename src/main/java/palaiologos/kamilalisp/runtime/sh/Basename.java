@@ -1,6 +1,7 @@
 package palaiologos.kamilalisp.runtime.sh;
 
 import org.apache.commons.compress.utils.FileNameUtils;
+import org.apache.commons.lang3.StringUtils;
 import palaiologos.kamilalisp.atom.Atom;
 
 import java.io.File;
@@ -16,10 +17,10 @@ public class Basename extends ShellFunction {
     @Override
     protected Atom execute(String flags, List<Atom> args) {
         assertArity(args, 1);
-        String path = args.get(0).toString();
-        if(path.isEmpty() || path.endsWith(File.pathSeparator))
+        String path = args.get(0).getString();
+        if(path.isEmpty() || path.endsWith(File.separator))
             return new Atom(args);
-        String[] components = path.split(File.pathSeparator);
+        String[] components = StringUtils.splitByWholeSeparator(path, File.separator);
         String file = components[components.length - 1];
         // Extract name and extension
         String name = FileNameUtils.getBaseName(file);

@@ -9,13 +9,13 @@ import java.util.List;
 public class Levenshtein extends PrimitiveFunction implements Lambda {
     @Override
     protected String name() {
-        return "levenshtein";
+        return "str:levenshtein";
     }
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if (args.size() != 2)
-            throw new RuntimeException("levenshtein called with wrong number of arguments.");
+            throw new RuntimeException("str:levenshtein called with wrong number of arguments.");
 
         args.get(0).assertTypes(Type.STRING);
         args.get(1).assertTypes(Type.STRING);

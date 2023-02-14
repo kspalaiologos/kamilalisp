@@ -27,7 +27,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-target/
 
 ## ANTLR stuff ##
 src/main/java/palaiologos/kamilalisp/parsers/Grammar.interp
@@ -63,10 +62,6 @@ src/main/java/palaiologos/kamilalisp/parsers/FortranFormulaListener.java
 src/main/java/palaiologos/kamilalisp/parsers/FortranFormulaParser.java
 src/main/java/palaiologos/kamilalisp/parsers/FortranFormulaVisitor.java
 
-## IDE stuff ##
-.idea/
-dependency-reduced-pom.xml
-
 ## LaTeX stuff ##
 doc/_minted-main/
 doc/**/*.aux
@@ -75,3 +70,6 @@ doc/*.log
 doc/*.out
 doc/*.fls
 doc/*.fdb_latexmk
+
+## Binaries ##
+target/
