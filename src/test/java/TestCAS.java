@@ -57,6 +57,13 @@ class TestCAS {
     }
 
     @Test
+    void testRationalIntegral() {
+        assertEquals(Common.runCode("""
+            (cas:integral (/ (sqrt (+ 1 (** x 2))) (+ 1 (** x 3))) dx)
+        """).toString(), "(/ (- (* (sqrt 2) (log (/ (- (- (- (+ (* (+ (+ (sqrt 2) x) 1) (sqrt (+ (* x x) 1))) (* (- (- x 1)) (sqrt 2))) (* x x)) x) 2) (- (- (* (+ x 1) (sqrt (+ (* x x) 1))) (* x x)) x)))) (* 2 (atan (/ (- (- (* (- (* 2 x) 1) (sqrt (+ (* x x) 1))) (+ (* (* 2 x) x) x)) 1) (- (- (sqrt (+ (* x x) 1)) x) 1))))) 3)");
+    }
+
+    @Test
     void testDefiniteIntegral() {
         assertEquals(Common.runCode("""
             (cas:integral -oo oo (exp (- (** x 2))) dx)
