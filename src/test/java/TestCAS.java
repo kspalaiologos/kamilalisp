@@ -47,6 +47,10 @@ class TestCAS {
         assertEquals(Common.runCode("""
             (cas:integral (sqrt (tan x)) dx)
         """).toString(), "(/ (- (- (- (* (* 4 (sqrt 2)) (atan (/ 1 (- (+ (sqrt (/ (- (+ (+ (* (* (* 2 (sqrt 2)) (cos x)) (sqrt (/ (sin x) (cos x)))) (* 2 (sin x))) (* 2 (cos x)))) (cos x))) (* (sqrt 2) (sqrt (/ (sin x) (cos x))))) 1)))) (* (* 4 (sqrt 2)) (atan (/ 1 (+ (+ (sqrt (/ (+ (+ (* (* (* 2 (sqrt 2)) (cos x)) (sqrt (/ (sin x) (cos x)))) (* 2 (sin x))) (* 2 (cos x))) (cos x))) (* (sqrt 2) (sqrt (/ (sin x) (cos x))))) 1))))) (+ (* (sqrt 2) (log (/ (+ (+ (* (* (* 2 (sqrt 2)) (cos x)) (sqrt (/ (sin x) (cos x)))) (* 2 (sin x))) (* 2 (cos x))) (cos x)))) (* (sqrt 2) (log (/ (- (+ (+ (* (* (* 2 (sqrt 2)) (cos x)) (sqrt (/ (sin x) (cos x)))) (* 2 (sin x))) (* 2 (cos x)))) (cos x))))))) 4)");
+
+        assertEquals(Common.runCode("""
+            (cas:integral (/ (exp (asec x)) (** x 2)) dx)
+        """).toString(), "(/ (* (- (sqrt (- (* x x) 1)) 1) (exp (asec x))) (* 2 x))");
     }
 
     @Test
@@ -61,6 +65,10 @@ class TestCAS {
         assertEquals(Common.runCode("""
             (cas:integral (/ (sqrt (+ 1 (** x 2))) (+ 1 (** x 3))) dx)
         """).toString(), "(/ (- (* (sqrt 2) (log (/ (- (- (- (+ (* (+ (+ (sqrt 2) x) 1) (sqrt (+ (* x x) 1))) (* (- (- x 1)) (sqrt 2))) (* x x)) x) 2) (- (- (* (+ x 1) (sqrt (+ (* x x) 1))) (* x x)) x)))) (* 2 (atan (/ (- (- (* (- (* 2 x) 1) (sqrt (+ (* x x) 1))) (+ (* (* 2 x) x) x)) 1) (- (- (sqrt (+ (* x x) 1)) x) 1))))) 3)");
+
+        assertEquals(Common.runCode("""
+            (cas:integral (/ (** x 6) (sqrt (* (+ (** x 7) 1) (+ (** x 7) 2)))) dx)
+        """).toString(), "(- (/ (log (- (- (* 2 (sqrt (+ (+ (** x 14) (* 3 (** x 7))) 2))) (* 2 (** x 7))) 3)) 7))");
     }
 
     @Test

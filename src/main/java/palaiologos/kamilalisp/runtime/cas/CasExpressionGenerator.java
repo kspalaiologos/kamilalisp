@@ -10,7 +10,7 @@ import java.util.Set;
 public class CasExpressionGenerator {
     private static Set<String> allowedFunctions = Set.of(
             "sin", "cos", "tan", "cot", "asin", "acos", "atan", "acot",
-            "exp", "ln", "log2", "log10", "sqrt"
+            "exp", "ln", "log2", "log10", "sqrt", "sec", "csc", "asec", "acsc"
     );
 
     private static Map<String, Integer> expectedArities = Map.ofEntries(
@@ -26,7 +26,11 @@ public class CasExpressionGenerator {
             Map.entry("ln", 1),
             Map.entry("log2", 1),
             Map.entry("log10", 1),
-            Map.entry("sqrt", 1)
+            Map.entry("sqrt", 1),
+            Map.entry("sec", 1),
+            Map.entry("csc", 1),
+            Map.entry("asec", 1),
+            Map.entry("acsc", 1)
     );
 
     private static Map<String, String> primitiveTranslations = Map.ofEntries(

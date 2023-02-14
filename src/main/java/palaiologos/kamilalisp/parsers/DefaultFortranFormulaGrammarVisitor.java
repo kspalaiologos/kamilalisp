@@ -122,9 +122,9 @@ public class DefaultFortranFormulaGrammarVisitor extends FortranFormulaBaseVisit
     public Atom visitConstant(FortranFormulaParser.ConstantContext ctx) {
         if(ctx.ID().getText().equals("infinity"))
             return new Atom("oo", true);
-        if(ctx.ID().getText().equals("%pi"))
+        if(ctx.ID().getText().equals("%pi") || ctx.ID().getText().equals("pi"))
             return new Atom(List.of(new Atom("pi", true)));
-        if(ctx.ID().getText().equals("%e"))
+        if(ctx.ID().getText().equals("%e") || ctx.ID().getText().equals("e"))
             return new Atom(List.of(new Atom("e", true)));
 
         return new Atom(ctx.ID().getText(), true);
