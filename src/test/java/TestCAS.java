@@ -77,4 +77,17 @@ class TestCAS {
             (cas:integral -oo oo (exp (- (** x 2))) dx)
         """).toString(), "(sqrt (pi))");
     }
+
+    @Test
+    void testIntegralSpecialFunction() {
+        assertEquals(Common.runCode("""
+            (cas:integral (* (** x n) (exp (/ (- (* x x)) 2))) dx)
+        """).toString(), "(- (* (exp (/ (* (- n 1) (log 2)) 2)) (gamma (/ (+ n 1) 2) (/ (* x x) 2))))");
+    }
+
+    @Test
+    void testProblematicIntegrals() {
+        assertThrows(RuntimeException.class, () -> Common.runCode("(cas:integral 0 oo (* (** x n) (exp (/ (- (* x x)) 2))) dx)"), "Potential pole in the integral. Use the no-pole option to ignore.");
+        assertThrows(RuntimeException.class, () -> Common.runCode("(cas:integral 0 oo (* (** x n) (exp (/ (- (* x x)) 2))) dx (no-pole))"), "Failed to evaluate integral.");
+    }
 }
