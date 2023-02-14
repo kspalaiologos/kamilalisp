@@ -73,27 +73,43 @@ public class CasExpressionGenerator {
             String id = head.getIdentifier();
             switch(id) {
                 case "+":
+                    if(tree.getList().size() == 1)
+                        throw new RuntimeException("Invalid arity for function: +");
                     if(tree.getList().size() == 2)
                         return "conj(" + generateExpression(e, tree.getList().get(1)) + ")";
                     return tree.getList().stream().skip(1).map(x -> generateExpression(e, x)).reduce((x, y) -> "((" + x + ")+(" + y + "))").get();
                 case "-":
+                    if(tree.getList().size() == 1)
+                        throw new RuntimeException("Invalid arity for function: -");
                     if(tree.getList().size() == 2)
                         return "-(" + generateExpression(e, tree.getList().get(1)) + ")";
                     return tree.getList().stream().skip(1).map(x -> generateExpression(e, x)).reduce((x, y) -> "((" + x + ")-(" + y + "))").get();
                 case "*":
+                    if(tree.getList().size() == 1)
+                        throw new RuntimeException("Invalid arity for function: *");
                     if(tree.getList().size() == 2)
                         return "signum(" + generateExpression(e, tree.getList().get(1)) + ")";
                     return tree.getList().stream().skip(1).map(x -> generateExpression(e, x)).reduce((x, y) -> "((" + x + ")*(" + y + "))").get();
                 case "/":
+                    if(tree.getList().size() == 1)
+                        throw new RuntimeException("Invalid arity for function: /");
                     if(tree.getList().size() == 2)
                         return "1/(" + generateExpression(e, tree.getList().get(1)) + ")";
                     return tree.getList().stream().skip(1).map(x -> generateExpression(e, x)).reduce((x, y) -> "((" + x + ")/(" + y + "))").get();
                 case "**":
+                    if(tree.getList().size() <= 2)
+                        throw new RuntimeException("Invalid arity for function: **");
                     return tree.getList().stream().skip(1).map(x -> generateExpression(e, x)).reduce((x, y) -> "((" + x + ")^(" + y + "))").get();
                 case "pi":
-                    return "%pi";
+                    if(tree.getList().size() == 1)
+                        return "%pi";
+                    else if(tree.getList().size() == 2)
+                        return "(%pi*(" + generateExpression(e, tree.getList().get(1)) + "))";
                 case "e":
-                    return "exp(1)";
+                    if(tree.getList().size() == 1)
+                        return "exp(1)";
+                    else if(tree.getList().size() == 2)
+                        return "(exp(1)*(" + generateExpression(e, tree.getList().get(1)) + "))";
                 default:
                     if(allowedFunctions.contains(id)) {
                         if(tree.getList().size() - 1 != expectedArities.get(id))
