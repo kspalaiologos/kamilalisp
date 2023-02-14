@@ -61,7 +61,7 @@ public class FriCAS {
         boolean successful = s.snd().matches("^Type: .*$");
         String text, type;
         if(successful) {
-            text = s.fst().replaceFirst("\\([0-9]+\\)", "").trim();
+            text = s.fst().replaceFirst("[ \t]+\\([0-9]+\\)[ \t]+", "").trim();
             type = s.snd().replaceFirst("Type: ", "");
         } else {
             if(!s.snd().isEmpty())

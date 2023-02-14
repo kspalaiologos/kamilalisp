@@ -43,6 +43,8 @@ class TestCAS {
 
     @Test
     void testIntegralExpLog() {
-
+        assertEquals(Common.runCode("""
+            cas:integral (exp (+ 1 (ln x))) dx
+        """).toString(), "(/ (* (* x x) e) 2)");
     }
 }
