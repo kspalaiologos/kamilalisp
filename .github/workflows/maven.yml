@@ -2,10 +2,8 @@
 name: Maven Package
 
 on:
-  push:
-    branches: [ "v0.2" ]
-  pull_request:
-    branches: [ "v0.2" ]
+ push:
+ pull_request:
 
 jobs:
   build-linux-x86_64:
