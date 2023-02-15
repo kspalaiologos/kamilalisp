@@ -14,6 +14,12 @@ import java.util.stream.Stream;
 public class Integral extends PrimitiveFunction implements SpecialForm {
     protected static Atom tex = new Atom("tex");
 
+    protected static Atom expressionFromList(Environment env, Set<String> args, String differential, Atom expression) {
+        Set<String> newArgs = new LinkedHashSet<>(args);
+        newArgs.add(differential);
+        return new Atom(new MathExpression(env, newArgs, expression));
+    }
+
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if(args.size() == 2 || args.size() == 3) {
@@ -64,11 +70,11 @@ public class Integral extends PrimitiveFunction implements SpecialForm {
                             throw new RuntimeException("Unknown error in evaluating the integral: " + s);
                         }
                     } else {
-                        return solution;
+                        return expressionFromList(env, expr.getArgs(), differential, solution);
                     }
                 } else {
                     // More than one solution.
-                    return processSolution(a);
+                    return processSolution(env, expr, differential, a);
                 }
             } else {
                 if(StackFrame.isDebug())
@@ -98,13 +104,13 @@ public class Integral extends PrimitiveFunction implements SpecialForm {
         }
     }
 
-    public static Atom processSolution(HashPMap<Atom, Atom> a) {
+    public static Atom processSolution(Environment env, MathExpression originalExpression, String differential, HashPMap<Atom, Atom> a) {
         // If all of them are identifiers:
         if(a.entrySet().stream().noneMatch(x -> x.getKey().getString().contains("("))) {
             Set<String> defined = a.keySet().stream().map(Atom::getString).filter(x -> x.startsWith("T")).collect(Collectors.toSet());
             Atom result = a.entrySet().stream().filter(x -> x.getKey().getString().startsWith("R")).findFirst().get().getValue();
             // Replace all occurences of identifiers in "defined" with their value in "a".
-            return replaceIdentifiers(result, defined, a);
+            return expressionFromList(env, originalExpression.getArgs(), differential, replaceIdentifiers(result, defined, a));
         } else {
             // Got a list somewhere.
             Atom result = a.entrySet().stream().filter(x -> x.getKey().getString().startsWith("R")).findFirst().get().getValue();
@@ -123,7 +129,7 @@ public class Integral extends PrimitiveFunction implements SpecialForm {
             // Verify that the result is R...=Ln
             if(!result.getIdentifier().matches("T" + n))
                 throw new RuntimeException("Invalid result.");
-            return new Atom(Stream.concat(Stream.of(new Atom("tie", true)), a.entrySet().stream().filter(x -> x.getKey().getString().startsWith("T")).map(Map.Entry::getValue)).toList());
+            return new Atom(a.entrySet().stream().filter(x -> x.getKey().getString().startsWith("T")).map(Map.Entry::getValue).map(solution -> expressionFromList(env, originalExpression.getArgs(), differential, solution)).toList());
         }
     }
 

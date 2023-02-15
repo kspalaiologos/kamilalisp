@@ -1,5 +1,6 @@
 package palaiologos.kamilalisp.runtime.cas;
 
+import com.google.common.base.Objects;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Type;
@@ -13,16 +14,24 @@ public class MathExpression implements Userdata {
     private final Set<String> args;
     private final Atom data;
     private final Environment e;
+    private final String expressionCache;
 
     public MathExpression(Environment e, Set<String> args, Atom data) {
         this.args = args;
         this.data = data;
         this.e = e;
+
+        expressionCache = stringifyExpression(data);
+    }
+
+    public Set<String> getArgs() {
+        return args;
     }
 
     private static final Set<String> allowedFunctions = Set.of(
             "sin", "cos", "tan", "cot", "asin", "acos", "atan", "acot",
-            "exp", "ln", "log2", "log10", "sqrt", "sec", "csc", "asec", "acsc"
+            "exp", "ln", "log2", "log10", "sqrt", "sec", "csc", "asec", "acsc",
+            "dilog", "polylog", "gamma"
     );
 
     private static final Map<String, Integer> expectedArities = Map.ofEntries(
@@ -42,7 +51,10 @@ public class MathExpression implements Userdata {
             Map.entry("sec", 1),
             Map.entry("csc", 1),
             Map.entry("asec", 1),
-            Map.entry("acsc", 1)
+            Map.entry("acsc", 1),
+            Map.entry("dilog", 1),
+            Map.entry("polylog", 2),
+            Map.entry("gamma", 1)
     );
 
     private static final Map<String, String> primitiveTranslations = Map.ofEntries(
@@ -140,10 +152,7 @@ public class MathExpression implements Userdata {
         }
     }
 
-    private String expressionCache = null;
     public String getExpression() {
-        if(expressionCache == null)
-            expressionCache = stringifyExpression(data);
         return expressionCache;
     }
 
@@ -153,27 +162,39 @@ public class MathExpression implements Userdata {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hashCode(expressionCache, args, data);
+    }
+
+    @Override
     public int compareTo(Userdata other) {
-        return 0;
+        return hashCode() - other.hashCode();
     }
 
     @Override
     public boolean equals(Userdata other) {
-        return false;
+        if(!(other instanceof MathExpression otherExpr))
+            return false;
+        return expressionCache.equals(otherExpr.expressionCache);
     }
 
     @Override
     public String toDisplayString() {
-        return null;
+        return "ƒ(" + args.stream().reduce((x, y) -> x + "," + y).orElse("") + ")=" + data.toString();
+    }
+
+    @Override
+    public String toString() {
+        return toDisplayString();
     }
 
     @Override
     public String typeName() {
-        return null;
+        return "cas:function";
     }
 
     @Override
     public boolean coerceBoolean() {
-        return false;
+        return true;
     }
 }

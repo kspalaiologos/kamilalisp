@@ -28,7 +28,7 @@ public class DefaultFortranFormulaGrammarVisitor extends FortranFormulaBaseVisit
             case "ATAN2": case "DATAN2": return "atan2";
             case "COS": case "DCOS": return "cos";
             case "EXP": case "DEXP": return "exp";
-            case "LOG": case "DLOG": return "log";
+            case "LOG": case "DLOG": return "ln";
             case "LOG10": case "DLOG10": return "log10";
             case "SIN": case "DSIN": return "sin";
             case "SQRT": case "DSQRT": return "sqrt";

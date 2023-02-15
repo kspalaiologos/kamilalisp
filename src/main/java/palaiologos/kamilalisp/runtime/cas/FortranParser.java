@@ -43,9 +43,5 @@ public class FortranParser {
     }
 
     public static void main(String[] args) {
-        String s = "      T1(1)=DLOG(((x*x-a)*DSQRT(-a)+2*a*x)/(x*x+a))/(2*DSQRT(-a))\n" +
-                "      T1(2)=DATAN((x*DSQRT(a))/a)/DSQRT(a)\n" +
-                "      R2=T1";
-        System.out.println(Integral.processSolution(parse(s).getUserdata(HashMapUserData.class).value()));
     }
 }

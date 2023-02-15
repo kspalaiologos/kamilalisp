@@ -59,11 +59,11 @@ public class ComplexIntegral extends Integral {
                             throw new RuntimeException("Unknown error in evaluating the integral: " + s);
                         }
                     } else {
-                        return solution;
+                        return expressionFromList(env, expr.getArgs(), differential, solution);
                     }
                 } else {
                     // More than one solution.
-                    return processSolution(a);
+                    return processSolution(env, expr, differential, a);
                 }
             } else {
                 if(StackFrame.isDebug())
