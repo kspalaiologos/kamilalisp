@@ -31,7 +31,7 @@ public class MathExpression implements Userdata {
     private static final Set<String> allowedFunctions = Set.of(
             "sin", "cos", "tan", "cot", "asin", "acos", "atan", "acot",
             "exp", "ln", "log2", "log10", "sqrt", "sec", "csc", "asec", "acsc",
-            "dilog", "polylog", "gamma"
+            "dilog", "polylog"
     );
 
     private static final Map<String, Integer> expectedArities = Map.ofEntries(
@@ -53,8 +53,7 @@ public class MathExpression implements Userdata {
             Map.entry("asec", 1),
             Map.entry("acsc", 1),
             Map.entry("dilog", 1),
-            Map.entry("polylog", 2),
-            Map.entry("gamma", 1)
+            Map.entry("polylog", 2)
     );
 
     private static final Map<String, String> primitiveTranslations = Map.ofEntries(
@@ -131,11 +130,22 @@ public class MathExpression implements Userdata {
                         return "%pi";
                     else if(tree.getList().size() == 2)
                         return "(%pi*(" + stringifyExpression(tree.getList().get(1)) + "))";
+                    else
+                        throw new RuntimeException("Invalid arity for function: gamma");
                 case "e":
                     if(tree.getList().size() == 1)
                         return "exp(1)";
                     else if(tree.getList().size() == 2)
                         return "(exp(1)*(" + stringifyExpression(tree.getList().get(1)) + "))";
+                    else
+                        throw new RuntimeException("Invalid arity for function: gamma");
+                case "gamma":
+                    if(tree.getList().size() == 2)
+                        return "gamma(" + stringifyExpression(tree.getList().get(1)) + ")";
+                    else if(tree.getList().size() == 3)
+                        return "gamma(" + stringifyExpression(tree.getList().get(1)) + "," + stringifyExpression(tree.getList().get(2)) + ")";
+                    else
+                        throw new RuntimeException("Invalid arity for function: gamma");
                 default:
                     if(allowedFunctions.contains(id)) {
                         if(tree.getList().size() - 1 != expectedArities.get(id))
