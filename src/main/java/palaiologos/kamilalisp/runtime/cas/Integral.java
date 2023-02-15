@@ -17,15 +17,14 @@ public class Integral extends PrimitiveFunction implements SpecialForm {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if(args.size() == 2 || args.size() == 3) {
-            Atom expr = args.get(0);
+            MathExpression expr = Evaluation.evaluate(env, args.get(0)).getUserdata(MathExpression.class);
             Atom var = args.get(1);
             HashPMap<Atom, Atom> options = env.has("cas-options") ? env.get("cas-options").getUserdata(HashMapUserData.class).value() : HashTreePMap.from(new HashMap<Atom, Atom>());
             var.assertTypes(Type.IDENTIFIER);
             String differential = var.getIdentifier().substring(1);
             if(!differential.matches("[a-zA-Z]+") || differential.isEmpty())
                 throw new RuntimeException("Invalid differential.");
-            String expressionCode = CasExpressionGenerator.generateExpression(env, expr);
-            String instruction = "integrate(" + expressionCode + ", " + differential + ")\n";
+            String instruction = "integrate(" + expr.getExpression() + ", " + differential + ")\n";
             EvaluationResult r = (EvaluationResult) FriCAS.withFriCas(x -> {
                 x.apply(")clear all\n");
                 x.apply(")set output algebra off\n");

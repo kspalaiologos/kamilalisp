@@ -10,6 +10,7 @@ import palaiologos.kamilalisp.runtime.array.sais.SacaBwt;
 import palaiologos.kamilalisp.runtime.array.sais.SacaSais;
 import palaiologos.kamilalisp.runtime.array.sais.SacaUnbwt;
 import palaiologos.kamilalisp.runtime.cas.ComplexIntegral;
+import palaiologos.kamilalisp.runtime.cas.Fn;
 import palaiologos.kamilalisp.runtime.cas.Integral;
 import palaiologos.kamilalisp.runtime.dataformat.*;
 import palaiologos.kamilalisp.runtime.dataformat.archive.*;
@@ -195,6 +196,7 @@ public class FunctionRegistry {
 
         env.setPrimitive("cas:integral", "∫", new Atom(new Integral()));
         env.setPrimitive("cas:complex-integral", "⍉∫", new Atom(new ComplexIntegral()));
+        env.setPrimitive("cas:fn", "ƒ", new Atom(new Fn()));
 
         env.setPrimitive("abs", new Atom(new Abs()));
         env.setPrimitive("bernoulli", new Atom(new Bernoulli()));

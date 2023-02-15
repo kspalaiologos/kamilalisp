@@ -7,23 +7,19 @@ import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class ComplexIntegral extends Integral {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if(args.size() == 2 || args.size() == 3) {
-            Atom expr = args.get(0);
+            MathExpression expr = Evaluation.evaluate(env, args.get(0)).getUserdata(MathExpression.class);
             Atom var = args.get(1);
             HashPMap<Atom, Atom> options = env.has("cas-options") ? env.get("cas-options").getUserdata(HashMapUserData.class).value() : HashTreePMap.from(new HashMap<Atom, Atom>());
             var.assertTypes(Type.IDENTIFIER);
             String differential = var.getIdentifier().substring(1);
             if(!differential.matches("[a-zA-Z]+") || differential.isEmpty())
                 throw new RuntimeException("Invalid differential.");
-            String expressionCode = CasExpressionGenerator.generateExpression(env, expr);
-            String instruction = "complexIntegrate(" + expressionCode + ", " + differential + ")\n";
+            String instruction = "complexIntegrate(" + expr.getExpression() + ", " + differential + ")\n";
             EvaluationResult r = (EvaluationResult) FriCAS.withFriCas(x -> {
                 x.apply(")clear all\n");
                 x.apply(")set output algebra off\n");
