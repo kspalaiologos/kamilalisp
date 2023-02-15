@@ -96,66 +96,75 @@ public class MathExpression implements Userdata {
                 throw new RuntimeException("Invalid function call.");
             }
             String id = head.getIdentifier();
-            switch(id) {
-                case "+":
-                    if(tree.getList().size() == 1)
+            switch (id) {
+                case "+" -> {
+                    if (tree.getList().size() == 1)
                         throw new RuntimeException("Invalid arity for function: +");
-                    if(tree.getList().size() == 2)
+                    if (tree.getList().size() == 2)
                         return "conj(" + stringifyExpression(tree.getList().get(1)) + ")";
                     return tree.getList().stream().skip(1).map(this::stringifyExpression).reduce((x, y) -> "((" + x + ")+(" + y + "))").get();
-                case "-":
-                    if(tree.getList().size() == 1)
+                }
+                case "-" -> {
+                    if (tree.getList().size() == 1)
                         throw new RuntimeException("Invalid arity for function: -");
-                    if(tree.getList().size() == 2)
+                    if (tree.getList().size() == 2)
                         return "-(" + stringifyExpression(tree.getList().get(1)) + ")";
                     return tree.getList().stream().skip(1).map(this::stringifyExpression).reduce((x, y) -> "((" + x + ")-(" + y + "))").get();
-                case "*":
-                    if(tree.getList().size() == 1)
+                }
+                case "*" -> {
+                    if (tree.getList().size() == 1)
                         throw new RuntimeException("Invalid arity for function: *");
-                    if(tree.getList().size() == 2)
+                    if (tree.getList().size() == 2)
                         return "signum(" + stringifyExpression(tree.getList().get(1)) + ")";
                     return tree.getList().stream().skip(1).map(this::stringifyExpression).reduce((x, y) -> "((" + x + ")*(" + y + "))").get();
-                case "/":
-                    if(tree.getList().size() == 1)
+                }
+                case "/" -> {
+                    if (tree.getList().size() == 1)
                         throw new RuntimeException("Invalid arity for function: /");
-                    if(tree.getList().size() == 2)
+                    if (tree.getList().size() == 2)
                         return "1/(" + stringifyExpression(tree.getList().get(1)) + ")";
                     return tree.getList().stream().skip(1).map(this::stringifyExpression).reduce((x, y) -> "((" + x + ")/(" + y + "))").get();
-                case "**":
-                    if(tree.getList().size() <= 2)
+                }
+                case "**" -> {
+                    if (tree.getList().size() <= 2)
                         throw new RuntimeException("Invalid arity for function: **");
                     return tree.getList().stream().skip(1).map(this::stringifyExpression).reduce((x, y) -> "((" + x + ")^(" + y + "))").get();
-                case "pi":
-                    if(tree.getList().size() == 1)
+                }
+                case "pi" -> {
+                    if (tree.getList().size() == 1)
                         return "%pi";
-                    else if(tree.getList().size() == 2)
+                    else if (tree.getList().size() == 2)
                         return "(%pi*(" + stringifyExpression(tree.getList().get(1)) + "))";
                     else
                         throw new RuntimeException("Invalid arity for function: gamma");
-                case "e":
-                    if(tree.getList().size() == 1)
+                }
+                case "e" -> {
+                    if (tree.getList().size() == 1)
                         return "exp(1)";
-                    else if(tree.getList().size() == 2)
+                    else if (tree.getList().size() == 2)
                         return "(exp(1)*(" + stringifyExpression(tree.getList().get(1)) + "))";
                     else
                         throw new RuntimeException("Invalid arity for function: gamma");
-                case "gamma":
-                    if(tree.getList().size() == 2)
+                }
+                case "gamma" -> {
+                    if (tree.getList().size() == 2)
                         return "gamma(" + stringifyExpression(tree.getList().get(1)) + ")";
-                    else if(tree.getList().size() == 3)
+                    else if (tree.getList().size() == 3)
                         return "gamma(" + stringifyExpression(tree.getList().get(1)) + "," + stringifyExpression(tree.getList().get(2)) + ")";
                     else
                         throw new RuntimeException("Invalid arity for function: gamma");
-                default:
-                    if(allowedFunctions.contains(id)) {
-                        if(tree.getList().size() - 1 != expectedArities.get(id))
+                }
+                default -> {
+                    if (allowedFunctions.contains(id)) {
+                        if (tree.getList().size() - 1 != expectedArities.get(id))
                             throw new RuntimeException("Invalid arity for function: " + id);
-                        if(primitiveTranslations.containsKey(id))
+                        if (primitiveTranslations.containsKey(id))
                             id = primitiveTranslations.get(id);
                         return id + "(" + tree.getList().stream().skip(1).map(this::stringifyExpression).reduce((x, y) -> x + "," + y).get() + ")";
                     } else {
                         throw new RuntimeException("Unknown function: " + id);
                     }
+                }
             }
         } else {
             throw new RuntimeException("Invalid expression. Unexpected component of type " + tree.getType());
