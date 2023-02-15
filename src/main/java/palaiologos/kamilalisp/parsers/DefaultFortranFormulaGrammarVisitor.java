@@ -64,6 +64,12 @@ public class DefaultFortranFormulaGrammarVisitor extends FortranFormulaBaseVisit
     }
 
     @Override
+    public Atom visitToplevelExpr(FortranFormulaParser.ToplevelExprContext ctx) {
+        Atom value = visit(ctx.expr());
+        return new Atom(List.of(new Atom("=", true), new Atom("R", true), value));
+    }
+
+    @Override
     public Atom visitAssignExprWithIndex(FortranFormulaParser.AssignExprWithIndexContext ctx) {
         String key = ctx.ID().getText() + "(" + ctx.NUMBER().getText() + ")";
         Atom value = visit(ctx.expr());

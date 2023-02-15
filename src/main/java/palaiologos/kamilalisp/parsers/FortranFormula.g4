@@ -6,7 +6,8 @@ grammar FortranFormula;
 
 main : toplevel_rule* EOF ;
 toplevel_rule
-    : ID '=' expr # AssignExpr
+    : expr # ToplevelExpr
+    | ID '=' expr # AssignExpr
     | ID '=' toplevel_rule # AssignRule
     | ID '(' NUMBER ')' '=' expr # AssignExprWithIndex
     | ID '(' NUMBER ')' '=' toplevel_rule # AssignRuleWithIndex
