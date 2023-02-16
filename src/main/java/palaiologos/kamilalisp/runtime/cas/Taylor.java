@@ -12,6 +12,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Taylor extends PrimitiveFunction implements Lambda {
     protected static Atom tex = new Atom("tex");
@@ -21,11 +22,11 @@ public class Taylor extends PrimitiveFunction implements Lambda {
     public Atom apply(Environment env, List<Atom> args) {
         assertArity(args, 3);
         String var = args.get(0).getIdentifier();
-        MathExpression point = args.get(1).getUserdata(MathExpression.class);
+        Atom point = args.get(1);
         MathExpression expr = args.get(2).getUserdata(MathExpression.class);
         HashPMap<Atom, Atom> options = env.has("cas-options") ? env.get("cas-options").getUserdata(HashMapUserData.class).value() : HashTreePMap.from(new HashMap<Atom, Atom>());
         String instruction =
-                "taylor(" + expr.getExpression() + ", " + var + "=" + point.getExpression() + ")\n";
+                "taylor(" + expr.getExpression() + ", " + var + "=" + (new MathExpression(env, Set.of(), point).getExpression()) + ")\n";
         EvaluationResult r = (EvaluationResult) FriCAS.withFriCas(x -> {
             x.apply(")clear all\n");
             x.apply(")set output algebra off\n");
