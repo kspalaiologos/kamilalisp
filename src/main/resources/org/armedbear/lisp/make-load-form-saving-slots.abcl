@@ -1,0 +1,12 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/make-load-form-saving-slots.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.make_load_form_saving_slots"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(RESOLVE 'DEFSTRUCT)
+(PROGN (PUT 'MAKE-LOAD-FORM-SAVING-SLOTS 'SOURCE (CONS '((:FUNCTION MAKE-LOAD-FORM-SAVING-SLOTS) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/make-load-form-saving-slots.lisp" 
+1628) (GET 'MAKE-LOAD-FORM-SAVING-SLOTS 'SOURCE NIL))) (FSET 'MAKE-LOAD-FORM-SAVING-SLOTS 
+(GET-FASL-FUNCTION *FASL-LOADER* 0) 1628 '(OBJECT &KEY SLOT-NAMES ENVIRONMENT) NIL))

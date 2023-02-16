@@ -1,0 +1,11 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/read-from-string.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.read_from_string"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'READ-FROM-STRING 'SOURCE (CONS '((:FUNCTION READ-FROM-STRING) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/read-from-string.lisp" 
+1595) (GET 'READ-FROM-STRING 'SOURCE NIL))) (FSET 'READ-FROM-STRING (GET-FASL-FUNCTION 
+*FASL-LOADER* 0) 1595 '(STRING &OPTIONAL (EOF-ERROR-P T) EOF-VALUE &KEY (START 0) 
+END PRESERVE-WHITESPACE) NIL))

@@ -3,7 +3,7 @@ package palaiologos.kamilalisp.runtime.meta;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
 import palaiologos.kamilalisp.atom.*;
-import palaiologos.kamilalisp.parser.GrammarLexer;
+import palaiologos.kamilalisp.parsers.GrammarLexer;
 
 import java.util.List;
 

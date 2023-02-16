@@ -1,0 +1,17 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/fill.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.fill"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(REQUIRE "EXTENSIBLE-SEQUENCES-BASE")
+(PROGN (PUT 'LIST-FILL 'SOURCE (CONS '((:FUNCTION LIST-FILL) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/fill.lisp" 
+1617) (GET 'LIST-FILL 'SOURCE NIL))) (FSET 'LIST-FILL (GET-FASL-FUNCTION *FASL-LOADER* 
+0) 1617 '(SEQUENCE ITEM START END) NIL))
+(PROGN (PUT 'VECTOR-FILL 'SOURCE (CONS '((:FUNCTION VECTOR-FILL) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/fill.lisp" 
+1870) (GET 'VECTOR-FILL 'SOURCE NIL))) (FSET 'VECTOR-FILL (GET-FASL-FUNCTION *FASL-LOADER* 
+1) 1870 '(SEQUENCE ITEM START END) NIL))
+(PROGN (PUT 'FILL 'SOURCE (CONS '((:FUNCTION FILL) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/fill.lisp" 
+2068) (GET 'FILL 'SOURCE NIL))) (FSET 'FILL (GET-FASL-FUNCTION *FASL-LOADER* 2) 2068 
+'(SEQUENCE ITEM &KEY (START 0) END) "Replace the specified elements of SEQUENCE with ITEM."))

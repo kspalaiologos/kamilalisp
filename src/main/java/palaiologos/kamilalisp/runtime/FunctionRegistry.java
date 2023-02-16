@@ -9,6 +9,7 @@ import palaiologos.kamilalisp.runtime.array.hof.*;
 import palaiologos.kamilalisp.runtime.array.sais.SacaBwt;
 import palaiologos.kamilalisp.runtime.array.sais.SacaSais;
 import palaiologos.kamilalisp.runtime.array.sais.SacaUnbwt;
+import palaiologos.kamilalisp.runtime.cas.*;
 import palaiologos.kamilalisp.runtime.dataformat.*;
 import palaiologos.kamilalisp.runtime.dataformat.archive.*;
 import palaiologos.kamilalisp.runtime.datetime.*;
@@ -83,9 +84,6 @@ public class FunctionRegistry {
         env.setPrimitive("defun", "⍥←", new Atom(new Defun()));
         env.setPrimitive("outer-product", "⌼", new Atom(new OuterProduct()));
         env.setPrimitive("inner-product", "⌻", new Atom(new InnerProduct()));
-        env.setPrimitive("meta:env-keys", new Atom(new EnvKeys()));
-        env.setPrimitive("meta:to-glyphs", new Atom(new ToGlyphs()));
-        env.setPrimitive("meta:to-ascii", new Atom(new ToASCII()));
         env.setPrimitive("shannon-entropy", "⍫⍴", new Atom(new Shannon()));
         env.setPrimitive("tally", "⍴", new Atom(new Tally()));
         env.setPrimitive("rank", "⍴⍴", new Atom(new Rank()));
@@ -150,6 +148,11 @@ public class FunctionRegistry {
         env.setPrimitive("prime:next", "⋔↑", new Atom(new NextPrime()));
         env.setPrimitive("prime:nth", "⋔→", new Atom(new PrimeNo()));
 
+        env.setPrimitive("meta:env-keys", new Atom(new EnvKeys()));
+        env.setPrimitive("meta:to-glyphs", new Atom(new ToGlyphs()));
+        env.setPrimitive("meta:to-ascii", new Atom(new ToASCII()));
+        env.setPrimitive("meta:type-name", new Atom(new TypeName()));
+
         env.setPrimitive("str:format", "⍫∊", new Atom(new Format()));
         env.setPrimitive("str:lines", new Atom(new Lines()));
         env.setPrimitive("str:implode", "⍫∨", new Atom(new Implode()));
@@ -190,6 +193,20 @@ public class FunctionRegistry {
         env.setPrimitive("bit:popcount", "⌶⍏", new Atom(new BitPopcount()));
         env.setPrimitive("bit:unpack", "⌶↓", new Atom(new BitUnpack()));
         env.setPrimitive("bit:pack", "⌶↑", new Atom(new BitPack()));
+
+        env.setPrimitive("cas:integral", "∫", new Atom(new Integral()));
+        env.setPrimitive("cas:complex-integral", "⍉∫", new Atom(new ComplexIntegral()));
+        env.setPrimitive("cas:fn", "ƒ", new Atom(new Fn()));
+        env.setPrimitive("cas:lim", "↘↖", new Atom(new Limit()));
+        env.setPrimitive("cas:complex-lim", "⍉↘↖", new Atom(new Limit()));
+        env.setPrimitive("cas:N", "∅ƒ", new Atom(new Numeric()));
+        env.setPrimitive("cas:D", "∂", new Atom(new Derivative()));
+        env.setPrimitive("cas:taylor", "⍟∂", new Atom(new Taylor()));
+        env.setPrimitive("cas:puiseux", "⍧∂", new Atom(new Puiseux()));
+        env.setPrimitive("cas:laurent", "⍉∂", new Atom(new Laurent()));
+        env.setPrimitive("cas:maclaurin", "∂0", new Atom(new Maclaurin()));
+        env.setPrimitive("cas:polynomial", "⊕ƒ⊗", new Atom(new Polynomial()));
+        env.setPrimitive("cas:factor", "ƒ∵", new Atom(new Factor()));
 
         env.setPrimitive("abs", new Atom(new Abs()));
         env.setPrimitive("bernoulli", new Atom(new Bernoulli()));

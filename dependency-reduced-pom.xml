@@ -20,8 +20,8 @@
         <configuration>
           <listener>true</listener>
           <visitor>true</visitor>
-          <sourceDirectory>${basedir}/src/main/java/palaiologos/kamilalisp/parser</sourceDirectory>
-          <outputDirectory>${basedir}/src/main/java/palaiologos/kamilalisp/parser</outputDirectory>
+          <sourceDirectory>${basedir}/src/main/java/palaiologos/kamilalisp/parsers</sourceDirectory>
+          <outputDirectory>${basedir}/src/main/java/palaiologos/kamilalisp/parsers</outputDirectory>
         </configuration>
       </plugin>
       <plugin>
@@ -62,6 +62,7 @@
             <option>-libraryjars &lt;java.home&gt;/jmods</option>
             <option>-keep class org.jline.** { *; }</option>
             <option>-keep class org.tukaani.xz.** { *; }</option>
+            <option>-keep class org.armedbear.lisp.** { *; }</option>
             <option>-optimizationpasses 9</option>
             <option>-allowaccessmodification</option>
             <option>-flattenpackagehierarchy ''</option>
@@ -100,6 +101,7 @@
         <configuration>
           <excludes>
             <exclude>palaiologos/kamilalisp/repl/*.class</exclude>
+            <exclude>org/**</exclude>
           </excludes>
         </configuration>
       </plugin>

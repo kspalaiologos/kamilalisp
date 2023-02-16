@@ -1,0 +1,14 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/concatenate.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.concatenate"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'CONCATENATE-TO-STRING 'SOURCE (CONS '((:FUNCTION CONCATENATE-TO-STRING) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/concatenate.lisp" 1590) 
+(GET 'CONCATENATE-TO-STRING 'SOURCE NIL))) (FSET 'CONCATENATE-TO-STRING (GET-FASL-FUNCTION 
+*FASL-LOADER* 0) 1590 '(SEQUENCES) NIL))
+(PROGN (PUT 'CONCATENATE 'SOURCE (CONS '((:FUNCTION CONCATENATE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/concatenate.lisp" 
+2267) (GET 'CONCATENATE 'SOURCE NIL))) (FSET 'CONCATENATE (GET-FASL-FUNCTION *FASL-LOADER* 
+1) 2267 '(RESULT-TYPE &REST SEQUENCES) NIL))

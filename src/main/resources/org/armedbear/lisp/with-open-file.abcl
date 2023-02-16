@@ -1,0 +1,10 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/with-open-file.lisp")
+(COMMON-LISP:SETQ SYSTEM::*FASL-UNINTERNED-SYMBOLS* #(#:WHOLE-308917 #:ENVIRONMENT-308918))
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.with_open_file"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'WITH-OPEN-FILE 'SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/with-open-file.lisp" 
+1588) (GET 'WITH-OPEN-FILE 'SOURCE NIL))) (FSET 'WITH-OPEN-FILE (MAKE-MACRO 'WITH-OPEN-FILE 
+(GET-FASL-FUNCTION *FASL-LOADER* 0)) 1588 '(&REST ARGS) NIL))

@@ -1,0 +1,61 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/fdefinition.lisp")
+(COMMON-LISP:SETQ SYSTEM::*FASL-UNINTERNED-SYMBOLS* #(#:G272295))
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.fdefinition"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(EXPORT '(RECORD-SOURCE-INFORMATION UNTRACED-FUNCTION))
+(PROGN (PUT 'CHECK-REDEFINITION 'SOURCE (CONS '((:FUNCTION CHECK-REDEFINITION) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/fdefinition.lisp" 
+1647) (GET 'CHECK-REDEFINITION 'SOURCE NIL))) (FSET 'CHECK-REDEFINITION (GET-FASL-FUNCTION 
+*FASL-LOADER* 0) 1647 '(NAME) NIL))
+(PROGN (PUT 'RECORD-SOURCE-INFORMATION 'SOURCE (CONS '((:FUNCTION RECORD-SOURCE-INFORMATION) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/fdefinition.lisp" 3690) 
+(GET 'RECORD-SOURCE-INFORMATION 'SOURCE NIL))) (FSET 'RECORD-SOURCE-INFORMATION (GET-FASL-FUNCTION 
+*FASL-LOADER* 2) 3690 '(NAME &OPTIONAL SOURCE-PATHNAME SOURCE-POSITION) NIL))
+(PROGN (PUT 'RECORD-SOURCE-INFORMATION-FOR-TYPE 'SOURCE (CONS '((:FUNCTION RECORD-SOURCE-INFORMATION-FOR-TYPE) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/fdefinition.lisp" 4169) 
+(GET 'RECORD-SOURCE-INFORMATION-FOR-TYPE 'SOURCE NIL))) (FSET 'RECORD-SOURCE-INFORMATION-FOR-TYPE 
+(GET-FASL-FUNCTION *FASL-LOADER* 3) 4169 '(NAME TYPE &OPTIONAL SOURCE-PATHNAME SOURCE-POSITION) 
+"Record source information on the SYS:SOURCE property for symbol with NAME
+
+TYPE is either a symbol or list.
+
+Source information for functions, methods, and generic functions are
+represented as lists of the following form:
+
+    (:generic-function function-name)
+    (:function function-name)
+    (:method method-name qualifiers specializers)
+
+Where FUNCTION-NAME or METHOD-NAME can be a either be of the form
+'symbol or '(setf symbol).
+
+Source information for all other forms have a symbol for TYPE which is
+one of the following:
+
+:class, :variable, :condition, :constant, :compiler-macro, :macro
+:package, :structure, :type, :setf-expander, :source-transform
+
+These values follow SBCL'S implemenation in SLIME
+c.f. <https://github.com/slime/slime/blob/bad2acf672c33b913aabc1a7facb9c3c16a4afe9/swank/sbcl.lisp#L748>
+
+"))
+(PROGN (PUT 'TRACE-REDEFINED-UPDATE 'SOURCE (CONS '((:FUNCTION TRACE-REDEFINED-UPDATE) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/fdefinition.lisp" 6361) 
+(GET 'TRACE-REDEFINED-UPDATE 'SOURCE NIL))) (FSET 'TRACE-REDEFINED-UPDATE (GET-FASL-FUNCTION 
+*FASL-LOADER* 5) 6361 '(&REST ARGS) NIL))
+(PROGN (PUT 'UNTRACED-FUNCTION 'SOURCE (CONS '((:FUNCTION UNTRACED-FUNCTION) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/fdefinition.lisp" 
+6460) (GET 'UNTRACED-FUNCTION 'SOURCE NIL))) (FSET 'UNTRACED-FUNCTION (GET-FASL-FUNCTION 
+*FASL-LOADER* 6) 6460 '(NAME) NIL))
+(%DEFVAR '*FSET-HOOKS* NIL)
+(PROGN (PUT 'FSET 'SOURCE (CONS '((:FUNCTION FSET) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/fdefinition.lisp" 
+6583) (GET 'FSET 'SOURCE NIL))) (FSET 'FSET (GET-FASL-FUNCTION *FASL-LOADER* 7) 6583 
+'(NAME FUNCTION &OPTIONAL SOURCE-POSITION ARGLIST DOCUMENTATION) NIL))
+(PROGN (PUT 'FDEFINITION 'SOURCE (CONS '((:FUNCTION FDEFINITION) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/fdefinition.lisp" 
+7509) (GET 'FDEFINITION 'SOURCE NIL))) (FSET 'FDEFINITION (GET-FASL-FUNCTION *FASL-LOADER* 
+9) 7509 '(NAME) NIL))
+(PROGN (PUT '%SET-FDEFINITION 'SOURCE (CONS '((:FUNCTION %SET-FDEFINITION) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/fdefinition.lisp" 
+7824) (GET '%SET-FDEFINITION 'SOURCE NIL))) (FSET '%SET-FDEFINITION (GET-FASL-FUNCTION 
+*FASL-LOADER* 10) 7824 '(NAME FUNCTION) NIL))
+(%DEFINE-SETF-MACRO 'FDEFINITION NIL '%SET-FDEFINITION NIL)

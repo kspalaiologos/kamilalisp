@@ -1,7 +1,6 @@
 package palaiologos.kamilalisp.atom;
 
 import ch.obermuhlner.math.big.BigComplex;
-import com.google.common.base.Strings;
 import palaiologos.kamilalisp.error.TypeError;
 import palaiologos.kamilalisp.runtime.Index;
 
@@ -125,7 +124,7 @@ public class Atom implements Comparable<Atom> {
         return (String) data;
     }
 
-    private Userdata getUserdata() {
+    public Userdata getUserdata() {
         if (type != Type.USERDATA) {
             throw new TypeError("Cannot get userdata from non-userdata atom " + typeString());
         }

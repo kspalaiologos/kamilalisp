@@ -4,9 +4,9 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import palaiologos.kamilalisp.atom.*;
-import palaiologos.kamilalisp.parser.DefaultGrammarVisitor;
-import palaiologos.kamilalisp.parser.JSONLexer;
-import palaiologos.kamilalisp.parser.JSONParser;
+import palaiologos.kamilalisp.parsers.DefaultGrammarVisitor;
+import palaiologos.kamilalisp.parsers.JSONLexer;
+import palaiologos.kamilalisp.parsers.JSONParser;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;

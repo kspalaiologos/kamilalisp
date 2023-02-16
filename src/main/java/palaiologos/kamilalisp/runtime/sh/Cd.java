@@ -1,6 +1,6 @@
 package palaiologos.kamilalisp.runtime.sh;
 
-import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.atom.Atom;
 
 import java.io.File;
 import java.util.List;

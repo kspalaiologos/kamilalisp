@@ -1,0 +1,54 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dump-class.lisp")
+(COMMON-LISP:SETQ SYSTEM::*FASL-UNINTERNED-SYMBOLS* #(#:JVM-INSTRUCTIONS #:WHOLE-260221 #:ENVIRONMENT-260222))
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.dump_class"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(REQUIRE '#0?)
+(SYSTEM:%IN-PACKAGE "JVM")
+(PROGN (PUT '*POOL* 'SYSTEM::SOURCE (CONS (LIST :VARIABLE "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dump-class.lisp" 
+1617) (GET '*POOL* 'SYSTEM::SOURCE NIL))) (DEFVAR *POOL* NIL))
+(PROGN (PUT 'READ-U1 'SYSTEM::SOURCE (CONS '((:FUNCTION READ-U1) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dump-class.lisp" 
+1638) (GET 'READ-U1 'SYSTEM::SOURCE NIL))) (FSET 'READ-U1 (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 0) 1638 '(STREAM) NIL))
+(PROGN (PUT 'READ-U2 'SYSTEM::SOURCE (CONS '((:FUNCTION READ-U2) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dump-class.lisp" 
+1685) (GET 'READ-U2 'SYSTEM::SOURCE NIL))) (FSET 'READ-U2 (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 1) 1685 '(STREAM) NIL))
+(PROGN (PUT 'READ-U4 'SYSTEM::SOURCE (CONS '((:FUNCTION READ-U4) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dump-class.lisp" 
+1763) (GET 'READ-U4 'SYSTEM::SOURCE NIL))) (FSET 'READ-U4 (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 2) 1763 '(STREAM) NIL))
+(PROGN (PUT 'LOOKUP-UTF8 'SYSTEM::SOURCE (CONS '((:FUNCTION LOOKUP-UTF8) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dump-class.lisp" 
+1838) (GET 'LOOKUP-UTF8 'SYSTEM::SOURCE NIL))) (FSET 'LOOKUP-UTF8 (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 3) 1838 '(INDEX) NIL))
+(PROGN (PUT 'READ-CONSTANT-POOL-ENTRY 'SYSTEM::SOURCE (CONS '((:FUNCTION READ-CONSTANT-POOL-ENTRY) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dump-class.lisp" 1957) 
+(GET 'READ-CONSTANT-POOL-ENTRY 'SYSTEM::SOURCE NIL))) (FSET 'READ-CONSTANT-POOL-ENTRY 
+(SYSTEM::GET-FASL-FUNCTION *FASL-LOADER* 4) 1957 '(STREAM) NIL))
+(PROGN (PUT '*INDENT* 'SYSTEM::SOURCE (CONS (LIST :VARIABLE "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dump-class.lisp" 
+2555) (GET '*INDENT* 'SYSTEM::SOURCE NIL))) (DEFVAR *INDENT* 0))
+(PROGN (PUT '*SPACES* 'SYSTEM::SOURCE (CONS (LIST :VARIABLE "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dump-class.lisp" 
+2576) (GET '*SPACES* 'SYSTEM::SOURCE NIL))) (DEFPARAMETER *SPACES* (MAKE-STRING 256 
+:INITIAL-ELEMENT #\ )))
+(PROGN (PUT 'OUT 'SYSTEM::SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dump-class.lisp" 
+2644) (GET 'OUT 'SYSTEM::SOURCE NIL))) (FSET 'OUT (MAKE-MACRO 'OUT (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 5)) 2644 '(&REST ARGS) NIL))
+(PROGN (PUT 'DUMP-CODE 'SYSTEM::SOURCE (CONS '((:FUNCTION DUMP-CODE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dump-class.lisp" 
+2742) (GET 'DUMP-CODE 'SYSTEM::SOURCE NIL))) (FSET 'DUMP-CODE (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 6) 2742 '(CODE) NIL))
+(PROGN (PUT 'DUMP-CODE-ATTRIBUTE 'SYSTEM::SOURCE (CONS '((:FUNCTION DUMP-CODE-ATTRIBUTE) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dump-class.lisp" 3160) 
+(GET 'DUMP-CODE-ATTRIBUTE 'SYSTEM::SOURCE NIL))) (FSET 'DUMP-CODE-ATTRIBUTE (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 9) 3160 '(STREAM) NIL))
+(PROGN (PUT 'DUMP-EXCEPTIONS 'SYSTEM::SOURCE (CONS '((:FUNCTION DUMP-EXCEPTIONS) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dump-class.lisp" 4242) 
+(GET 'DUMP-EXCEPTIONS 'SYSTEM::SOURCE NIL))) (FSET 'DUMP-EXCEPTIONS (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 20) 4242 '(STREAM) NIL))
+(PROGN (PUT 'READ-ATTRIBUTE 'SYSTEM::SOURCE (CONS '((:FUNCTION READ-ATTRIBUTE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dump-class.lisp" 
+4307) (GET 'READ-ATTRIBUTE 'SYSTEM::SOURCE NIL))) (FSET 'READ-ATTRIBUTE (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 21) 4307 '(INDEX STREAM) NIL))
+(PROGN (PUT 'READ-INFO 'SYSTEM::SOURCE (CONS '((:FUNCTION READ-INFO) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dump-class.lisp" 
+5308) (GET 'READ-INFO 'SYSTEM::SOURCE NIL))) (FSET 'READ-INFO (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 27) 5308 '(INDEX STREAM TYPE) NIL))
+(PROGN (PUT 'DUMP-CLASS 'SYSTEM::SOURCE (CONS '((:FUNCTION DUMP-CLASS) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dump-class.lisp" 
+6057) (GET 'DUMP-CLASS 'SYSTEM::SOURCE NIL))) (FSET 'DUMP-CLASS (SYSTEM::GET-FASL-FUNCTION 
+*FASL-LOADER* 32) 6057 '(FILENAME) NIL))

@@ -1,0 +1,31 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/featurep.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.featurep"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "EXTENSIONS")
+(EXPORT 'FEATUREP)
+(PROGN (SYSTEM:PUT 'FEATUREP 'SYSTEM::SOURCE (CONS '((:FUNCTION FEATUREP) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/featurep.lisp" 
+1630) (GET 'FEATUREP 'SYSTEM::SOURCE NIL))) (SYSTEM:FSET 'FEATUREP (SYSTEM::GET-FASL-FUNCTION 
+SYSTEM:*FASL-LOADER* 0) 1630 '(FORM) NIL))
+(PROGN (SYSTEM:PUT 'OS-MACOSX-P 'SYSTEM::SOURCE (CONS '((:FUNCTION OS-MACOSX-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/featurep.lisp" 
+2206) (GET 'OS-MACOSX-P 'SYSTEM::SOURCE NIL))) (SYSTEM:FSET 'OS-MACOSX-P (SYSTEM::GET-FASL-FUNCTION 
+SYSTEM:*FASL-LOADER* 1) 2206 'NIL "Is the underlying operating system MacOS X?"))
+(PROGN (SYSTEM:PUT 'OS-UNIX-P 'SYSTEM::SOURCE (CONS '((:FUNCTION OS-UNIX-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/featurep.lisp" 
+2552) (GET 'OS-UNIX-P 'SYSTEM::SOURCE NIL))) (SYSTEM:FSET 'OS-UNIX-P (SYSTEM::GET-FASL-FUNCTION 
+SYSTEM:*FASL-LOADER* 2) 2552 'NIL "Is the underlying operating system some Unix variant?"))
+(PROGN (SYSTEM:PUT 'OS-WINDOWS-P 'SYSTEM::SOURCE (CONS '((:FUNCTION OS-WINDOWS-P) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/featurep.lisp" 2685) (GET 
+'OS-WINDOWS-P 'SYSTEM::SOURCE NIL))) (SYSTEM:FSET 'OS-WINDOWS-P (SYSTEM::GET-FASL-FUNCTION 
+SYSTEM:*FASL-LOADER* 3) 2685 'NIL "Is the underlying operating system Microsoft Windows?"))
+(PROGN (SYSTEM:PUT 'OS-GENERA-P 'SYSTEM::SOURCE (CONS '((:FUNCTION OS-GENERA-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/featurep.lisp" 
+2857) (GET 'OS-GENERA-P 'SYSTEM::SOURCE NIL))) (SYSTEM:FSET 'OS-GENERA-P (SYSTEM::GET-FASL-FUNCTION 
+SYSTEM:*FASL-LOADER* 4) 2857 'NIL "Is the underlying operating system Genera (running on a Symbolics Lisp Machine)?"))
+(PROGN (SYSTEM:PUT 'OS-OLDMAC-P 'SYSTEM::SOURCE (CONS '((:FUNCTION OS-OLDMAC-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/featurep.lisp" 
+2987) (GET 'OS-OLDMAC-P 'SYSTEM::SOURCE NIL))) (SYSTEM:FSET 'OS-OLDMAC-P (SYSTEM::GET-FASL-FUNCTION 
+SYSTEM:*FASL-LOADER* 5) 2987 'NIL "Is the underlying operating system an (emulated?) MacOS 9 or earlier?"))
+(PROGN (SYSTEM:PUT 'OS-HAIKU-P 'SYSTEM::SOURCE (CONS '((:FUNCTION OS-HAIKU-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/featurep.lisp" 
+3103) (GET 'OS-HAIKU-P 'SYSTEM::SOURCE NIL))) (SYSTEM:FSET 'OS-HAIKU-P (SYSTEM::GET-FASL-FUNCTION 
+SYSTEM:*FASL-LOADER* 6) 3103 'NIL "Is the underlying operating system Haiku?"))
+(EXPORT '(OS-UNIX-P OS-WINDOWS-P))

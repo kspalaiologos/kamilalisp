@@ -10,14 +10,12 @@ import org.jline.reader.impl.history.DefaultHistory;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.AttributedStringBuilder;
-import org.jline.utils.AttributedStyle;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.InterruptionError;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.AttributedString;
 import java.util.Arrays;
 import java.util.List;
 

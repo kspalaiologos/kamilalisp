@@ -1,0 +1,13 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/lcm.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.lcm"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'TWO-ARG-LCM 'SOURCE (CONS '((:FUNCTION TWO-ARG-LCM) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/lcm.lisp" 
+1577) (GET 'TWO-ARG-LCM 'SOURCE NIL))) (FSET 'TWO-ARG-LCM (GET-FASL-FUNCTION *FASL-LOADER* 
+0) 1577 '(N M) NIL))
+(PROGN (PUT 'LCM 'SOURCE (CONS '((:FUNCTION LCM) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/lcm.lisp" 
+1698) (GET 'LCM 'SOURCE NIL))) (FSET 'LCM (GET-FASL-FUNCTION *FASL-LOADER* 1) 1698 
+'(&REST INTEGERS) NIL))

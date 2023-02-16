@@ -1,0 +1,14 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/psetf.lisp")
+(COMMON-LISP:SETQ SYSTEM::*FASL-UNINTERNED-SYMBOLS* #(#:COLLECT #:WHOLE-292567 #:ENVIRONMENT-292568))
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.psetf"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(REQUIRE '#0?)
+(PROGN (PUT 'PSETF 'SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/psetf.lisp" 
+1623) (GET 'PSETF 'SOURCE NIL))) (FSET 'PSETF (MAKE-MACRO 'PSETF (GET-FASL-FUNCTION 
+*FASL-LOADER* 0)) 1623 '(&REST ARGS &ENVIRONMENT ENV) "This is to SETF as PSETQ is to SETQ.  Args are alternating place
+   expressions and values to go into those places.  All of the subforms and
+   values are determined, left to right, and only then are the locations
+   updated.  Returns NIL."))

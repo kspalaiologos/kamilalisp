@@ -1,0 +1,17 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dribble.lisp")
+(COMMON-LISP:SETQ SYSTEM::*FASL-UNINTERNED-SYMBOLS* #(#:G259939 #:G259943))
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.dribble"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT '*PREVIOUS-DRIBBLE-STREAMS* 'SOURCE (CONS (LIST :VARIABLE "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dribble.lisp" 
+2300) (GET '*PREVIOUS-DRIBBLE-STREAMS* 'SOURCE NIL))) (DEFVAR *PREVIOUS-DRIBBLE-STREAMS* 
+NIL))
+(PROGN (PUT '*DRIBBLE-STREAM* 'SOURCE (CONS (LIST :VARIABLE "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dribble.lisp" 
+2341) (GET '*DRIBBLE-STREAM* 'SOURCE NIL))) (DEFVAR *DRIBBLE-STREAM* NIL))
+(PROGN (PUT 'DRIBBLE 'SOURCE (CONS '((:FUNCTION DRIBBLE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/dribble.lisp" 
+2371) (GET 'DRIBBLE 'SOURCE NIL))) (FSET 'DRIBBLE (GET-FASL-FUNCTION *FASL-LOADER* 
+0) 2371 '(&OPTIONAL PATHNAME &KEY (IF-EXISTS :APPEND)) "With a file name as an argument, dribble opens the file and sends a
+  record of further I/O to that file. Without an argument, it closes
+  the dribble file, and quits logging."))

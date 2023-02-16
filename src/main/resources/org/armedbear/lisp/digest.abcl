@@ -1,0 +1,51 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/digest.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.digest"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(REQUIRE :JAVA)
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'ASCIIFY 'SOURCE (CONS '((:FUNCTION ASCIIFY) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/digest.lisp" 
+1593) (GET 'ASCIIFY 'SOURCE NIL))) (FSET 'ASCIIFY (GET-FASL-FUNCTION *FASL-LOADER* 
+0) 1593 '(DIGEST) NIL))
+(PROGN (PUT 'SHA256 'SOURCE (CONS '((:FUNCTION SHA256) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/digest.lisp" 
+1754) (GET 'SHA256 'SOURCE NIL))) (FSET 'SHA256 (GET-FASL-FUNCTION *FASL-LOADER* 
+2) 1754 '(&REST PATHS-OR-STRINGS) "Returned ASCIIfied representation of SHA256 digest of byte-based resource at PATHS-OR-STRINGs."))
+(FUNCALL (GET-FASL-FUNCTION *FASL-LOADER* 3))
+(PROGN (PUT 'DIGEST 'SOURCE (CONS '((:GENERIC-FUNCTION DIGEST) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/digest.lisp" 
+2872) (GET 'DIGEST 'SOURCE NIL))))
+(PROGN (PUT 'DIGEST-PATH 'SOURCE (CONS '((:FUNCTION DIGEST-PATH) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/digest.lisp" 
+3508) (GET 'DIGEST-PATH 'SOURCE NIL))) (FSET 'DIGEST-PATH (GET-FASL-FUNCTION *FASL-LOADER* 
+4) 3508 '(PATH) NIL))
+(PROGN (PUT '*DIGEST-TYPES* 'SOURCE (CONS (LIST :VARIABLE "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/digest.lisp" 
+3573) (GET '*DIGEST-TYPES* 'SOURCE NIL))) (DEFVAR *DIGEST-TYPES* '((SHA-1 . "SHA-1") 
+(SHA-256 . "SHA-256") (SHA-512 . "SHA-512")) "Normalization of cryptographic digest naming."))
+(PROGN (PUT '+BYTE-BUFFER-REWIND+ 'SOURCE (CONS '(+BYTE-BUFFER-REWIND+ "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/digest.lisp" 
+3724) (GET '+BYTE-BUFFER-REWIND+ 'SOURCE NIL))) (DEFCONSTANT +BYTE-BUFFER-REWIND+ 
+(JAVA:JMETHOD "java.nio.ByteBuffer" "rewind")))
+(PROGN (PUT '+BYTE-BUFFER-GET+ 'SOURCE (CONS '(+BYTE-BUFFER-GET+ "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/digest.lisp" 
+3828) (GET '+BYTE-BUFFER-GET+ 'SOURCE NIL))) (DEFCONSTANT +BYTE-BUFFER-GET+ (JAVA:JMETHOD 
+"java.nio.ByteBuffer" "get" "[B" "int" "int")))
+(PROGN (PUT '+DIGEST-UPDATE+ 'SOURCE (CONS '(+DIGEST-UPDATE+ "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/digest.lisp" 
+3923) (GET '+DIGEST-UPDATE+ 'SOURCE NIL))) (DEFCONSTANT +DIGEST-UPDATE+ (JAVA:JMETHOD 
+"java.security.MessageDigest" "update" "[B" "int" "int")))
+(PUT 'DIGEST 'SOURCE (CONS '((:METHOD DIGEST NIL (PATHNAME)) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/digest.lisp" 
+4027) (GET 'DIGEST 'SOURCE NIL)))
+(MOP::ENSURE-METHOD 'DIGEST :LAMBDA-LIST '(URL &KEY (DIGEST 'SHA-256)) :QUALIFIERS 
+'NIL :SPECIALIZERS (MOP::CANONICALIZE-SPECIALIZERS (LIST 'PATHNAME)) :FUNCTION (GET-FASL-FUNCTION 
+*FASL-LOADER* 5))
+(PROGN (PUT 'DIGEST-NIO 'SOURCE (CONS '((:FUNCTION DIGEST-NIO) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/digest.lisp" 
+4121) (GET 'DIGEST-NIO 'SOURCE NIL))) (FSET 'DIGEST-NIO (GET-FASL-FUNCTION *FASL-LOADER* 
+9) 4121 '(SOURCE &KEY (DIGEST 'SHA-256)) "Calculate digest with default of :SHA-256 pathname specified by URL.
+Returns an array of JVM primitive signed 8-bit bytes.
+
+Uses \"New I/O\" in JVM \"worse named API of all time\".
+
+*DIGEST-TYPES* controls the allowable digest types."))
+(PUT 'DIGEST 'SOURCE (CONS '((:METHOD DIGEST NIL (STRING)) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/digest.lisp" 
+5642) (GET 'DIGEST 'SOURCE NIL)))
+(MOP::ENSURE-METHOD 'DIGEST :LAMBDA-LIST '(SOURCE &KEY (DIGEST 'SHA-256)) :QUALIFIERS 
+'NIL :SPECIALIZERS (MOP::CANONICALIZE-SPECIALIZERS (LIST 'STRING)) :FUNCTION (GET-FASL-FUNCTION 
+*FASL-LOADER* 10))
+(EXPORT 'SHA256 :SYSTEM)

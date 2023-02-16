@@ -1,0 +1,60 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/numbers.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.numbers"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'SIGNUM 'SOURCE (CONS '((:FUNCTION SIGNUM) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/numbers.lisp" 
+1616) (GET 'SIGNUM 'SOURCE NIL))) (FSET 'SIGNUM (GET-FASL-FUNCTION *FASL-LOADER* 
+0) 1616 '(NUMBER) "If NUMBER is zero, return NUMBER, else return (/ NUMBER (ABS NUMBER))."))
+(PROGN (PUT 'ROUND 'SOURCE (CONS '((:FUNCTION ROUND) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/numbers.lisp" 
+1850) (GET 'ROUND 'SOURCE NIL))) (FSET 'ROUND (GET-FASL-FUNCTION *FASL-LOADER* 1) 
+1850 '(NUMBER &OPTIONAL (DIVISOR 1)) "Rounds number (or number/divisor) to nearest integer.
+   The second returned value is the remainder."))
+(PROGN (PUT 'FFLOOR 'SOURCE (CONS '((:FUNCTION FFLOOR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/numbers.lisp" 
+2726) (GET 'FFLOOR 'SOURCE NIL))) (FSET 'FFLOOR (GET-FASL-FUNCTION *FASL-LOADER* 
+2) 2726 '(NUMBER &OPTIONAL (DIVISOR 1)) "Same as FLOOR, but returns first value as a float."))
+(PROGN (PUT 'FCEILING 'SOURCE (CONS '((:FUNCTION FCEILING) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/numbers.lisp" 
+3089) (GET 'FCEILING 'SOURCE NIL))) (FSET 'FCEILING (GET-FASL-FUNCTION *FASL-LOADER* 
+3) 3089 '(NUMBER &OPTIONAL (DIVISOR 1)) "Same as CEILING, but returns first value as a float."))
+(PROGN (PUT 'FROUND 'SOURCE (CONS '((:FUNCTION FROUND) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/numbers.lisp" 
+3457) (GET 'FROUND 'SOURCE NIL))) (FSET 'FROUND (GET-FASL-FUNCTION *FASL-LOADER* 
+4) 3457 '(NUMBER &OPTIONAL (DIVISOR 1)) "Same as ROUND, but returns first value as a float."))
+(PROGN (PUT 'RATIONALIZE 'SOURCE (CONS '((:FUNCTION RATIONALIZE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/numbers.lisp" 
+3675) (GET 'RATIONALIZE 'SOURCE NIL))) (FSET 'RATIONALIZE (GET-FASL-FUNCTION *FASL-LOADER* 
+5) 3675 '(NUMBER) NIL))
+(PROGN (PUT 'GCD 'SOURCE (CONS '((:FUNCTION GCD) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/numbers.lisp" 
+3735) (GET 'GCD 'SOURCE NIL))) (FSET 'GCD (GET-FASL-FUNCTION *FASL-LOADER* 6) 3735 
+'(&REST INTEGERS) NIL))
+(PROGN (PUT 'ISQRT 'SOURCE (CONS '((:FUNCTION ISQRT) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/numbers.lisp" 
+4141) (GET 'ISQRT 'SOURCE NIL))) (FSET 'ISQRT (GET-FASL-FUNCTION *FASL-LOADER* 7) 
+4141 '(NATURAL) "Returns the root of the nearest integer less than natural which is a perfect
+   square."))
+(PROGN (PUT 'FLOAT-PRECISION 'SOURCE (CONS '((:FUNCTION FLOAT-PRECISION) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/numbers.lisp" 
+5202) (GET 'FLOAT-PRECISION 'SOURCE NIL))) (FSET 'FLOAT-PRECISION (GET-FASL-FUNCTION 
+*FASL-LOADER* 8) 5202 '(FLOAT) NIL))
+(PROGN (PUT 'DECODE-FLOAT 'SOURCE (CONS '((:FUNCTION DECODE-FLOAT) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/numbers.lisp" 
+6032) (GET 'DECODE-FLOAT 'SOURCE NIL))) (FSET 'DECODE-FLOAT (GET-FASL-FUNCTION *FASL-LOADER* 
+9) 6032 '(FLOAT) NIL))
+(PROGN (PUT 'SANE-INTEGER-DECODE-FLOAT 'SOURCE (CONS '((:FUNCTION SANE-INTEGER-DECODE-FLOAT) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/numbers.lisp" 6366) (GET 
+'SANE-INTEGER-DECODE-FLOAT 'SOURCE NIL))) (FSET 'SANE-INTEGER-DECODE-FLOAT (GET-FASL-FUNCTION 
+*FASL-LOADER* 10) 6366 '(FLOAT) NIL))
+(PROGN (PUT 'DECODE-FLOAT-SINGLE 'SOURCE (CONS '((:FUNCTION DECODE-FLOAT-SINGLE) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/numbers.lisp" 6712) (GET 
+'DECODE-FLOAT-SINGLE 'SOURCE NIL))) (FSET 'DECODE-FLOAT-SINGLE (GET-FASL-FUNCTION 
+*FASL-LOADER* 11) 6712 '(FLOAT) NIL))
+(PROGN (PUT 'DECODE-FLOAT-DOUBLE 'SOURCE (CONS '((:FUNCTION DECODE-FLOAT-DOUBLE) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/numbers.lisp" 7098) (GET 
+'DECODE-FLOAT-DOUBLE 'SOURCE NIL))) (FSET 'DECODE-FLOAT-DOUBLE (GET-FASL-FUNCTION 
+*FASL-LOADER* 12) 7098 '(FLOAT) NIL))
+(PROGN (PUT 'CONJUGATE 'SOURCE (CONS '((:FUNCTION CONJUGATE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/numbers.lisp" 
+7485) (GET 'CONJUGATE 'SOURCE NIL))) (FSET 'CONJUGATE (GET-FASL-FUNCTION *FASL-LOADER* 
+13) 7485 '(NUMBER) NIL))
+(PROGN (PUT 'PHASE 'SOURCE (CONS '((:FUNCTION PHASE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/numbers.lisp" 
+7628) (GET 'PHASE 'SOURCE NIL))) (FSET 'PHASE (GET-FASL-FUNCTION *FASL-LOADER* 14) 
+7628 '(NUMBER) "Returns the angle part of the polar representation of a complex number.
+   For complex numbers, this is (atan (imagpart number) (realpart number)).
+   For non-complex positive numbers, this is 0.  For non-complex negative
+   numbers this is PI."))

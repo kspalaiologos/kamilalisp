@@ -1,0 +1,18 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/ed.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.ed"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'ED 'SOURCE (CONS '((:FUNCTION ED) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/ed.lisp" 
+1609) (GET 'ED 'SOURCE NIL))) (FSET 'ED (GET-FASL-FUNCTION *FASL-LOADER* 0) 1609 
+'(&OPTIONAL X) "Starts the editor (on a file or a function if named).  Functions
+from the list *ED-FUNCTIONS* are called in order with X as an argument
+until one of them returns non-NIL; these functions are responsible for
+signalling a FILE-ERROR to indicate failure to perform an operation on
+the file system."))
+(PROGN (PUT 'DEFAULT-ED-FUNCTION 'SOURCE (CONS '((:FUNCTION DEFAULT-ED-FUNCTION) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/ed.lisp" 2161) (GET 'DEFAULT-ED-FUNCTION 
+'SOURCE NIL))) (FSET 'DEFAULT-ED-FUNCTION (GET-FASL-FUNCTION *FASL-LOADER* 1) 2161 
+'(WHAT) NIL))

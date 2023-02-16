@@ -1,0 +1,38 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/collect.lisp")
+(COMMON-LISP:SETQ SYSTEM::*FASL-UNINTERNED-SYMBOLS* #(#:WHOLE-204500 #:ENVIRONMENT-204501))
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.collect"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "EXT")
+(EXPORT '(COLLECT))
+(PROGN (SYSTEM:PUT 'COLLECT-NORMAL-EXPANDER 'SYSTEM::SOURCE (CONS '((:FUNCTION COLLECT-NORMAL-EXPANDER) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/collect.lisp" 1599) (GET 
+'COLLECT-NORMAL-EXPANDER 'SYSTEM::SOURCE NIL))) (SYSTEM:FSET 'COLLECT-NORMAL-EXPANDER 
+(SYSTEM::GET-FASL-FUNCTION SYSTEM:*FASL-LOADER* 0) 1599 '(N-VALUE FUN FORMS) NIL))
+(PROGN (SYSTEM:PUT 'COLLECT-LIST-EXPANDER 'SYSTEM::SOURCE (CONS '((:FUNCTION COLLECT-LIST-EXPANDER) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/collect.lisp" 2127) (GET 
+'COLLECT-LIST-EXPANDER 'SYSTEM::SOURCE NIL))) (SYSTEM:FSET 'COLLECT-LIST-EXPANDER 
+(SYSTEM::GET-FASL-FUNCTION SYSTEM:*FASL-LOADER* 2) 2127 '(N-VALUE N-TAIL FORMS) NIL))
+(PROGN (SYSTEM:PUT 'COLLECT 'SYSTEM::SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/collect.lisp" 
+2801) (GET 'COLLECT 'SYSTEM::SOURCE NIL))) (SYSTEM:FSET 'COLLECT (SYSTEM:MAKE-MACRO 
+'COLLECT (SYSTEM::GET-FASL-FUNCTION SYSTEM:*FASL-LOADER* 4)) 2801 '(COLLECTIONS &BODY 
+BODY) "Collect ({(Name [Initial-Value] [Function])}*) {Form}*
+  Collect some values somehow.  Each of the collections specifies a bunch of
+  things which collected during the evaluation of the body of the form.  The
+  name of the collection is used to define a local macro, a la MACROLET.
+  Within the body, this macro will evaluate each of its arguments and collect
+  the result, returning the current value after the collection is done.  The
+  body is evaluated as a PROGN; to get the final values when you are done, just
+  call the collection macro with no arguments.
+
+  Initial-Value is the value that the collection starts out with, which
+  defaults to NIL.  Function is the function which does the collection.  It is
+  a function which will accept two arguments: the value to be collected and the
+  current collection.  The result of the function is made the new value for the
+  collection.  As a totally magical special-case, the Function may be Collect,
+  which tells us to build a list in forward order; this is the default.  If an
+  Initial-Value is supplied for Collect, the stuff will be rplacd'd onto the
+  end.  Note that Function may be anything that can appear in the functional
+  position, including macros and lambdas."))
+(PROVIDE 'COLLECT)

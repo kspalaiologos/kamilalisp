@@ -1,0 +1,12 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/describe-compiler-policy.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.describe_compiler_policy"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(EXPORT 'DESCRIBE-COMPILER-POLICY)
+(PROGN (PUT 'DESCRIBE-COMPILER-POLICY 'SOURCE (CONS '((:FUNCTION DESCRIBE-COMPILER-POLICY) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/describe-compiler-policy.lisp" 
+1651) (GET 'DESCRIBE-COMPILER-POLICY 'SOURCE NIL))) (FSET 'DESCRIBE-COMPILER-POLICY 
+(GET-FASL-FUNCTION *FASL-LOADER* 0) 1651 'NIL NIL))

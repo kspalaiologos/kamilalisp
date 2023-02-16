@@ -1,0 +1,15 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/read-conditional.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.read_conditional"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'READ-FEATURE 'SOURCE (CONS '((:FUNCTION READ-FEATURE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/read-conditional.lisp" 
+1595) (GET 'READ-FEATURE 'SOURCE NIL))) (FSET 'READ-FEATURE (GET-FASL-FUNCTION *FASL-LOADER* 
+0) 1595 '(STREAM) NIL))
+(PROGN (PUT 'READ-CONDITIONAL 'SOURCE (CONS '((:FUNCTION READ-CONDITIONAL) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/read-conditional.lisp" 
+1756) (GET 'READ-CONDITIONAL 'SOURCE NIL))) (FSET 'READ-CONDITIONAL (GET-FASL-FUNCTION 
+*FASL-LOADER* 1) 1756 '(STREAM SUBCHAR INT) NIL))
+(FUNCALL (GET-FASL-FUNCTION *FASL-LOADER* 2))
+(FUNCALL (GET-FASL-FUNCTION *FASL-LOADER* 3))

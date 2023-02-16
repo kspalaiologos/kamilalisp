@@ -1,0 +1,16 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/query.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.query"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'QUERY-READLINE 'SOURCE (CONS '((:FUNCTION QUERY-READLINE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/query.lisp" 
+1604) (GET 'QUERY-READLINE 'SOURCE NIL))) (FSET 'QUERY-READLINE (GET-FASL-FUNCTION 
+*FASL-LOADER* 0) 1604 'NIL NIL))
+(PROGN (PUT 'Y-OR-N-P 'SOURCE (CONS '((:FUNCTION Y-OR-N-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/query.lisp" 
+1715) (GET 'Y-OR-N-P 'SOURCE NIL))) (FSET 'Y-OR-N-P (GET-FASL-FUNCTION *FASL-LOADER* 
+1) 1715 '(&OPTIONAL FORMAT-STRING &REST ARGUMENTS) NIL))
+(PROGN (PUT 'YES-OR-NO-P 'SOURCE (CONS '((:FUNCTION YES-OR-NO-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/query.lisp" 
+2409) (GET 'YES-OR-NO-P 'SOURCE NIL))) (FSET 'YES-OR-NO-P (GET-FASL-FUNCTION *FASL-LOADER* 
+2) 2409 '(&OPTIONAL FORMAT-STRING &REST ARGUMENTS) NIL))

@@ -1,0 +1,77 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.strings"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'STRING-UPCASE 'SOURCE (CONS '((:FUNCTION STRING-UPCASE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+1586) (GET 'STRING-UPCASE 'SOURCE NIL))) (FSET 'STRING-UPCASE (GET-FASL-FUNCTION 
+*FASL-LOADER* 0) 1586 '(STRING &KEY (START 0) END) NIL))
+(PROGN (PUT 'STRING-DOWNCASE 'SOURCE (CONS '((:FUNCTION STRING-DOWNCASE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+1673) (GET 'STRING-DOWNCASE 'SOURCE NIL))) (FSET 'STRING-DOWNCASE (GET-FASL-FUNCTION 
+*FASL-LOADER* 1) 1673 '(STRING &KEY (START 0) END) NIL))
+(PROGN (PUT 'STRING-CAPITALIZE 'SOURCE (CONS '((:FUNCTION STRING-CAPITALIZE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+1764) (GET 'STRING-CAPITALIZE 'SOURCE NIL))) (FSET 'STRING-CAPITALIZE (GET-FASL-FUNCTION 
+*FASL-LOADER* 2) 1764 '(STRING &KEY (START 0) END) NIL))
+(PROGN (PUT 'NSTRING-UPCASE 'SOURCE (CONS '((:FUNCTION NSTRING-UPCASE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+1859) (GET 'NSTRING-UPCASE 'SOURCE NIL))) (FSET 'NSTRING-UPCASE (GET-FASL-FUNCTION 
+*FASL-LOADER* 3) 1859 '(STRING &KEY (START 0) END) NIL))
+(PROGN (PUT 'NSTRING-DOWNCASE 'SOURCE (CONS '((:FUNCTION NSTRING-DOWNCASE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+1948) (GET 'NSTRING-DOWNCASE 'SOURCE NIL))) (FSET 'NSTRING-DOWNCASE (GET-FASL-FUNCTION 
+*FASL-LOADER* 4) 1948 '(STRING &KEY (START 0) END) NIL))
+(PROGN (PUT 'NSTRING-CAPITALIZE 'SOURCE (CONS '((:FUNCTION NSTRING-CAPITALIZE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+2041) (GET 'NSTRING-CAPITALIZE 'SOURCE NIL))) (FSET 'NSTRING-CAPITALIZE (GET-FASL-FUNCTION 
+*FASL-LOADER* 5) 2041 '(STRING &KEY (START 0) END) NIL))
+(PROGN (PUT 'STRING= 'SOURCE (CONS '((:FUNCTION STRING=) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+2138) (GET 'STRING= 'SOURCE NIL))) (FSET 'STRING= (GET-FASL-FUNCTION *FASL-LOADER* 
+6) 2138 '(STRING1 STRING2 &KEY (START1 0) END1 (START2 0) END2) NIL))
+(PROGN (PUT 'STRING/= 'SOURCE (CONS '((:FUNCTION STRING/=) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+2263) (GET 'STRING/= 'SOURCE NIL))) (FSET 'STRING/= (GET-FASL-FUNCTION *FASL-LOADER* 
+7) 2263 '(STRING1 STRING2 &KEY (START1 0) END1 (START2 0) END2) NIL))
+(PROGN (PUT 'STRING-EQUAL 'SOURCE (CONS '((:FUNCTION STRING-EQUAL) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+2552) (GET 'STRING-EQUAL 'SOURCE NIL))) (FSET 'STRING-EQUAL (GET-FASL-FUNCTION *FASL-LOADER* 
+8) 2552 '(STRING1 STRING2 &KEY (START1 0) END1 (START2 0) END2) NIL))
+(PROGN (PUT 'STRING-NOT-EQUAL 'SOURCE (CONS '((:FUNCTION STRING-NOT-EQUAL) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+2849) (GET 'STRING-NOT-EQUAL 'SOURCE NIL))) (FSET 'STRING-NOT-EQUAL (GET-FASL-FUNCTION 
+*FASL-LOADER* 9) 2849 '(STRING1 STRING2 &KEY (START1 0) END1 (START2 0) END2) NIL))
+(PROGN (PUT 'STRING< 'SOURCE (CONS '((:FUNCTION STRING<) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+3154) (GET 'STRING< 'SOURCE NIL))) (FSET 'STRING< (GET-FASL-FUNCTION *FASL-LOADER* 
+10) 3154 '(STRING1 STRING2 &KEY (START1 0) END1 (START2 0) END2) NIL))
+(PROGN (PUT 'STRING> 'SOURCE (CONS '((:FUNCTION STRING>) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+3441) (GET 'STRING> 'SOURCE NIL))) (FSET 'STRING> (GET-FASL-FUNCTION *FASL-LOADER* 
+11) 3441 '(STRING1 STRING2 &KEY (START1 0) END1 (START2 0) END2) NIL))
+(PROGN (PUT 'STRING<= 'SOURCE (CONS '((:FUNCTION STRING<=) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+3728) (GET 'STRING<= 'SOURCE NIL))) (FSET 'STRING<= (GET-FASL-FUNCTION *FASL-LOADER* 
+12) 3728 '(STRING1 STRING2 &KEY (START1 0) END1 (START2 0) END2) NIL))
+(PROGN (PUT 'STRING>= 'SOURCE (CONS '((:FUNCTION STRING>=) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+4017) (GET 'STRING>= 'SOURCE NIL))) (FSET 'STRING>= (GET-FASL-FUNCTION *FASL-LOADER* 
+13) 4017 '(STRING1 STRING2 &KEY (START1 0) END1 (START2 0) END2) NIL))
+(PROGN (PUT 'STRING-LESSP 'SOURCE (CONS '((:FUNCTION STRING-LESSP) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+4306) (GET 'STRING-LESSP 'SOURCE NIL))) (FSET 'STRING-LESSP (GET-FASL-FUNCTION *FASL-LOADER* 
+14) 4306 '(STRING1 STRING2 &KEY (START1 0) END1 (START2 0) END2) NIL))
+(PROGN (PUT 'STRING-GREATERP 'SOURCE (CONS '((:FUNCTION STRING-GREATERP) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+4603) (GET 'STRING-GREATERP 'SOURCE NIL))) (FSET 'STRING-GREATERP (GET-FASL-FUNCTION 
+*FASL-LOADER* 15) 4603 '(STRING1 STRING2 &KEY (START1 0) END1 (START2 0) END2) NIL))
+(PROGN (PUT 'STRING-NOT-LESSP 'SOURCE (CONS '((:FUNCTION STRING-NOT-LESSP) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+4906) (GET 'STRING-NOT-LESSP 'SOURCE NIL))) (FSET 'STRING-NOT-LESSP (GET-FASL-FUNCTION 
+*FASL-LOADER* 16) 4906 '(STRING1 STRING2 &KEY (START1 0) END1 (START2 0) END2) NIL))
+(PROGN (PUT 'STRING-NOT-GREATERP 'SOURCE (CONS '((:FUNCTION STRING-NOT-GREATERP) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 5211) (GET 
+'STRING-NOT-GREATERP 'SOURCE NIL))) (FSET 'STRING-NOT-GREATERP (GET-FASL-FUNCTION 
+*FASL-LOADER* 17) 5211 '(STRING1 STRING2 &KEY (START1 0) END1 (START2 0) END2) NIL))
+(PROGN (PUT 'STRING-LEFT-TRIM 'SOURCE (CONS '((:FUNCTION STRING-LEFT-TRIM) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+5522) (GET 'STRING-LEFT-TRIM 'SOURCE NIL))) (FSET 'STRING-LEFT-TRIM (GET-FASL-FUNCTION 
+*FASL-LOADER* 18) 5522 '(CHAR-BAG STRING &AUX END) "Given a set of characters (a list or string) and a string, returns
+   a copy of the string with the characters in the set removed from the
+   left end."))
+(PROGN (PUT 'STRING-RIGHT-TRIM 'SOURCE (CONS '((:FUNCTION STRING-RIGHT-TRIM) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+5995) (GET 'STRING-RIGHT-TRIM 'SOURCE NIL))) (FSET 'STRING-RIGHT-TRIM (GET-FASL-FUNCTION 
+*FASL-LOADER* 19) 5995 '(CHAR-BAG STRING &AUX END) "Given a set of characters (a list or string) and a string, returns
+   a copy of the string with the characters in the set removed from the
+   right end."))
+(PROGN (PUT 'STRING-TRIM 'SOURCE (CONS '((:FUNCTION STRING-TRIM) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/strings.lisp" 
+6410) (GET 'STRING-TRIM 'SOURCE NIL))) (FSET 'STRING-TRIM (GET-FASL-FUNCTION *FASL-LOADER* 
+20) 6410 '(CHAR-BAG STRING &AUX END) "Given a set of characters (a list or string) and a string, returns a
+   copy of the string with the characters in the set removed from both
+   ends."))

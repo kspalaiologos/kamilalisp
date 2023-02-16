@@ -1,0 +1,33 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/directory.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.directory"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'DIRECTORY-AS-FILE 'SOURCE (CONS '((:FUNCTION DIRECTORY-AS-FILE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/directory.lisp" 
+1633) (GET 'DIRECTORY-AS-FILE 'SOURCE NIL))) (FSET 'DIRECTORY-AS-FILE (GET-FASL-FUNCTION 
+*FASL-LOADER* 0) 1633 '(PATHNAME) "Convert a PATHNAME referencing a directory to a file"))
+(PROGN (PUT 'WILD-INFERIORS-P 'SOURCE (CONS '((:FUNCTION WILD-INFERIORS-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/directory.lisp" 
+2080) (GET 'WILD-INFERIORS-P 'SOURCE NIL))) (FSET 'WILD-INFERIORS-P (GET-FASL-FUNCTION 
+*FASL-LOADER* 1) 2080 '(COMPONENT) NIL))
+(PROGN (PUT 'LIST-DIRECTORIES-WITH-WILDCARDS 'SOURCE (CONS '((:FUNCTION LIST-DIRECTORIES-WITH-WILDCARDS) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/directory.lisp" 2208) 
+(GET 'LIST-DIRECTORIES-WITH-WILDCARDS 'SOURCE NIL))) (FSET 'LIST-DIRECTORIES-WITH-WILDCARDS 
+(GET-FASL-FUNCTION *FASL-LOADER* 2) 2208 '(PATHNAME WILD-INFERIORS-FOUND RESOLVE-SYMLINKS) 
+NIL))
+(PROGN (PUT 'DIRECTORY 'SOURCE (CONS '((:FUNCTION DIRECTORY) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/directory.lisp" 
+5138) (GET 'DIRECTORY 'SOURCE NIL))) (FSET 'DIRECTORY (GET-FASL-FUNCTION *FASL-LOADER* 
+5) 5138 '(PATHSPEC &KEY (RESOLVE-SYMLINKS NIL)) "Determines which, if any, files that are present in the file system have names matching PATHSPEC, and returns a fresh list of pathnames corresponding to the potential truenames of those files.  
+
+With :RESOLVE-SYMLINKS set to nil, not all pathnames returned may
+correspond to an existing file.  Symbolic links are considered to be
+be valid entries even if they do not currently have a valid file or
+directory as a target.  Therefore, subsequent CL:TRUENAME call on
+individual pathnames in the list may signal an error, i.e. the
+pathnames have been constructed as truenames, without calling the
+entire resolution routine of CL:TRUENAME.
+
+If called with :RESOLVE-SYMLINKS set to T, and any of the pathnames
+have truenames which do not exist, this routine will signal a file
+error to its caller."))

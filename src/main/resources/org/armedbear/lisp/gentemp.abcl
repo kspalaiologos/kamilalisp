@@ -1,0 +1,12 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/gentemp.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.gentemp"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT '*GENTEMP-COUNTER* 'SOURCE (CONS (LIST :VARIABLE "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/gentemp.lisp" 
+1611) (GET '*GENTEMP-COUNTER* 'SOURCE NIL))) (DEFVAR *GENTEMP-COUNTER* 0))
+(PROGN (PUT 'GENTEMP 'SOURCE (CONS '((:FUNCTION GENTEMP) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/gentemp.lisp" 
+1641) (GET 'GENTEMP 'SOURCE NIL))) (FSET 'GENTEMP (GET-FASL-FUNCTION *FASL-LOADER* 
+0) 1641 '(&OPTIONAL (PREFIX "T") (PACKAGE *PACKAGE*)) NIL))

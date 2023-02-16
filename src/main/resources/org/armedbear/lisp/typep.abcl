@@ -1,0 +1,22 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/typep.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.typep"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'SIMPLE-ARRAY-P 'SOURCE (CONS '((:FUNCTION SIMPLE-ARRAY-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/typep.lisp" 
+1584) (GET 'SIMPLE-ARRAY-P 'SOURCE NIL))) (FSET 'SIMPLE-ARRAY-P (GET-FASL-FUNCTION 
+*FASL-LOADER* 0) 1584 '(OBJECT) NIL))
+(PROGN (PUT 'IN-INTERVAL-P 'SOURCE (CONS '((:FUNCTION IN-INTERVAL-P) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/typep.lisp" 
+1817) (GET 'IN-INTERVAL-P 'SOURCE NIL))) (FSET 'IN-INTERVAL-P (GET-FASL-FUNCTION 
+*FASL-LOADER* 1) 1817 '(X INTERVAL) NIL))
+(PROGN (PUT 'MATCH-DIMENSIONS 'SOURCE (CONS '((:FUNCTION MATCH-DIMENSIONS) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/typep.lisp" 
+2457) (GET 'MATCH-DIMENSIONS 'SOURCE NIL))) (FSET 'MATCH-DIMENSIONS (GET-FASL-FUNCTION 
+*FASL-LOADER* 2) 2457 '(DIM PAT) NIL))
+(PROGN (PUT '%TYPEP 'SOURCE (CONS '((:FUNCTION %TYPEP) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/typep.lisp" 
+2654) (GET '%TYPEP 'SOURCE NIL))) (FSET '%TYPEP (GET-FASL-FUNCTION *FASL-LOADER* 
+3) 2654 '(OBJECT TYPE) NIL))
+(PROGN (PUT 'TYPEP 'SOURCE (CONS '((:FUNCTION TYPEP) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/typep.lisp" 
+7266) (GET 'TYPEP 'SOURCE NIL))) (FSET 'TYPEP (GET-FASL-FUNCTION *FASL-LOADER* 4) 
+7266 '(OBJECT TYPE &OPTIONAL ENVIRONMENT) NIL))

@@ -1,0 +1,13 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/get-pid.lisp")
+(COMMON-LISP:SETQ SYSTEM::*FASL-UNINTERNED-SYMBOLS* #(#:G272566))
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.get_pid"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "EXTENSIONS")
+(EXPORT '(GET-PID) :EXTENSIONS)
+(PROGN (SYSTEM:PUT 'GET-PID 'SYSTEM::SOURCE (CONS '((:FUNCTION GET-PID) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/get-pid.lisp" 
+66) (GET 'GET-PID 'SYSTEM::SOURCE NIL))) (SYSTEM:FSET 'GET-PID (SYSTEM::GET-FASL-FUNCTION 
+SYSTEM:*FASL-LOADER* 0) 66 'NIL "Get the process identifier of this lisp process. 
+
+Used to be in SLIME but generally useful, so now back in ABCL proper."))

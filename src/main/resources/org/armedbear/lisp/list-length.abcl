@@ -1,0 +1,10 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/list-length.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.list_length"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'LIST-LENGTH 'SOURCE (CONS '((:FUNCTION LIST-LENGTH) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/list-length.lisp" 
+1590) (GET 'LIST-LENGTH 'SOURCE NIL))) (FSET 'LIST-LENGTH (GET-FASL-FUNCTION *FASL-LOADER* 
+0) 1590 '(LIST) NIL))

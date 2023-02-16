@@ -1,0 +1,14 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/make-sequence.lisp")
+
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.make_sequence"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'SIZE-MISMATCH-ERROR 'SOURCE (CONS '((:FUNCTION SIZE-MISMATCH-ERROR) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/make-sequence.lisp" 1592) 
+(GET 'SIZE-MISMATCH-ERROR 'SOURCE NIL))) (FSET 'SIZE-MISMATCH-ERROR (GET-FASL-FUNCTION 
+*FASL-LOADER* 0) 1592 '(TYPE SIZE) NIL))
+(PROGN (PUT 'MAKE-SEQUENCE 'SOURCE (CONS '((:FUNCTION MAKE-SEQUENCE) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/make-sequence.lisp" 
+1820) (GET 'MAKE-SEQUENCE 'SOURCE NIL))) (FSET 'MAKE-SEQUENCE (GET-FASL-FUNCTION 
+*FASL-LOADER* 1) 1820 '(TYPE SIZE &KEY (INITIAL-ELEMENT NIL IESP)) NIL))

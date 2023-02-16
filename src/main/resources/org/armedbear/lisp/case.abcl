@@ -1,0 +1,46 @@
+"; -*- Mode: Lisp -*-"
+(SYSTEM:INIT-FASL :VERSION 43)
+(COMMON-LISP:SETQ SYSTEM:*SOURCE* #P"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/case.lisp")
+(COMMON-LISP:SETQ SYSTEM::*FASL-UNINTERNED-SYMBOLS* #(#:G248560 #:WHOLE-248782 #:ENVIRONMENT-248783 #:WHOLE-248806 #:ENVIRONMENT-248807 #:WHOLE-248830 #:ENVIRONMENT-248831 #:WHOLE-248854 #:ENVIRONMENT-248855 #:WHOLE-248878 #:ENVIRONMENT-248879 #:WHOLE-248902 #:ENVIRONMENT-248903))
+(COMMON-LISP:SETQ SYSTEM:*FASL-LOADER* (SYSTEM::MAKE-FASL-CLASS-LOADER "org.armedbear.lisp.case"))
+(COMMON-LISP:IN-PACKAGE "COMMON-LISP-USER")
+(SYSTEM:%IN-PACKAGE "SYSTEM")
+(PROGN (PUT 'LIST-OF-LENGTH-AT-LEAST-P 'SOURCE (CONS '((:FUNCTION LIST-OF-LENGTH-AT-LEAST-P) 
+"/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/case.lisp" 1607) (GET 
+'LIST-OF-LENGTH-AT-LEAST-P 'SOURCE NIL))) (FSET 'LIST-OF-LENGTH-AT-LEAST-P (GET-FASL-FUNCTION 
+*FASL-LOADER* 0) 1607 '(X N) NIL))
+(PROGN (PUT 'CASE-BODY-ERROR 'SOURCE (CONS '((:FUNCTION CASE-BODY-ERROR) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/case.lisp" 
+1865) (GET 'CASE-BODY-ERROR 'SOURCE NIL))) (FSET 'CASE-BODY-ERROR (GET-FASL-FUNCTION 
+*FASL-LOADER* 1) 1865 '(NAME KEYFORM KEYFORM-VALUE EXPECTED-TYPE KEYS) NIL))
+(PROGN (PUT 'CASE-BODY-AUX 'SOURCE (CONS '((:FUNCTION CASE-BODY-AUX) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/case.lisp" 
+2296) (GET 'CASE-BODY-AUX 'SOURCE NIL))) (FSET 'CASE-BODY-AUX (GET-FASL-FUNCTION 
+*FASL-LOADER* 6) 2296 '(NAME KEYFORM KEYFORM-VALUE CLAUSES KEYS ERRORP PROCEEDP EXPECTED-TYPE) 
+NIL))
+(PROGN (PUT 'CASE-BODY 'SOURCE (CONS '((:FUNCTION CASE-BODY) "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/case.lisp" 
+4105) (GET 'CASE-BODY 'SOURCE NIL))) (FSET 'CASE-BODY (GET-FASL-FUNCTION *FASL-LOADER* 
+7) 4105 '(NAME KEYFORM CASES MULTI-P TEST ERRORP PROCEEDP NEEDCASESP) NIL))
+(PUT 'CASE 'MACROEXPAND-MACRO (MAKE-MACRO 'CASE (GET-FASL-FUNCTION *FASL-LOADER* 
+8)))
+(PROGN (PUT 'CCASE 'SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/case.lisp" 
+6847) (GET 'CCASE 'SOURCE NIL))) (FSET 'CCASE (MAKE-MACRO 'CCASE (GET-FASL-FUNCTION 
+*FASL-LOADER* 9)) 6847 '(KEYFORM &BODY CASES) "CCASE Keyform {({(Key*) | Key} Form*)}*
+  Evaluates the Forms in the first clause with a Key EQL to the value of
+  Keyform. If none of the keys matches then a correctable error is
+  signalled."))
+(PUT 'ECASE 'MACROEXPAND-MACRO (MAKE-MACRO 'ECASE (GET-FASL-FUNCTION *FASL-LOADER* 
+10)))
+(PROGN (PUT 'TYPECASE 'SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/case.lisp" 
+7406) (GET 'TYPECASE 'SOURCE NIL))) (FSET 'TYPECASE (MAKE-MACRO 'TYPECASE (GET-FASL-FUNCTION 
+*FASL-LOADER* 11)) 7406 '(KEYFORM &BODY CASES) "TYPECASE Keyform {(Type Form*)}*
+  Evaluates the Forms in the first clause for which TYPEP of Keyform and Type
+  is true."))
+(PROGN (PUT 'CTYPECASE 'SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/case.lisp" 
+7636) (GET 'CTYPECASE 'SOURCE NIL))) (FSET 'CTYPECASE (MAKE-MACRO 'CTYPECASE (GET-FASL-FUNCTION 
+*FASL-LOADER* 12)) 7636 '(KEYFORM &BODY CASES) "CTYPECASE Keyform {(Type Form*)}*
+  Evaluates the Forms in the first clause for which TYPEP of Keyform and Type
+  is true. If no form is satisfied then a correctable error is signalled."))
+(PROGN (PUT 'ETYPECASE 'SOURCE (CONS '(:MACRO "/Users/evenson/work/abcl.easye.git/src/org/armedbear/lisp/case.lisp" 
+7926) (GET 'ETYPECASE 'SOURCE NIL))) (FSET 'ETYPECASE (MAKE-MACRO 'ETYPECASE (GET-FASL-FUNCTION 
+*FASL-LOADER* 13)) 7926 '(KEYFORM &BODY CASES) "ETYPECASE Keyform {(Type Form*)}*
+  Evaluates the Forms in the first clause for which TYPEP of Keyform and Type
+  is true. If no form is satisfied then an error is signalled."))
