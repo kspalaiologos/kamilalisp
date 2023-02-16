@@ -33,7 +33,7 @@ public class Limit extends PrimitiveFunction implements SpecialForm {
         MathExpression function = Evaluation.evaluate(env, args.get(3)).getUserdata(MathExpression.class);
         HashPMap<Atom, Atom> options = env.has("cas-options") ? env.get("cas-options").getUserdata(HashMapUserData.class).value() : HashTreePMap.from(new HashMap<Atom, Atom>());
         String instruction =
-                "limit(" + function.getExpression() + ", " + variable + "=" + (new MathExpression(env, Set.of(), value).getExpression()) + (side.equals("") ? "" : ", " + side) + ")\n";
+                "limit(" + function.getExpression() + ", " + variable + "=" + (MathExpression.constantExpression(env, value).getExpression()) + (side.equals("") ? "" : ", " + side) + ")\n";
         EvaluationResult r = (EvaluationResult) FriCAS.withFriCas(x -> {
             x.apply(")clear all\n");
             x.apply(")set output algebra off\n");

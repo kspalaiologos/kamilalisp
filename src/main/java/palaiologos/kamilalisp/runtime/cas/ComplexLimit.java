@@ -26,7 +26,7 @@ public class ComplexLimit extends Limit {
         MathExpression function = Evaluation.evaluate(env, args.get(3)).getUserdata(MathExpression.class);
         HashPMap<Atom, Atom> options = env.has("cas-options") ? env.get("cas-options").getUserdata(HashMapUserData.class).value() : HashTreePMap.from(new HashMap<Atom, Atom>());
         String instruction =
-                "complexLimit(" + function.getExpression() + ", " + variable + "=" + (new MathExpression(env, Set.of(), value).getExpression()) + ")\n";
+                "complexLimit(" + function.getExpression() + ", " + variable + "=" + (MathExpression.constantExpression(env, value).getExpression()) + ")\n";
         EvaluationResult r = (EvaluationResult) FriCAS.withFriCas(x -> {
             x.apply(")clear all\n");
             x.apply(")set output algebra off\n");

@@ -26,7 +26,7 @@ public class Taylor extends PrimitiveFunction implements Lambda {
         MathExpression expr = args.get(2).getUserdata(MathExpression.class);
         HashPMap<Atom, Atom> options = env.has("cas-options") ? env.get("cas-options").getUserdata(HashMapUserData.class).value() : HashTreePMap.from(new HashMap<Atom, Atom>());
         String instruction =
-                "taylor(" + expr.getExpression() + ", " + var + "=" + (new MathExpression(env, Set.of(), point).getExpression()) + ")\n";
+                "taylor(" + expr.getExpression() + ", " + var + "=" + (MathExpression.constantExpression(env, point).getExpression()) + ")\n";
         EvaluationResult r = (EvaluationResult) FriCAS.withFriCas(x -> {
             x.apply(")clear all\n");
             x.apply(")set output algebra off\n");

@@ -211,6 +211,12 @@ public class MathExpression implements Userdata {
         return expressionCache.equals(otherExpr.expressionCache);
     }
 
+    public static MathExpression constantExpression(Environment env, Atom a) {
+        if(a.getType() == Type.USERDATA && a.isUserdata(MathExpression.class))
+            return a.getUserdata(MathExpression.class);
+        return new MathExpression(env, Set.of(), a);
+    }
+
     @Override
     public String toDisplayString() {
         return "ƒ(" + args.stream().reduce((x, y) -> x + "," + y).orElse("") + ")=" + data.toString();
