@@ -174,6 +174,12 @@ public class MathExpression implements Userdata {
         }
     }
 
+    public Atom force() {
+        if(!args.isEmpty())
+            throw new IllegalArgumentException("The function is not constant.");
+        return Evaluation.evaluate(e, data);
+    }
+
     public String getExpression() {
         return expressionCache;
     }
