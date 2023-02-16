@@ -8,6 +8,9 @@
 - more shell builtins
 - unit testing
 - bzip3 (needs java porting).
+- cas: solve systems of equations, solve DEs,
+  compute eigenvalues, eigenvectors, solve systems of equations,
+  discrete sums.
 
 book:
 - huffman coding, elias gamma, histograms, fft, ski calculus, matrix algos, Chinese Remainder Theorem?

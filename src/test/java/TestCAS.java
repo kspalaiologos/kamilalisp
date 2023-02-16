@@ -91,4 +91,22 @@ class TestCAS {
             (cas:integral (cas:fn (a x) \\/ (+ a (** x 2))) dx)
         """).toString(), "(ƒ(a,x)=(/ (ln (/ (+ (* (- (* x x) a) (sqrt (- a))) (* (* 2 a) x)) (+ (* x x) a))) (* 2 (sqrt (- a)))) ƒ(a,x)=(/ (atan (/ (* x (sqrt a)) a)) (sqrt a)))");
     }
+
+    @Test
+    void testBasicLimit() {
+        assertEquals(Common.runCode("""
+            (cas:lim x -> 0 (cas:fn (x) (+ x 1)))
+        """).toString(), "ƒ()=1");
+
+        assertEquals(Common.runCode("""
+            (cas:lim x -> 0 (cas:fn (x) (/ (sin x) x)))
+        """).toString(), "ƒ()=1");
+    }
+
+    @Test
+    void testPolynomialFactor() {
+        assertEquals(Common.runCode("""
+            (cas:factor (cas:polynomial '(1 -6 11 -6)))
+        """).toString(), "ƒ(x)=(* (* (- x 3) (- x 2)) (- x 1))");
+    }
 }

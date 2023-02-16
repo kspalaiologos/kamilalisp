@@ -206,6 +206,7 @@ public class FunctionRegistry {
         env.setPrimitive("cas:laurent", "⍉∂", new Atom(new Laurent()));
         env.setPrimitive("cas:maclaurin", "∂0", new Atom(new Maclaurin()));
         env.setPrimitive("cas:polynomial", "⊕ƒ⊗", new Atom(new Polynomial()));
+        env.setPrimitive("cas:factor", "ƒ∵", new Atom(new Factor()));
 
         env.setPrimitive("abs", new Atom(new Abs()));
         env.setPrimitive("bernoulli", new Atom(new Bernoulli()));
