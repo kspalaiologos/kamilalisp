@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime.cas;
+package palaiologos.kamilalisp.runtime.cas.meta;
 
 import org.armedbear.lisp.Interpreter;
 import palaiologos.kamilalisp.atom.Pair;

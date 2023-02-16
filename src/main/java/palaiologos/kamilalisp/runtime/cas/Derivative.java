@@ -3,6 +3,9 @@ package palaiologos.kamilalisp.runtime.cas;
 import org.pcollections.HashPMap;
 import org.pcollections.HashTreePMap;
 import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.runtime.cas.meta.EvaluationResult;
+import palaiologos.kamilalisp.runtime.cas.meta.FortranParser;
+import palaiologos.kamilalisp.runtime.cas.meta.FriCAS;
 import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
 import java.util.HashMap;
@@ -60,7 +63,7 @@ public class Derivative extends PrimitiveFunction implements Lambda {
                     else
                         throw new RuntimeException("Failed to compute the derivative, unknown error.");
                 }
-                if(!hasVariable(entry, var))
+                if(hasVariable(entry, var))
                     return new Atom(new MathExpression(env, expr.getArgs(), entry));
                 else {
                     LinkedHashSet<String> args2 = new LinkedHashSet<>(expr.getArgs());

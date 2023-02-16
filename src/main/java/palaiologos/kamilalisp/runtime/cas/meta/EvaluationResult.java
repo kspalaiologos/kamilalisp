@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime.cas;
+package palaiologos.kamilalisp.runtime.cas.meta;
 
 public class EvaluationResult {
     private boolean wasSuccessful;

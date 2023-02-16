@@ -56,7 +56,7 @@ import java.util.SortedMap;
 import java.util.Set;
 
 import org.armedbear.lisp.util.DecodingReader;
-import palaiologos.kamilalisp.runtime.cas.FriCAS;
+import palaiologos.kamilalisp.runtime.cas.meta.FriCAS;
 
 /** The stream class
  *
@@ -1794,7 +1794,7 @@ public class Stream extends StructureObject {
         int n;
         if(reader instanceof DecodingReader && ((DecodingReader) reader).isStdin)
             try {
-                n = palaiologos.kamilalisp.runtime.cas.FriCAS.getInstance().cin.take();
+                n = FriCAS.getInstance().cin.take();
             } catch (InterruptedException e) { n = -1; }
         else {
             n = reader.read();

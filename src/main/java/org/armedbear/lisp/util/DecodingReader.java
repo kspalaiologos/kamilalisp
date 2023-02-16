@@ -1,6 +1,8 @@
 /*     */ package org.armedbear.lisp.util;
 /*     */ 
-/*     */ import java.io.IOException;
+/*     */ import palaiologos.kamilalisp.runtime.cas.meta.FriCAS;
+
+import java.io.IOException;
 /*     */ import java.io.InputStream;
 /*     */ import java.io.PushbackInputStream;
 /*     */ import java.io.PushbackReader;
@@ -86,7 +88,7 @@
 /*  86 */     this.bbuf = ByteBuffer.allocate(size);
 /*  87 */     this.bbuf.flip();
 
-                if(stream == palaiologos.kamilalisp.runtime.cas.FriCAS.nis) {
+                if(stream == FriCAS.nis) {
                     this.isStdin = true;
                 }
 /*     */   }
