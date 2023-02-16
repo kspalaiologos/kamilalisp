@@ -200,6 +200,7 @@ public class FunctionRegistry {
         env.setPrimitive("cas:lim", "↘↖", new Atom(new Limit()));
         env.setPrimitive("cas:complex-lim", "⍉↘↖", new Atom(new Limit()));
         env.setPrimitive("cas:N", "∅ƒ", new Atom(new Numeric()));
+        env.setPrimitive("cas:D", "∂", new Atom(new Derivative()));
 
         env.setPrimitive("abs", new Atom(new Abs()));
         env.setPrimitive("bernoulli", new Atom(new Bernoulli()));
