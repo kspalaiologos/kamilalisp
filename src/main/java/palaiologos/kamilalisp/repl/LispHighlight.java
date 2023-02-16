@@ -35,24 +35,15 @@ class LispHighlight implements Highlighter {
     private static AttributedStyle getStyleForToken(Token t, boolean isKw, boolean isWs) {
         if (isKw)
             return KW_STYLE;
-        switch (t.getType()) {
-            case GrammarLexer.BIN:
-            case GrammarLexer.FLOAT:
-            case GrammarLexer.HEX:
-            case GrammarLexer.LONG:
-            case GrammarLexer.COMPLEX:
-                return NUM_STYLE;
-            case GrammarLexer.NAME:
-                return EMPTY_STYLE;
-            case GrammarLexer.TRASH:
-                return isWs ? EMPTY_STYLE : COMMENT_STYLE;
-            case GrammarLexer.NIL:
-                return NIL_STYLE;
-            case GrammarLexer.STRING:
-                return STR_STYLE;
-            default:
-                return DEF_STYLE;
-        }
+        return switch (t.getType()) {
+            case GrammarLexer.BIN, GrammarLexer.FLOAT, GrammarLexer.HEX, GrammarLexer.LONG, GrammarLexer.COMPLEX ->
+                    NUM_STYLE;
+            case GrammarLexer.NAME -> EMPTY_STYLE;
+            case GrammarLexer.TRASH -> isWs ? EMPTY_STYLE : COMMENT_STYLE;
+            case GrammarLexer.NIL -> NIL_STYLE;
+            case GrammarLexer.STRING -> STR_STYLE;
+            default -> DEF_STYLE;
+        };
     }
 
     @Override
@@ -62,13 +53,13 @@ class LispHighlight implements Highlighter {
             return b.toAttributedString();
         GrammarLexer lex;
 
-        if(!s.startsWith("?")) {
-            lex = new GrammarLexer(CharStreams.fromString(s));
-        } else {
+        if (s.startsWith("?")) {
             b.style(EMPTY_STYLE);
             b.append("?");
-            lex = new GrammarLexer(CharStreams.fromString(s.substring(1)));
+            s = s.substring(1);
         }
+        
+        lex = new GrammarLexer(CharStreams.fromString(s));
 
         lex.removeErrorListeners();
         int written = 0;
