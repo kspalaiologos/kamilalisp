@@ -1,11 +1,10 @@
 package palaiologos.kamilalisp.runtime.cas;
 
 import com.google.common.base.Objects;
-import palaiologos.kamilalisp.atom.Atom;
-import palaiologos.kamilalisp.atom.Environment;
-import palaiologos.kamilalisp.atom.Type;
-import palaiologos.kamilalisp.atom.Userdata;
+import palaiologos.kamilalisp.atom.*;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,6 +19,11 @@ public class MathExpression implements Userdata {
         this.args = args;
         this.data = data;
         this.e = e;
+
+        args.forEach(x -> {
+            if(allowedFunctions.contains(x))
+                throw new RuntimeException("Identifier " + x + " is not allowed as a variable, as it denotes a function already.");
+        });
 
         expressionCache = stringifyExpression(data);
     }
@@ -177,7 +181,11 @@ public class MathExpression implements Userdata {
 
     @Override
     public Atom field(Object key) {
-        return null;
+        if(!(key instanceof String keyStr))
+            throw new RuntimeException("Invalid key type: " + key.getClass().getName());
+        if(!args.contains(keyStr))
+            throw new RuntimeException("Invalid argument: " + keyStr);
+        return new Atom(new MathExpressionSubstitute(keyStr));
     }
 
     @Override
@@ -215,5 +223,41 @@ public class MathExpression implements Userdata {
     @Override
     public boolean coerceBoolean() {
         return true;
+    }
+
+    private class MathExpressionSubstitute extends PrimitiveFunction implements Lambda {
+        private String keyStr;
+
+        public MathExpressionSubstitute(String keyStr) {
+            this.keyStr = keyStr;
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 1);
+            MathExpression me = new MathExpression(env, Set.of(), args.get(0));
+            return substituteRecursively(MathExpression.this.data, me.data);
+        }
+
+        private Atom substituteRecursively(Atom data, Atom sub) {
+            if(data.getType() == Type.IDENTIFIER) {
+                if(data.getIdentifier().equals(keyStr))
+                    return sub;
+                else
+                    return data;
+            } else if(data.getType() == Type.LIST) {
+                List<Atom> newList = new ArrayList<>();
+                for(Atom a : data.getList())
+                    newList.add(substituteRecursively(a, sub));
+                return new Atom(newList);
+            } else {
+                return data;
+            }
+        }
+
+        @Override
+        protected String name() {
+            return "cas:function." + keyStr;
+        }
     }
 }
