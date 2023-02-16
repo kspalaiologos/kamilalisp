@@ -217,6 +217,22 @@ public class MathExpression implements Userdata {
         return new MathExpression(env, Set.of(), a);
     }
 
+    public static void unknownsFrom(Atom expr, Set<String> dest) {
+        if(expr.getType() == Type.USERDATA && expr.isUserdata(MathExpression.class)) {
+            MathExpression me = expr.getUserdata(MathExpression.class);
+            dest.addAll(me.args);
+        } else if(expr.getType() == Type.LIST) {
+            if(expr.getList().isEmpty())
+                throw new RuntimeException("Invalid expression: " + expr);
+            for(Atom a : expr.getList().subList(1, expr.getList().size()))
+                unknownsFrom(a, dest);
+        } else if(expr.getType() == Type.IDENTIFIER) {
+            dest.add(expr.getIdentifier());
+        } else if(!expr.isNumeric()) {
+            throw new RuntimeException("Invalid expression: " + expr);
+        }
+    }
+
     @Override
     public String toDisplayString() {
         return "ƒ(" + args.stream().reduce((x, y) -> x + "," + y).orElse("") + ")=" + data.toString();

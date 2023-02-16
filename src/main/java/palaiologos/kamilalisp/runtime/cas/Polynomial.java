@@ -6,6 +6,7 @@ import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,10 +27,14 @@ public class Polynomial extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("Polynomial must have at least one coefficient.");
         else if(coefficients.size() == 1)
             return new Atom(List.of(coefficients.get(0)));
+        Set<String> variables = new LinkedHashSet<>();
+        variables.add("x");
         Atom result = coefficients.get(0);
-        for(int i = 1; i < coefficients.size(); i++)
+        for(int i = 1; i < coefficients.size(); i++) {
+            MathExpression.unknownsFrom(coefficients.get(i), variables);
             result = new Atom(List.of(plus, coefficients.get(i), new Atom(List.of(times, x, result))));
-        return new Atom(new MathExpression(env, Set.of("x"), result));
+        }
+        return new Atom(new MathExpression(env, variables, result));
     }
 
     @Override
