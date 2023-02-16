@@ -10,11 +10,10 @@ import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
 import java.math.BigInteger;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Taylor extends PrimitiveFunction implements Lambda {
+public class Puiseux extends PrimitiveFunction implements Lambda {
     protected static Atom tex = new Atom("tex");
     protected static Atom terms = new Atom("terms");
 
@@ -26,7 +25,7 @@ public class Taylor extends PrimitiveFunction implements Lambda {
         MathExpression expr = args.get(2).getUserdata(MathExpression.class);
         HashPMap<Atom, Atom> options = env.has("cas-options") ? env.get("cas-options").getUserdata(HashMapUserData.class).value() : HashTreePMap.from(new HashMap<Atom, Atom>());
         String instruction =
-                "taylor(" + expr.getExpression() + ", " + var + "=" + (new MathExpression(env, Set.of(), point).getExpression()) + ")\n";
+                "puiseux(" + expr.getExpression() + ", " + var + "=" + (new MathExpression(env, Set.of(), point).getExpression()) + ")\n";
         EvaluationResult r = (EvaluationResult) FriCAS.withFriCas(x -> {
             x.apply(")clear all\n");
             x.apply(")set output algebra off\n");
@@ -43,8 +42,8 @@ public class Taylor extends PrimitiveFunction implements Lambda {
         });
         if(!r.isSuccessful()) {
             if(StackFrame.isDebug())
-                throw new RuntimeException("Failed to compute the taylor series, command=" + instruction + ", result=" + r.getResult());
-            throw new RuntimeException("Failed to compute the taylor series.");
+                throw new RuntimeException("Failed to compute the puiseux series, command=" + instruction + ", result=" + r.getResult());
+            throw new RuntimeException("Failed to compute the puiseux series.");
         } else {
             if(options.getOrDefault(tex, Atom.FALSE).equals(Atom.TRUE)) {
                 return new Atom(r.getResult());
@@ -54,8 +53,8 @@ public class Taylor extends PrimitiveFunction implements Lambda {
                 a = FortranParser.parse(r.getResult()).getUserdata(HashMapUserData.class).value();
             } catch (Exception e) {
                 if(StackFrame.isDebug())
-                    throw new RuntimeException("Failed to compute the taylor series (parse), command=" + instruction + ", result=" + r.getResult() + ", why=" + e.getMessage());
-                throw new RuntimeException("Failed to compute the taylor series.");
+                    throw new RuntimeException("Failed to compute the puiseux series (parse), command=" + instruction + ", result=" + r.getResult() + ", why=" + e.getMessage());
+                throw new RuntimeException("Failed to compute the puiseux series.");
             }
 
             if(a.size() == 0) {
@@ -64,13 +63,13 @@ public class Taylor extends PrimitiveFunction implements Lambda {
                 Atom entry = a.entrySet().stream().findFirst().get().getValue();
                 return new Atom(new MathExpression(env, expr.getArgs(), entry));
             } else {
-                throw new RuntimeException("Failed to compute the taylor series, CAS arity error.");
+                throw new RuntimeException("Failed to compute the puiseux series, CAS arity error.");
             }
         }
     }
 
     @Override
     protected String name() {
-        return "cas:taylor";
+        return "cas:puiseux";
     }
 }
