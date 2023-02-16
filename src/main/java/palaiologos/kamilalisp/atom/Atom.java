@@ -125,7 +125,7 @@ public class Atom implements Comparable<Atom> {
         return (String) data;
     }
 
-    private Userdata getUserdata() {
+    public Userdata getUserdata() {
         if (type != Type.USERDATA) {
             throw new TypeError("Cannot get userdata from non-userdata atom " + typeString());
         }

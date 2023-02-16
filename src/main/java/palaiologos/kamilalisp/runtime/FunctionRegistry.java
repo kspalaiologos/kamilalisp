@@ -87,9 +87,6 @@ public class FunctionRegistry {
         env.setPrimitive("defun", "⍥←", new Atom(new Defun()));
         env.setPrimitive("outer-product", "⌼", new Atom(new OuterProduct()));
         env.setPrimitive("inner-product", "⌻", new Atom(new InnerProduct()));
-        env.setPrimitive("meta:env-keys", new Atom(new EnvKeys()));
-        env.setPrimitive("meta:to-glyphs", new Atom(new ToGlyphs()));
-        env.setPrimitive("meta:to-ascii", new Atom(new ToASCII()));
         env.setPrimitive("shannon-entropy", "⍫⍴", new Atom(new Shannon()));
         env.setPrimitive("tally", "⍴", new Atom(new Tally()));
         env.setPrimitive("rank", "⍴⍴", new Atom(new Rank()));
@@ -153,6 +150,11 @@ public class FunctionRegistry {
         env.setPrimitive("prime:is?", "⋔?", new Atom(new IsPrime()));
         env.setPrimitive("prime:next", "⋔↑", new Atom(new NextPrime()));
         env.setPrimitive("prime:nth", "⋔→", new Atom(new PrimeNo()));
+
+        env.setPrimitive("meta:env-keys", new Atom(new EnvKeys()));
+        env.setPrimitive("meta:to-glyphs", new Atom(new ToGlyphs()));
+        env.setPrimitive("meta:to-ascii", new Atom(new ToASCII()));
+        env.setPrimitive("meta:type-name", new Atom(new TypeName()));
 
         env.setPrimitive("str:format", "⍫∊", new Atom(new Format()));
         env.setPrimitive("str:lines", new Atom(new Lines()));
