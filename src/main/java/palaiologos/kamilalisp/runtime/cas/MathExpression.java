@@ -149,7 +149,7 @@ public class MathExpression implements Userdata {
                     else
                         throw new RuntimeException("Invalid arity for function: gamma");
                 }
-                case "O" -> { return "0"; }
+                case "o" -> { return "0"; }
                 case "gamma" -> {
                     if (tree.getList().size() == 2)
                         return "gamma(" + stringifyExpression(tree.getList().get(1)) + ")";
