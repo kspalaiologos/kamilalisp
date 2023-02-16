@@ -3,7 +3,6 @@ package palaiologos.kamilalisp.runtime.cas;
 import com.google.common.base.Objects;
 import palaiologos.kamilalisp.atom.*;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

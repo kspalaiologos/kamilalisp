@@ -4,7 +4,6 @@ import ch.obermuhlner.math.big.BigComplex;
 import com.google.common.collect.Streams;
 import org.pcollections.HashTreePMap;
 import palaiologos.kamilalisp.atom.Atom;
-import palaiologos.kamilalisp.atom.Pair;
 import palaiologos.kamilalisp.atom.Type;
 import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 

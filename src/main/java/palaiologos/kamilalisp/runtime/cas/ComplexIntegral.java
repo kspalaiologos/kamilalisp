@@ -1,12 +1,12 @@
 package palaiologos.kamilalisp.runtime.cas;
 
-import com.google.common.collect.Streams;
 import org.pcollections.HashPMap;
 import org.pcollections.HashTreePMap;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
 
 public class ComplexIntegral extends Integral {
     @Override

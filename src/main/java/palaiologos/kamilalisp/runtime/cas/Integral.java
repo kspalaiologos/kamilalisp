@@ -9,7 +9,6 @@ import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class Integral extends PrimitiveFunction implements SpecialForm {
     protected static Atom tex = new Atom("tex");

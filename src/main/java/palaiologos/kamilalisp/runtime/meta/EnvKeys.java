@@ -6,7 +6,6 @@ import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class EnvKeys extends PrimitiveFunction implements Lambda {

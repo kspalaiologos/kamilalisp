@@ -1,7 +1,6 @@
 package palaiologos.kamilalisp.atom;
 
 import ch.obermuhlner.math.big.BigComplex;
-import com.google.common.base.Strings;
 import palaiologos.kamilalisp.error.TypeError;
 import palaiologos.kamilalisp.runtime.Index;
 

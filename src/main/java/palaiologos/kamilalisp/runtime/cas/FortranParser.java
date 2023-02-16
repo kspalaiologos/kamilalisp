@@ -8,7 +8,6 @@ import palaiologos.kamilalisp.atom.Parser;
 import palaiologos.kamilalisp.parsers.DefaultFortranFormulaGrammarVisitor;
 import palaiologos.kamilalisp.parsers.FortranFormulaLexer;
 import palaiologos.kamilalisp.parsers.FortranFormulaParser;
-import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
 import java.util.Iterator;
 import java.util.stream.Collectors;
