@@ -30,7 +30,7 @@ mvn package
 
 ## Features
 
-KamilaLisp allows for actor programming, concurrent programming, imperative programming, functional programming, array programming, pure functional programming, object-oriented programming, rudimentary logic programming, mathematical programming, backend development, numerical computation, system administration and event-driven programming. In more detail:
+KamilaLisp allows for actor programming, concurrent programming, imperative programming, functional programming, array programming, pure functional programming, object-oriented programming, rudimentary logic programming, mathematical programming, backend development, numerical computation, system administration, symbolic computation (real and complex analysis) and event-driven programming. In more detail:
 
 - Arbitrary precision complex, integer and decimal arithmetic.
 - Many mathematical functions (bernoulli, gamma, trigonometry, arcus functions, hyperbolic functions, inverse hyperbolic functions, FFT, IFFT)
@@ -66,9 +66,14 @@ KamilaLisp allows for actor programming, concurrent programming, imperative prog
 - On-The-Fly Lexical scanner generation.
 - Function compositions, partial application, variadic functions, static scoping.
 - Tail call optimisation.
+- Limits, complex limits.
+- Indefinite integrals.
+- Differentiation
+- Polynomial factoring.
+- Laurent, Taylor, MacLaurin and Puiseux series expansion.
 - Functional de Bruijn indices.
 - Possibility to write standalone non-interactive scripts.
-- Prompt styling
+- Prompt styling.
 - Portable.
 
 ## Examples
