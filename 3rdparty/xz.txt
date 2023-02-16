@@ -1,0 +1,3 @@
+This Java implementation of XZ has been put into the public domain,
+thus you can do whatever you want with it. All the files in the
+package have been written by Lasse Collin, Igor Pavlov, and/or Brett Okken. 
