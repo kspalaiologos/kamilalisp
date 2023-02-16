@@ -3,10 +3,7 @@ package palaiologos.kamilalisp.runtime.cas;
 import com.google.common.base.Objects;
 import palaiologos.kamilalisp.atom.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class MathExpression implements Userdata {
     private final Set<String> args;
@@ -263,8 +260,13 @@ public class MathExpression implements Userdata {
         @Override
         public Atom apply(Environment env, List<Atom> args) {
             assertArity(args, 1);
-            MathExpression me = new MathExpression(env, Set.of(), args.get(0));
-            return substituteRecursively(MathExpression.this.data, me.data);
+            Set<String> variables = new LinkedHashSet<>();
+            unknownsFrom(args.get(0), variables);
+            MathExpression me = new MathExpression(env, variables, args.get(0));
+            Atom result = substituteRecursively(MathExpression.this.data, me.data);
+            Set<String> returnVariables = new LinkedHashSet<>();
+            unknownsFrom(result, returnVariables);
+            return new Atom(new MathExpression(env, returnVariables, result));
         }
 
         private Atom substituteRecursively(Atom data, Atom sub) {
