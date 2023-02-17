@@ -73,6 +73,7 @@ KamilaLisp allows for actor programming, concurrent programming, imperative prog
 - Laurent, Taylor, MacLaurin and Puiseux series expansion.
 - Functional de Bruijn indices.
 - Possibility to write standalone non-interactive scripts.
+- Machine word operations (flt64:...)
 - Prompt styling.
 - Portable.
 
