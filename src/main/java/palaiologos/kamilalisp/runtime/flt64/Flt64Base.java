@@ -770,6 +770,112 @@ public class Flt64Base {
             return Flt64Base.toAtom(polygamma(Flt64Base.toFlt64(args.get(0)), Flt64Base.toFlt64(args.get(1))));
         }
     };
+    public final Flt64Function pochhammer = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:pochhammer";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            double x = toFlt64(args.get(0));
+            double n = toFlt64(args.get(1));
+            return toAtom(gamma(x + n) / gamma(x));
+        }
+    };
+    public final Flt64Function erf = new Flt64Function() {
+        public static double erf(double x) {
+            if (x > 26.0) {
+                return 1.0;
+            } else if (x < -5.5) {
+                return -1.0;
+            } else {
+                double absx, c, p, q;
+                absx = Math.abs(x);
+                if (absx <= 0.5) {
+                    c = x * x;
+                    p = ((-0.356098437018154e-1 * c + 0.699638348861914e1) * c + 0.219792616182942e2) * c + 0.242667955230532e3;
+                    q = ((c + 0.150827976304078e2) * c + 0.911649054045149e2) * c + 0.215058875869861e3;
+                    return x * p / q;
+                }
+                if (x < 0.0) {
+                    return -(1.0 - Math.exp(-x * x) * nonexperfc(absx));
+                }
+                return 1.0 - Math.exp(-x * x) * nonexperfc(absx);
+            }
+        }
+
+        private static double nonexperfc(double x) {
+            double absx, c, p, q;
+            absx = Math.abs(x);
+            if (absx <= 0.5) {
+                return Math.exp(x * x) * erf(x);
+            } else if (absx < 4.0) {
+                c = absx;
+                p = ((((((-0.136864857382717e-6 * c + 0.564195517478974e0) * c + 0.721175825088309e1) * c + 0.431622272220567e2) * c + 0.152989285046940e3) * c + 0.339320816734344e3) * c + 0.451918953711873e3) * c + 0.300459261020162e3;
+                q = ((((((c + 0.127827273196294e2) * c + 0.770001529352295e2) * c + 0.277585444743988e3) * c + 0.638980264465631e3) * c + 0.931354094850610e3) * c + 0.790950925327898e3) * c + 0.300459260956983e3;
+                return ((x > 0.0) ? p / q : Math.exp(x * x) * 2.0 - p / q);
+            } else {
+                c = 1.0 / x / x;
+                p = (((0.223192459734185e-1 * c + 0.278661308609648e0) * c + 0.226956593539687e0) * c + 0.494730910623251e-1) * c + 0.299610707703542e-2;
+                q = (((c + 0.198733201817135e1) * c + 0.105167510706793e1) * c + 0.191308926107830e0) * c + 0.106209230528468e-1;
+                c = (c * (-p) / q + 0.564189583547756) / absx;
+                return ((x > 0.0) ? c : Math.exp(x * x) * 2.0 - c);
+            }
+        }
+
+        @Override
+        protected String name() {
+            return "flt64:erf";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 1);
+            double x = toFlt64(args.get(0));
+            return toAtom(erf(x));
+        }
+    };
+    public final Flt64Function erfc = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:erfc";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 1);
+            double x = toFlt64(args.get(0));
+            return toAtom(erfc(x));
+        }
+    };
+    public final Flt64Function erfcInverse = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:erfc-inverse";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 1);
+            double x = toFlt64(args.get(0));
+            return toAtom(inverfc(x));
+        }
+    };
+    public final Flt64Function erfInverse = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:erf-inverse";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 1);
+            double x = toFlt64(args.get(0));
+            return toAtom(inverfc(1. - x));
+        }
+    };
 
     private static double toFlt64(Atom a) {
         return switch (a.getType()) {
@@ -967,75 +1073,6 @@ public class Flt64Base {
         return -tmp + Math.log(2.5066282746310005 * ser / x);
     }
 
-    public final Flt64Function pochhammer = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:pochhammer";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 2);
-            double x = toFlt64(args.get(0));
-            double n = toFlt64(args.get(1));
-            return toAtom(gamma(x + n) / gamma(x));
-        }
-    };
-
-    public final Flt64Function erf = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:erf";
-        }
-
-        public static double erf(double x) {
-            if(x>26.0) {
-                return 1.0;
-            } else if(x<-5.5) {
-                return -1.0;
-            } else {
-                double absx, c, p, q;
-                absx = Math.abs(x);
-                if(absx<=0.5) {
-                    c = x*x;
-                    p = ((-0.356098437018154e-1*c+0.699638348861914e1)*c+0.219792616182942e2)*c+0.242667955230532e3;
-                    q = ((c+0.150827976304078e2)*c+0.911649054045149e2)*c+0.215058875869861e3;
-                    return x*p/q;
-                }
-                if(x<0.0) {
-                    return -(1.0-Math.exp(-x*x)*nonexperfc(absx));
-                }
-                return 1.0-Math.exp(-x*x)*nonexperfc(absx);
-            }
-        }
-
-        private static double nonexperfc(double x) {
-            double absx, c, p, q;
-            absx = Math.abs(x);
-            if(absx<=0.5) {
-                return Math.exp(x*x)*erf(x);
-            } else if(absx<4.0) {
-                c = absx;
-                p = ((((((-0.136864857382717e-6*c+0.564195517478974e0)*c+0.721175825088309e1)*c+0.431622272220567e2)*c+0.152989285046940e3)*c+0.339320816734344e3)*c+0.451918953711873e3)*c+0.300459261020162e3;
-                q = ((((((c+0.127827273196294e2)*c+0.770001529352295e2)*c+0.277585444743988e3)*c+0.638980264465631e3)*c+0.931354094850610e3)*c+0.790950925327898e3)*c+0.300459260956983e3;
-                return((x>0.0) ? p/q : Math.exp(x*x)*2.0-p/q);
-            } else {
-                c = 1.0/x/x;
-                p = (((0.223192459734185e-1*c+0.278661308609648e0)*c+0.226956593539687e0)*c+0.494730910623251e-1)*c+0.299610707703542e-2;
-                q = (((c+0.198733201817135e1)*c+0.105167510706793e1)*c+0.191308926107830e0)*c+0.106209230528468e-1;
-                c = (c*(-p)/q+0.564189583547756)/absx;
-                return((x>0.0) ? c : Math.exp(x*x)*2.0-c);
-            }
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 1);
-            double x = toFlt64(args.get(0));
-            return toAtom(erf(x));
-        }
-    };
-
     public static double erfc(double x) {
         final double t = 1.0 / (1.0 + 0.5 * Math.abs(x));
         final double ans = t
@@ -1056,60 +1093,18 @@ public class Flt64Base {
     }
 
     double inverfc(double p) {
-        double x,err,t,pp;
+        double x, err, t, pp;
         if (p >= 2.0) return -100.;
         if (p <= 0.0) return 100.;
-        pp = (p < 1.0)? p : 2. - p;
-        t = Math.sqrt(-2.*Math.log(pp/2.));
-        x = -0.70711*((2.30753+t*0.27061)/(1.+t*(0.99229+t*0.04481)) - t);
-        for (int j=0;j<2;j++) {
+        pp = (p < 1.0) ? p : 2. - p;
+        t = Math.sqrt(-2. * Math.log(pp / 2.));
+        x = -0.70711 * ((2.30753 + t * 0.27061) / (1. + t * (0.99229 + t * 0.04481)) - t);
+        for (int j = 0; j < 2; j++) {
             err = erfc(x) - pp;
-            x += err/(1.12837916709551257*Math.exp(-x*x)-x*err);
+            x += err / (1.12837916709551257 * Math.exp(-x * x) - x * err);
         }
-        return (p < 1.0? x : -x);
+        return (p < 1.0 ? x : -x);
     }
-
-    public final Flt64Function erfc = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:erfc";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 1);
-            double x = toFlt64(args.get(0));
-            return toAtom(erfc(x));
-        }
-    };
-
-    public final Flt64Function erfcInverse = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:erfc-inverse";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 1);
-            double x = toFlt64(args.get(0));
-            return toAtom(inverfc(x));
-        }
-    };
-
-    public final Flt64Function erfInverse = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:erf-inverse";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 1);
-            double x = toFlt64(args.get(0));
-            return toAtom(inverfc(1.-x));
-        }
-    };
 
     public void registerFlt64(Environment env) {
         // TODO:
