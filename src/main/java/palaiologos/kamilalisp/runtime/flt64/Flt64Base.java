@@ -1498,9 +1498,120 @@ public class Flt64Base {
         return (p < 1.0 ? x : -x);
     }
 
+    static public double y0(double x) throws ArithmeticException {
+
+        if (x < 8.0) {
+            double y=x*x;
+
+            double ans1 = -2957821389.0+y*(7062834065.0+y*(-512359803.6
+                    +y*(10879881.29+y*(-86327.92757+y*228.4622733))));
+            double ans2=40076544269.0+y*(745249964.8+y*(7189466.438
+                    +y*(47447.26470+y*(226.1030244+ y))));
+
+            return (ans1/ans2)+0.636619772*BesselComputation.bessel0(x)*Math.log(x);
+        } else {
+            double z=8.0/x;
+            double y=z*z;
+            double xx=x-0.785398164;
+
+            double ans1=1.0+y*(-0.1098628627e-2+y*(0.2734510407e-4
+                    +y*(-0.2073370639e-5+y*0.2093887211e-6)));
+            double ans2 = -0.1562499995e-1+y*(0.1430488765e-3
+                    +y*(-0.6911147651e-5+y*(0.7621095161e-6
+                    +y*(-0.934945152e-7))));
+            return Math.sqrt(0.636619772/x)*
+                    (Math.sin(xx)*ans1+z*Math.cos(xx)*ans2);
+        }
+    }
+
+    static public double y1(double x) throws ArithmeticException {
+
+        if (x < 8.0) {
+            double y=x*x;
+            double ans1=x*(-0.4900604943e13+y*(0.1275274390e13
+                    +y*(-0.5153438139e11+y*(0.7349264551e9
+                    +y*(-0.4237922726e7+y*0.8511937935e4)))));
+            double ans2=0.2499580570e14+y*(0.4244419664e12
+                    +y*(0.3733650367e10+y*(0.2245904002e8
+                    +y*(0.1020426050e6+y*(0.3549632885e3+y)))));
+            return (ans1/ans2)+0.636619772*(BesselComputation.bessel1(x)*Math.log(x)-1.0/x);
+        } else {
+            double z=8.0/x;
+            double y=z*z;
+            double xx=x-2.356194491;
+            double ans1=1.0+y*(0.183105e-2+y*(-0.3516396496e-4
+                    +y*(0.2457520174e-5+y*(-0.240337019e-6))));
+            double ans2=0.04687499995+y*(-0.2002690873e-3
+                    +y*(0.8449199096e-5+y*(-0.88228987e-6
+                    +y*0.105787412e-6)));
+            return Math.sqrt(0.636619772/x)*
+                    (Math.sin(xx)*ans1+z*Math.cos(xx)*ans2);
+        }
+    }
+
+    static public double yn(int n, double x) {
+        double by,bym,byp,tox;
+
+        if(n == 0) return y0(x);
+        if(n == 1) return y1(x);
+
+        tox=2.0/x;
+        by=y1(x);
+        bym=y0(x);
+        for (int j=1;j<n;j++) {
+            byp=j*tox*by-bym;
+            bym=by;
+            by=byp;
+        }
+        return by;
+    }
+
+    public final Flt64Function bessely0 = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:bessel-y0";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(y0(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Base::y0).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+
+    public final Flt64Function bessely1 = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:bessel-y1";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(y1(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Base::y1).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+
+    public final Flt64Function bessely = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:bessel-yn";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            return Flt64Base.toAtom(yn(args.get(0).getInteger().intValueExact(), Flt64Base.toFlt64(args.get(1))));
+        }
+    };
+
     public void registerFlt64(Environment env) {
         // TODO:
-        // dawson-f, Expint, log-integral, fresnel-s, fresnel-c, fresnel-f, fresnel-g,
+        // dawson-f, log-integral, fresnel-s, fresnel-c, fresnel-f, fresnel-g,
         // Si, Co, Shi, Chi, bessel-y, bessel-i, bessel-k, hankel-h1, hankel-h2,
         // airy-bi, hypergeom-2f1, hypergeom-pfq, meijer-g, fox-h, hypergeom-1f1,
         // whittaker-m, whittaker-w, elliptic-k, elliptic-f, elliptic-e, elliptic-pi,
@@ -1563,6 +1674,9 @@ public class Flt64Base {
         env.setPrimitive("flt64:bessel-j1", new Atom(bessel1));
         env.setPrimitive("flt64:bessel-jn", new Atom(bessel));
         env.setPrimitive("flt64:bessel-jn-derv", new Atom(besselderv));
+        env.setPrimitive("flt64:bessel-y0", new Atom(bessely0));
+        env.setPrimitive("flt64:bessel-y1", new Atom(bessely1));
+        env.setPrimitive("flt64:bessel-yn", new Atom(bessely));
         env.setPrimitive("flt64:airy-ai", new Atom(airy));
         env.setPrimitive("flt64:airy-ai-derv", new Atom(airyDerv));
         env.setPrimitive("flt64:Ei", new Atom(Ei));
