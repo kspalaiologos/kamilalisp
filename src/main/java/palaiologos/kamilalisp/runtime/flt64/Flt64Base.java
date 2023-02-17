@@ -1677,7 +1677,7 @@ public class Flt64Base {
     public void registerFlt64(Environment env) {
         // TODO:
         // dawson-f, log-integral, fresnel-s, fresnel-c, fresnel-f, fresnel-g,
-        // Si, Co, Shi, Chi, hankel-h1, hankel-h2,
+        // Si, Co, Shi, Chi, hankel-h1, hankel-h2, dilog (spence), polylog
         // airy-bi, hypergeom-2f1, hypergeom-pfq, meijer-g, fox-h, hypergeom-1f1,
         // whittaker-m, whittaker-w, elliptic-k, elliptic-f, elliptic-e, elliptic-pi,
         // lerch-phi, dirichlet-beta, dirichlet-eta, dirichlet-lambda, barnesg, logbarnesg,
