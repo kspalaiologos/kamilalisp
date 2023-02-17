@@ -1092,68 +1092,68 @@ public class Flt64Base {
             xtmp[23] = 1.73205080756887729;
             xtmp[24] = 0.78539816339744831;
             xtmp[25] = 0.56418958354775629;
-            if((x>=-5.0)&&(x<=8.0)) {
+            if ((x >= -5.0) && (x <= 8.0)) {
                 u = v = t = tc = 1.0;
                 s = sc = 0.5;
                 n = 3;
-                zzz = x*x*x;
-                while(Math.abs(u)+Math.abs(v)+Math.abs(s)+Math.abs(t)>1.0e-18) {
-                    u = u*zzz/(n*(n-1));
-                    v = v*zzz/(n*(n+1));
-                    s = s*zzz/(n*(n+2));
-                    t = t*zzz/(n*(n-2));
+                zzz = x * x * x;
+                while (Math.abs(u) + Math.abs(v) + Math.abs(s) + Math.abs(t) > 1.0e-18) {
+                    u = u * zzz / (n * (n - 1));
+                    v = v * zzz / (n * (n + 1));
+                    s = s * zzz / (n * (n + 2));
+                    t = t * zzz / (n * (n - 2));
                     sc += s;
                     tc += t;
                     n += 3;
                 }
-                if(x<2.5) {
-                    return xtmp[21]*sc*x*x-xtmp[22]*tc;
+                if (x < 2.5) {
+                    return xtmp[21] * sc * x * x - xtmp[22] * tc;
                 }
             }
             k1 = k2 = k3 = k4 = 0.0;
             sqrtx = Math.sqrt(Math.abs(x));
-            xt = 0.666666666666667*Math.abs(x)*sqrtx;
-            c = xtmp[25]/Math.sqrt(sqrtx);
-            if(x<0.0) {
+            xt = 0.666666666666667 * Math.abs(x) * sqrtx;
+            c = xtmp[25] / Math.sqrt(sqrtx);
+            if (x < 0.0) {
                 x = -x;
-                co = Math.cos(xt-xtmp[24]);
-                si = Math.sin(xt-xtmp[24]);
-                for(l = 1; l<=10; l++) {
-                    wwl = xtmp[l+10];
-                    pl = xtmp[l]/xt;
-                    pl2 = pl*pl;
-                    pl1 = 1.0+pl2;
-                    pl3 = pl1*pl1;
-                    k1 += wwl/pl1;
-                    k2 += wwl*pl/pl1;
-                    k3 += wwl*pl*(1.0+pl*(2.0/xt+pl))/pl3;
-                    k4 += wwl*(-1.0-pl*(1.0+pl*(xt-pl))/xt)/pl3;
+                co = Math.cos(xt - xtmp[24]);
+                si = Math.sin(xt - xtmp[24]);
+                for (l = 1; l <= 10; l++) {
+                    wwl = xtmp[l + 10];
+                    pl = xtmp[l] / xt;
+                    pl2 = pl * pl;
+                    pl1 = 1.0 + pl2;
+                    pl3 = pl1 * pl1;
+                    k1 += wwl / pl1;
+                    k2 += wwl * pl / pl1;
+                    k3 += wwl * pl * (1.0 + pl * (2.0 / xt + pl)) / pl3;
+                    k4 += wwl * (-1.0 - pl * (1.0 + pl * (xt - pl)) / xt) / pl3;
                 }
-                ai = c*(co*k1+si*k2);
-                aid = 0.25*ai/x-c*sqrtx*(co*k3+si*k4);
+                ai = c * (co * k1 + si * k2);
+                aid = 0.25 * ai / x - c * sqrtx * (co * k3 + si * k4);
             } else {
-                if(x<9.0) {
+                if (x < 9.0) {
                     expxt = Math.exp(xt);
                 } else {
                     expxt = 1.0;
                 }
-                for(l = 1; l<=10; l++) {
-                    wwl = xtmp[l+10];
-                    pl = xtmp[l]/xt;
-                    pl1 = 1.0+pl;
-                    pl2 = 1.0-pl;
-                    k1 += wwl/pl1;
-                    k2 += wwl*pl/(xt*pl1*pl1);
-                    k3 += wwl/pl2;
-                    k4 += wwl*pl/(xt*pl2*pl2);
+                for (l = 1; l <= 10; l++) {
+                    wwl = xtmp[l + 10];
+                    pl = xtmp[l] / xt;
+                    pl1 = 1.0 + pl;
+                    pl2 = 1.0 - pl;
+                    k1 += wwl / pl1;
+                    k2 += wwl * pl / (xt * pl1 * pl1);
+                    k3 += wwl / pl2;
+                    k4 += wwl * pl / (xt * pl2 * pl2);
                 }
-                ai = 0.5*c*k1/expxt;
-                aid = ai*(-0.25/x-sqrtx)+0.5*c*sqrtx*k2/expxt;
-                if(x>=9) {
+                ai = 0.5 * c * k1 / expxt;
+                aid = ai * (-0.25 / x - sqrtx) + 0.5 * c * sqrtx * k2 / expxt;
+                if (x >= 9) {
                     // Asymptotic behavior follows
-                    expxt = Math.pow(x, 3./2.);
-                    ai = 0.5*Math.exp(-2.0*expxt/3.0)/Math.sqrt(Math.PI)/Math.pow(x, 0.25);
-                    aid = -ai*Math.pow(x, 0.5)-ai/x/4.0;
+                    expxt = Math.pow(x, 3. / 2.);
+                    ai = 0.5 * Math.exp(-2.0 * expxt / 3.0) / Math.sqrt(Math.PI) / Math.pow(x, 0.25);
+                    aid = -ai * Math.pow(x, 0.5) - ai / x / 4.0;
                 }
             }
             return aid;
@@ -1172,7 +1172,20 @@ public class Flt64Base {
                 return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> airyDerivative(x)).mapToObj(Flt64Base::toAtom).toList());
         }
     };
+    public final Flt64Function Ei = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:Ei";
+        }
 
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(ExpInt.expint(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(ExpInt::expint).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
 
     private static double toFlt64(Atom a) {
         return switch (a.getType()) {
@@ -1390,6 +1403,8 @@ public class Flt64Base {
     }
 
     public static double lowerIncomplete(double a, double x) {
+        if(a == 0)
+            return -ExpInt.expint(-x);
         return regularizedGammaP(a, x) * gamma(a);
     }
 
@@ -1485,7 +1500,7 @@ public class Flt64Base {
 
     public void registerFlt64(Environment env) {
         // TODO:
-        // dawson-f, Expint, Ei, log-integral, fresnel-s, fresnel-c, fresnel-f, fresnel-g,
+        // dawson-f, Expint, log-integral, fresnel-s, fresnel-c, fresnel-f, fresnel-g,
         // Si, Co, Shi, Chi, bessel-y, bessel-i, bessel-k, hankel-h1, hankel-h2,
         // airy-bi, hypergeom-2f1, hypergeom-pfq, meijer-g, fox-h, hypergeom-1f1,
         // whittaker-m, whittaker-w, elliptic-k, elliptic-f, elliptic-e, elliptic-pi,
@@ -1550,6 +1565,7 @@ public class Flt64Base {
         env.setPrimitive("flt64:bessel-jn-derv", new Atom(besselderv));
         env.setPrimitive("flt64:airy-ai", new Atom(airy));
         env.setPrimitive("flt64:airy-ai-derv", new Atom(airyDerv));
+        env.setPrimitive("flt64:Ei", new Atom(Ei));
         env.setPrimitive("flt64:=", new Atom(eq));
         env.setPrimitive("flt64:/=", new Atom(ne));
         env.setPrimitive("flt64:<", new Atom(lt));
@@ -1562,6 +1578,149 @@ public class Flt64Base {
     }
 
     private abstract static class Flt64Function extends PrimitiveFunction implements Lambda {
+    }
+
+    public static class ExpInt {
+        private static final double eulerGamma = 0.57721566490153286060651209008240243104215933593992;
+
+        private static double __expint_E1_series(double __x) {
+            double __term = 1.0;
+            double __esum = 0.0;
+            double __osum = 0.0;
+            final int __max_iter = 1000;
+            for (int __i = 1; __i < __max_iter; ++__i) {
+                __term *= -__x / __i;
+                if (Math.abs(__term) < EPSILON)
+                    break;
+                if (__term >= 0.0)
+                    __esum += __term / __i;
+                else
+                    __osum += __term / __i;
+            }
+            return -__esum - __osum
+                    - eulerGamma - Math.log(__x);
+        }
+
+        private static double __expint_E1_asymp(double __x) {
+            double __term = 1;
+            double __esum = 1;
+            double __osum = 0;
+            final int __max_iter = 1000;
+            for (int __i = 1; __i < __max_iter; ++__i) {
+                double __prev = __term;
+                __term *= -__i / __x;
+                if (Math.abs(__term) > Math.abs(__prev))
+                    break;
+                if (__term >= 0)
+                    __esum += __term;
+                else
+                    __osum += __term;
+            }
+            return Math.exp(-__x) * (__esum + __osum) / __x;
+        }
+
+        private static double __expint_En_series(int __n, double __x) {
+            final int __max_iter = 1000;
+            final int __nm1 = __n - 1;
+            double __ans = (__nm1 != 0 ? 1.0 / __nm1 : -Math.log(__x) - eulerGamma);
+            double __fact = 1.0;
+            for (int __i = 1; __i <= __max_iter; ++__i) {
+                __fact *= -__x / __i;
+                double __del;
+                if (__i != __nm1) {
+                    __del = -__fact / (__i - __nm1);
+                } else {
+                    double __psi = -eulerGamma;
+                    for (int __ii = 1; __ii <= __nm1; ++__ii) {
+                        __psi += 1.0 / __ii;
+                    }
+                    __del = __fact * (__psi - Math.log(__x));
+                }
+                __ans += __del;
+                if (Math.abs(__del) < EPSILON * Math.abs(__ans)) {
+                    return __ans;
+                }
+            }
+            throw new RuntimeException("Series summation failed in __expint_En_series.");
+        }
+
+        private static double __expint_En_cont_frac(int __n, double __x) {
+            final int __max_iter = 1000;
+            final int __nm1 = __n - 1;
+            double __b = __x + __n;
+            double __c = 1 / Double.MIN_VALUE;
+            double __d = 1 / __b;
+            double __h = __d;
+            for (int __i = 1; __i <= __max_iter; ++__i) {
+                double __a = -__i * (__nm1 + __i);
+                __b += 2;
+                __d = 1 / (__a * __d + __b);
+                __c = __b + __a / __c;
+                final double __del = __c * __d;
+                __h *= __del;
+                if (Math.abs(__del - 1) < EPSILON) {
+                    return __h * Math.exp(-__x);
+                }
+            }
+            throw new RuntimeException("Continued fraction failed in __expint_En_cont_frac.");
+        }
+
+        private static double __expint_Ei_series(double __x) {
+            double __term = 1;
+            double __sum = 0;
+            final int __max_iter = 1000;
+            for (int __i = 1; __i < __max_iter; ++__i) {
+                __term *= __x / __i;
+                __sum += __term / __i;
+                if (__term < EPSILON * __sum)
+                    break;
+            }
+            return eulerGamma + __sum + Math.log(__x);
+        }
+
+        private static double __expint_Ei_asymp(double __x) {
+            double __term = 1;
+            double __sum = 1;
+            final int __max_iter = 1000;
+            for (int __i = 1; __i < __max_iter; ++__i) {
+                double __prev = __term;
+                __term *= __i / __x;
+                if (__term < EPSILON)
+                    break;
+                if (__term >= __prev)
+                    break;
+                __sum += __term;
+            }
+            return Math.exp(__x) * __sum / __x;
+        }
+
+        private static double __expint_Ei(double __x) {
+            if (__x < 0)
+                return -__expint_E1(-__x);
+            else if (__x < -Math.log(EPSILON))
+                return __expint_Ei_series(__x);
+            else
+                return __expint_Ei_asymp(__x);
+        }
+
+        private static double __expint_E1(double __x) {
+            if (__x < 0)
+                return -__expint_Ei(-__x);
+            else if (__x < 1)
+                return __expint_E1_series(__x);
+            else if (__x < 100)  //  TODO: Find a good asymptotic switch point.
+                return __expint_En_cont_frac(1, __x);
+            else
+                return __expint_E1_asymp(__x);
+        }
+
+        public static double expint(double x) {
+            if (Double.isNaN(x)) {
+                return Double.NaN;
+            } else {
+                return __expint_Ei(x);
+            }
+        }
     }
 
     public static class ZetaCalculation {
