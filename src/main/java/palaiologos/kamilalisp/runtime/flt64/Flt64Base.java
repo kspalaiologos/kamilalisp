@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class Flt64Base {
-    private abstract class Flt64Function extends PrimitiveFunction implements Lambda { }
+    private abstract static class Flt64Function extends PrimitiveFunction implements Lambda { }
 
     private static double toFlt64(Atom a) {
         return switch(a.getType()) {
@@ -108,7 +108,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::abs).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.abs(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::abs).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -120,7 +123,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::ceil).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.ceil(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::ceil).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -132,7 +138,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::floor).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.floor(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::floor).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -144,7 +153,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::round).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.round(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::round).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -156,7 +168,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::exp).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.exp(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::exp).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -168,7 +183,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::log).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.log(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::log).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -180,7 +198,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::log10).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.log10(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::log10).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -192,7 +213,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::log).map(x -> x / Math.log(2)).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.log(toFlt64(args.get(0))) / Math.log(2));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::log).map(x -> x / Math.log(2)).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -204,7 +228,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::sqrt).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.sqrt(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::sqrt).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -240,7 +267,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> x < 0 ? -1 : x == 0 ? 0 : 1).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.signum(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> x < 0 ? -1 : x == 0 ? 0 : 1).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -252,7 +282,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::sin).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.sin(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::sin).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -264,7 +297,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::cos).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.cos(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::cos).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -276,7 +312,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::tan).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.tan(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::tan).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -288,7 +327,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::asin).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.asin(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::asin).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -300,7 +342,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::acos).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.acos(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::acos).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -312,7 +357,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::atan).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.atan(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::atan).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -324,7 +372,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> 1 / Math.cos(x)).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(1 / Math.cos(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> 1 / Math.cos(x)).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -336,7 +387,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> 1 / Math.sin(x)).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(1 / Math.sin(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> 1 / Math.sin(x)).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -348,7 +402,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> 1 / Math.tan(x)).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(1 / Math.tan(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> 1 / Math.tan(x)).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -360,7 +417,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> Math.acos(1 / x)).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.acos(1 / toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> Math.acos(1 / x)).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -372,7 +432,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> Math.asin(1 / x)).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.asin(1 / toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> Math.asin(1 / x)).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -384,7 +447,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> Math.atan(1 / x)).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.atan(1 / toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> Math.atan(1 / x)).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -396,7 +462,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::sinh).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.sinh(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::sinh).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -408,7 +477,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::cosh).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.cosh(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::cosh).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -420,7 +492,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::tanh).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(Math.tanh(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::tanh).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -432,7 +507,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> 1 / Math.cosh(x)).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(1 / Math.cosh(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> 1 / Math.cosh(x)).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -444,7 +522,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> 1 / Math.sinh(x)).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(1 / Math.sinh(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> 1 / Math.sinh(x)).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -456,7 +537,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> 1 / Math.tanh(x)).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(1 / Math.tanh(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> 1 / Math.tanh(x)).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -481,7 +565,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(this::asinh).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(asinh(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(this::asinh).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -517,7 +604,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(this::acosh).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(acosh(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(this::acosh).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -541,7 +631,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(this::atanh).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return toAtom(atanh(toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(this::atanh).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -727,7 +820,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Base::gamma).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return Flt64Base.toAtom(gamma(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Base::gamma).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -795,7 +891,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Base::digamma).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return Flt64Base.toAtom(digamma(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Base::digamma).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -838,7 +937,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Base::trigamma).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return Flt64Base.toAtom(trigamma(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Base::trigamma).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -867,7 +969,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Base::loggamma).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return Flt64Base.toAtom(loggamma(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Base::loggamma).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -1037,7 +1142,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(ZetaCalculation::riemann_zeta).mapToObj(Flt64Base::toAtom).toList());
+            if(args.size() == 1)
+                return Flt64Base.toAtom(ZetaCalculation.riemann_zeta(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(ZetaCalculation::riemann_zeta).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
