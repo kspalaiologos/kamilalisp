@@ -1106,6 +1106,114 @@ public class Flt64Base {
         return (p < 1.0 ? x : -x);
     }
 
+    public static double lowerIncomplete(double a, double x) {
+        return regularizedGammaP(a, x) * gamma(a);
+    }
+
+    public static double upperIncomplete(double a, double x) {
+        return regularizedGammaQ(a, x) * gamma(a);
+    }
+
+    public final Flt64Function upperIncompleteGamma = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:ui-gamma";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            double a = toFlt64(args.get(0));
+            double x = toFlt64(args.get(1));
+            return toAtom(upperIncomplete(a, x));
+        }
+    };
+
+    public final Flt64Function lowerIncompleteGamma = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:li-gamma";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            double a = toFlt64(args.get(0));
+            double x = toFlt64(args.get(1));
+            return toAtom(lowerIncomplete(a, x));
+        }
+    };
+
+    public static double regularizedGammaQ(double a, double x) {
+        if (a <= 0.0)
+            throw new IllegalArgumentException(
+                    "Invalid arguments in routine gammq");
+        return 1.0 - regularizedGammaP(a, x);
+    }
+
+    public static double regularizedGammaP(double a, double x) {
+        if (a <= 0.0)
+            throw new IllegalArgumentException(
+                    "Invalid arguments in routine gammp");
+        if (x < (a + 1.0)) { // Use the series representation.
+            return gser(a, x);
+        } else { // Use the continued fraction representation
+            return 1.0 - gcf(a, x);
+        }
+    }
+
+    private static double gser(double a, double x) {
+        double gln = loggamma(a);
+        if (x <= 0.0) {
+            if (x < 0.0)
+                throw new IllegalArgumentException("x < 0 in routine gser");
+            return 0.0;
+        } else {
+            double ap = a;
+            double del, sum;
+            del = sum = 1.0 / a;
+            for (int n = 1; n <= 100; n++) {
+                ++ap;
+                del *= x / ap;
+                sum += del;
+                if (Math.abs(del) < Math.abs(sum) * 3.0e-7) {
+                    return sum * Math.exp(-x + a * Math.log(x) - gln);
+                }
+            }
+            throw new IllegalArgumentException(
+                    "a too large, ITMAX too small in routine gser");
+        }
+    }
+
+    private static double gcf(double a, double x) {
+        double an, del;
+        int i;
+        double b = x + 1.0 - a;
+        // Set up for evaluating continued fraction
+        // by modified Lentz’s method (§5.2) with b0 = 0.
+        double c = 1.0 / Double.MIN_VALUE;
+        double d = 1.0 / b;
+        double h = d;
+        for (i = 1; i <= 100; i++) { // Iterate to convergence.
+            an = -i * (i - a);
+            b += 2.0;
+            d = an * d + b;
+            if (Math.abs(d) < Double.MIN_VALUE)
+                d = Double.MIN_VALUE;
+            c = b + an / c;
+            if (Math.abs(c) < Double.MIN_VALUE)
+                c = Double.MIN_VALUE;
+            d = 1.0 / d;
+            del = d * c;
+            h *= del;
+            if (Math.abs(del - 1.0) < 3.0e-7)
+                break;
+        }
+        if (i > 100)
+            throw new IllegalArgumentException(
+                    "a too large, ITMAX too small in gcf");
+        double gln = loggamma(a);
+        return Math.exp(-x + a * Math.log(x) - gln) * h;
+    }
+
     public void registerFlt64(Environment env) {
         // TODO:
         // dawson-f, Expint, Ei, log-integral, fresnel-s, fresnel-c, fresnel-f, fresnel-g,
@@ -1164,6 +1272,9 @@ public class Flt64Base {
         env.setPrimitive("flt64:erfc", new Atom(erfc));
         env.setPrimitive("flt64:erf-inverse", new Atom(erfInverse));
         env.setPrimitive("flt64:erfc-inverse", new Atom(erfcInverse));
+        env.setPrimitive("flt64:ui-gamma", new Atom(upperIncompleteGamma));
+        env.setPrimitive("flt64:li-gamma", new Atom(lowerIncompleteGamma));
+        env.setPrimitive("flt64:log-gamma", new Atom(loggamma));
         env.setPrimitive("flt64:=", new Atom(eq));
         env.setPrimitive("flt64:/=", new Atom(ne));
         env.setPrimitive("flt64:<", new Atom(lt));
@@ -1224,7 +1335,6 @@ public class Flt64Base {
         private static double __riemann_zeta_glob(double __s) {
             double __zeta = 0;
 
-            final double __eps = EPSILON;
             //  Max e exponent before overflow.
             final double __max_bincoeff = 308 * Math.log(10) - 1;
 
@@ -1259,7 +1369,7 @@ public class Flt64Base {
                     break;
                 __term *= __num;
                 __zeta += __term;
-                if (Math.abs(__term / __zeta) < __eps)
+                if (Math.abs(__term / __zeta) < EPSILON)
                     break;
                 __num *= 0.5;
             }
