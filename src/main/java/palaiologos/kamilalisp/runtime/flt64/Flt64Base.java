@@ -548,7 +548,7 @@ public class Flt64Base {
     public final Flt64Function eq = new Flt64Function() {
         @Override
         protected String name() {
-            return "flt64:eq";
+            return "flt64:=";
         }
 
         @Override
@@ -561,7 +561,7 @@ public class Flt64Base {
     public final Flt64Function ne = new Flt64Function() {
         @Override
         protected String name() {
-            return "flt64:ne";
+            return "flt64:/=";
         }
 
         @Override
@@ -574,7 +574,7 @@ public class Flt64Base {
     public final Flt64Function lt = new Flt64Function() {
         @Override
         protected String name() {
-            return "flt64:lt";
+            return "flt64:<";
         }
 
         @Override
@@ -587,7 +587,7 @@ public class Flt64Base {
     public final Flt64Function le = new Flt64Function() {
         @Override
         protected String name() {
-            return "flt64:le";
+            return "flt64:<=";
         }
 
         @Override
@@ -600,7 +600,7 @@ public class Flt64Base {
     public final Flt64Function gt = new Flt64Function() {
         @Override
         protected String name() {
-            return "flt64:gt";
+            return "flt64:>";
         }
 
         @Override
@@ -613,7 +613,7 @@ public class Flt64Base {
     public final Flt64Function ge = new Flt64Function() {
         @Override
         protected String name() {
-            return "flt64:ge";
+            return "flt64:>=";
         }
 
         @Override
