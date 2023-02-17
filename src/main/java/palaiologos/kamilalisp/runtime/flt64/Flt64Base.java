@@ -316,6 +316,78 @@ public class Flt64Base {
         }
     };
 
+    public final Flt64Function sec = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:sec";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> 1 / Math.cos(x)).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+
+    public final Flt64Function csc = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:csc";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> 1 / Math.sin(x)).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+
+    public final Flt64Function cot = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:cot";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> 1 / Math.tan(x)).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+
+    public final Flt64Function asec = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:asec";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> Math.acos(1 / x)).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+
+    public final Flt64Function acsc = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:acsc";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> Math.asin(1 / x)).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+
+    public final Flt64Function acot = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:acot";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> Math.atan(1 / x)).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+
     public void registerFlt64(Environment env) {
         env.setPrimitive("flt64:+", new Atom(add));
         env.setPrimitive("flt64:-", new Atom(sub));
@@ -341,6 +413,12 @@ public class Flt64Base {
         env.setPrimitive("flt64:asin", new Atom(asin));
         env.setPrimitive("flt64:acos", new Atom(acos));
         env.setPrimitive("flt64:atan", new Atom(atan));
+        env.setPrimitive("flt64:sec", new Atom(sec));
+        env.setPrimitive("flt64:csc", new Atom(csc));
+        env.setPrimitive("flt64:cot", new Atom(cot));
+        env.setPrimitive("flt64:asec", new Atom(asec));
+        env.setPrimitive("flt64:acsc", new Atom(acsc));
+        env.setPrimitive("flt64:acot", new Atom(acot));
         env.setPrimitive("flt64:e", toAtom(Math.E));
         env.setPrimitive("flt64:pi", toAtom(Math.PI));
         env.setPrimitive("flt64:euler-gamma", toAtom(0.57721566490153286060651209008240243104215933593992));
