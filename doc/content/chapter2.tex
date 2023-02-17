@@ -850,13 +850,13 @@ Define the function to compute the value of a two-dimensional convolution at a g
       \foldl + 0 \* (flatten conv-mat) \flatten kern
 \end{Verbatim}
 
-Now, define the \verb|convolution-2d| function that takes argument the input matrix and the kernel matrix and yields the convolution of the two matrices using the \verb|parallel-map-idx| function which behaves comparably to \verb|$:| (the parallel variant of \verb|:|), except it also passes the index in the list to the function:
+Now, define the \verb|convolution-2d| function that takes argument the input matrix and the kernel matrix and yields the convolution of the two matrices using the \verb|parallel:map-idx| function which behaves comparably to \verb|$:| (the parallel variant of \verb|:|), except it also passes the index in the list to the function:
 
 \begin{Verbatim}
     defun convolve (mat kern) \let-seq
       (def cell-mat (cell mat))
-      \parallel-map-idx (lambda (y row)
-        \parallel-map-idx (lambda (x _e)
+      \parallel:map-idx (lambda (y row)
+        \parallel:map-idx (lambda (x _e)
           \convolve-step cell-mat kern x y) row) mat
 \end{Verbatim}
 
@@ -937,8 +937,8 @@ Since the convolution code has become more complex, it should be saved to a file
 
     (defun public:convolve (mat kern) \let-seq
       (def cell-mat (cell mat))
-      \parallel-map-idx (lambda (y row)
-        \parallel-map-idx (lambda (x _e)
+      \parallel:map-idx (lambda (y row)
+        \parallel:map-idx (lambda (x _e)
           \convolve-step cell-mat kern x y) row) mat)
     
     (defun public:convolve-rgb (img kern) (let-seq

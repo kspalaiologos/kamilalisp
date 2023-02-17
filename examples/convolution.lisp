@@ -30,8 +30,8 @@
 
     (defun public:convolve (mat kern) \let-seq
       (def cell-mat (cell mat))
-      \parallel-map-idx (lambda (y row)
-        \parallel-map-idx (lambda (x _e)
+      \parallel:map-idx (lambda (y row)
+        \parallel:map-idx (lambda (x _e)
           \convolve-step cell-mat kern x y) row) mat)
     
     (defun public:convolve-rgb (img kern) (let-seq
