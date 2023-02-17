@@ -799,6 +799,49 @@ public class Flt64Base {
         }
     };
 
+    private static double trigamma(double x) {
+        final double C_LIMIT = 49;
+        final double S_LIMIT = 1e-5;
+        final double F_1_6 = 1d / 6;
+        final double F_1_30 = 1d / 30;
+        final double F_1_42 = 1d / 42;
+
+        if (!Double.isFinite(x)) {
+            return x;
+        }
+
+        if (x > 0 && x <= S_LIMIT) {
+            return 1 / (x * x);
+        }
+
+        double trigamma = 0;
+        while (x < C_LIMIT) {
+            trigamma += 1 / (x * x);
+            x += 1;
+        }
+
+        final double inv = 1 / (x * x);
+        //  1    1      1       1       1
+        //  - + ---- + ---- - ----- + -----
+        //  x      2      3       5       7
+        //      2 x    6 x    30 x    42 x
+        trigamma += 1 / x + inv / 2 + inv / x * (F_1_6 - inv * (F_1_30 + F_1_42 * inv));
+
+        return trigamma;
+    }
+
+    public final Flt64Function trigamma = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:trigamma";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Base::trigamma).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+
     // TODO:
     // polygamma, loggamma, pochhammer, barnesg, logbarnesg,
     // erf, erfi, erfc, inverse-erf, inverse-erfi, inverse-erfc, dawson-f,
@@ -850,6 +893,7 @@ public class Flt64Base {
         env.setPrimitive("flt64:coth", new Atom(coth));
         env.setPrimitive("flt64:gamma", new Atom(gamma));
         env.setPrimitive("flt64:digamma", new Atom(digamma));
+        env.setPrimitive("flt64:trigamma", new Atom(trigamma));
         env.setPrimitive("flt64:beta", new Atom(beta));
         env.setPrimitive("flt64:=", new Atom(eq));
         env.setPrimitive("flt64:/=", new Atom(ne));
