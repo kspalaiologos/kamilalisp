@@ -1162,6 +1162,24 @@ public class Flt64Base {
         }
     };
 
+    public final Flt64Function polygamma = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:polygamma";
+        }
+
+        private static double polygamma(double n, double x) {
+            // Polygamma[n, x] = (-1)^n * Gamma[n + 1] * HurwitzZeta[n + 1, x]
+            return Math.pow(-1, n) * gamma(n + 1) * ZetaCalculation.hurwitz_zeta(n + 1, x);
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            return Flt64Base.toAtom(polygamma(Flt64Base.toFlt64(args.get(0)), Flt64Base.toFlt64(args.get(1))));
+        }
+    };
+
     // TODO:
     // polygamma, pochhammer, barnesg, logbarnesg,
     // erf, erfi, erfc, inverse-erf, inverse-erfi, inverse-erfc, dawson-f,
@@ -1217,6 +1235,7 @@ public class Flt64Base {
         env.setPrimitive("flt64:beta", new Atom(beta));
         env.setPrimitive("flt64:zeta", new Atom(zeta));
         env.setPrimitive("flt64:hurwitz-zeta", new Atom(hurwitz_zeta));
+        env.setPrimitive("flt64:polygamma", new Atom(polygamma));
         env.setPrimitive("flt64:=", new Atom(eq));
         env.setPrimitive("flt64:/=", new Atom(ne));
         env.setPrimitive("flt64:<", new Atom(lt));
