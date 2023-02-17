@@ -842,14 +842,226 @@ public class Flt64Base {
         }
     };
 
+    private static double loggamma(double xx) {
+        double x, y, tmp, ser;
+
+        final double[] cof = { 76.18009172947146, -86.50532032941677,
+                24.01409824083091, -1.231739572450155, 0.1208650973866179e-2,
+                -0.5395239384953e-5 };
+        int j;
+        y = x = xx;
+        tmp = x + 5.5;
+        tmp -= (x + 0.5) * Math.log(tmp);
+        ser = 1.000000000190015;
+        for (j = 0; j <= 5; j++)
+            ser += cof[j] / ++y;
+
+        return -tmp + Math.log(2.5066282746310005 * ser / x);
+    }
+
+    public final Flt64Function loggamma = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:loggamma";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Base::loggamma).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+
+    private static double EPSILON = Math.ulp(1.0d);
+
+    public static class ZetaCalculation {
+        private static double __riemann_zeta_sum(double s) {
+            if (s < 1.0) {
+                throw new IllegalArgumentException("Bad argument in zeta sum.");
+            }
+
+            final int max_iter = 10000;
+            double zeta = 0.0;
+            for (int k = 1; k < max_iter; ++k) {
+                double term = Math.pow(k, -s);
+                if (term < EPSILON) {
+                    break;
+                }
+                zeta += term;
+            }
+
+            return zeta;
+        }
+
+        private static double __riemann_zeta_alt(double __s) {
+            double __sgn = 1;
+            double __zeta = 0;
+            for (int __i = 1; __i < 10000000; ++__i) {
+                double __term = __sgn / Math.pow(__i, __s);
+                if (Math.abs(__term) < EPSILON)
+                    break;
+                __zeta += __term;
+                __sgn *= -1;
+            }
+            __zeta /= 1 - Math.pow(2, 1 - __s);
+
+            return __zeta;
+        }
+
+        private static double __riemann_zeta_glob(double __s) {
+            double __zeta = 0;
+
+            final double __eps = EPSILON;
+            //  Max e exponent before overflow.
+            final double __max_bincoeff = Math.log(Double.MAX_VALUE) - 1;
+
+            //  This series works until the binomial coefficient blows up
+            //  so use reflection.
+            if (__s < 0) {
+                {
+                    __zeta = __riemann_zeta_glob(1 - __s);
+                    __zeta *= Math.pow(2 * Math.PI, __s) * Math.sin(Math.PI / 2 * __s) * Math.exp(loggamma(1 - __s)) / Math.PI;
+                    return __zeta;
+                }
+            }
+
+            double __num = 0.5;
+            final int __maxit = 10000;
+            for (int __i = 0; __i < __maxit; ++__i) {
+                boolean __punt = false;
+                double __sgn = 1;
+                double __term = 0;
+                for (int __j = 0; __j <= __i; ++__j) {
+                    double __bincoeff = loggamma(1 + __i) - loggamma(1 + __j) - loggamma(1 + __i - __j);
+                    if (__bincoeff > __max_bincoeff) {
+                        //  This only gets hit for x << 0.
+                        __punt = true;
+                        break;
+                    }
+                    __bincoeff = Math.exp(__bincoeff);
+                    __term += __sgn * __bincoeff * Math.pow(1 + __j, -__s);
+                    __sgn *= -1;
+                }
+                if (__punt)
+                    break;
+                __term *= __num;
+                __zeta += __term;
+                if (Math.abs(__term / __zeta) < __eps)
+                    break;
+                __num *= 0.5;
+            }
+
+            __zeta /= 1 - Math.pow(2, 1 - __s);
+
+            return __zeta;
+        }
+
+        private static double __riemann_zeta_product(double __s) {
+            final double[] __prime = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109};
+
+            double __zeta = 1;
+            for (double v : __prime) {
+                double __fact = 1 - Math.pow(v, -__s);
+                __zeta *= __fact;
+                if (1 - __fact < EPSILON) {
+                    break;
+                }
+            }
+
+            __zeta = 1 / __zeta;
+
+            return __zeta;
+        }
+
+        public static double riemann_zeta(double s) {
+            if (Double.isNaN(s)) {
+                return Double.NaN;
+            } else if (s == 1) {
+                return Double.POSITIVE_INFINITY;
+            } else if (s < -19) {
+                double zeta = __riemann_zeta_product(1 - s);
+                zeta *= Math.pow(2 * Math.PI, s) * Math.sin(Math.PI / 2 * s) * Math.exp(loggamma(1 - s)) / Math.PI;
+                return zeta;
+            } else if (s < 20) {
+                return __riemann_zeta_glob(s);
+            } else {
+                return __riemann_zeta_product(s);
+            }
+        }
+
+        private static double __hurwitz_zeta_glob(double a, double s) {
+            double zeta = 0;
+
+            double eps = EPSILON;
+            //  Max e exponent before overflow.
+            double max_bincoeff = Math.log(Double.MAX_VALUE) - 1;
+
+            int maxit = 10000;
+            for (int i = 0; i < maxit; i++) {
+                boolean punt = false;
+                double sgn = 1;
+                double term = 0;
+                for (int j = 0; j <= i; j++) {
+                    double bincoeff = loggamma(1 + i) - loggamma(1 + j) - loggamma(1 + i - j);
+                    if (bincoeff > max_bincoeff) {
+                        //  This only gets hit for x << 0.
+                        punt = true;
+                        break;
+                    }
+                    bincoeff = Math.exp(bincoeff);
+                    term += sgn * bincoeff * Math.pow(a + j, -s);
+                    sgn *= -1;
+                }
+                if (punt)
+                    break;
+                term /= i + 1;
+                if (Math.abs(term / zeta) < eps)
+                    break;
+                zeta += term;
+            }
+
+            zeta /= s - 1;
+
+            return zeta;
+        }
+
+        public static double hurwitz_zeta(double a, double s) {
+            return __hurwitz_zeta_glob(a, s);
+        }
+    };
+
+    public final Flt64Function zeta = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:zeta";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(ZetaCalculation::riemann_zeta).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+
+    public final Flt64Function hurwitz_zeta = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:hurwitz-zeta";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            return Flt64Base.toAtom(ZetaCalculation.hurwitz_zeta(Flt64Base.toFlt64(args.get(0)), Flt64Base.toFlt64(args.get(1))));
+        }
+    };
+
     // TODO:
-    // polygamma, loggamma, pochhammer, barnesg, logbarnesg,
+    // polygamma, pochhammer, barnesg, logbarnesg,
     // erf, erfi, erfc, inverse-erf, inverse-erfi, inverse-erfc, dawson-f,
     // E (exp-integral-e), Ei, log-integral, fresnel-s, fresnel-c, fresnel-f, fresnel-g,
     // Si, Co, Shi, Chi, bessel-j, bessel-y, bessel-i, bessel-k, hankel-h1, hankel-h2,
     // airy-ai, airy-bi, hypergeom-2f1, hypergeom-pfq, meijer-g, fox-h, hypergeom-1f1,
     // whittaker-m, whittaker-w, elliptic-k, elliptic-f, elliptic-e, elliptic-pi,
-    // zeta, hurwitz-zeta, lerch-phi, dirchlet-beta, dirchlet-eta, dirchlet-lambda
+    // lerch-phi, dirchlet-beta, dirchlet-eta, dirchlet-lambda
 
     public void registerFlt64(Environment env) {
         env.setPrimitive("flt64:+", new Atom(add));
@@ -895,6 +1107,8 @@ public class Flt64Base {
         env.setPrimitive("flt64:digamma", new Atom(digamma));
         env.setPrimitive("flt64:trigamma", new Atom(trigamma));
         env.setPrimitive("flt64:beta", new Atom(beta));
+        env.setPrimitive("flt64:zeta", new Atom(zeta));
+        env.setPrimitive("flt64:hurwitz-zeta", new Atom(hurwitz_zeta));
         env.setPrimitive("flt64:=", new Atom(eq));
         env.setPrimitive("flt64:/=", new Atom(ne));
         env.setPrimitive("flt64:<", new Atom(lt));
