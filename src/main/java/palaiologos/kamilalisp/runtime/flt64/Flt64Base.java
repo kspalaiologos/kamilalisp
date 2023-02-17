@@ -748,8 +748,59 @@ public class Flt64Base {
         }
     };
 
+    private static double digamma(double x) {
+        final double GAMMA = 0.577215664901532860606512090082;
+        final double C_LIMIT = 49;
+        final double S_LIMIT = 1e-5;
+        final double F_M1_12 = -1d / 12;
+        final double F_1_120 = 1d / 120;
+        final double F_M1_252 = -1d / 252;
+
+        if (!Double.isFinite(x)) {
+            return x;
+        }
+
+        double digamma = 0;
+        if (x < 0) {
+            // Use reflection formula to fall back into positive values.
+            digamma -= Math.PI / Math.tan(Math.PI * x);
+            x = 1 - x;
+        }
+
+        if (x > 0 && x <= S_LIMIT) {
+            // Use method 5 from Bernardo AS103, accurate to O(x).
+            return digamma - GAMMA - 1 / x;
+        }
+
+        while (x < C_LIMIT) {
+            digamma -= 1 / x;
+            x += 1;
+        }
+
+        // Use method 4, accurate to O(1/x^8)
+        final double inv = 1 / (x * x);
+        //            1       1        1         1
+        // log(x) -  --- - ------ + ------- - -------
+        //           2 x   12 x^2   120 x^4   252 x^6
+        digamma += Math.log(x) - 0.5 / x + inv * (F_M1_12 + inv * (F_1_120 + F_M1_252 * inv));
+
+        return digamma;
+    }
+
+    public final Flt64Function digamma = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:digamma";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Base::digamma).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+
     // TODO:
-    // polygamma, digamma, loggamma, pochhammer, barnesg, logbarnesg,
+    // polygamma, loggamma, pochhammer, barnesg, logbarnesg,
     // erf, erfi, erfc, inverse-erf, inverse-erfi, inverse-erfc, dawson-f,
     // E (exp-integral-e), Ei, log-integral, fresnel-s, fresnel-c, fresnel-f, fresnel-g,
     // Si, Co, Shi, Chi, bessel-j, bessel-y, bessel-i, bessel-k, hankel-h1, hankel-h2,
@@ -798,6 +849,7 @@ public class Flt64Base {
         env.setPrimitive("flt64:csch", new Atom(csch));
         env.setPrimitive("flt64:coth", new Atom(coth));
         env.setPrimitive("flt64:gamma", new Atom(gamma));
+        env.setPrimitive("flt64:digamma", new Atom(digamma));
         env.setPrimitive("flt64:beta", new Atom(beta));
         env.setPrimitive("flt64:=", new Atom(eq));
         env.setPrimitive("flt64:/=", new Atom(ne));
