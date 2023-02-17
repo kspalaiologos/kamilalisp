@@ -1113,8 +1113,7 @@ public class Flt64Base {
 
     public void registerFlt64(Environment env) {
         // TODO:
-        // inverse-erf, inverse-erfc, dawson-f,
-        // E (exp-integral-e), Ei, log-integral, fresnel-s, fresnel-c, fresnel-f, fresnel-g,
+        // dawson-f, Expint, Ei, log-integral, fresnel-s, fresnel-c, fresnel-f, fresnel-g,
         // Si, Co, Shi, Chi, bessel-j, bessel-y, bessel-i, bessel-k, hankel-h1, hankel-h2,
         // airy-ai, airy-bi, hypergeom-2f1, hypergeom-pfq, meijer-g, fox-h, hypergeom-1f1,
         // whittaker-m, whittaker-w, elliptic-k, elliptic-f, elliptic-e, elliptic-pi,
