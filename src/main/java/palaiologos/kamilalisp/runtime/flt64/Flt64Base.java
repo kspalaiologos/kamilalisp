@@ -917,7 +917,7 @@ public class Flt64Base {
             if (args.size() == 1)
                 return Flt64Base.toAtom(BesselComputation.bessel0(Flt64Base.toFlt64(args.get(0))));
             else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> BesselComputation.bessel0(x)).mapToObj(Flt64Base::toAtom).toList());
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(BesselComputation::bessel0).mapToObj(Flt64Base::toAtom).toList());
         }
     };
     public final Flt64Function bessel1 = new Flt64Function() {
@@ -931,7 +931,7 @@ public class Flt64Base {
             if (args.size() == 1)
                 return Flt64Base.toAtom(BesselComputation.bessel1(Flt64Base.toFlt64(args.get(0))));
             else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> BesselComputation.bessel1(x)).mapToObj(Flt64Base::toAtom).toList());
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(BesselComputation::bessel1).mapToObj(Flt64Base::toAtom).toList());
         }
     };
     public final Flt64Function bessel = new Flt64Function() {
@@ -1013,7 +1013,6 @@ public class Flt64Base {
             xt = 0.666666666666667 * Math.abs(x) * sqrtx;
             c = xtmp[25] / Math.sqrt(sqrtx);
             if (x < 0.0) {
-                x = -x;
                 co = Math.cos(xt - xtmp[24]);
                 si = Math.sin(xt - xtmp[24]);
                 for (l = 1; l <= 10; l++) {
@@ -1035,7 +1034,6 @@ public class Flt64Base {
                     wwl = xtmp[l + 10];
                     pl = xtmp[l] / xt;
                     pl1 = 1.0 + pl;
-                    pl2 = 1.0 - pl;
                     k1 += wwl / pl1;
                     k2 += wwl * pl / (xt * pl1 * pl1);
                 }
@@ -1066,7 +1064,7 @@ public class Flt64Base {
     public final Flt64Function airyDerv = new Flt64Function() {
         public static double airyDerivative(double x) {
             int n, l;
-            double s, t, u, v, sc, tc, uc, vc, k1, k2, k3, k4, c, xt, si, co, expxt;
+            double s, t, u, v, sc, tc, k1, k2, k3, k4, c, xt, si, co, expxt;
             double sqrtx, wwl, pl, pl1, pl2, pl3, zzz, ai, aid;
             double[] xtmp = new double[26];
             xtmp[1] = 1.4083081072180964e1;
@@ -1095,7 +1093,7 @@ public class Flt64Base {
             xtmp[24] = 0.78539816339744831;
             xtmp[25] = 0.56418958354775629;
             if((x>=-5.0)&&(x<=8.0)) {
-                u = v = t = uc = vc = tc = 1.0;
+                u = v = t = tc = 1.0;
                 s = sc = 0.5;
                 n = 3;
                 zzz = x*x*x;
@@ -1104,16 +1102,12 @@ public class Flt64Base {
                     v = v*zzz/(n*(n+1));
                     s = s*zzz/(n*(n+2));
                     t = t*zzz/(n*(n-2));
-                    uc += u;
-                    vc += v;
                     sc += s;
                     tc += t;
                     n += 3;
                 }
                 if(x<2.5) {
-                    ai = xtmp[21]*uc-xtmp[22]*x*vc;
-                    aid = xtmp[21]*sc*x*x-xtmp[22]*tc;
-                    return aid;
+                    return xtmp[21]*sc*x*x-xtmp[22]*tc;
                 }
             }
             k1 = k2 = k3 = k4 = 0.0;
