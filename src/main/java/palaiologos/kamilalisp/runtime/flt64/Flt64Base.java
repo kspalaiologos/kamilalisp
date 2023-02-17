@@ -545,6 +545,84 @@ public class Flt64Base {
         }
     };
 
+    public final Flt64Function eq = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:eq";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            return new Atom(Flt64Base.toFlt64(args.get(0)) == Flt64Base.toFlt64(args.get(1)));
+        }
+    };
+
+    public final Flt64Function ne = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:ne";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            return new Atom(Flt64Base.toFlt64(args.get(0)) != Flt64Base.toFlt64(args.get(1)));
+        }
+    };
+
+    public final Flt64Function lt = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:lt";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            return new Atom(Flt64Base.toFlt64(args.get(0)) < Flt64Base.toFlt64(args.get(1)));
+        }
+    };
+
+    public final Flt64Function le = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:le";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            return new Atom(Flt64Base.toFlt64(args.get(0)) <= Flt64Base.toFlt64(args.get(1)));
+        }
+    };
+
+    public final Flt64Function gt = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:gt";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            return new Atom(Flt64Base.toFlt64(args.get(0)) > Flt64Base.toFlt64(args.get(1)));
+        }
+    };
+
+    public final Flt64Function ge = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:ge";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            return new Atom(Flt64Base.toFlt64(args.get(0)) >= Flt64Base.toFlt64(args.get(1)));
+        }
+    };
+
     public void registerFlt64(Environment env) {
         env.setPrimitive("flt64:+", new Atom(add));
         env.setPrimitive("flt64:-", new Atom(sub));
@@ -585,6 +663,12 @@ public class Flt64Base {
         env.setPrimitive("flt64:sech", new Atom(sech));
         env.setPrimitive("flt64:csch", new Atom(csch));
         env.setPrimitive("flt64:coth", new Atom(coth));
+        env.setPrimitive("flt64:=", new Atom(eq));
+        env.setPrimitive("flt64:/=", new Atom(ne));
+        env.setPrimitive("flt64:<", new Atom(lt));
+        env.setPrimitive("flt64:<=", new Atom(le));
+        env.setPrimitive("flt64:>", new Atom(gt));
+        env.setPrimitive("flt64:>=", new Atom(ge));
         env.setPrimitive("flt64:e", toAtom(Math.E));
         env.setPrimitive("flt64:pi", toAtom(Math.PI));
         env.setPrimitive("flt64:euler-gamma", toAtom(0.57721566490153286060651209008240243104215933593992));
