@@ -832,9 +832,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 1);
-            double x = toFlt64(args.get(0));
-            return toAtom(erf(x));
+            if (args.size() == 1)
+                return Flt64Base.toAtom(erf(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> erf(x)).mapToObj(Flt64Base::toAtom).toList());
         }
     };
     public final Flt64Function erfc = new Flt64Function() {
@@ -845,9 +846,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 1);
-            double x = toFlt64(args.get(0));
-            return toAtom(erfc(x));
+            if (args.size() == 1)
+                return Flt64Base.toAtom(erfc(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Base::erfc).mapToObj(Flt64Base::toAtom).toList());
         }
     };
     public final Flt64Function erfcInverse = new Flt64Function() {
@@ -858,9 +860,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 1);
-            double x = toFlt64(args.get(0));
-            return toAtom(inverfc(x));
+            if (args.size() == 1)
+                return Flt64Base.toAtom(inverfc(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> inverfc(x)).mapToObj(Flt64Base::toAtom).toList());
         }
     };
     public final Flt64Function erfInverse = new Flt64Function() {
@@ -871,9 +874,10 @@ public class Flt64Base {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 1);
-            double x = toFlt64(args.get(0));
-            return toAtom(inverfc(1. - x));
+            if (args.size() == 1)
+                return Flt64Base.toAtom(inverfc(1. - Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> inverfc(1. - x)).mapToObj(Flt64Base::toAtom).toList());
         }
     };
     public final Flt64Function upperIncompleteGamma = new Flt64Function() {
@@ -905,45 +909,157 @@ public class Flt64Base {
     public final Flt64Function bessel0 = new Flt64Function() {
         @Override
         protected String name() {
-            return "flt64:bessel0";
+            return "flt64:bessel-j0";
         }
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return toAtom(BesselComputation.bessel0(toFlt64(args.get(0))));
+            if (args.size() == 1)
+                return Flt64Base.toAtom(BesselComputation.bessel0(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> BesselComputation.bessel0(x)).mapToObj(Flt64Base::toAtom).toList());
         }
     };
     public final Flt64Function bessel1 = new Flt64Function() {
         @Override
         protected String name() {
-            return "flt64:bessel1";
+            return "flt64:bessel-j1";
         }
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            return toAtom(BesselComputation.bessel1(toFlt64(args.get(0))));
+            if (args.size() == 1)
+                return Flt64Base.toAtom(BesselComputation.bessel1(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> BesselComputation.bessel1(x)).mapToObj(Flt64Base::toAtom).toList());
         }
     };
     public final Flt64Function bessel = new Flt64Function() {
         @Override
         protected String name() {
-            return "flt64:bessel";
+            return "flt64:bessel-jn";
         }
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
             return toAtom(BesselComputation.bessel(args.get(0).getInteger().intValueExact(), toFlt64(args.get(1))));
         }
     };
     public final Flt64Function besselderv = new Flt64Function() {
         @Override
         protected String name() {
-            return "flt64:bessel-derv";
+            return "flt64:bessel-jn-derv";
         }
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
             return toAtom(BesselComputation.besselnDerivative(args.get(0).getInteger().intValueExact(), toFlt64(args.get(1))));
+        }
+    };
+    public final Flt64Function airy = new Flt64Function() {
+        public static double airy(double x) {
+            int n, l;
+            double s, t, u, v, uc, vc, k1, k2, c, xt, si, co, expxt;
+            double sqrtx, wwl, pl, pl1, pl2, zzz, ai;
+            double[] xtmp = new double[26];
+            xtmp[1] = 1.4083081072180964e1;
+            xtmp[2] = 1.0214885479197331e1;
+            xtmp[3] = 7.4416018450450930;
+            xtmp[4] = 5.3070943061781927;
+            xtmp[5] = 3.6340135029132462;
+            xtmp[6] = 2.3310652303052450;
+            xtmp[7] = 1.3447970842609268;
+            xtmp[8] = 6.4188858369567296e-1;
+            xtmp[9] = 2.0100345998121046e-1;
+            xtmp[10] = 8.0594359172052833e-3;
+            xtmp[11] = 3.1542515762964787e-14;
+            xtmp[12] = 6.6394210819584921e-11;
+            xtmp[13] = 1.7583889061345669e-8;
+            xtmp[14] = 1.3712392370435815e-6;
+            xtmp[15] = 4.4350966639284350e-5;
+            xtmp[16] = 7.1555010917718255e-4;
+            xtmp[17] = 6.4889566103335381e-3;
+            xtmp[18] = 3.6440415875773282e-2;
+            xtmp[19] = 1.4399792418590999e-1;
+            xtmp[20] = 8.1231141336261486e-1;
+            xtmp[21] = 0.355028053887817;
+            xtmp[22] = 0.258819403792807;
+            xtmp[23] = 1.73205080756887729;
+            xtmp[24] = 0.78539816339744831;
+            xtmp[25] = 0.56418958354775629;
+            if ((x >= -5.0) && (x <= 8.0)) {
+                u = v = t = uc = vc = 1.0;
+                s = 0.5;
+                n = 3;
+                zzz = x * x * x;
+                while (Math.abs(u) + Math.abs(v) + Math.abs(s) + Math.abs(t) > 1.0e-18) {
+                    u = u * zzz / (n * (n - 1));
+                    v = v * zzz / (n * (n + 1));
+                    s = s * zzz / (n * (n + 2));
+                    t = t * zzz / (n * (n - 2));
+                    uc += u;
+                    vc += v;
+                    n += 3;
+                }
+                if (x < 2.5) {
+                    ai = xtmp[21] * uc - xtmp[22] * x * vc;
+                    return ai;
+                }
+            }
+            k1 = k2 = 0.0;
+            sqrtx = Math.sqrt(Math.abs(x));
+            xt = 0.666666666666667 * Math.abs(x) * sqrtx;
+            c = xtmp[25] / Math.sqrt(sqrtx);
+            if (x < 0.0) {
+                x = -x;
+                co = Math.cos(xt - xtmp[24]);
+                si = Math.sin(xt - xtmp[24]);
+                for (l = 1; l <= 10; l++) {
+                    wwl = xtmp[l + 10];
+                    pl = xtmp[l] / xt;
+                    pl2 = pl * pl;
+                    pl1 = 1.0 + pl2;
+                    k1 += wwl / pl1;
+                    k2 += wwl * pl / pl1;
+                }
+                ai = c * (co * k1 + si * k2);
+            } else {
+                if (x < 9.0) {
+                    expxt = Math.exp(xt);
+                } else {
+                    expxt = 1.0;
+                }
+                for (l = 1; l <= 10; l++) {
+                    wwl = xtmp[l + 10];
+                    pl = xtmp[l] / xt;
+                    pl1 = 1.0 + pl;
+                    pl2 = 1.0 - pl;
+                    k1 += wwl / pl1;
+                    k2 += wwl * pl / (xt * pl1 * pl1);
+                }
+                ai = 0.5 * c * k1 / expxt;
+                if (x >= 9.0) {
+                    // Asymptotic behavior follows
+                    expxt = Math.pow(x, 3. / 2.);
+                    ai = 0.5 * Math.exp(-2.0 * expxt / 3.0) / Math.sqrt(Math.PI) / Math.pow(x, 0.25);
+                }
+            }
+            return ai;
+        }
+
+        @Override
+        protected String name() {
+            return "flt64:airy";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(airy(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> airy(x)).mapToObj(Flt64Base::toAtom).toList());
         }
     };
 
@@ -1321,6 +1437,7 @@ public class Flt64Base {
         env.setPrimitive("flt64:bessel-j1", new Atom(bessel1));
         env.setPrimitive("flt64:bessel-jn", new Atom(bessel));
         env.setPrimitive("flt64:bessel-jn-derv", new Atom(besselderv));
+        env.setPrimitive("flt64:airy", new Atom(airy));
         env.setPrimitive("flt64:=", new Atom(eq));
         env.setPrimitive("flt64:/=", new Atom(ne));
         env.setPrimitive("flt64:<", new Atom(lt));
