@@ -1495,7 +1495,7 @@ public class Flt64Base {
         // Si, Co, Shi, Chi, bessel-y, bessel-i, bessel-k, hankel-h1, hankel-h2,
         // airy-bi, hypergeom-2f1, hypergeom-pfq, meijer-g, fox-h, hypergeom-1f1,
         // whittaker-m, whittaker-w, elliptic-k, elliptic-f, elliptic-e, elliptic-pi,
-        // lerch-phi, dirchlet-beta, dirchlet-eta, dirchlet-lambda, barnesg, logbarnesg,
+        // lerch-phi, dirichlet-beta, dirichlet-eta, dirichlet-lambda, barnesg, logbarnesg,
         env.setPrimitive("flt64:+", new Atom(add));
         env.setPrimitive("flt64:-", new Atom(sub));
         env.setPrimitive("flt64:*", new Atom(mul));
