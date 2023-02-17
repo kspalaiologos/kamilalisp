@@ -876,6 +876,76 @@ public class Flt64Base {
             return toAtom(inverfc(1. - x));
         }
     };
+    public final Flt64Function upperIncompleteGamma = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:ui-gamma";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            double a = toFlt64(args.get(0));
+            double x = toFlt64(args.get(1));
+            return toAtom(upperIncomplete(a, x));
+        }
+    };
+    public final Flt64Function lowerIncompleteGamma = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:li-gamma";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            double a = toFlt64(args.get(0));
+            double x = toFlt64(args.get(1));
+            return toAtom(lowerIncomplete(a, x));
+        }
+    };
+    public final Flt64Function bessel0 = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:bessel0";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            return toAtom(BesselComputation.bessel0(toFlt64(args.get(0))));
+        }
+    };
+    public final Flt64Function bessel1 = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:bessel1";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            return toAtom(BesselComputation.bessel1(toFlt64(args.get(0))));
+        }
+    };
+    public final Flt64Function bessel = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:bessel";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            return toAtom(BesselComputation.bessel(args.get(0).getInteger().intValueExact(), toFlt64(args.get(1))));
+        }
+    };
+    public final Flt64Function besselderv = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:bessel-derv";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            return toAtom(BesselComputation.besselnDerivative(args.get(0).getInteger().intValueExact(), toFlt64(args.get(1))));
+        }
+    };
 
     private static double toFlt64(Atom a) {
         return switch (a.getType()) {
@@ -1092,20 +1162,6 @@ public class Flt64Base {
         return x >= 0.0 ? ans : -ans;
     }
 
-    double inverfc(double p) {
-        double x, err, t, pp;
-        if (p >= 2.0) return -100.;
-        if (p <= 0.0) return 100.;
-        pp = (p < 1.0) ? p : 2. - p;
-        t = Math.sqrt(-2. * Math.log(pp / 2.));
-        x = -0.70711 * ((2.30753 + t * 0.27061) / (1. + t * (0.99229 + t * 0.04481)) - t);
-        for (int j = 0; j < 2; j++) {
-            err = erfc(x) - pp;
-            x += err / (1.12837916709551257 * Math.exp(-x * x) - x * err);
-        }
-        return (p < 1.0 ? x : -x);
-    }
-
     public static double lowerIncomplete(double a, double x) {
         return regularizedGammaP(a, x) * gamma(a);
     }
@@ -1113,34 +1169,6 @@ public class Flt64Base {
     public static double upperIncomplete(double a, double x) {
         return regularizedGammaQ(a, x) * gamma(a);
     }
-
-    public final Flt64Function upperIncompleteGamma = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:ui-gamma";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            double a = toFlt64(args.get(0));
-            double x = toFlt64(args.get(1));
-            return toAtom(upperIncomplete(a, x));
-        }
-    };
-
-    public final Flt64Function lowerIncompleteGamma = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:li-gamma";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            double a = toFlt64(args.get(0));
-            double x = toFlt64(args.get(1));
-            return toAtom(lowerIncomplete(a, x));
-        }
-    };
 
     public static double regularizedGammaQ(double a, double x) {
         if (a <= 0.0)
@@ -1214,6 +1242,20 @@ public class Flt64Base {
         return Math.exp(-x + a * Math.log(x) - gln) * h;
     }
 
+    double inverfc(double p) {
+        double x, err, t, pp;
+        if (p >= 2.0) return -100.;
+        if (p <= 0.0) return 100.;
+        pp = (p < 1.0) ? p : 2. - p;
+        t = Math.sqrt(-2. * Math.log(pp / 2.));
+        x = -0.70711 * ((2.30753 + t * 0.27061) / (1. + t * (0.99229 + t * 0.04481)) - t);
+        for (int j = 0; j < 2; j++) {
+            err = erfc(x) - pp;
+            x += err / (1.12837916709551257 * Math.exp(-x * x) - x * err);
+        }
+        return (p < 1.0 ? x : -x);
+    }
+
     public void registerFlt64(Environment env) {
         // TODO:
         // dawson-f, Expint, Ei, log-integral, fresnel-s, fresnel-c, fresnel-f, fresnel-g,
@@ -1275,6 +1317,10 @@ public class Flt64Base {
         env.setPrimitive("flt64:ui-gamma", new Atom(upperIncompleteGamma));
         env.setPrimitive("flt64:li-gamma", new Atom(lowerIncompleteGamma));
         env.setPrimitive("flt64:log-gamma", new Atom(loggamma));
+        env.setPrimitive("flt64:bessel0", new Atom(bessel0));
+        env.setPrimitive("flt64:bessel1", new Atom(bessel1));
+        env.setPrimitive("flt64:bessel", new Atom(bessel));
+        env.setPrimitive("flt64:bessel-derv", new Atom(besselderv));
         env.setPrimitive("flt64:=", new Atom(eq));
         env.setPrimitive("flt64:/=", new Atom(ne));
         env.setPrimitive("flt64:<", new Atom(lt));
@@ -1458,6 +1504,236 @@ public class Flt64Base {
             }
 
             return part1 + Math.pow(a + n, 1 - x) / (x - 1) - 1. / (2 * Math.pow(a + n, x)) + part2;
+        }
+    }
+
+    private class BesselComputation {
+        private static double besseln(int n, double x) {
+            int sg, k;
+            double y, tmp, pk, xk, pkm1, r, pkm2;
+            if (n < 0) {
+                n = -n;
+                if (n % 2 == 0) {
+                    sg = 1;
+                } else {
+                    sg = -1;
+                }
+            } else {
+                sg = 1;
+            }
+            if (x < 0) {
+                if (n % 2 != 0) {
+                    sg = -sg;
+                }
+                x = -x;
+            }
+            if (n == 0) {
+                y = sg * bessel0(x);
+                return y;
+            }
+            if (n == 1) {
+                y = sg * bessel1(x);
+                return y;
+            }
+            if (n == 2) {
+                if (x == 0) {
+                    y = 0;
+                } else {
+                    y = sg * (2.0 * bessel1(x) / x - bessel0(x));
+                }
+                return y;
+            }
+            if (x < 1.e-12) {
+                y = 0;
+                return y;
+            }
+            k = 53;
+            pk = 2 * (n + k);
+            tmp = pk;
+            xk = x * x;
+            while (k != 0) {
+                pk = pk - 2.0;
+                tmp = pk - xk / tmp;
+                k = k - 1;
+            }
+            tmp = x / tmp;
+            pk = 1.0;
+            pkm1 = 1.0 / tmp;
+            k = n - 1;
+            r = 2 * k;
+            while (k != 0) {
+                pkm2 = (pkm1 * r - pk * x) / x;
+                pk = pkm1;
+                pkm1 = pkm2;
+                r = r - 2.0;
+                k = k - 1;
+            }
+            if (Math.abs(pk) > Math.abs(pkm1)) {
+                tmp = bessel1(x) / pk;
+            } else {
+                tmp = bessel0(x) / pkm1;
+            }
+            return sg * tmp;
+        }
+
+        public static double besselnDerivative(int n, double x) {
+            int m, qm, qp, nm, np;
+            double bjn, bjnm, bjnp;
+            m = n;
+            if (n == 0) {
+                bjn = besseln(1, x);
+                return -bjn;
+            }
+            qm = 1;
+            qp = 1;
+            nm = m - 1;
+            np = m + 1;
+            if (m < 0) {
+                if (nm < 0) {
+                    nm = -nm;
+                    qm = -1;
+                }
+                if (np < 0) {
+                    np = -np;
+                    qp = -1;
+                }
+            }
+            bjnm = besseln(nm, x);
+            bjnp = besseln(np, x);
+            bjnm = Math.pow(qm, nm) * bjnm;
+            bjnp = Math.pow(qp, np) * bjnp;
+            return (bjnm - bjnp) / 2.;
+        }
+
+        public static double bessel0(double x) {
+            double nn, pzero, qzero, xsq, p1, q1, y;
+            double[] zz;
+            double[] p = {26857.86856980014981415848441, -40504123.71833132706360663322, 25071582855.36881945555156435, -8085222034853.793871199468171, 1434354939140344.111664316553, -136762035308817138.6865416609, 6382059341072356562.289432465, -117915762910761053603.8440800, 493378725179413356181.6813446};
+            double[] q = {1.0, 1363.063652328970604442810507, 1114636.098462985378182402543, 669998767.2982239671814028660, 312304311494.1213172572469442, 112775673967979.8507056031594, 30246356167094626.98627330784, 5428918384092285160.200195092, 493378725179413356211.3278438};
+            if (x < 0) {
+                x = -x;
+            }
+            if (x > 8.0) {
+                zz = besselasympt0(x);
+                pzero = zz[0];
+                qzero = zz[1];
+                nn = x - Math.PI / 4;
+                y = Math.sqrt(2 / Math.PI / x) * (pzero * Math.cos(nn) - qzero * Math.sin(nn));
+                return y;
+            }
+            xsq = x * x;
+            p1 = p[0];
+            for (int i = 1; i < 9; i++) {
+                p1 = p[i] + p1 * xsq;
+            }
+            q1 = q[0];
+            for (int i = 1; i < 9; i++) {
+                q1 = q[i] + q1 * xsq;
+            }
+            return p1 / q1;
+        }
+
+        public static double bessel1(double x) {
+            double s, pzero, qzero, nn, p1, q1, y, xsq;
+            double[] zz;
+            double[] p = {2701.122710892323414856790990, -4695753.530642995859767162166, 3413234182.301700539091292655, -1322983480332.126453125473247, 290879526383477.5409737601689, -35888175699101060.50743641413, 2316433580634002297.931815435, -66721065689249162980.20941484, 581199354001606143928.050809};
+            double[] q = {1.0, 1606.931573481487801970916749, 1501793.594998585505921097578, 1013863514.358673989967045588, 524371026216.7649715406728642, 208166122130760.7351240184229, 60920613989175217.46105196863, 11857707121903209998.37113348, 1162398708003212287858.529400};
+            s = Math.signum(x);
+            if (x < 0) {
+                x = -x;
+            }
+            if (x > 8.0) {
+                zz = besselasympt1(x);
+                pzero = zz[0];
+                qzero = zz[1];
+                nn = x - 3 * Math.PI / 4;
+                y = Math.sqrt(2 / Math.PI / x) * (pzero * Math.cos(nn) - qzero * Math.sin(nn));
+                if (s < 0) {
+                    y = -y;
+                }
+                return y;
+            }
+            xsq = x * x;
+            p1 = p[0];
+            for (int i = 1; i < 9; i++) {
+                p1 = p[i] + p1 * xsq;
+            }
+            q1 = q[0];
+            for (int i = 1; i < 9; i++) {
+                q1 = q[i] + q1 * xsq;
+            }
+            return s * x * p1 / q1;
+        }
+
+        private static double[] besselasympt0(double x) {
+            double xsq, p2, q2, p3, q3, pzero, qzero;
+            double[] zz = new double[2];
+            double[] p = {0.0, 2485.271928957404011288128951, 153982.6532623911470917825993, 2016135.283049983642487182349, 8413041.456550439208464315611, 12332384.76817638145232406055, 5393485.083869438325262122897};
+            double[] q = {1.0, 2615.700736920839685159081813, 156001.7276940030940592769933, 2025066.801570134013891035236, 8426449.050629797331554404810, 12338310.22786324960844856182, 5393485.083869438325560444960};
+            double[] pp = {0.0, -4.887199395841261531199129300, -226.2630641933704113967255053, -2365.956170779108192723612816, -8239.066313485606568803548860, -10381.41698748464093880530341, -3984.617357595222463506790588};
+            double[] qq = {1.0, 408.7714673983499223402830260, 15704.89191515395519392882766, 156021.3206679291652539287109, 533291.3634216897168722255057, 666745.4239319826986004038103, 255015.5108860942382983170882};
+            xsq = 64.0 / x / x;
+            p2 = p[0];
+            for (int i = 1; i < 7; i++) {
+                p2 = p[i] + p2 * xsq;
+            }
+            q2 = q[0];
+            for (int i = 1; i < 7; i++) {
+                q2 = q[i] + q2 * xsq;
+            }
+            p3 = pp[0];
+            for (int i = 1; i < 7; i++) {
+                p3 = pp[i] + p3 * xsq;
+            }
+            q3 = qq[0];
+            for (int i = 1; i < 7; i++) {
+                q3 = qq[i] + q3 * xsq;
+            }
+            pzero = p2 / q2;
+            qzero = 8 * p3 / q3 / x;
+            zz[0] = pzero;
+            zz[1] = qzero;
+            return zz;
+        }
+
+        private static double[] besselasympt1(double x) {
+            double xsq, p2, q2, p3, q3, pzero, qzero;
+            double[] zz = new double[2];
+            double[] p = {-1611.616644324610116477412898, -109824.0554345934672737413139, -1523529.351181137383255105722, -6603373.248364939109255245434, -9942246.505077641195658377899, -4435757.816794127857114720794};
+            double[] q = {1.0, -1455.009440190496182453565068, -107263.8599110382011903063867, -1511809.506634160881644546358, -6585339.479723087072826915069, -9934124.389934585658967556309, -4435757.816794127856828016962};
+            double[] pp = {35.26513384663603218592175580, 1706.375429020768002061283546, 18494.26287322386679652009819, 66178.83658127083517939992166, 85145.16067533570196555001171, 33220.91340985722351859704442};
+            double[] qq = {1.0, 863.8367769604990967475517183, 37890.22974577220264142952256, 400294.4358226697511708610813, 1419460.669603720892855755253, 1819458.042243997298924553839, 708712.8194102874357377502472};
+            xsq = 64.0 / x / x;
+            p2 = p[0];
+            for (int i = 1; i < 6; i++) {
+                p2 = p[i] + p2 * xsq;
+            }
+            q2 = q[0];
+            for (int i = 1; i < 7; i++) {
+                q2 = q[i] + q2 * xsq;
+            }
+            p3 = pp[0];
+            for (int i = 1; i < 6; i++) {
+                p3 = pp[i] + p3 * xsq;
+            }
+            q3 = qq[0];
+            for (int i = 1; i < 7; i++) {
+                q3 = qq[i] + q3 * xsq;
+            }
+            pzero = p2 / q2;
+            qzero = 8 * p3 / q3 / x;
+            zz[0] = pzero;
+            zz[1] = qzero;
+            return zz;
+        }
+
+        public static double bessel(int n, double x) {
+            if (n == 0)
+                return bessel0(x);
+            else if (n == 1)
+                return bessel1(x);
+            else
+                return besseln(n, x);
         }
     }
 }
