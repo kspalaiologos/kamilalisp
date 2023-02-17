@@ -13,6 +13,7 @@ import palaiologos.kamilalisp.runtime.cas.*;
 import palaiologos.kamilalisp.runtime.dataformat.*;
 import palaiologos.kamilalisp.runtime.dataformat.archive.*;
 import palaiologos.kamilalisp.runtime.datetime.*;
+import palaiologos.kamilalisp.runtime.flt64.Flt64Base;
 import palaiologos.kamilalisp.runtime.hashmap.*;
 import palaiologos.kamilalisp.runtime.image.LoadImage;
 import palaiologos.kamilalisp.runtime.image.WriteImage;
@@ -207,6 +208,8 @@ public class FunctionRegistry {
         env.setPrimitive("cas:maclaurin", "∂0", new Atom(new Maclaurin()));
         env.setPrimitive("cas:polynomial", "⊕ƒ⊗", new Atom(new Polynomial()));
         env.setPrimitive("cas:factor", "ƒ∵", new Atom(new Factor()));
+
+        new Flt64Base().registerFlt64(env);
 
         env.setPrimitive("abs", new Atom(new Abs()));
         env.setPrimitive("bernoulli", new Atom(new Bernoulli()));

@@ -58,7 +58,7 @@ class LispHighlight implements Highlighter {
             b.append("?");
             s = s.substring(1);
         }
-        
+
         lex = new GrammarLexer(CharStreams.fromString(s));
 
         lex.removeErrorListeners();
