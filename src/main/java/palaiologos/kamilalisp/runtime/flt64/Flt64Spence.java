@@ -101,11 +101,8 @@ public class Flt64Spence {
         double w, y, z;
         int flag;
 
-        if (x < 0.0) {
-            // Li2(z) + Li2(-z) = 0.5 * Li2(z^2).
-            // ... => Li2(-z) = 0.5 * Li2(z^2) - Li2(z).
-            return 0.5 * spence(x * x) - spence(-x);
-        }
+        if (x < 0.0)
+            throw new ArithmeticException("Domain error");
         if (x == 1.0)
             return 0.0;
         if (x == 0.0)
