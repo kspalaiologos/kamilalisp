@@ -9,6 +9,26 @@ import java.math.BigInteger;
 import java.util.List;
 
 public class Flt64Spence {
+    public static final Flt64Base.Flt64Function frexp = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:frexp";
+        }
+
+        private Atom frexpA(Atom a) {
+            double aD = Flt64Base.toFlt64(a);
+            Pair<Integer, Double> p = frexp(aD);
+            return new Atom(List.of(new Atom(BigInteger.valueOf(p.fst())), new Atom(BigDecimal.valueOf(p.snd()))));
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return frexpA(args.get(0));
+            else
+                return new Atom(args.stream().map(this::frexpA).toList());
+        }
+    };
     private final static double[] A = {
             4.65128586073990045278E-5,
             7.31589045238094711071E-3,
@@ -19,7 +39,6 @@ public class Flt64Spence {
             3.29771340985225106936E0,
             1.00000000000000000126E0,
     };
-
     private final static double[] B = {
             6.90990488912553276999E-4,
             2.54043763932544379113E-2,
@@ -42,6 +61,63 @@ public class Flt64Spence {
                 return Flt64Base.toAtom(spence(Flt64Base.toFlt64(args.get(0))));
             else
                 return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Spence::spence).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+    // It's more efficient to simply tabulate all factorials.
+    // '1,',1↓∊',',⍪⍕¨!¨⍳170
+    private static final double[] factorialTab = {
+            1.0, 1.0, 2.0, 6.0, 24.0, 120.0, 720.0, 5040.0, 40320.0, 362880.0, 3628800.0, 39916800.0, 479001600.0, 6227020800.0,
+            8.71782912E10, 1.307674368E12, 2.092278989E13, 3.556874281E14, 6.402373706E15,
+            1.216451004E17, 2.432902008E18, 5.109094217E19, 1.124000728E21,
+            2.585201674E22, 6.204484017E23, 1.551121004E25, 4.032914611E26,
+            1.088886945E28, 3.048883446E29, 8.841761994E30, 2.652528598E32,
+            8.222838654E33, 2.631308369E35, 8.683317619E36, 2.95232799E38, 1.033314797E40,
+            3.719933268E41, 1.376375309E43, 5.230226175E44, 2.039788208E46,
+            8.159152832E47, 3.345252661E49, 1.405006118E51, 6.041526306E52,
+            2.658271575E54, 1.196222209E56, 5.50262216E57, 2.586232415E59, 1.241391559E61,
+            6.08281864E62, 3.04140932E64, 1.551118753E66, 8.065817517E67, 4.274883284E69,
+            2.308436973E71, 1.269640335E73, 7.109985878E74, 4.05269195E76, 2.350561331E78,
+            1.386831185E80, 8.320987113E81, 5.075802139E83, 3.146997326E85,
+            1.982608315E87, 1.268869322E89, 8.247650592E90, 5.443449391E92,
+            3.647111092E94, 2.480035542E96, 1.711224524E98, 1.197857167E100,
+            8.504785886E101, 6.123445838E103, 4.470115462E105, 3.307885442E107,
+            2.480914081E109, 1.885494702E111, 1.45183092E113, 1.132428118E115,
+            8.946182131E116, 7.156945705E118, 5.797126021E120, 4.753643337E122,
+            3.94552397E124, 3.314240135E126, 2.817104114E128, 2.422709538E130,
+            2.107757298E132, 1.854826423E134, 1.650795516E136, 1.485715964E138,
+            1.352001528E140, 1.243841405E142, 1.156772507E144, 1.087366157E146,
+            1.032997849E148, 9.916779349E149, 9.619275968E151, 9.426890449E153,
+            9.332621544E155, 9.332621544E157, 9.42594776E159, 9.614466715E161,
+            9.902900716E163, 1.029901675E166, 1.081396758E168, 1.146280564E170,
+            1.226520203E172, 1.324641819E174, 1.443859583E176, 1.588245542E178,
+            1.762952551E180, 1.974506857E182, 2.231192749E184, 2.543559733E186,
+            2.925093693E188, 3.393108684E190, 3.969937161E192, 4.68452585E194,
+            5.574585761E196, 6.689502913E198, 8.094298525E200, 9.875044201E202,
+            1.214630437E205, 1.506141742E207, 1.882677177E209, 2.372173243E211,
+            3.012660018E213, 3.856204824E215, 4.974504222E217, 6.466855489E219,
+            8.471580691E221, 1.118248651E224, 1.487270706E226, 1.992942746E228,
+            2.690472707E230, 3.659042882E232, 5.012888748E234, 6.917786473E236,
+            9.615723197E238, 1.346201248E241, 1.898143759E243, 2.695364138E245,
+            3.854370717E247, 5.550293833E249, 8.047926057E251, 1.174997204E254,
+            1.72724589E256, 2.556323918E258, 3.808922638E260, 5.713383956E262,
+            8.627209774E264, 1.311335886E267, 2.006343905E269, 3.089769614E271,
+            4.789142901E273, 7.471062926E275, 1.172956879E278, 1.853271869E280,
+            2.946702272E282, 4.714723636E284, 7.590705054E286, 1.229694219E289,
+            2.004401577E291, 3.287218586E293, 5.423910666E295, 9.003691706E297,
+            1.503616515E300, 2.526075745E302, 4.269068009E304, 7.257415615E306
+    };
+    public static final Flt64Base.Flt64Function factorial = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:factorial";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(factorial((int) Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> factorial((int) x)).mapToObj(Flt64Base::toAtom).toList());
         }
     };
     // Polylog tables:
@@ -176,27 +252,6 @@ public class Flt64Spence {
         }
     }
 
-    public static final Flt64Base.Flt64Function frexp = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:frexp";
-        }
-
-        private Atom frexpA(Atom a) {
-            double aD = Flt64Base.toFlt64(a);
-            Pair<Integer, Double> p = frexp(aD);
-            return new Atom(List.of(new Atom(BigInteger.valueOf(p.fst())), new Atom(BigDecimal.valueOf(p.snd()))));
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if(args.size() == 1)
-                return frexpA(args.get(0));
-            else
-                return new Atom(args.stream().map(this::frexpA).toList());
-        }
-    };
-
     private static double powi(double x, int nn) {
         int n, e, sign, asign, lx;
         double w, y, s;
@@ -259,74 +314,15 @@ public class Flt64Spence {
         return (y);
     }
 
-    // It's more efficient to simply tabulate all factorials.
-    // '1,',1↓∊',',⍪⍕¨!¨⍳170
-    private static final double[] factorialTab = {
-            1.0,1.0,2.0,6.0,24.0,120.0,720.0,5040.0,40320.0,362880.0,3628800.0,39916800.0,479001600.0,6227020800.0,
-            8.71782912E10,1.307674368E12,2.092278989E13,3.556874281E14,6.402373706E15,
-            1.216451004E17,2.432902008E18,5.109094217E19,1.124000728E21,
-            2.585201674E22,6.204484017E23,1.551121004E25,4.032914611E26,
-            1.088886945E28,3.048883446E29,8.841761994E30,2.652528598E32,
-            8.222838654E33,2.631308369E35,8.683317619E36,2.95232799E38,1.033314797E40,
-            3.719933268E41,1.376375309E43,5.230226175E44,2.039788208E46,
-            8.159152832E47,3.345252661E49,1.405006118E51,6.041526306E52,
-            2.658271575E54,1.196222209E56,5.50262216E57,2.586232415E59,1.241391559E61,
-            6.08281864E62,3.04140932E64,1.551118753E66,8.065817517E67,4.274883284E69,
-            2.308436973E71,1.269640335E73,7.109985878E74,4.05269195E76,2.350561331E78,
-            1.386831185E80,8.320987113E81,5.075802139E83,3.146997326E85,
-            1.982608315E87,1.268869322E89,8.247650592E90,5.443449391E92,
-            3.647111092E94,2.480035542E96,1.711224524E98,1.197857167E100,
-            8.504785886E101,6.123445838E103,4.470115462E105,3.307885442E107,
-            2.480914081E109,1.885494702E111,1.45183092E113,1.132428118E115,
-            8.946182131E116,7.156945705E118,5.797126021E120,4.753643337E122,
-            3.94552397E124,3.314240135E126,2.817104114E128,2.422709538E130,
-            2.107757298E132,1.854826423E134,1.650795516E136,1.485715964E138,
-            1.352001528E140,1.243841405E142,1.156772507E144,1.087366157E146,
-            1.032997849E148,9.916779349E149,9.619275968E151,9.426890449E153,
-            9.332621544E155,9.332621544E157,9.42594776E159,9.614466715E161,
-            9.902900716E163,1.029901675E166,1.081396758E168,1.146280564E170,
-            1.226520203E172,1.324641819E174,1.443859583E176,1.588245542E178,
-            1.762952551E180,1.974506857E182,2.231192749E184,2.543559733E186,
-            2.925093693E188,3.393108684E190,3.969937161E192,4.68452585E194,
-            5.574585761E196,6.689502913E198,8.094298525E200,9.875044201E202,
-            1.214630437E205,1.506141742E207,1.882677177E209,2.372173243E211,
-            3.012660018E213,3.856204824E215,4.974504222E217,6.466855489E219,
-            8.471580691E221,1.118248651E224,1.487270706E226,1.992942746E228,
-            2.690472707E230,3.659042882E232,5.012888748E234,6.917786473E236,
-            9.615723197E238,1.346201248E241,1.898143759E243,2.695364138E245,
-            3.854370717E247,5.550293833E249,8.047926057E251,1.174997204E254,
-            1.72724589E256,2.556323918E258,3.808922638E260,5.713383956E262,
-            8.627209774E264,1.311335886E267,2.006343905E269,3.089769614E271,
-            4.789142901E273,7.471062926E275,1.172956879E278,1.853271869E280,
-            2.946702272E282,4.714723636E284,7.590705054E286,1.229694219E289,
-            2.004401577E291,3.287218586E293,5.423910666E295,9.003691706E297,
-            1.503616515E300,2.526075745E302,4.269068009E304,7.257415615E306
-    };
-
-    public static double factorial(int n){
-        if(n < 0){
+    public static double factorial(int n) {
+        if (n < 0) {
             throw new ArithmeticException("Domain error");
         }
-        if(n > 170){
+        if (n > 170) {
             return Double.POSITIVE_INFINITY;
         }
         return factorialTab[n];
     }
-
-    public static final Flt64Base.Flt64Function factorial = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:factorial";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(factorial((int) Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> factorial((int) x)).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
 
     public static double polylog(int n, double x) {
         double h, k, p, s, t, u, xc, z;
@@ -361,17 +357,17 @@ public class Flt64Spence {
             return s;
         }
 
-        if(x < -1.0) {
+        if (x < -1.0) {
             double q, w;
             int r;
 
             w = Math.log(-x);
             s = 0.0;
-            for(r = 1; r <= n / 2; r++) {
+            for (r = 1; r <= n / 2; r++) {
                 j = 2 * r;
                 p = polylog(j, -1.0);
                 j = n - j;
-                if(j == 0) {
+                if (j == 0) {
                     s = s + p;
                     break;
                 }
@@ -381,7 +377,7 @@ public class Flt64Spence {
             }
             s = 2.0 * s;
             q = polylog(n, 1.0 / x);
-            if((n & 1) == 1)
+            if ((n & 1) == 1)
                 q = -q;
             s = s - q;
             s = s - Math.pow(w, n) / factorial(n);
@@ -391,9 +387,9 @@ public class Flt64Spence {
         if (n == 2 && x < 0.0)
             return spence(1.0 - x);
 
-        if(n == 3) {
+        if (n == 3) {
             p = x * x * x;
-            if(x > 0.8) {
+            if (x > 0.8) {
                 u = Math.log(x);
                 s = u * u * u / 6.0;
                 xc = 1.0 - x;
@@ -437,20 +433,43 @@ public class Flt64Spence {
             p = x * x * x;
             k = 3.0;
             s = 0.0;
-            do
-            {
+            do {
                 p = p * x;
                 k += 1.0;
                 h = p / powi(k, n);
                 s = s + h;
             }
-            while (Math.abs(h/s) > Flt64Base.EPSILON);
-            s += x * x * x / powi(3.0,n);
-            s += x * x / powi(2.0,n);
+            while (Math.abs(h / s) > Flt64Base.EPSILON);
+            s += x * x * x / powi(3.0, n);
+            s += x * x / powi(2.0, n);
             s += x;
             return s;
         }
 
-        throw new UnsupportedOperationException("Not implemented yet");
+        z = Math.log(x);
+        h = -Math.log(-z);
+        for (i = 1; i < n; i++)
+            h = h + 1.0 / i;
+        p = 1.0;
+        s = Flt64Zeta.riemann_zeta(n);
+        for (j = 1; j <= n + 1; j++) {
+            p = p * z / j;
+            if (j == n - 1)
+                s = s + h * p;
+            else
+                s = s + Flt64Zeta.riemann_zeta(n - j) * p;
+        }
+        j = n + 3;
+        z = z * z;
+        for (; ; ) {
+            p = p * z / ((j - 1) * j);
+            h = Flt64Zeta.riemann_zeta(n - j);
+            h = h * p;
+            s = s + h;
+            if (Math.abs(h / s) < Flt64Base.EPSILON)
+                break;
+            j += 2;
+        }
+        return s;
     }
 }
