@@ -52,7 +52,7 @@ public class Flt64Spence {
     public static final Flt64Base.Flt64Function spence = new Flt64Base.Flt64Function() {
         @Override
         protected String name() {
-            return "flt64:dilog";
+            return "flt64:spence";
         }
 
         @Override
@@ -61,6 +61,20 @@ public class Flt64Spence {
                 return Flt64Base.toAtom(spence(Flt64Base.toFlt64(args.get(0))));
             else
                 return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Spence::spence).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+    public static final Flt64Base.Flt64Function dilog = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:dilog";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(dilog(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Spence::dilog).mapToObj(Flt64Base::toAtom).toList());
         }
     };
     // It's more efficient to simply tabulate all factorials.
@@ -171,6 +185,10 @@ public class Flt64Spence {
         while (--i > 0);
 
         return ans;
+    }
+
+    public static double dilog(double x) {
+        return spence(1 - x);
     }
 
     // NOTE: This actually computes:

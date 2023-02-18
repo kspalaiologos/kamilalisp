@@ -128,6 +128,27 @@ public class Flt64Zeta {
         // z*lerchphi(z,s,1) = Li_s(z). n:int
         if(Math.floor(a) == a && z == 1)
             return Flt64Spence.polylog((int)a, s) / s;
+        // lerchphi(0,1,a) = 1/sqrt(a^2)
+        if(s == 0 && a == 1)
+            return 1 / Math.abs(z);
+        // lerchphi(1,s,0.5) = (2^s-1)*zeta(s)
+        if(s == 1 && z == 0.5)
+            return (Math.pow(2, a) - 1) * riemann_zeta(a);
+        // lerchphi(z,1,1) = -log(1-z)/z
+        if(a == 1 && z == 1)
+            return -Math.log(1 - s) / s;
+        // lerchphi(z,2,0.5) = 2/sqrt(z) * (Li2(z) - Li2(-z))
+        if(a == 2 && z == 0.5)
+            return 2 / Math.sqrt(s) * (Flt64Spence.dilog(s) - Flt64Spence.dilog(-s));
+        // lerchphi(z,2,1.5) = 2/(z^1.5) * (Li2(z) - Li2(-z) - 2sqrt(z))
+        if(a == 2 && z == 1.5)
+            return 2 / Math.pow(s, 1.5) * (Flt64Spence.dilog(s) - Flt64Spence.dilog(-s) - 2 * Math.sqrt(s));
+        // lerchphi(0,s,a) = (a^2)^(-s/2)
+        if(s == 0)
+            return Math.pow(z * z, -a / 2);
+        // lerchphi(z,0,a) = 1/(1-z)
+        if(a == 0)
+            return 1 / (1 - s);
 
         throw new UnsupportedOperationException("lerch-phi: scenario not yet implemented.");
     }
