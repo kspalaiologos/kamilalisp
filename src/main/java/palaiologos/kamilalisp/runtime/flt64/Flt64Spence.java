@@ -472,4 +472,17 @@ public class Flt64Spence {
         }
         return s;
     }
+
+    public static final Flt64Base.Flt64Function fPolylogarithm = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:polylog";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            return Flt64Base.toAtom(polylog(args.get(0).getInteger().intValueExact(), Flt64Base.toFlt64(args.get(1))));
+        }
+    };
 }

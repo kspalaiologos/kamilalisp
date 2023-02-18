@@ -327,6 +327,7 @@ public class Flt64Base {
         env.setPrimitive("flt64:dilog", new Atom(Flt64Spence.spence));
         env.setPrimitive("flt64:frexp", new Atom(Flt64Spence.frexp));
         env.setPrimitive("flt64:factorial", new Atom(Flt64Spence.factorial));
+        env.setPrimitive("flt64:polylog", new Atom(Flt64Spence.fPolylogarithm));
         env.setPrimitive("flt64:=", new Atom(Flt64Cmp.eq));
         env.setPrimitive("flt64:/=", new Atom(Flt64Cmp.ne));
         env.setPrimitive("flt64:<", new Atom(Flt64Cmp.lt));
