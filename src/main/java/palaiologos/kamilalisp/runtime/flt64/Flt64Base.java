@@ -435,6 +435,7 @@ public class Flt64Base {
 
     public void registerFlt64(Environment env) {
         // TODO:
+        // Si(x), Co(x) - investigate cases of catastorphic cancellation.
         // dawson-f, log-integral, fresnel-f, fresnel-g, Shi, Chi, hankel-h1, hankel-h2, polylog
         // dilog (spence), airy-bi, hypergeom-2f1, hypergeom-pfq, meijer-g, fox-h, hypergeom-1f1,
         // whittaker-m, whittaker-w, elliptic-k, elliptic-f, elliptic-e, elliptic-pi,
