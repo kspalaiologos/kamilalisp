@@ -448,6 +448,8 @@ public class Flt64Base {
         env.setPrimitive("flt64:si", new Atom(Flt64TrigonometricIntegral.fsi));
         env.setPrimitive("flt64:Ci", new Atom(Flt64TrigonometricIntegral.fCi));
         env.setPrimitive("flt64:Cin", new Atom(Flt64TrigonometricIntegral.fCin));
+        env.setPrimitive("flt64:Shi", new Atom(Flt64TrigonometricIntegral.fShi));
+        env.setPrimitive("flt64:Chi", new Atom(Flt64TrigonometricIntegral.fChi));
         env.setPrimitive("flt64:Ei", new Atom(Flt64Ei.fEi));
         env.setPrimitive("flt64:=", new Atom(Flt64Cmp.eq));
         env.setPrimitive("flt64:/=", new Atom(Flt64Cmp.ne));
