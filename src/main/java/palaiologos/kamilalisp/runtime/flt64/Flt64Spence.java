@@ -258,7 +258,8 @@ public class Flt64Spence {
     }
 
     // It's more efficient to simply tabulate all factorials.
-    private static double factorialTab[] = {
+    // '1,',1↓∊',',⍪⍕¨!¨⍳170
+    private static final double[] factorialTab = {
             1.0,1.0,2.0,6.0,24.0,120.0,720.0,5040.0,40320.0,362880.0,3628800.0,39916800.0,479001600.0,6227020800.0,
             8.71782912E10,1.307674368E12,2.092278989E13,3.556874281E14,6.402373706E15,
             1.216451004E17,2.432902008E18,5.109094217E19,1.124000728E21,
@@ -383,6 +384,11 @@ public class Flt64Spence {
             s = s - q;
             s = s - Math.pow(w, n) / factorial(n);
             return s;
+        }
+
+        if (n == 2) {
+            if (x < 0.0)
+                return spence(1.0 - x);
         }
 
         throw new UnsupportedOperationException("Not implemented yet");
