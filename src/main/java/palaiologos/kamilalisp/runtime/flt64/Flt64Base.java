@@ -241,7 +241,7 @@ public class Flt64Base {
     public void registerFlt64(Environment env) {
         // TODO:
         // log-integral, hankel-h1, hankel-h2, polylog
-        // dilog (spence), airy-bi, hypergeom-2f1, hypergeom-pfq, meijer-g, fox-h, hypergeom-1f1,
+        // airy-bi, hypergeom-2f1, hypergeom-pfq, meijer-g, fox-h, hypergeom-1f1,
         // whittaker-m, whittaker-w, elliptic-k, elliptic-f, elliptic-e, elliptic-pi,
         // lerch-phi, dirichlet-beta, dirichlet-eta, dirichlet-lambda, barnesg, logbarnesg,
         env.setPrimitive("flt64:+", new Atom(Flt64Arith.add));
@@ -324,6 +324,7 @@ public class Flt64Base {
         env.setPrimitive("flt64:Shi", new Atom(Flt64TrigonometricIntegral.fShi));
         env.setPrimitive("flt64:Chi", new Atom(Flt64TrigonometricIntegral.fChi));
         env.setPrimitive("flt64:Ei", new Atom(Flt64Ei.fEi));
+        env.setPrimitive("flt64:dilog", new Atom(Flt64Spence.spence));
         env.setPrimitive("flt64:=", new Atom(Flt64Cmp.eq));
         env.setPrimitive("flt64:/=", new Atom(Flt64Cmp.ne));
         env.setPrimitive("flt64:<", new Atom(Flt64Cmp.lt));
