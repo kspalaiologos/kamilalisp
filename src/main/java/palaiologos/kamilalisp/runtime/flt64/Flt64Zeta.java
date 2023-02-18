@@ -41,6 +41,19 @@ public class Flt64Zeta {
         }
     };
 
+    public static final Flt64Base.Flt64Function fLerchPhi = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:lerch-phi";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            return Flt64Base.toAtom(lerch_phi(Flt64Base.toFlt64(args.get(0)), Flt64Base.toFlt64(args.get(1)), Flt64Base.toFlt64(args.get(2))));
+        }
+    };
+
     private static double __riemann_zeta_glob(double __s) {
         double __zeta = 0;
 
@@ -103,6 +116,20 @@ public class Flt64Zeta {
         __zeta = 1 / __zeta;
 
         return __zeta;
+    }
+
+    public static double lerch_phi(double s, double a, double z) {
+        // lerchphi(1, a, 1) = zeta(a)
+        if(s == 1 && z == 1)
+            return riemann_zeta(a);
+        // lerchphi(1, a, z) = zeta(a, z)
+        if(s == 1)
+            return hurwitz_zeta(a, z);
+        // z*lerchphi(z,s,1) = Li_s(z). n:int
+        if(Math.floor(a) == a && z == 1)
+            return Flt64Spence.polylog((int)a, s) / s;
+
+        throw new UnsupportedOperationException("lerch-phi: scenario not yet implemented.");
     }
 
     public static double riemann_zeta(double s) {
