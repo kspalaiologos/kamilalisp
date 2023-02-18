@@ -334,6 +334,13 @@ public class Flt64Base {
         env.setPrimitive("flt64:e", toAtom(Math.E));
         env.setPrimitive("flt64:pi", toAtom(Math.PI));
         env.setPrimitive("flt64:euler-gamma", toAtom(0.57721566490153286060651209008240243104215933593992));
+        env.setPrimitive("flt64:golden-ratio", toAtom(1.61803398874989484820));
+        env.setPrimitive("flt64:apery", toAtom(Math.log(1.20205690315959428539)));
+        env.setPrimitive("flt64:glaisher-A", toAtom(1.28242712910062263687));
+        env.setPrimitive("flt64:catalan-C", toAtom(0.91596559417721901505));
+        env.setPrimitive("flt64:golomb-lambda", toAtom(0.62432998854355087099));
+        env.setPrimitive("flt64:khinchin-K0", toAtom(2.68545200106530644530));
+        env.setPrimitive("flt64:mills-A", toAtom(1.30637788386308069046));
     }
 
     abstract static class Flt64Function extends PrimitiveFunction implements Lambda {

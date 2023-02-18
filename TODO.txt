@@ -8,6 +8,7 @@
 - more shell builtins
 - unit testing
 - bzip3 (needs java porting).
+- GUI features.
 - cas: solve systems of equations, solve DEs,
   compute eigenvalues, eigenvectors, solve systems of equations,
   discrete sums.
