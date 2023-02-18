@@ -147,38 +147,183 @@ public class Flt64Zeta {
         return sum;
     }
 
+    // https://www.marvinrayburns.com/UniversalTOC25.pdf
+    private static double lerchphiGeneral(double z, double s, double v, double acc) {
+        final int imax = 100;
+
+        if (1.0 <= Math.abs(z)) {
+            throw new ArithmeticException("lerchphi: |z| >= 1 divergence");
+        }
+
+        if (Math.abs(Math.floor(v) - v) <= Flt64Base.EPSILON * Math.abs(v) && v <= 0.0) {
+            throw new ArithmeticException("lerchphi: v divergence");
+        }
+
+        double v1 = v, sum1 = 0, result;
+        int m = 0, sign;
+
+        boolean s_cond = Math.abs(Math.floor(s) - s) > Flt64Base.EPSILON * Math.abs(s);
+        if (v < 0.0 && Math.abs(z) > Flt64Base.EPSILON) {
+            if (s_cond) {
+                throw new ArithmeticException("lerch-phi: s divergence");
+            } else {
+                m = -(int) Math.floor(v);
+                v1 += m;
+                sum1 = 0.0;
+                if (((int) s % 2) == 0) sign = 1;
+                else sign = -1;
+                for (int i = 0; i <= m - 1; i++) {
+                    if (i > 0 && z < 0) sign = -sign;
+                    sum1 += sign * Math.pow(Math.abs(z), i) / Math.pow(Math.abs(v + i), s);
+                }
+            }
+        }
+
+        if (Math.abs(z) <= Flt64Base.EPSILON) {
+            if (v < 0) {
+                if (s_cond) {
+                    throw new ArithmeticException("lerch-phi: s divergence");
+                } else {
+                    if (((int) s % 2) == 0) sign = 1;
+                    else sign = -1;
+                    result = sign * 1.0 / Math.pow(Math.abs(v), s);
+                }
+            } else {
+                return 1.0 / Math.pow(v, s);
+            }
+        }
+
+        double eps0, skn, skn0, sn, omega;
+        eps0 = skn0 = sn = 0.0;
+
+        if (z <= 0.5)
+            omega = 1.0 / Math.pow(v1, s);
+        else {
+            omega = aj(z, s, v1, 0, acc);
+        }
+
+        double[] num = new double[imax];
+        double[] den = new double[imax];
+        double[] StoreAj = null;
+
+        // CNCT case.
+        if (z > 0.5) StoreAj = new double[imax];
+
+        int i = -1;
+        sign = -1;
+
+        final int beta = 1;
+        final int n = 0;
+
+        double est = 0, iom, factor, factor1, eps, x, cacc;
+
+        for (; ; ) {
+            i++;
+            sign = -sign;
+            sn += omega;
+            double omegafactor = Math.pow((v1 + i) / (v1 + i + 1), s);
+            if (z < 0.0)
+                omega = (z) * omegafactor * omega;
+            else {
+                if (z <= 0.5)
+                    omega = (z) * omegafactor * omega;
+                else {
+                    StoreAj[i] = sign * omega;
+                    if (i % 2 == 0) {
+                        omega = -sign * 0.5 * (StoreAj[i / 2] - Math.pow(z, i / 2) /
+                                Math.pow(v1 + i / 2, s));
+                    } else {
+                        omega = aj(z, s, v1, i + 1, acc);
+                        omega = -sign * omega;
+                    }
+                }
+            }
+            if (Math.abs(z) <= 0.5) {
+                skn = sn;
+                est = 2.0 * Math.pow(Math.abs(z), (i + 1)) / Math.pow(v1 + i + 1, s);
+            } else {
+                if (Math.abs(omega) <= Flt64Base.EPSILON) {
+                    throw new ArithmeticException("lerch-phi: omega ~= 0");
+                } else iom = 1.0 / omega;
+                num[i] = sn * iom;
+                den[i] = iom;
+                if (i > 0) {
+                    factor = 1.0;
+                    num[i - 1] = num[i] - factor * num[i - 1];
+                    den[i - 1] = den[i] - factor * den[i - 1];
+                }
+
+                factor1 = (double) (beta + n + i - 1) * (beta + n + i - 2);
+                for (int j = 2; j <= i; j++) {
+                    factor = factor1 / (beta + n + i + j - 2) / (beta + n + i + j - 3);
+                    num[i - j] = num[i - j + 1] - factor * num[i - j];
+                    den[i - j] = den[i - j + 1] - factor * den[i - j];
+                }
+                skn = num[0] / den[0];
+            }
+
+            eps = Math.abs(skn - skn0);
+
+            if (i > 0 && eps < eps0) {
+                if (Math.abs(z) > 0.5) {
+                    x = eps / eps0;
+                    est = 2.0 / x / (1.0 - x) * eps;
+                }
+                cacc = Math.abs(est / skn);
+                if (cacc < acc) break;
+            }
+
+            if (eps <= 0.0) break;
+
+            if (i > imax - 2) {
+                throw new ArithmeticException("Maximum number of iterations exceeded in lerch-phi");
+            }
+
+            skn0 = skn;
+            eps0 = eps;
+        }
+
+        if (v < 0) {
+            sign = 1;
+            if ((z < 0) && (m % 2 != 0)) sign = -1;
+            result = sum1 + skn * sign * Math.pow(Math.abs(z), m);
+        } else result = skn;
+
+        return result;
+    }
+
     public static double lerch_phi(double s, double a, double z) {
         // lerchphi(1, a, 1) = zeta(a)
-        if(s == 1 && z == 1)
+        if (s == 1 && z == 1)
             return riemann_zeta(a);
         // lerchphi(1, a, z) = zeta(a, z)
-        if(s == 1)
+        if (s == 1)
             return hurwitz_zeta(a, z);
         // z*lerchphi(z,s,1) = Li_s(z). n:int
-        if(Math.floor(a) == a && z == 1)
-            return Flt64Spence.polylog((int)a, s) / s;
+        if (Math.floor(a) == a && z == 1)
+            return Flt64Spence.polylog((int) a, s) / s;
         // lerchphi(0,1,a) = 1/sqrt(a^2)
-        if(s == 0 && a == 1)
+        if (s == 0 && a == 1)
             return 1 / Math.abs(z);
         // lerchphi(1,s,0.5) = (2^s-1)*zeta(s)
-        if(s == 1 && z == 0.5)
+        if (s == 1 && z == 0.5)
             return (Math.pow(2, a) - 1) * riemann_zeta(a);
         // lerchphi(z,1,1) = -log(1-z)/z
-        if(a == 1 && z == 1)
+        if (a == 1 && z == 1)
             return -Math.log(1 - s) / s;
         // lerchphi(z,2,0.5) = 2/sqrt(z) * (Li2(z) - Li2(-z))
-        if(a == 2 && z == 0.5)
+        if (a == 2 && z == 0.5)
             return 2 / Math.sqrt(s) * (Flt64Spence.dilog(s) - Flt64Spence.dilog(-s));
         // lerchphi(z,2,1.5) = 2/(z^1.5) * (Li2(z) - Li2(-z) - 2sqrt(z))
-        if(a == 2 && z == 1.5)
+        if (a == 2 && z == 1.5)
             return 2 / Math.pow(s, 1.5) * (Flt64Spence.dilog(s) - Flt64Spence.dilog(-s) - 2 * Math.sqrt(s));
         // lerchphi(0,s,a) = (a^2)^(-s/2)
-        if(s == 0)
+        if (s == 0)
             return Math.pow(z * z, -a / 2);
         // lerchphi(z,0,a) = 1/(1-z)
-        if(a == 0)
+        if (a == 0)
             return 1 / (1 - s);
-
+        lerchphiGeneral(s, a, z, 10e-16);
         throw new UnsupportedOperationException("lerch-phi: scenario not yet implemented.");
     }
 
