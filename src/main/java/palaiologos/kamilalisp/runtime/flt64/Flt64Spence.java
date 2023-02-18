@@ -97,6 +97,8 @@ public class Flt64Spence {
         return ans;
     }
 
+    // NOTE: This actually computes:
+    // \int_{1}^{v}{\frac{\ln t}{1-t}}dt=\operatorname{Li}_{2}(1-v)
     public static double spence(double x) {
         double w, y, z;
         int flag;
