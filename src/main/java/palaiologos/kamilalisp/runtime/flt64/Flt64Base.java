@@ -367,11 +367,76 @@ public class Flt64Base {
         return (p < 1.0 ? x : -x);
     }
 
+    private static double Si(double x) {
+        if(x < 0.0) return Double.NaN;
+        if(x < 4.0) {
+            double x2 = x * x;
+            double x4 = x2 * x2;
+            double x6 = x4 * x2;
+            double x8 = x4 * x4;
+            double x10 = x8 * x2;
+            double x12 = x8 * x4;
+            double x14 = x12 * x2;
+            double nrt = 1.0 - 4.54393409816329991e-2 * x2 + 1.15457225751016682e-3 * x4 - 1.41018536821330254e-5 * x6 + 9.43280809438713025e-8 * x8 - 3.53201978997168357e-10 * x10 + 7.08240282274875911e-13 * x12 - 6.05338212010422477e-16 * x14;
+            double drt = 1.0 + 1.01162145739225565e-2 * x2 + 4.99175116169755106e-5 * x4 + 1.55654986308745614e-7 * x6 + 3.28067571055789734e-10 * x8 + 4.5049097575386581e-13 * x10 + 3.21107051193712168e-16 * x12;
+            return x * nrt / drt;
+        } else {
+            throw new RuntimeException("NYI");
+        }
+    }
+
+    private static double Ci(double x) {
+        if(x < 0.0) return Double.NaN;
+        if(x < 4.0) {
+            double x2 = x * x;
+            double x4 = x2 * x2;
+            double x6 = x4 * x2;
+            double x8 = x4 * x4;
+            double x10 = x8 * x2;
+            double x12 = x8 * x4;
+            double x14 = x12 * x2;
+            double nrt = -0.25 + 7.51851524438898291e-3 * x2 - 1.27528342240267686e-4 * x4 + 1.05297363846239184e-6 * x6 - 4.68889508144848019e-9 * x8 + 1.06480802891189243e-11 * x10 - 9.93728488857585407e-15 * x12;
+            double drt = 1 + 1.1592605689110735e-2 * x2 + 6.72126800814254432e-5 * x4 + 2.55533277086129636e-7 * x6 + 6.97071295760958946e-10 * x8 + 1.38536352772778619e-12 * x10 + 1.89106054713059759e-15 * x12 + 1.39759616731376855e-18 * x14;
+            return 0.57721566490153286060651209008240243104215933593992 + Math.log(x) + x2 * (nrt / drt);
+        } else {
+            throw new RuntimeException("NYI");
+        }
+    }
+
+    public final Flt64Function fSi = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:Si";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(Si(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> Si(x)).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+
+    public final Flt64Function fCi = new Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:Ci";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(Ci(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> Ci(x)).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+
     public void registerFlt64(Environment env) {
         // TODO:
-        // dawson-f, log-integral, fresnel-f, fresnel-g,
-        // Si, Co, Shi, Chi, hankel-h1, hankel-h2, dilog (spence), polylog
-        // airy-bi, hypergeom-2f1, hypergeom-pfq, meijer-g, fox-h, hypergeom-1f1,
+        // dawson-f, log-integral, fresnel-f, fresnel-g, Shi, Chi, hankel-h1, hankel-h2, polylog
+        // dilog (spence), airy-bi, hypergeom-2f1, hypergeom-pfq, meijer-g, fox-h, hypergeom-1f1,
         // whittaker-m, whittaker-w, elliptic-k, elliptic-f, elliptic-e, elliptic-pi,
         // lerch-phi, dirichlet-beta, dirichlet-eta, dirichlet-lambda, barnesg, logbarnesg,
         env.setPrimitive("flt64:+", new Atom(Flt64Arith.add));
@@ -444,6 +509,8 @@ public class Flt64Base {
         env.setPrimitive("flt64:airy-ai-derv", new Atom(airyDerv));
         env.setPrimitive("flt64:fresnel-S", new Atom(Flt64Fresnel.fFresnelSine));
         env.setPrimitive("flt64:fresnel-C", new Atom(Flt64Fresnel.fFresnelCosine));
+        env.setPrimitive("flt64:Si", new Atom(fSi));
+        env.setPrimitive("flt64:Ci", new Atom(fCi));
         env.setPrimitive("flt64:Ei", new Atom(Flt64Ei.fEi));
         env.setPrimitive("flt64:=", new Atom(Flt64Cmp.eq));
         env.setPrimitive("flt64:/=", new Atom(Flt64Cmp.ne));
