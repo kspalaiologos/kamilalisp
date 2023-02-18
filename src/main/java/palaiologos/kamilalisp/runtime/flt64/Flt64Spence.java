@@ -182,7 +182,7 @@ public class Flt64Spence {
             return "flt64:frexp";
         }
 
-        Atom frexpA(Atom a) {
+        private Atom frexpA(Atom a) {
             double aD = Flt64Base.toFlt64(a);
             Pair<Integer, Double> p = frexp(aD);
             return new Atom(List.of(new Atom(BigInteger.valueOf(p.fst())), new Atom(BigDecimal.valueOf(p.snd()))));
@@ -418,6 +418,37 @@ public class Flt64Spence {
                 k += 1.0;
             } while (Math.abs(h / s) > 1.1e-16);
             return (s + t);
+        }
+
+        boolean do_pseries = false;
+
+        if (n == 4) {
+            if (x >= 0.875) {
+                u = 1.0 - x;
+                s = polevl(u, A4, 12) / p1evl(u, B4, 12);
+                s = s * u * u - 1.202056903159594285400 * u;
+                s += 1.0823232337111381915160;
+                return s;
+            }
+            do_pseries = true;
+        }
+
+        if (x < 0.75 || do_pseries) {
+            p = x * x * x;
+            k = 3.0;
+            s = 0.0;
+            do
+            {
+                p = p * x;
+                k += 1.0;
+                h = p / powi(k, n);
+                s = s + h;
+            }
+            while (Math.abs(h/s) > Flt64Base.EPSILON);
+            s += x * x * x / powi(3.0,n);
+            s += x * x / powi(2.0,n);
+            s += x;
+            return s;
         }
 
         throw new UnsupportedOperationException("Not implemented yet");
