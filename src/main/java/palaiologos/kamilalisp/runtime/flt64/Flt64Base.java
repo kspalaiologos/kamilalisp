@@ -240,10 +240,9 @@ public class Flt64Base {
 
     public void registerFlt64(Environment env) {
         // TODO:
-        // log-integral, hankel-h1, hankel-h2, polylog
-        // airy-bi, hypergeom-2f1, hypergeom-pfq, meijer-g, fox-h, hypergeom-1f1,
-        // whittaker-m, whittaker-w, elliptic-k, elliptic-f, elliptic-e, elliptic-pi,
-        // lerch-phi, dirichlet-beta, dirichlet-eta, dirichlet-lambda, barnesg, logbarnesg,
+        // airy-bi, hypergeom-2f1, hypergeom-pfq, meijer-g, fox-h, hypergeom-1f1, log-integral,
+        // whittaker-m, whittaker-w, elliptic-k, elliptic-f, elliptic-e, elliptic-pi, hankel-h2,
+        // dirichlet-beta, dirichlet-eta, dirichlet-lambda, barnesg, logbarnesg, hankel-h1,
         env.setPrimitive("flt64:+", new Atom(Flt64Arith.add));
         env.setPrimitive("flt64:-", new Atom(Flt64Arith.sub));
         env.setPrimitive("flt64:*", new Atom(Flt64Arith.mul));
