@@ -120,9 +120,10 @@ public class Flt64Zeta {
 
     // van Wijngaarden's A_j for Lerch Transcendent computation.
     private static double aj(double z, double s, double v, int j, double acc) {
-        double sum, bjk, z2ind;
-        int k, flag;
-        double ind, two2k;
+        // ind and two2k can be longs, but we use ints to avoid overflow.
+        // there's still a check in the loop body to make sure though.
+        double sum, bjk, z2ind, ind, two2k;
+        int k;
 
         sum = 0.0;
         k = -1;
@@ -145,7 +146,6 @@ public class Flt64Zeta {
 
         return sum;
     }
-
 
     public static double lerch_phi(double s, double a, double z) {
         // lerchphi(1, a, 1) = zeta(a)
