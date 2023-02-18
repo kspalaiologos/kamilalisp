@@ -386,9 +386,36 @@ public class Flt64Spence {
             return s;
         }
 
-        if (n == 2) {
-            if (x < 0.0)
-                return spence(1.0 - x);
+        if (n == 2 && x < 0.0)
+            return spence(1.0 - x);
+
+        if(n == 3) {
+            p = x * x * x;
+            if(x > 0.8) {
+                u = Math.log(x);
+                s = u * u * u / 6.0;
+                xc = 1.0 - x;
+                s = s - 0.5 * u * u * Math.log(xc);
+                s = s + Math.PI * Math.PI * u / 6.0;
+                s = s - polylog(3, -xc / x);
+                s = s - polylog(3, xc);
+                s = s + Flt64Zeta.riemann_zeta(3.0) - 1;
+                s = s + 1.0;
+                return s;
+            }
+            t = p / 27.0;
+            t = t + .125 * x * x;
+            t = t + x;
+
+            s = 0.0;
+            k = 4.0;
+            do {
+                p = p * x;
+                h = p / (k * k * k);
+                s = s + h;
+                k += 1.0;
+            } while (Math.abs(h / s) > 1.1e-16);
+            return (s + t);
         }
 
         throw new UnsupportedOperationException("Not implemented yet");
