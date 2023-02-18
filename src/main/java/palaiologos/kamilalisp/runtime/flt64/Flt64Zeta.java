@@ -118,6 +118,35 @@ public class Flt64Zeta {
         return __zeta;
     }
 
+    // van Wijngaarden's A_j for Lerch Transcendent computation.
+    private static double aj(double z, double s, double v, int j, double acc) {
+        double sum, bjk, z2ind;
+        int k, flag;
+        double ind, two2k;
+
+        sum = 0.0;
+        k = -1;
+        two2k = 1;
+
+        do {
+            k++;
+
+            if (k > 0) two2k *= 2;
+            ind = two2k * (j + 1) - 1;
+
+            if (k > 0 && (two2k == 0 || ind == 0)) {
+                return Double.NaN;
+            }
+
+            z2ind = Math.pow(z, ind);
+            bjk = two2k * z2ind / Math.pow(v + ind, s);
+            sum += bjk;
+        } while (!(Math.abs(sum) <= 2.2250738585072014e-308) && !(Math.abs(bjk / sum) < 1.0e-2 * acc));
+
+        return sum;
+    }
+
+
     public static double lerch_phi(double s, double a, double z) {
         // lerchphi(1, a, 1) = zeta(a)
         if(s == 1 && z == 1)
