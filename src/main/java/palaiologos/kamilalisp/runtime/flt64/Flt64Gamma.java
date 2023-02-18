@@ -121,6 +121,20 @@ public class Flt64Gamma {
             return Flt64Base.toAtom(lowerIncomplete(a, x));
         }
     };
+    public static final Flt64Base.Flt64Function fPochhammer = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:pochhammer";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            double x = Flt64Base.toFlt64(args.get(0));
+            double n = Flt64Base.toFlt64(args.get(1));
+            return Flt64Base.toAtom(Flt64Gamma.gamma(x + n) / Flt64Gamma.gamma(x));
+        }
+    };
 
     public static double loggamma(double xx) {
         double x, y, tmp, ser;
@@ -295,7 +309,7 @@ public class Flt64Gamma {
 
     public static double lowerIncomplete(double a, double x) {
         if (a == 0)
-            return -Flt64Base.ExpInt.expint(-x);
+            return -Flt64Ei.expint(-x);
         return regularizedGammaP(a, x) * Flt64Gamma.gamma(a);
     }
 

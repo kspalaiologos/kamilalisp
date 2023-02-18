@@ -10,20 +10,6 @@ import java.util.List;
 
 public class Flt64Base {
     public static final double EPSILON = Math.ulp(1.0d);
-    public final Flt64Function pochhammer = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:pochhammer";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 2);
-            double x = toFlt64(args.get(0));
-            double n = toFlt64(args.get(1));
-            return toAtom(Flt64Gamma.gamma(x + n) / Flt64Gamma.gamma(x));
-        }
-    };
     public final Flt64Function erf = new Flt64Function() {
         public static double erf(double x) {
             if (x > 26.0) {
@@ -434,7 +420,7 @@ public class Flt64Base {
         env.setPrimitive("flt64:zeta", new Atom(Flt64Zeta.fRiemannZeta));
         env.setPrimitive("flt64:hurwitz-zeta", new Atom(Flt64Zeta.fHurwitzZeta));
         env.setPrimitive("flt64:polygamma", new Atom(Flt64Gamma.fPolygamma));
-        env.setPrimitive("flt64:pochhammer", new Atom(pochhammer));
+        env.setPrimitive("flt64:pochhammer", new Atom(Flt64Gamma.fPochhammer));
         env.setPrimitive("flt64:erf", new Atom(erf));
         env.setPrimitive("flt64:erfc", new Atom(erfc));
         env.setPrimitive("flt64:erf-inverse", new Atom(erfInverse));
