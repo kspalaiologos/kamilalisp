@@ -1997,7 +1997,7 @@ public class Flt64Base {
             double xn = 1.0;
             double factorial = 1.0;
             double g = 0.0;
-            final int asymptoticTerms = 35;
+            final int asymptoticTerms = 50;
             double[] term = new double[asymptoticTerms + 1];
             double epsilon = EPSILON / 4.0;
             int j = 5;
@@ -2111,13 +2111,14 @@ public class Flt64Base {
             double factorial = 1.0;
             double f = 0.0;
             double epsilon = EPSILON / 4.0;
+            final int asymptoticTerms = 50;
             int j = 3;
             int i = 0;
 
-            double[] term = new double[36];
+            double[] term = new double[asymptoticTerms + 1];
             term[0] = 1.0;
-            term[35] = 0.0;
-            for (i = 1; i < 35; i++) {
+            term[asymptoticTerms] = 0.0;
+            for (i = 1; i < asymptoticTerms; i++) {
                 factorial *= ((double) j * (double) (j - 2));
                 xn *= x4;
                 term[i] = factorial / xn;
