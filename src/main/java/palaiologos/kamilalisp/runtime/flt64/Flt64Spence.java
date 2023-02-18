@@ -7,34 +7,48 @@ import java.util.List;
 
 public class Flt64Spence {
     private final static double[] A = {
-                4.65128586073990045278E-5,
-                7.31589045238094711071E-3,
-                1.33847639578309018650E-1,
-                8.79691311754530315341E-1,
-                2.71149851196553469920E0,
-                4.25697156008121755724E0,
-                3.29771340985225106936E0,
-                1.00000000000000000126E0,
+            4.65128586073990045278E-5,
+            7.31589045238094711071E-3,
+            1.33847639578309018650E-1,
+            8.79691311754530315341E-1,
+            2.71149851196553469920E0,
+            4.25697156008121755724E0,
+            3.29771340985225106936E0,
+            1.00000000000000000126E0,
     };
 
     private final static double[] B = {
-                6.90990488912553276999E-4,
-                2.54043763932544379113E-2,
-                2.82974860602568089943E-1,
-                1.41172597751831069617E0,
-                3.63800533345137075418E0,
-                5.03278880143316990390E0,
-                3.54771340985225096217E0,
-                9.99999999999999998740E-1,
+            6.90990488912553276999E-4,
+            2.54043763932544379113E-2,
+            2.82974860602568089943E-1,
+            1.41172597751831069617E0,
+            3.63800533345137075418E0,
+            5.03278880143316990390E0,
+            3.54771340985225096217E0,
+            9.99999999999999998740E-1,
+    };
+    public static final Flt64Base.Flt64Function spence = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:dilog";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(spence(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Spence::spence).mapToObj(Flt64Base::toAtom).toList());
+        }
     };
 
-    private static double polevl(double x, double p[], int N) {
+    private static double polevl(double x, double[] p, int N) {
         int i = N, dx = 0;
         double ans = p[dx++];
 
         do
             ans = ans * x + p[dx++];
-        while(--i > 0);
+        while (--i > 0);
 
         return ans;
     }
@@ -76,21 +90,6 @@ public class Flt64Spence {
             y = -0.5 * z * z - y;
         }
 
-        return (y);
+        return y;
     }
-
-    public static final Flt64Base.Flt64Function spence = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:dilog";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(spence(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Spence::spence).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
 }

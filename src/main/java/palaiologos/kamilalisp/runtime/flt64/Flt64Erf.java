@@ -6,8 +6,107 @@ import palaiologos.kamilalisp.atom.Environment;
 import java.util.List;
 
 public class Flt64Erf {
+    public static final Flt64Base.Flt64Function erf = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:erf";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(erf(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Erf::erf).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+    public static final Flt64Base.Flt64Function erfc = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:erfc";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(erfc(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Erf::erfc).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+    public static final Flt64Base.Flt64Function erfi = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:erfi";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(erfi(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Erf::erfi).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+    public static final Flt64Base.Flt64Function dawson = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:dawson+";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(dawson(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Erf::dawson).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+    public static final Flt64Base.Flt64Function dawsonMinus = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:dawson-";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(dawsonm(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Erf::dawsonm).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+    public static final Flt64Base.Flt64Function erfcInverse = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:erfc-inverse";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(inverfc(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Erf::inverfc).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+    public static final Flt64Base.Flt64Function erfInverse = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:erf-inverse";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(inverfc(1. - Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> inverfc(1. - x)).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+
     private static double w_im_y100(double x) {
-        double y100 = 100 / (1+x);
+        double y100 = 100 / (1 + x);
         switch ((int) y100) {
             case 0 -> {
                 double t = 2 * y100 - 1;
@@ -408,7 +507,7 @@ public class Flt64Erf {
         if (ax > 45) {
             if (ax > 5e7)
                 return ispi / x;
-            return ispi*((x*x) * (x*x-4.5) + 2) / (x * ((x*x) * (x*x-5) + 3.75));
+            return ispi * ((x * x) * (x * x - 4.5) + 2) / (x * ((x * x) * (x * x - 5) + 3.75));
         }
 
         if (ax < 0.03092783506) {
@@ -423,7 +522,7 @@ public class Flt64Erf {
     }
 
     public static double erfi(double x) {
-        return x*x > 720 ? (x > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY) : Math.exp(x*x) * im_w_of_x(x);
+        return x * x > 720 ? (x > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY) : Math.exp(x * x) * im_w_of_x(x);
     }
 
     public static double dawson(double x) {
@@ -507,103 +606,4 @@ public class Flt64Erf {
             return ((x > 0.0) ? c : Math.exp(x * x) * 2.0 - c);
         }
     }
-
-    public static final Flt64Base.Flt64Function erf = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:erf";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(erf(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Erf::erf).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public static final Flt64Base.Flt64Function erfc = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:erfc";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(erfc(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Erf::erfc).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public static final Flt64Base.Flt64Function erfi = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:erfi";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(erfi(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Erf::erfi).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public static final Flt64Base.Flt64Function dawson = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:dawson+";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(dawson(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Erf::dawson).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public static final Flt64Base.Flt64Function dawsonMinus = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:dawson-";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(dawsonm(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Erf::dawsonm).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public static final Flt64Base.Flt64Function erfcInverse = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:erfc-inverse";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(inverfc(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Erf::inverfc).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public static final Flt64Base.Flt64Function erfInverse = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:erf-inverse";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(inverfc(1. - Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> inverfc(1. - x)).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
 }
