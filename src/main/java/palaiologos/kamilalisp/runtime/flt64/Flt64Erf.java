@@ -449,7 +449,7 @@ public class Flt64Erf {
         return x >= 0.0 ? ans : -ans;
     }
 
-    static double inverfc(double p) {
+    public static double inverfc(double p) {
         double x, err, t, pp;
         if (p >= 2.0) return -100.;
         if (p <= 0.0) return 100.;
@@ -463,47 +463,52 @@ public class Flt64Erf {
         return (p < 1.0 ? x : -x);
     }
 
-    public static final Flt64Base.Flt64Function erf = new Flt64Base.Flt64Function() {
-        public static double erf(double x) {
-            if (x > 26.0) {
-                return 1.0;
-            } else if (x < -5.5) {
-                return -1.0;
-            } else {
-                double absx, c, p, q;
-                absx = Math.abs(x);
-                if (absx <= 0.5) {
-                    c = x * x;
-                    p = ((-0.356098437018154e-1 * c + 0.699638348861914e1) * c + 0.219792616182942e2) * c + 0.242667955230532e3;
-                    q = ((c + 0.150827976304078e2) * c + 0.911649054045149e2) * c + 0.215058875869861e3;
-                    return x * p / q;
-                }
-                if (x < 0.0) {
-                    return -(1.0 - Math.exp(-x * x) * nonexperfc(absx));
-                }
-                return 1.0 - Math.exp(-x * x) * nonexperfc(absx);
-            }
-        }
+    public static double dawsonm(double x) {
+        // sqrt(pi)/2 * exp(x*2) * erf(x)
+        return 0.8862269254527580136490837416705725913990 * Math.exp(x * x) * erf(x);
+    }
 
-        private static double nonexperfc(double x) {
+    public static double erf(double x) {
+        if (x > 26.0) {
+            return 1.0;
+        } else if (x < -5.5) {
+            return -1.0;
+        } else {
             double absx, c, p, q;
             absx = Math.abs(x);
             if (absx <= 0.5) {
-                return Math.exp(x * x) * erf(x);
-            } else if (absx < 4.0) {
-                c = absx;
-                p = ((((((-0.136864857382717e-6 * c + 0.564195517478974e0) * c + 0.721175825088309e1) * c + 0.431622272220567e2) * c + 0.152989285046940e3) * c + 0.339320816734344e3) * c + 0.451918953711873e3) * c + 0.300459261020162e3;
-                q = ((((((c + 0.127827273196294e2) * c + 0.770001529352295e2) * c + 0.277585444743988e3) * c + 0.638980264465631e3) * c + 0.931354094850610e3) * c + 0.790950925327898e3) * c + 0.300459260956983e3;
-                return ((x > 0.0) ? p / q : Math.exp(x * x) * 2.0 - p / q);
-            } else {
-                c = 1.0 / x / x;
-                p = (((0.223192459734185e-1 * c + 0.278661308609648e0) * c + 0.226956593539687e0) * c + 0.494730910623251e-1) * c + 0.299610707703542e-2;
-                q = (((c + 0.198733201817135e1) * c + 0.105167510706793e1) * c + 0.191308926107830e0) * c + 0.106209230528468e-1;
-                c = (c * (-p) / q + 0.564189583547756) / absx;
-                return ((x > 0.0) ? c : Math.exp(x * x) * 2.0 - c);
+                c = x * x;
+                p = ((-0.356098437018154e-1 * c + 0.699638348861914e1) * c + 0.219792616182942e2) * c + 0.242667955230532e3;
+                q = ((c + 0.150827976304078e2) * c + 0.911649054045149e2) * c + 0.215058875869861e3;
+                return x * p / q;
             }
+            if (x < 0.0) {
+                return -(1.0 - Math.exp(-x * x) * nonexperfc(absx));
+            }
+            return 1.0 - Math.exp(-x * x) * nonexperfc(absx);
         }
+    }
 
+    private static double nonexperfc(double x) {
+        double absx, c, p, q;
+        absx = Math.abs(x);
+        if (absx <= 0.5) {
+            return Math.exp(x * x) * erf(x);
+        } else if (absx < 4.0) {
+            c = absx;
+            p = ((((((-0.136864857382717e-6 * c + 0.564195517478974e0) * c + 0.721175825088309e1) * c + 0.431622272220567e2) * c + 0.152989285046940e3) * c + 0.339320816734344e3) * c + 0.451918953711873e3) * c + 0.300459261020162e3;
+            q = ((((((c + 0.127827273196294e2) * c + 0.770001529352295e2) * c + 0.277585444743988e3) * c + 0.638980264465631e3) * c + 0.931354094850610e3) * c + 0.790950925327898e3) * c + 0.300459260956983e3;
+            return ((x > 0.0) ? p / q : Math.exp(x * x) * 2.0 - p / q);
+        } else {
+            c = 1.0 / x / x;
+            p = (((0.223192459734185e-1 * c + 0.278661308609648e0) * c + 0.226956593539687e0) * c + 0.494730910623251e-1) * c + 0.299610707703542e-2;
+            q = (((c + 0.198733201817135e1) * c + 0.105167510706793e1) * c + 0.191308926107830e0) * c + 0.106209230528468e-1;
+            c = (c * (-p) / q + 0.564189583547756) / absx;
+            return ((x > 0.0) ? c : Math.exp(x * x) * 2.0 - c);
+        }
+    }
+
+    public static final Flt64Base.Flt64Function erf = new Flt64Base.Flt64Function() {
         @Override
         protected String name() {
             return "flt64:erf";
@@ -514,7 +519,7 @@ public class Flt64Erf {
             if (args.size() == 1)
                 return Flt64Base.toAtom(erf(Flt64Base.toFlt64(args.get(0))));
             else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> erf(x)).mapToObj(Flt64Base::toAtom).toList());
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Erf::erf).mapToObj(Flt64Base::toAtom).toList());
         }
     };
     public static final Flt64Base.Flt64Function erfc = new Flt64Base.Flt64Function() {
@@ -548,7 +553,7 @@ public class Flt64Erf {
     public static final Flt64Base.Flt64Function dawson = new Flt64Base.Flt64Function() {
         @Override
         protected String name() {
-            return "flt64:dawson";
+            return "flt64:dawson+";
         }
 
         @Override
@@ -557,6 +562,20 @@ public class Flt64Erf {
                 return Flt64Base.toAtom(dawson(Flt64Base.toFlt64(args.get(0))));
             else
                 return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Erf::dawson).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+    public static final Flt64Base.Flt64Function dawsonMinus = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:dawson-";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(dawsonm(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Erf::dawsonm).mapToObj(Flt64Base::toAtom).toList());
         }
     };
     public static final Flt64Base.Flt64Function erfcInverse = new Flt64Base.Flt64Function() {
@@ -570,7 +589,7 @@ public class Flt64Erf {
             if (args.size() == 1)
                 return Flt64Base.toAtom(inverfc(Flt64Base.toFlt64(args.get(0))));
             else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(x -> inverfc(x)).mapToObj(Flt64Base::toAtom).toList());
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Erf::inverfc).mapToObj(Flt64Base::toAtom).toList());
         }
     };
     public static final Flt64Base.Flt64Function erfInverse = new Flt64Base.Flt64Function() {

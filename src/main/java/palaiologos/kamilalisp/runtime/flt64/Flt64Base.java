@@ -296,7 +296,7 @@ public class Flt64Base {
         env.setPrimitive("flt64:erf-inverse", new Atom(Flt64Erf.erfInverse));
         env.setPrimitive("flt64:erfc-inverse", new Atom(Flt64Erf.erfcInverse));
         env.setPrimitive("flt64:erfi", new Atom(Flt64Erf.erfi));
-        env.setPrimitive("flt64:dawson", new Atom(Flt64Erf.dawson));
+        env.setPrimitive("flt64:dawson+", new Atom(Flt64Erf.dawson));
         env.setPrimitive("flt64:ui-gamma", new Atom(Flt64Gamma.fUpperIncompleteGamma));
         env.setPrimitive("flt64:li-gamma", new Atom(Flt64Gamma.fLowerIncompleteGamma));
         env.setPrimitive("flt64:log-gamma", new Atom(Flt64Gamma.fLogGamma));
