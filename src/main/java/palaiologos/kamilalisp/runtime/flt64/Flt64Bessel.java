@@ -6,6 +6,110 @@ import palaiologos.kamilalisp.atom.Environment;
 import java.util.List;
 
 public class Flt64Bessel {
+    public static final Flt64Base.Flt64Function fBessely0 = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:bessel-y0";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(y0(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Bessel::y0).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+    public static final Flt64Base.Flt64Function fBessely1 = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:bessel-y1";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(y1(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Bessel::y1).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+    public static final Flt64Base.Flt64Function fBessely = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:bessel-yn";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            return Flt64Base.toAtom(yn(args.get(0).getInteger().intValueExact(), Flt64Base.toFlt64(args.get(1))));
+        }
+    };
+    public static final Flt64Base.Flt64Function fBesselk = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:bessel-kn";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            return Flt64Base.toAtom(kn(args.get(0).getInteger().intValueExact(), Flt64Base.toFlt64(args.get(1))));
+        }
+    };
+    public static final Flt64Base.Flt64Function fBessel0 = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:bessel-j0";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(bessel0(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Bessel::bessel0).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+    public static final Flt64Base.Flt64Function fBessel1 = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:bessel-j1";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(bessel1(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Bessel::bessel1).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+    public static final Flt64Base.Flt64Function fBessel = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:bessel-jn";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            return Flt64Base.toAtom(bessel(args.get(0).getInteger().intValueExact(), Flt64Base.toFlt64(args.get(1))));
+        }
+    };
+    public static final Flt64Base.Flt64Function fBesselderv = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:bessel-jn-derv";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            return Flt64Base.toAtom(besselnDerivative(args.get(0).getInteger().intValueExact(), Flt64Base.toFlt64(args.get(1))));
+        }
+    };
     protected static final double[] A_i0 = {
             -4.41534164647933937950E-18,
             3.33079451882223809783E-17,
@@ -65,6 +169,20 @@ public class Flt64Bessel {
             3.36911647825569408990E-3,
             8.04490411014108831608E-1
     };
+    public static final Flt64Base.Flt64Function fBesseli0 = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:bessel-i0";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(i0(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Bessel::i0).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
     protected static final double[] A_i1 = {
             2.77791411276104639959E-18,
             -2.11142121435816608115E-17,
@@ -123,6 +241,20 @@ public class Flt64Bessel {
             -9.76109749136146840777E-3,
             7.78576235018280120474E-1
     };
+    public static final Flt64Base.Flt64Function fBesseli1 = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:bessel-i1";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(i1(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Bessel::i1).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
     protected static final double[] A_k0 = {
             1.37446543561352307156E-16,
             4.25981614279661018399E-14,
@@ -161,6 +293,20 @@ public class Flt64Bessel {
             1.56988388573005337491E-3,
             -3.14481013119645005427E-2,
             2.44030308206595545468E0
+    };
+    public static final Flt64Base.Flt64Function fBesselk0 = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:bessel-k0";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(k0(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Bessel::k0).mapToObj(Flt64Base::toAtom).toList());
+        }
     };
     protected static final double[] A_k1 = {
             -7.02386347938628759343E-18,
@@ -201,6 +347,20 @@ public class Flt64Bessel {
             -2.85781685962277938680E-3,
             1.03923736576817238437E-1,
             2.72062619048444266945E0
+    };
+    public static final Flt64Base.Flt64Function fBesselk1 = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:bessel-k1";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(k1(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Bessel::k1).mapToObj(Flt64Base::toAtom).toList());
+        }
     };
 
     private static double besseln(int n, double x) {
@@ -696,165 +856,4 @@ public class Flt64Bessel {
         }
         return by;
     }
-
-    public static final Flt64Base.Flt64Function fBessely0 = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:bessel-y0";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(y0(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Bessel::y0).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public static final Flt64Base.Flt64Function fBessely1 = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:bessel-y1";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(y1(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Bessel::y1).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public static final Flt64Base.Flt64Function fBessely = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:bessel-yn";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 2);
-            return Flt64Base.toAtom(yn(args.get(0).getInteger().intValueExact(), Flt64Base.toFlt64(args.get(1))));
-        }
-    };
-    public static final Flt64Base.Flt64Function fBesselk = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:bessel-kn";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 2);
-            return Flt64Base.toAtom(kn(args.get(0).getInteger().intValueExact(), Flt64Base.toFlt64(args.get(1))));
-        }
-    };
-    public static final Flt64Base.Flt64Function fBesseli0 = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:bessel-i0";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(i0(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Bessel::i0).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public static final Flt64Base.Flt64Function fBesseli1 = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:bessel-i1";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(i1(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Bessel::i1).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public static final Flt64Base.Flt64Function fBesselk0 = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:bessel-k0";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(k0(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Bessel::k0).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public static final Flt64Base.Flt64Function fBesselk1 = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:bessel-k1";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(k1(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Bessel::k1).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public static final Flt64Base.Flt64Function fBessel0 = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:bessel-j0";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(bessel0(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Bessel::bessel0).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public static final Flt64Base.Flt64Function fBessel1 = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:bessel-j1";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(bessel1(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Bessel::bessel1).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public static final Flt64Base.Flt64Function fBessel = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:bessel-jn";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 2);
-            return Flt64Base.toAtom(bessel(args.get(0).getInteger().intValueExact(), Flt64Base.toFlt64(args.get(1))));
-        }
-    };
-    public static final Flt64Base.Flt64Function fBesselderv = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:bessel-jn-derv";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 2);
-            return Flt64Base.toAtom(besselnDerivative(args.get(0).getInteger().intValueExact(), Flt64Base.toFlt64(args.get(1))));
-        }
-    };
 }

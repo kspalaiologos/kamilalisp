@@ -6,6 +6,122 @@ import palaiologos.kamilalisp.atom.Environment;
 import java.util.List;
 
 public class Flt64Gamma {
+    public static final Flt64Base.Flt64Function fLogGamma = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:loggamma";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(Flt64Gamma.loggamma(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Gamma::loggamma).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+    public static final Flt64Base.Flt64Function fGamma = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:gamma";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(gamma(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Gamma::gamma).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+    public static final Flt64Base.Flt64Function fBeta = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:beta";
+        }
+
+        private double betaImpl(double x, double y) {
+            return gamma(x) * gamma(y) / gamma(x + y);
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            return Flt64Base.toAtom(betaImpl(Flt64Base.toFlt64(args.get(0)), Flt64Base.toFlt64(args.get(1))));
+        }
+    };
+    public static final Flt64Base.Flt64Function fDigamma = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:digamma";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(digamma(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Gamma::digamma).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+    public static final Flt64Base.Flt64Function fTrigamma = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:trigamma";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(trigamma(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Gamma::trigamma).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
+    public static final Flt64Base.Flt64Function fPolygamma = new Flt64Base.Flt64Function() {
+        private static double polygamma(double n, double x) {
+            // Polygamma[n, x] = (-1)^(n+1) * Gamma[n + 1] * HurwitzZeta[n + 1, x]
+            return Math.pow(-1, n + 1) * gamma(n + 1) * Flt64Zeta.hurwitz_zeta(n + 1, x);
+        }
+
+        @Override
+        protected String name() {
+            return "flt64:polygamma";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            return Flt64Base.toAtom(polygamma(Flt64Base.toFlt64(args.get(0)), Flt64Base.toFlt64(args.get(1))));
+        }
+    };
+    public static final Flt64Base.Flt64Function fUpperIncompleteGamma = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:ui-gamma";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            double a = Flt64Base.toFlt64(args.get(0));
+            double x = Flt64Base.toFlt64(args.get(1));
+            return Flt64Base.toAtom(upperIncomplete(a, x));
+        }
+    };
+    public static final Flt64Base.Flt64Function fLowerIncompleteGamma = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:li-gamma";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            double a = Flt64Base.toFlt64(args.get(0));
+            double x = Flt64Base.toFlt64(args.get(1));
+            return Flt64Base.toAtom(lowerIncomplete(a, x));
+        }
+    };
+
     public static double loggamma(double xx) {
         double x, y, tmp, ser;
 
@@ -22,6 +138,7 @@ public class Flt64Gamma {
 
         return -tmp + Math.log(2.5066282746310005 * ser / x);
     }
+
     public static double gamma(double x) {
         double sgngam, q, z, y, p1, q1;
         int ip, p;
@@ -257,120 +374,4 @@ public class Flt64Gamma {
         double gln = Flt64Gamma.loggamma(a);
         return Math.exp(-x + a * Math.log(x) - gln) * h;
     }
-
-    public static final Flt64Base.Flt64Function fLogGamma = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:loggamma";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(Flt64Gamma.loggamma(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Gamma::loggamma).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public static final Flt64Base.Flt64Function fGamma = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:gamma";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(gamma(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Gamma::gamma).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public static final Flt64Base.Flt64Function fBeta = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:beta";
-        }
-
-        private double betaImpl(double x, double y) {
-            return gamma(x) * gamma(y) / gamma(x + y);
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 2);
-            return Flt64Base.toAtom(betaImpl(Flt64Base.toFlt64(args.get(0)), Flt64Base.toFlt64(args.get(1))));
-        }
-    };
-    public static final Flt64Base.Flt64Function fDigamma = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:digamma";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(digamma(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Gamma::digamma).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public static final Flt64Base.Flt64Function fTrigamma = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:trigamma";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(trigamma(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Gamma::trigamma).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public static final Flt64Base.Flt64Function fPolygamma = new Flt64Base.Flt64Function() {
-        private static double polygamma(double n, double x) {
-            // Polygamma[n, x] = (-1)^(n+1) * Gamma[n + 1] * HurwitzZeta[n + 1, x]
-            return Math.pow(-1, n + 1) * gamma(n + 1) * Flt64Zeta.hurwitz_zeta(n + 1, x);
-        }
-
-        @Override
-        protected String name() {
-            return "flt64:polygamma";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 2);
-            return Flt64Base.toAtom(polygamma(Flt64Base.toFlt64(args.get(0)), Flt64Base.toFlt64(args.get(1))));
-        }
-    };
-    public static final Flt64Base.Flt64Function fUpperIncompleteGamma = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:ui-gamma";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            double a = Flt64Base.toFlt64(args.get(0));
-            double x = Flt64Base.toFlt64(args.get(1));
-            return Flt64Base.toAtom(upperIncomplete(a, x));
-        }
-    };
-    public static final Flt64Base.Flt64Function fLowerIncompleteGamma = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:li-gamma";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            double a = Flt64Base.toFlt64(args.get(0));
-            double x = Flt64Base.toFlt64(args.get(1));
-            return Flt64Base.toAtom(lowerIncomplete(a, x));
-        }
-    };
 }

@@ -6,6 +6,20 @@ import palaiologos.kamilalisp.atom.Environment;
 import java.util.List;
 
 public class Flt64Zeta {
+    public static final Flt64Base.Flt64Function fRiemannZeta = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:zeta";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 1)
+                return Flt64Base.toAtom(riemann_zeta(Flt64Base.toFlt64(args.get(0))));
+            else
+                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Zeta::riemann_zeta).mapToObj(Flt64Base::toAtom).toList());
+        }
+    };
     private static final double[] zetBernCoefs = new double[]
             {
                     0.0,
@@ -14,6 +28,18 @@ public class Flt64Zeta {
                     1.3382536530684678833e-11, -3.3896802963225828668e-13, 8.5860620562778445641e-15,
                     -2.1748686985580618730e-16
             };
+    public static final Flt64Base.Flt64Function fHurwitzZeta = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:hurwitz-zeta";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            return Flt64Base.toAtom(hurwitz_zeta(Flt64Base.toFlt64(args.get(0)), Flt64Base.toFlt64(args.get(1))));
+        }
+    };
 
     private static double __riemann_zeta_glob(double __s) {
         double __zeta = 0;
@@ -142,31 +168,4 @@ public class Flt64Zeta {
 
         return part1 + Math.pow(a + n, 1 - x) / (x - 1) - 1. / (2 * Math.pow(a + n, x)) + part2;
     }
-
-    public static final Flt64Base.Flt64Function fRiemannZeta = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:zeta";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return Flt64Base.toAtom(riemann_zeta(Flt64Base.toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Flt64Zeta::riemann_zeta).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public static final Flt64Base.Flt64Function fHurwitzZeta = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:hurwitz-zeta";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 2);
-            return Flt64Base.toAtom(hurwitz_zeta(Flt64Base.toFlt64(args.get(0)), Flt64Base.toFlt64(args.get(1))));
-        }
-    };
 }
