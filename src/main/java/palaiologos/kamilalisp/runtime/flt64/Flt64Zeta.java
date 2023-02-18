@@ -49,7 +49,7 @@ public class Flt64Zeta {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 2);
+            assertArity(args, 3);
             return Flt64Base.toAtom(lerch_phi(Flt64Base.toFlt64(args.get(0)), Flt64Base.toFlt64(args.get(1)), Flt64Base.toFlt64(args.get(2))));
         }
     };
@@ -323,8 +323,7 @@ public class Flt64Zeta {
         // lerchphi(z,0,a) = 1/(1-z)
         if (a == 0)
             return 1 / (1 - s);
-        lerchphiGeneral(s, a, z, 10e-16);
-        throw new UnsupportedOperationException("lerch-phi: scenario not yet implemented.");
+        return lerchphiGeneral(s, a, z, 10e-16);
     }
 
     public static double riemann_zeta(double s) {
