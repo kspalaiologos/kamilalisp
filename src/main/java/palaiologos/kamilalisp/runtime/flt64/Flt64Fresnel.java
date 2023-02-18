@@ -121,7 +121,7 @@ public class Flt64Fresnel {
         double g = 0.0;
         final int asymptoticTerms = 50;
         double[] term = new double[asymptoticTerms + 1];
-        double epsilon = EPSILON / 4.0;
+        double epsilon = Flt64Base.EPSILON / 4.0;
         int j = 5;
         int i = 0;
 
@@ -232,7 +232,7 @@ public class Flt64Fresnel {
         double xn = 1.0;
         double factorial = 1.0;
         double f = 0.0;
-        double epsilon = EPSILON / 4.0;
+        double epsilon = Flt64Base.EPSILON / 4.0;
         final int asymptoticTerms = 50;
         int j = 3;
         int i = 0;
@@ -334,7 +334,7 @@ public class Flt64Fresnel {
 
         if (x == 0.0) return 0.0;
         Sn /= 3.0;
-        while (Math.abs(Sn - Sm1) > EPSILON * Math.abs(Sm1)) {
+        while (Math.abs(Sn - Sm1) > Flt64Base.EPSILON * Math.abs(Sm1)) {
             Sm1 = Sn;
             y += 1;
             factorial *= y + y;

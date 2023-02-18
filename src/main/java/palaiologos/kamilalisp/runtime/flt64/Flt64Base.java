@@ -10,202 +10,6 @@ import java.util.List;
 
 public class Flt64Base {
     public static final double EPSILON = Math.ulp(1.0d);
-    public final Flt64Function add = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:+";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            return toAtom(args.stream().mapToDouble(Flt64Base::toFlt64).sum());
-        }
-    };
-    public final Flt64Function sub = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:-";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1) {
-                return toAtom(-toFlt64(args.get(0)));
-            } else {
-                return toAtom(args.stream().mapToDouble(Flt64Base::toFlt64).reduce((a, b) -> a - b).orElse(0));
-            }
-        }
-    };
-    public final Flt64Function mul = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:*";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            return toAtom(args.stream().mapToDouble(Flt64Base::toFlt64).reduce((a, b) -> a * b).orElse(1));
-        }
-    };
-    public final Flt64Function div = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:/";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            return toAtom(args.stream().mapToDouble(Flt64Base::toFlt64).reduce((a, b) -> a / b).orElse(1));
-        }
-    };
-    public final Flt64Function mod = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:mod";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            return toAtom(args.stream().mapToDouble(Flt64Base::toFlt64).reduce((a, b) -> a % b).orElse(1));
-        }
-    };
-    public final Flt64Function pow = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:**";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            return toAtom(args.stream().mapToDouble(Flt64Base::toFlt64).reduce(Math::pow).orElse(1));
-        }
-    };
-    public final Flt64Function abs = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:abs";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return toAtom(Math.abs(toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::abs).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public final Flt64Function ceil = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:ceil";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return toAtom(Math.ceil(toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::ceil).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public final Flt64Function floor = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:floor";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return toAtom(Math.floor(toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::floor).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public final Flt64Function round = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:round";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return toAtom(Math.round(toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::round).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public final Flt64Function exp = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:exp";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return toAtom(Math.exp(toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::exp).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public final Flt64Function ln = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:ln";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return toAtom(Math.log(toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::log).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public final Flt64Function log = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:log10";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return toAtom(Math.log10(toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::log10).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public final Flt64Function log2 = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:log2";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return toAtom(Math.log(toFlt64(args.get(0))) / Math.log(2));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::log).map(x -> x / Math.log(2)).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
-    public final Flt64Function sqrt = new Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:sqrt";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if (args.size() == 1)
-                return toAtom(Math.sqrt(toFlt64(args.get(0))));
-            else
-                return new Atom(args.stream().mapToDouble(Flt64Base::toFlt64).map(Math::sqrt).mapToObj(Flt64Base::toAtom).toList());
-        }
-    };
     public final Flt64Function pochhammer = new Flt64Function() {
         @Override
         protected String name() {
@@ -598,21 +402,21 @@ public class Flt64Base {
         // airy-bi, hypergeom-2f1, hypergeom-pfq, meijer-g, fox-h, hypergeom-1f1,
         // whittaker-m, whittaker-w, elliptic-k, elliptic-f, elliptic-e, elliptic-pi,
         // lerch-phi, dirichlet-beta, dirichlet-eta, dirichlet-lambda, barnesg, logbarnesg,
-        env.setPrimitive("flt64:+", new Atom(add));
-        env.setPrimitive("flt64:-", new Atom(sub));
-        env.setPrimitive("flt64:*", new Atom(mul));
-        env.setPrimitive("flt64:/", new Atom(div));
-        env.setPrimitive("flt64:mod", new Atom(mod));
-        env.setPrimitive("flt64:**", new Atom(pow));
-        env.setPrimitive("flt64:abs", new Atom(abs));
-        env.setPrimitive("flt64:ceil", new Atom(ceil));
-        env.setPrimitive("flt64:floor", new Atom(floor));
-        env.setPrimitive("flt64:round", new Atom(round));
-        env.setPrimitive("flt64:exp", new Atom(exp));
-        env.setPrimitive("flt64:ln", new Atom(ln));
-        env.setPrimitive("flt64:log2", new Atom(log2));
-        env.setPrimitive("flt64:log10", new Atom(log));
-        env.setPrimitive("flt64:sqrt", new Atom(sqrt));
+        env.setPrimitive("flt64:+", new Atom(Flt64Arith.add));
+        env.setPrimitive("flt64:-", new Atom(Flt64Arith.sub));
+        env.setPrimitive("flt64:*", new Atom(Flt64Arith.mul));
+        env.setPrimitive("flt64:/", new Atom(Flt64Arith.div));
+        env.setPrimitive("flt64:mod", new Atom(Flt64Arith.mod));
+        env.setPrimitive("flt64:**", new Atom(Flt64Arith.pow));
+        env.setPrimitive("flt64:abs", new Atom(Flt64Arith.abs));
+        env.setPrimitive("flt64:ceil", new Atom(Flt64Arith.ceil));
+        env.setPrimitive("flt64:floor", new Atom(Flt64Arith.floor));
+        env.setPrimitive("flt64:round", new Atom(Flt64Arith.round));
+        env.setPrimitive("flt64:exp", new Atom(Flt64Arith.exp));
+        env.setPrimitive("flt64:ln", new Atom(Flt64Arith.ln));
+        env.setPrimitive("flt64:log2", new Atom(Flt64Arith.log2));
+        env.setPrimitive("flt64:log10", new Atom(Flt64Arith.log));
+        env.setPrimitive("flt64:sqrt", new Atom(Flt64Arith.sqrt));
         env.setPrimitive("flt64:min", new Atom(Flt64Cmp.min));
         env.setPrimitive("flt64:max", new Atom(Flt64Cmp.max));
         env.setPrimitive("flt64:signum", new Atom(Flt64Cmp.signum));
