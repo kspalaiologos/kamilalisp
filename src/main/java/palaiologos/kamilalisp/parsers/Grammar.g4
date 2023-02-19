@@ -9,7 +9,7 @@ grammar Grammar;
 
 file_: form * EOF;
 
-form: form_rem (('@'|'∘') form_rem)*
+form: form_rem (BIND form_rem)*
     ;
 
 form_rem: literal
@@ -26,7 +26,7 @@ form_rem: literal
 
 list_form
         : form
-        | '\\'
+        | LISTPART
         ;
 
 any_list: list_ | sqlist ;
@@ -47,28 +47,28 @@ reader_macro
     ;
 
 self
-    : '&' LONG
+    : SELF LONG
     ;
 
 quote
-    : '\'' form
+    : QUOTE form
     ;
 
 map
-    : ':' form_rem
+    : MAPSYM form_rem
     ;
 
 parallel_map
-    : DOLLAR ':' form_rem
+    : DOLLAR MAPSYM form_rem
     ;
 
 over
-    : '^' form_rem
+    : SWIZZLE form_rem
     ;
 
 tack
-    : LONG '##' LONG
-    | '#' LONG
+    : LONG TACKTACK LONG
+    | TACK LONG
     ;
 
 bind
@@ -140,9 +140,17 @@ NIL : 'nil' | '⍬';
 // and can't inline rules on it's own.
 // Normally I'd have made a rule with NOTID and inverted it in a set.
 
+SELF: '&';
+BIND: '@'|'∘';
+QUOTE: '\'';
+LISTPART: '\\';
+MAPSYM: ':';
 DOLLAR: '$' ;
 PERCENT: '%' ;
+SWIZZLE: '^';
 DOT: '.' ;
+TACKTACK: '##';
+TACK: '#';
 
 fragment
 NOTID: ~('∘' | '⍬' | '⍨' | '.' | '@' | '$' | '%' | '^' | '\r' | '\n' | ' ' | '(' | ')' | '[' | ']' | ',' | '{' | '}' | ';' | '&') ;
@@ -155,13 +163,6 @@ NAME: '...'? NOTID_START NOTID* ;
 // Discard
 //--------------------------------------------------------------------
 
-fragment
-WS : [ \t\r\n]+ ;
-
-fragment
-COMMENT: ';' ~[\r\n]* ;
-
-TRASH
-    : ( WS | COMMENT ) -> channel(HIDDEN)
-    ;
+WS : [ \t\r\n]+ -> skip ;
+COMMENT: ';' ~[\r\n]* -> skip ;
 

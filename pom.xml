@@ -97,6 +97,12 @@
             <version>3.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.fifesoft</groupId>
+            <artifactId>rsyntaxtextarea</artifactId>
+            <version>3.3.2</version>
+        </dependency>
+
         <!-- Testing dependencies. -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -173,6 +179,8 @@
                         <option>-keep class org.jline.** { *; }</option>
                         <option>-keep class org.tukaani.xz.** { *; }</option>
                         <option>-keep class org.armedbear.lisp.** { *; }</option>
+                        <option>-keep class org.fife.** { *; }</option>
+                        <option>-keep class com.formdev.** { *; }</option>
                         <option>-optimizationpasses 9</option>
                         <option>-allowaccessmodification</option>
                         <option>-flattenpackagehierarchy ''</option>
@@ -180,6 +188,7 @@
                         <option>-dontnote</option>
                         <option>-forceprocessing</option>
                         <option>-keep class palaiologos.kamilalisp.error.** { *; }</option>
+                        <option>-keep class palaiologos.kamilalisp.runtime.ide.** { *; }</option>
                         <option>-keepclasseswithmembers public class * { public static void main(java.lang.String[]); }</option>
                         <option>-keepclassmembers enum  * { public static **[] values(); public static ** valueOf(java.lang.String); }</option>
                         <option>-keepclasseswithmembers,includedescriptorclasses,allowshrinking class * { native &lt;methods&gt;; }</option>
