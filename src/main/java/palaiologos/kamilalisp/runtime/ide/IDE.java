@@ -222,7 +222,12 @@ public class IDE {
             public void changedUpdate(DocumentEvent arg0) { }
         });
 
-        root.add(gutter, BorderLayout.WEST);
+        JScrollPane jspGutter = new JScrollPane(gutter);
+        jspGutter.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        jspGutter.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        jspGutter.setBorder(null);
+        jspGutter.getVerticalScrollBar().setModel(sp.getVerticalScrollBar().getModel());
+        root.add(jspGutter, BorderLayout.WEST);
         frame.add(root);
         frame.setBackground(Color.decode("#10141C"));
         frame.setVisible(true);
