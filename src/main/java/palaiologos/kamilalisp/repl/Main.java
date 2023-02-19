@@ -1,5 +1,7 @@
 package palaiologos.kamilalisp.repl;
 
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatAtomOneDarkIJTheme;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -12,7 +14,10 @@ import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.AttributedStringBuilder;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.InterruptionError;
+import palaiologos.kamilalisp.runtime.ide.IDE;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -47,12 +52,7 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        if (args.length >= 1) {
-            evalScript(new Environment(defaultRegistry), args[0], args);
-            return;
-        }
-
+    private static void terminalTTY() throws IOException {
         banner();
         Environment env = new Environment(defaultRegistry);
         DefaultParser parser = new DefaultParser();
@@ -127,6 +127,22 @@ public class Main {
             System.out.println("Bye.");
         } catch (UserInterruptException e) {
             System.out.println("Interrupted.");
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        if(args.length == 0)
+            terminalTTY();
+        if (args.length >= 1) {
+            if(args[0].equalsIgnoreCase("--ide")) {
+                FlatAtomOneDarkIJTheme.setup();
+                Font apl386 = Font.createFont(Font.TRUETYPE_FONT, Main.class.getResourceAsStream("/APL386.ttf"));
+                GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(apl386);
+                IDE ide = new IDE();
+                if(args.length >= 2)
+                    evalScript(new Environment(defaultRegistry), args[1], args);
+            } else
+                evalScript(new Environment(defaultRegistry), args[0], args);
         }
     }
 }
