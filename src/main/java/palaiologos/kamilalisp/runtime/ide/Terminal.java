@@ -13,10 +13,11 @@ public class Terminal extends JEditorPane {
         setContentType("text/html");
         String bodyRule = "body { font-family: \"APL386 Unicode\"; font-size: 20pt; background-color: #10141C; color: #bfbdb6; }";
         ((HTMLDocument)getDocument()).getStyleSheet().addRule(bodyRule);
-        setText("Hello, world!");
+        setText("");
         getCaret().setVisible(true);
         ((DefaultCaret) getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         setCaretColor(Color.decode("#bfbdb6"));
+        setEditable(false);
     }
 
     protected void paintComponent(Graphics g) {
