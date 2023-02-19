@@ -41,9 +41,7 @@ public class Terminal extends JEditorPane {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        SwingUtilities.invokeLater(() -> {
-            setCaretPosition(document.getLength());
-        });
+        SwingUtilities.invokeLater(() -> setCaretPosition(document.getLength()));
         awaitsInput.set(true);
         try {
             synchronized (awaitsInput) {
