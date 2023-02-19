@@ -233,7 +233,7 @@ public class IDE {
                 Environment env = new Environment(Main.defaultRegistry);
                 int lineNumberOffset = 0;
                 while (true) {
-                    String code = prompt();
+                    String code = prompt().trim();
                     if (code.isEmpty() || code.trim().isEmpty() || code.trim().charAt(0) == ';')
                         continue;
                     try {

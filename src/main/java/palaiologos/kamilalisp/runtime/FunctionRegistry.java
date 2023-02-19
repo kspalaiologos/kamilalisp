@@ -62,7 +62,7 @@ public class FunctionRegistry {
         env.setPrimitive("foldl1", "⌿.←", new Atom(new Foldl1()));
         env.setPrimitive("foldr1", "⌿.→", new Atom(new Foldr1()));
         env.setPrimitive("lift", "⍏", new Atom(new Lift()));
-        env.setPrimitive("tie", ",⍧", new Atom(new Tie()));
+        env.setPrimitive("tie", "⌿.⍧", new Atom(new Tie()));
         env.setPrimitive("if", "↕", new Atom(new If()));
         env.setPrimitive("filter", "⍭", new Atom(new Filter()));
         env.setPrimitive("filter-idx", "⍭¨", new Atom(new FilterIdx()));
