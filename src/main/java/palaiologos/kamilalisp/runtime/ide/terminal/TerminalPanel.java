@@ -20,8 +20,12 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -128,6 +132,9 @@ public class TerminalPanel extends JPanel {
 
         try {
             String text = area.getText(r.byteOffset, area.getDocument().getLength() - r.byteOffset);
+            synchronized (lines) {
+                lines.add(text.substring(0, text.length() - 1));
+            }
             r.byteOffset = 0;
             r.start = -1;
             return text;
@@ -141,6 +148,8 @@ public class TerminalPanel extends JPanel {
     AllowedEditRange r;
     RSyntaxTextArea area;
     Thread t;
+    final List<String> lines = new ArrayList<>();
+    int lineIndex = 0;
 
     public TerminalPanel() {
         setBackground(Color.decode("#10141C"));
@@ -179,7 +188,7 @@ public class TerminalPanel extends JPanel {
         gutter.setEditable(false);
         gutter.setFont(IDE.aplFont);
         gutter.setText("");
-        gutter.setBorder(new MatteBorder(0, 0, 0, 1, Color.decode("#1E222A")));
+        gutter.setBorder(null);
         area.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void removeUpdate(DocumentEvent e) {
@@ -258,6 +267,7 @@ public class TerminalPanel extends JPanel {
         jspGutter.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         jspGutter.setBorder(null);
         jspGutter.getVerticalScrollBar().setModel(sp.getVerticalScrollBar().getModel());
+        jspGutter.setBorder(new MatteBorder(0, 0, 0, 1, Color.decode("#1E222A")));
         add(jspGutter, BorderLayout.WEST);
 
         t = new Thread(() -> {
@@ -297,6 +307,48 @@ public class TerminalPanel extends JPanel {
                 }
                 // count newlines in code
                 lineNumberOffset += code.chars().filter(c -> c == '\n').count();
+            }
+        });
+
+        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), "line-back");
+        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), "line-forward");
+
+        getActionMap().put("line-back", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    System.out.println("yay");
+                    if(readingInput.get()) {
+                        if(lines.size() == lineIndex)
+                            return;
+                        lineIndex++;
+                        // Remove everything from r.byteOffset to the end of the document.
+                        area.getDocument().remove(r.byteOffset, area.getDocument().getLength() - r.byteOffset);
+                        // Append lines[lines.size() - 1 - lineIndex] to the document.
+                        area.append(lines.get(lines.size() - lineIndex));
+                    }
+                } catch (BadLocationException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
+        getActionMap().put("line-forward", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if(readingInput.get()) {
+                        if(lines.size() + 1 != lineIndex)
+                            return;
+                        lineIndex--;
+                        // Remove everything from r.byteOffset to the end of the document.
+                        area.getDocument().remove(r.byteOffset, area.getDocument().getLength() - r.byteOffset);
+                        // Append lines[lines.size() - 1 - lineIndex] to the document.
+                        area.append(lines.get(lines.size() - lineIndex));
+                    }
+                } catch (BadLocationException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
     }
