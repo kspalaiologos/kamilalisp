@@ -182,7 +182,7 @@ public class TerminalPanel extends JPanel {
         JScrollPane sp = new JScrollPane(area);
         sp.setBorder(null);
         add(sp, BorderLayout.CENTER);
-        gutter = new JTextArea(1,3);
+        gutter = new JTextArea(1,4);
         gutter.setBackground(Color.decode("#10141C"));
         gutter.setForeground(Color.decode("#E6E6E6"));
         gutter.setEditable(false);
