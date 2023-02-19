@@ -2,6 +2,7 @@ package palaiologos.kamilalisp.runtime.ide.terminal;
 
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.fife.ui.rsyntaxtextarea.*;
+import org.jline.terminal.Terminal;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Evaluation;
@@ -298,5 +299,10 @@ public class TerminalPanel extends JPanel {
                 lineNumberOffset += code.chars().filter(c -> c == '\n').count();
             }
         });
+    }
+
+    public TerminalPanel start() {
+        t.start();
+        return this;
     }
 }
