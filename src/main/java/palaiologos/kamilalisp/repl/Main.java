@@ -136,8 +136,6 @@ public class Main {
         if (args.length >= 1) {
             if(args[0].equalsIgnoreCase("--ide")) {
                 FlatAtomOneDarkIJTheme.setup();
-                Font apl386 = Font.createFont(Font.TRUETYPE_FONT, Main.class.getResourceAsStream("/APL386.ttf"));
-                GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(apl386);
                 IDE ide = new IDE();
                 if(args.length >= 2)
                     evalScript(new Environment(defaultRegistry), args[1], args);
