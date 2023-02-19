@@ -317,7 +317,6 @@ public class TerminalPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    System.out.println("yay");
                     if(readingInput.get()) {
                         if(lines.size() == lineIndex)
                             return;
