@@ -121,7 +121,7 @@ public class IDE {
         atmf.putMapping("text/kamilalisp", "palaiologos.kamilalisp.runtime.ide.KamilaLispTokenMaker");
         area.setSyntaxEditingStyle("text/kamilalisp");
         area.setAntiAliasingEnabled(true);
-        Font aplFont = Font.createFont(Font.TRUETYPE_FONT, IDE.class.getResourceAsStream("/Apl385.ttf")).deriveFont(16f);
+        Font aplFont = Font.createFont(Font.TRUETYPE_FONT, IDE.class.getResourceAsStream("/Apl385.ttf")).deriveFont(Font.BOLD, 14f);
         area.setFont(aplFont);
         area.setCaretColor(Color.decode("#D5D5D5"));
         area.setForeground(Color.decode("#E6E6E6"));
