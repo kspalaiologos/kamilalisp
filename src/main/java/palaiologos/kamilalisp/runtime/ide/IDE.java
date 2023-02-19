@@ -2,12 +2,8 @@ package palaiologos.kamilalisp.runtime.ide;
 
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.fife.ui.rsyntaxtextarea.*;
-import org.jline.reader.EndOfFileException;
-import org.jline.reader.UserInterruptException;
-import org.jline.utils.AttributedStringBuilder;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.InterruptionError;
-import palaiologos.kamilalisp.repl.AttributedStringParser;
 import palaiologos.kamilalisp.repl.Main;
 
 import javax.swing.*;
@@ -16,9 +12,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -278,7 +271,7 @@ public class IDE {
     }
 
     public class NonEditableLineDocumentFilter extends DocumentFilter {
-        private AllowedEditRange r;
+        private final AllowedEditRange r;
 
         public NonEditableLineDocumentFilter(IDE.AllowedEditRange r) {
             this.r = r;
@@ -306,7 +299,6 @@ public class IDE {
             }
             if(r.start == -1)
                 return;
-            Document doc = fb.getDocument();
             if(fb.getDocument().getText(0, offset).chars().filter(x -> x == '\n').count() >= r.start) {
                 fb.replace(offset, length, text, attrs);
             }
