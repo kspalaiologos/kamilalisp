@@ -319,6 +319,16 @@ public class TerminalPanel extends JPanel {
                                     gutter.setText("");
                                 });
                                 break;
+                            case "ide:workspace:add":
+                                IDE.invokeSwing(() -> {
+                                    if(idep.data.size() == 1) {
+                                        String name = (String) idep.data.get(0);
+                                        parent.statusBar.addWorkspace(name);
+                                    } else {
+                                        parent.statusBar.addWorkspace();
+                                    }
+                                });
+                                break;
                         }
                     } else {
                         throw new RuntimeException("Unknown packet type: " + p.getClass().getName());
