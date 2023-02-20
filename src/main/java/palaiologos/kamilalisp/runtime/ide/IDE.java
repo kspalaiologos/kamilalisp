@@ -8,7 +8,6 @@ import java.io.IOException;
 
 public class IDE {
     JFrame frame;
-    TerminalPanel root;
     public IDEStatusBar statusBar;
 
     public static final Font aplFont;
@@ -28,12 +27,10 @@ public class IDE {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
         frame.setLayout(new BorderLayout());
-        statusBar = new IDEStatusBar();
+        statusBar = new IDEStatusBar(this);
         frame.add(statusBar, BorderLayout.NORTH);
-        root = new TerminalPanel(this);
-        frame.add(root, BorderLayout.CENTER);
         frame.setBackground(Color.decode("#10141C"));
         frame.setVisible(true);
-        root.start();
+        statusBar.addWorkspace("Main");
     }
 }

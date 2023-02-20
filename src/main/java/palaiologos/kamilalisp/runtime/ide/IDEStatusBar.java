@@ -1,5 +1,7 @@
 package palaiologos.kamilalisp.runtime.ide;
 
+import palaiologos.kamilalisp.runtime.ide.terminal.TerminalPanel;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
@@ -14,9 +16,12 @@ public class IDEStatusBar extends JPanel {
     JScrollPane workspaceScrollPane;
     JToolBar workspacePanel;
     ArrayList<JLabel> workspaceLabels;
+    ArrayList<JComponent> workspaceComponents;
+    private IDE parent;
 
-    public IDEStatusBar() {
+    public IDEStatusBar(IDE parent) {
         super(new FlowLayout());
+        this.parent = parent;
         setBorder(new MatteBorder(0, 0, 1, 0, Color.decode("#1E222A")));
         setBackground(Color.decode("#10141C"));
         setLayout(new BorderLayout());
@@ -24,6 +29,7 @@ public class IDEStatusBar extends JPanel {
         selectedWorkspace = -1;
         workspaceNames = new ArrayList<>();
         workspaceLabels = new ArrayList<>();
+        workspaceComponents = new ArrayList<>();
         workspacePanel = new JToolBar();
         workspacePanel.setBorder(null);
         workspacePanel.setFloatable(false);
@@ -35,7 +41,6 @@ public class IDEStatusBar extends JPanel {
         workspaceScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         workspaceScrollPane.setColumnHeaderView(workspaceScrollPane.getHorizontalScrollBar());
         add(workspaceScrollPane, BorderLayout.CENTER);
-        addWorkspace("Main");
     }
 
     public boolean hasWorkspace(String name) {
@@ -56,7 +61,10 @@ public class IDEStatusBar extends JPanel {
         });
         workspaceLabels.add(lab);
         workspacePanel.add(lab);
+        TerminalPanel p = new TerminalPanel(parent);
+        workspaceComponents.add(p);
         selectWorkspace(noWorkspaces - 1);
+        p.start();
     }
 
     public void addWorkspace() {
@@ -70,11 +78,12 @@ public class IDEStatusBar extends JPanel {
         workspacePanel.revalidate();
         workspacePanel.repaint();
         workspaceLabels.remove(number);
-        if (selectedWorkspace == number) {
-            selectedWorkspace--;
-        }
-        if(selectedWorkspace == -1 || workspaceNames.isEmpty()) {
+        workspaceComponents.remove(number);
+        if(selectedWorkspace == 0 || workspaceNames.isEmpty()) {
             System.exit(1);
+        }
+        if (selectedWorkspace == number) {
+            selectWorkspace(selectedWorkspace - 1);
         }
     }
 
@@ -96,6 +105,10 @@ public class IDEStatusBar extends JPanel {
         String lab2Text = lab2.getText();
         lab1.setText(lab2Text);
         lab2.setText(lab1Text);
+        JComponent comp1 = workspaceComponents.get(idx1);
+        JComponent comp2 = workspaceComponents.get(idx2);
+        workspaceComponents.set(idx1, comp2);
+        workspaceComponents.set(idx2, comp1);
         if(selectedWorkspace == idx1)
             selectWorkspace(idx2);
         else if(selectedWorkspace == idx2)
@@ -120,12 +133,16 @@ public class IDEStatusBar extends JPanel {
             JLabel currentLabel = workspaceLabels.get(selectedWorkspace);
             currentLabel.setText("\u2218 " + selectedWorkspace + workspaceNames.get(selectedWorkspace));
             currentLabel.setBackground(Color.decode("#10141C"));
+            parent.frame.remove(workspaceComponents.get(selectedWorkspace));
         }
         selectedWorkspace = index;
         JLabel newLabel = workspaceLabels.get(selectedWorkspace);
         newLabel.setText("\u2219 " + selectedWorkspace + workspaceNames.get(selectedWorkspace));
         newLabel.setBackground(Color.decode("#1E222A"));
         workspaceScrollPane.getViewport().scrollRectToVisible(newLabel.getBounds());
+        parent.frame.add(workspaceComponents.get(selectedWorkspace), BorderLayout.CENTER);
+        parent.frame.revalidate();
+        parent.frame.repaint();
     }
 
     public void selectWorkspace(String name) {
