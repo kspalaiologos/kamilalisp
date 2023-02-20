@@ -34,6 +34,14 @@ public class IDEStatusBar extends JPanel {
         workspacePanel = new JToolBar();
         workspacePanel.setBorder(null);
         workspacePanel.setFloatable(false);
+        workspacePanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(e.getClickCount() % 2 == 0) {
+                    addWorkspace();
+                }
+            }
+        });
         workspacePanel.setBackground(Color.decode("#10141C"));
         workspaceScrollPane = new JScrollPane(workspacePanel);
         workspaceScrollPane.setBorder(null);
