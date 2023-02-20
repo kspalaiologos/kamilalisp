@@ -24,5 +24,7 @@ public class RemotePacketRegistry {
         env.setPrimitive("ide:workspace:swap", new Atom(new WorkspaceRename(in, out, socket)));
         env.setPrimitive("ide:workspace:rename", new Atom(new WorkspaceRename(in, out, socket)));
         env.setPrimitive("ide:workspace:current", new Atom(new WorkspaceCurrent(in, out, socket)));
+        env.set("io:writeln", new Atom(new TerminalWriteLn(in, out, socket)));
+        env.set("io:write", new Atom(new TerminalWrite(in, out, socket)));
     }
 }

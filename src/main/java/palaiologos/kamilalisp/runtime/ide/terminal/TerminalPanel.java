@@ -136,6 +136,27 @@ public class TerminalPanel extends JPanel {
         }
 
         try {
+            SwingUtilities.invokeAndWait(() -> {
+                // Count trailing spaces in document text.
+                int trailingSpaces = 0;
+                for(int i = area.getText().length() - 1; i >= 0; i--) {
+                    if(area.getText().charAt(i) == ' ')
+                        trailingSpaces++;
+                    else
+                        break;
+                }
+                // Remove trailing spaces.
+                try {
+                    area.getDocument().remove(area.getText().length() - trailingSpaces, trailingSpaces);
+                } catch (BadLocationException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (InterruptedException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
             String text = area.getText(r.byteOffset, area.getDocument().getLength() - r.byteOffset);
             synchronized (lines) {
                 lines.add(text.substring(0, text.length() - 1));
@@ -225,8 +246,11 @@ public class TerminalPanel extends JPanel {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 try {
-                    if(readingInput.get() && area.getDocument().getText(area.getDocument().getLength() - 1, 1).equals("\n")
-                            && !(area.getDocument().getLength() == r.byteOffset)) {
+                    int lastLine = area.getLineOfOffset(area.getDocument().getLength());
+                    int lastLineStart = area.getLineStartOffset(lastLine);
+                    int lastLineEnd = area.getLineEndOffset(lastLine);
+                    String lastLineText = area.getText(lastLineStart, lastLineEnd - lastLineStart);
+                    if(readingInput.get() && lastLineText.trim().isEmpty() && !(area.getDocument().getLength() == r.byteOffset)) {
                         // Maybe it's time to finish reading?
                         // Check if quotes are balanced.
                         String text = area.getText(r.byteOffset, area.getDocument().getLength() - r.byteOffset);
@@ -235,24 +259,24 @@ public class TerminalPanel extends JPanel {
                         long amount = q.chars().filter(ch -> ch == '"').count();
                         // Eek. Unbalanced quotes.
                         if(amount % 2 != 0)
-                            insertFixGutter();
+                            { insertFixGutter(); return; }
                         // OK, quotes are balanced. Remove every instance of quotation in the input.
                         q = q.replaceAll("\"[^\"]*\"", "");
                         // Count open and closed parens.
                         long open = q.chars().filter(ch -> ch == '(').count();
                         long closed = q.chars().filter(ch -> ch == ')').count();
                         if(open != closed)
-                            insertFixGutter();
+                            { insertFixGutter(); return; }
                         // Count open and closed braces.
                         open = q.chars().filter(ch -> ch == '{').count();
                         closed = q.chars().filter(ch -> ch == '}').count();
                         if(open != closed)
-                            insertFixGutter();
+                            { insertFixGutter(); return; }
                         // Count open and closed brackets.
                         open = q.chars().filter(ch -> ch == '[').count();
                         closed = q.chars().filter(ch -> ch == ']').count();
                         if(open != closed)
-                            insertFixGutter();
+                            { insertFixGutter(); return; }
                         // OK, it appears that we are done reading the input...
                         readingInput.set(false);
                         insertFixGutter();
@@ -431,6 +455,7 @@ public class TerminalPanel extends JPanel {
                     }
                 } catch (EOFException e) {
                     // The remote has closed the connection. Close the terminal window.
+                    boolean hasFocus = area.hasFocus();
                     Container parentContainer = TerminalPanel.this.getParent();
                     if (parentContainer instanceof JSplitPane) {
                         // This was not the only window in the workspace.
@@ -444,14 +469,18 @@ public class TerminalPanel extends JPanel {
                             if (grandparentSplitPane.getLeftComponent() == parentSplitPane) {
                                 if(TerminalPanel.this == left) {
                                     grandparentSplitPane.setLeftComponent(right);
+                                    if(hasFocus) right.requestFocusInWindow();
                                 } else {
                                     grandparentSplitPane.setLeftComponent(left);
+                                    if(hasFocus) left.requestFocusInWindow();
                                 }
                             } else {
                                 if(TerminalPanel.this == left) {
                                     grandparentSplitPane.setRightComponent(right);
+                                    if(hasFocus) right.requestFocusInWindow();
                                 } else {
                                     grandparentSplitPane.setRightComponent(left);
+                                    if(hasFocus) left.requestFocusInWindow();
                                 }
                             }
                         } else {
@@ -460,10 +489,14 @@ public class TerminalPanel extends JPanel {
                             // Add the other component.
                             if(TerminalPanel.this == left) {
                                 grandparentContainer.add(right);
+                                if(hasFocus) right.requestFocusInWindow();
                             } else {
                                 grandparentContainer.add(left);
+                                if(hasFocus) left.requestFocusInWindow();
                             }
                         }
+                        grandparentContainer.revalidate();
+                        grandparentContainer.repaint();
                     } else {
                         // This was the only window in the workspace.
                         // Delete the workspace.
@@ -524,21 +557,26 @@ public class TerminalPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Container parentContainer = TerminalPanel.this.getParent();
-                parentContainer.remove(TerminalPanel.this);
-                JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, TerminalPanel.this, new TerminalPanel(parent));
-                splitPane.setResizeWeight(0.5);
-                splitPane.setDividerLocation(0.5);
                 if (parentContainer instanceof JSplitPane) {
                     JComponent left = (JComponent) ((JSplitPane) parentContainer).getLeftComponent();
+                    parentContainer.remove(TerminalPanel.this);
+                    JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, TerminalPanel.this, new TerminalPanel(parent));
+                    splitPane.setResizeWeight(0.5);
+                    splitPane.setDividerLocation(0.5);
                     if (left == TerminalPanel.this) {
                         ((JSplitPane) parentContainer).setLeftComponent(splitPane);
                     } else {
                         ((JSplitPane) parentContainer).setRightComponent(splitPane);
                     }
+                    ((TerminalPanel) splitPane.getRightComponent()).start();
                 } else {
-                    parentContainer.add(splitPane);
+                    JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, TerminalPanel.this, new TerminalPanel(parent));
+                    splitPane.setResizeWeight(0.5);
+                    splitPane.setDividerLocation(0.5);
+                    parentContainer.remove(TerminalPanel.this);
+                    parentContainer.add(splitPane, BorderLayout.CENTER);
+                    ((TerminalPanel) splitPane.getRightComponent()).start();
                 }
-                ((TerminalPanel) splitPane.getRightComponent()).start();
                 parentContainer.revalidate();
                 parentContainer.repaint();
             }
@@ -548,21 +586,26 @@ public class TerminalPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Container parentContainer = TerminalPanel.this.getParent();
-                parentContainer.remove(TerminalPanel.this);
-                JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, TerminalPanel.this, new TerminalPanel(parent));
-                splitPane.setResizeWeight(0.5);
-                splitPane.setDividerLocation(0.5);
                 if (parentContainer instanceof JSplitPane) {
                     JComponent left = (JComponent) ((JSplitPane) parentContainer).getLeftComponent();
+                    parentContainer.remove(TerminalPanel.this);
+                    JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, TerminalPanel.this, new TerminalPanel(parent));
+                    splitPane.setResizeWeight(0.5);
+                    splitPane.setDividerLocation(0.5);
                     if (left == TerminalPanel.this) {
                         ((JSplitPane) parentContainer).setLeftComponent(splitPane);
                     } else {
                         ((JSplitPane) parentContainer).setRightComponent(splitPane);
                     }
+                    ((TerminalPanel) splitPane.getRightComponent()).start();
                 } else {
-                    parentContainer.add(splitPane);
+                    JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, TerminalPanel.this, new TerminalPanel(parent));
+                    splitPane.setResizeWeight(0.5);
+                    splitPane.setDividerLocation(0.5);
+                    parentContainer.remove(TerminalPanel.this);
+                    parentContainer.add(splitPane, BorderLayout.CENTER);
+                    ((TerminalPanel) splitPane.getRightComponent()).start();
                 }
-                ((TerminalPanel) splitPane.getRightComponent()).start();
                 parentContainer.revalidate();
                 parentContainer.repaint();
             }
