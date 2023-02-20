@@ -4,6 +4,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class IDEStatusBar extends JPanel {
@@ -24,12 +26,14 @@ public class IDEStatusBar extends JPanel {
         workspaceLabels = new ArrayList<>();
         workspacePanel = new JToolBar();
         workspacePanel.setBorder(null);
+        workspacePanel.setFloatable(false);
         workspacePanel.setBackground(Color.decode("#10141C"));
         workspaceScrollPane = new JScrollPane(workspacePanel);
         workspaceScrollPane.setBorder(null);
         workspaceScrollPane.setBackground(Color.decode("#10141C"));
-        workspaceScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        workspaceScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         workspaceScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        workspaceScrollPane.setColumnHeaderView(workspaceScrollPane.getHorizontalScrollBar());
         add(workspaceScrollPane, BorderLayout.CENTER);
         addWorkspace("Main");
     }
@@ -45,6 +49,11 @@ public class IDEStatusBar extends JPanel {
         lab.setFont(IDE.apl333Font);
         lab.setOpaque(true);
         lab.setBorder(new EmptyBorder(5, 5, 5, 5));
+        lab.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                selectWorkspace(workspaceLabels.indexOf(lab));
+            }
+        });
         workspaceLabels.add(lab);
         workspacePanel.add(lab);
         selectWorkspace(noWorkspaces - 1);
