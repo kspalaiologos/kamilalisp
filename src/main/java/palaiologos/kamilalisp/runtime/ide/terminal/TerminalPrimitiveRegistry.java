@@ -223,6 +223,33 @@ public class TerminalPrimitiveRegistry {
         }
     }
 
+    private static class IdeStatusBarSwap extends PrimitiveFunction implements Lambda {
+        private IDEStatusBar tp;
+
+        public IdeStatusBarSwap(IDEStatusBar tp) {
+            this.tp = tp;
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if(args.size() == 2) {
+                int srcIdx = args.get(0).getInteger().intValueExact();
+                int destIdx = args.get(1).getInteger().intValueExact();
+                return invokeSwing(() -> {
+                    tp.swapWorkspaces(srcIdx, destIdx);
+                    return Atom.NULL;
+                });
+            } else {
+                throw new RuntimeException("ide:workspace:swap: expected two arguments");
+            }
+        }
+
+        @Override
+        protected String name() {
+            return "ide:workspace:swap";
+        }
+    }
+
     private static class IdeStatusBarCurrent extends PrimitiveFunction implements SpecialForm, ReactiveFunction {
         private IDEStatusBar tp;
 
@@ -252,5 +279,6 @@ public class TerminalPrimitiveRegistry {
         e.setPrimitive("ide:workspace:select", new Atom(new IdeStatusBarSelect(sb)));
         e.setPrimitive("ide:workspace:rename", new Atom(new IdeStatusBarRename(sb)));
         e.setPrimitive("ide:workspace:current", new Atom(new IdeStatusBarCurrent(sb)));
+        e.setPrimitive("ide:workspace:swap", new Atom(new IdeStatusBarSwap(sb)));
     }
 }
