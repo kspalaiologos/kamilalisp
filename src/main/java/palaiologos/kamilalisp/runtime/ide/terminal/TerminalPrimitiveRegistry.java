@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime.ide.terminal;
 
-import org.armedbear.lisp.Throw;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.TypeError;
 import palaiologos.kamilalisp.runtime.ide.IDEStatusBar;
@@ -9,7 +8,6 @@ import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
