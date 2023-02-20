@@ -3,6 +3,7 @@ package palaiologos.kamilalisp.runtime.ide;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.Objects;
 
 public class IDE {
     JFrame frame;
@@ -13,8 +14,8 @@ public class IDE {
 
     static {
         try {
-            aplFont = Font.createFont(Font.TRUETYPE_FONT, IDE.class.getResourceAsStream("/APL385.ttf")).deriveFont(Font.BOLD, 15f);
-            apl333Font = Font.createFont(Font.TRUETYPE_FONT, IDE.class.getResourceAsStream("/APL333.ttf")).deriveFont(Font.BOLD, 12f);
+            aplFont = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(IDE.class.getResourceAsStream("/APL385.ttf"))).deriveFont(Font.BOLD, 15f);
+            apl333Font = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(IDE.class.getResourceAsStream("/APL333.ttf"))).deriveFont(Font.BOLD, 12f);
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
