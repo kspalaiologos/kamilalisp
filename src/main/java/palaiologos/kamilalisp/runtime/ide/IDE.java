@@ -22,9 +22,10 @@ public class IDE {
     }
 
     public IDE() {
-        frame = new JFrame("KamilaLisp");
+        frame = new JFrame("KamilaLisp IDE");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
+        frame.setIconImage(new ImageIcon(Objects.requireNonNull(IDE.class.getResource("/icon.png"))).getImage());
         frame.setLocationRelativeTo(null);
         frame.setLayout(new BorderLayout());
         statusBar = new IDEStatusBar(this);
