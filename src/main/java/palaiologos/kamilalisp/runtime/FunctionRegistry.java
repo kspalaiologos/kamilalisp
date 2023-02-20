@@ -139,7 +139,7 @@ public class FunctionRegistry {
         env.setPrimitive("shuffle", "⍠⍰", new Atom(new Shuffle()));
         env.setPrimitive("bipartition", "⍡¨", new Atom(new Bipartition()));
         env.setPrimitive("partition", "⍡", new Atom(new PartitionRange()));
-        env.setPrimitive("windows", "⌹⇔⍡", new Atom(new Windows()));
+        env.setPrimitive("windows", "⌹‡⍡", new Atom(new Windows()));
 
         env.setPrimitive("img:write", "≣⊣", new Atom(new WriteImage()));
         env.setPrimitive("img:read", "≣⊢", new Atom(new LoadImage()));
@@ -201,11 +201,11 @@ public class FunctionRegistry {
         env.setPrimitive("cas:lim", "↘↖", new Atom(new Limit()));
         env.setPrimitive("cas:complex-lim", "⍉↘↖", new Atom(new Limit()));
         env.setPrimitive("cas:N", "∅ƒ", new Atom(new Numeric()));
-        env.setPrimitive("cas:D", "∂", new Atom(new Derivative()));
-        env.setPrimitive("cas:taylor", "⍟∂", new Atom(new Taylor()));
-        env.setPrimitive("cas:puiseux", "⍧∂", new Atom(new Puiseux()));
-        env.setPrimitive("cas:laurent", "⍉∂", new Atom(new Laurent()));
-        env.setPrimitive("cas:maclaurin", "∂0", new Atom(new Maclaurin()));
+        env.setPrimitive("cas:D", "∇1", new Atom(new Derivative()));
+        env.setPrimitive("cas:taylor", "⍟∇", new Atom(new Taylor()));
+        env.setPrimitive("cas:puiseux", "⍧∇", new Atom(new Puiseux()));
+        env.setPrimitive("cas:laurent", "⍉∇", new Atom(new Laurent()));
+        env.setPrimitive("cas:maclaurin", "∇0", new Atom(new Maclaurin()));
         env.setPrimitive("cas:polynomial", "⊕ƒ⊗", new Atom(new Polynomial()));
         env.setPrimitive("cas:factor", "ƒ∵", new Atom(new Factor()));
 
@@ -275,7 +275,7 @@ public class FunctionRegistry {
         env.setPrimitive("*", new Atom(new Star()));
         env.setPrimitive("/", new Atom(new Slash()));
         env.setPrimitive("mod", new Atom(new Mod()));
-        env.setPrimitive("<=>", "⇔", new Atom(new Spaceship()));
+        env.setPrimitive("<=>", "‡", new Atom(new Spaceship()));
         env.setPrimitive("ucs", new Atom(new Ucs()));
         env.setPrimitive("ucb", new Atom(new Ucb()));
         env.setPrimitive("match", "→", new Atom(new Match()));

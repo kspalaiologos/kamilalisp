@@ -2,7 +2,7 @@ package palaiologos.kamilalisp.runtime.ide.terminal;
 
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.fife.ui.rsyntaxtextarea.*;
-import org.jline.terminal.Terminal;
+import org.fife.ui.rtextarea.RTextArea;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Evaluation;
@@ -143,7 +143,7 @@ public class TerminalPanel extends JPanel {
         }
     }
 
-    JTextArea gutter;
+    RTextArea gutter;
     final AtomicBoolean readingInput = new AtomicBoolean(true);
     AllowedEditRange r;
     RSyntaxTextArea area;
@@ -182,10 +182,11 @@ public class TerminalPanel extends JPanel {
         JScrollPane sp = new JScrollPane(area);
         sp.setBorder(null);
         add(sp, BorderLayout.CENTER);
-        gutter = new JTextArea(1,4);
+        gutter = new RTextArea(1,4);
         gutter.setBackground(Color.decode("#10141C"));
         gutter.setForeground(Color.decode("#E6E6E6"));
         gutter.setEditable(false);
+        gutter.setCurrentLineHighlightColor(Color.decode("#10141C"));
         gutter.setFont(IDE.aplFont);
         gutter.setText("");
         gutter.setBorder(null);
@@ -272,6 +273,7 @@ public class TerminalPanel extends JPanel {
 
         t = new Thread(() -> {
             Environment env = new Environment(Main.defaultRegistry);
+            TerminalPrimitiveRegistry.register(env, TerminalPanel.this);
             int lineNumberOffset = 0;
             while (true) {
                 String code = prompt().trim();

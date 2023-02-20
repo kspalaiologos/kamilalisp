@@ -14,7 +14,7 @@ public class IDE {
 
     static {
         try {
-            aplFont = Font.createFont(Font.TRUETYPE_FONT, IDE.class.getResourceAsStream("/Apl385.ttf")).deriveFont(Font.BOLD, 15f);
+            aplFont = Font.createFont(Font.TRUETYPE_FONT, IDE.class.getResourceAsStream("/APL385.ttf")).deriveFont(Font.BOLD, 15f);
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
