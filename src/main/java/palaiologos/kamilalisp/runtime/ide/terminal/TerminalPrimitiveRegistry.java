@@ -76,18 +76,18 @@ public class TerminalPrimitiveRegistry {
                 String name = args.get(0).getString();
                 return invokeSwing(() -> {
                     if(tp.hasWorkspace(name))
-                        throw new RuntimeException("ide:status-bar:add: workspace already exists");
+                        throw new RuntimeException("ide:workspace:add: workspace already exists");
                     tp.addWorkspace(name);
                     return Atom.NULL;
                 });
             } else {
-                throw new RuntimeException("ide:status-bar:add: too many arguments");
+                throw new RuntimeException("ide:workspace:add: too many arguments");
             }
         }
 
         @Override
         protected String name() {
-            return "ide:status-bar:add";
+            return "ide:workspace:add";
         }
     }
 
@@ -104,13 +104,13 @@ public class TerminalPrimitiveRegistry {
                 String name = args.get(0).getString();
                 return invokeSwing(() -> new Atom(tp.hasWorkspace(name)));
             } else {
-                throw new RuntimeException("ide:status-bar:add: too many arguments");
+                throw new RuntimeException("ide:workspace:add: too many arguments");
             }
         }
 
         @Override
         protected String name() {
-            return "ide:status-bar:has";
+            return "ide:workspace:has";
         }
     }
 
@@ -137,16 +137,16 @@ public class TerminalPrimitiveRegistry {
                         return Atom.NULL;
                     });
                 } else {
-                    throw new TypeError("ide:status-bar:delete: expected string or integer, got " + args.get(0).getType().toString());
+                    throw new TypeError("ide:workspace:delete: expected string or integer, got " + args.get(0).getType().toString());
                 }
             } else {
-                throw new RuntimeException("ide:status-bar:delete: too many arguments");
+                throw new RuntimeException("ide:workspace:delete: too many arguments");
             }
         }
 
         @Override
         protected String name() {
-            return "ide:status-bar:delete";
+            return "ide:workspace:delete";
         }
     }
 
@@ -173,24 +173,24 @@ public class TerminalPrimitiveRegistry {
                         return Atom.NULL;
                     });
                 } else {
-                    throw new TypeError("ide:status-bar:select: expected string or integer, got " + args.get(0).getType().toString());
+                    throw new TypeError("ide:workspace:select: expected string or integer, got " + args.get(0).getType().toString());
                 }
             } else {
-                throw new RuntimeException("ide:status-bar:select: too many arguments");
+                throw new RuntimeException("ide:workspace:select: too many arguments");
             }
         }
 
         @Override
         protected String name() {
-            return "ide:status-bar:select";
+            return "ide:workspace:select";
         }
     }
 
     public static void register(Environment e, TerminalPanel tp, IDEStatusBar sb) {
         e.setPrimitive("term:clear", new Atom(new TerminalClear(tp)));
-        e.setPrimitive("ide:status-bar:add", new Atom(new IdeStatusBarAdd(sb)));
-        e.setPrimitive("ide:status-bar:has", new Atom(new IdeStatusBarHas(sb)));
-        e.setPrimitive("ide:status-bar:delete", new Atom(new IdeStatusBarDelete(sb)));
-        e.setPrimitive("ide:status-bar:select", new Atom(new IdeStatusBarSelect(sb)));
+        e.setPrimitive("ide:workspace:add", new Atom(new IdeStatusBarAdd(sb)));
+        e.setPrimitive("ide:workspace:has", new Atom(new IdeStatusBarHas(sb)));
+        e.setPrimitive("ide:workspace:delete", new Atom(new IdeStatusBarDelete(sb)));
+        e.setPrimitive("ide:workspace:select", new Atom(new IdeStatusBarSelect(sb)));
     }
 }
