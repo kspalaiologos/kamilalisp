@@ -150,8 +150,10 @@ public class TerminalPanel extends JPanel {
     Thread t;
     final List<String> lines = new ArrayList<>();
     int lineIndex = 0;
+    private IDE parent;
 
-    public TerminalPanel() {
+    public TerminalPanel(IDE parent) {
+        this.parent = parent;
         setBackground(Color.decode("#10141C"));
         setBorder(null);
         setLayout(new BorderLayout());
@@ -273,7 +275,7 @@ public class TerminalPanel extends JPanel {
 
         t = new Thread(() -> {
             Environment env = new Environment(Main.defaultRegistry);
-            TerminalPrimitiveRegistry.register(env, TerminalPanel.this);
+            TerminalPrimitiveRegistry.register(env, TerminalPanel.this, TerminalPanel.this.parent.statusBar);
             int lineNumberOffset = 0;
             while (true) {
                 String code = prompt().trim();

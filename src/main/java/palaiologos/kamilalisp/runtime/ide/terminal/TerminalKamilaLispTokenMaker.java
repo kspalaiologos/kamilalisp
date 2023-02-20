@@ -26,7 +26,11 @@ public class TerminalKamilaLispTokenMaker extends AntlrTokenMaker {
     }
 
     private static Set<String> terminalKeys = Set.of(
-            "term:clear"
+            "term:clear",
+            "ide:status-bar:add",
+            "ide:status-bar:delete",
+            "ide:status-bar:select",
+            "ide:status-bar:has"
     );
 
     @Override
