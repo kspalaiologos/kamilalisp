@@ -3,11 +3,9 @@ package palaiologos.kamilalisp.runtime.ide.terminal;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextArea;
-import palaiologos.kamilalisp.atom.Atom;
-import palaiologos.kamilalisp.atom.Environment;
-import palaiologos.kamilalisp.atom.Evaluation;
-import palaiologos.kamilalisp.atom.Parser;
+import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.InterruptionError;
+import palaiologos.kamilalisp.error.TypeError;
 import palaiologos.kamilalisp.repl.Main;
 import palaiologos.kamilalisp.runtime.ide.IDE;
 import palaiologos.kamilalisp.runtime.remote.IDEPacket;
@@ -151,7 +149,7 @@ public class TerminalPanel extends JPanel {
         }
     }
 
-    RTextArea gutter;
+    RSyntaxTextArea gutter;
     final AtomicBoolean readingInput = new AtomicBoolean(true);
     AllowedEditRange r;
     RSyntaxTextArea area;
@@ -192,7 +190,8 @@ public class TerminalPanel extends JPanel {
         JScrollPane sp = new JScrollPane(area);
         sp.setBorder(null);
         add(sp, BorderLayout.CENTER);
-        gutter = new RTextArea(1,4);
+        gutter = new RSyntaxTextArea(1,4);
+        gutter.setSyntaxEditingStyle("text/plain");
         gutter.setBackground(Color.decode("#10141C"));
         gutter.setForeground(Color.decode("#E6E6E6"));
         gutter.setEditable(false);
@@ -328,6 +327,53 @@ public class TerminalPanel extends JPanel {
                         public void accept(IDEPacket o) {
                             String name = (String) o.data.get(0);
                             parent.statusBar.deleteWorkspace(name);
+                        }
+                    }),
+                    Map.entry("ide:workspace:select", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            Object ob = o.data.get(0);
+                            if(ob instanceof String) {
+                                String name = (String) ob;
+                                parent.statusBar.selectWorkspace(name);
+                            } else if(ob instanceof Integer) {
+                                int index = (int) ob;
+                                parent.statusBar.selectWorkspace(index);
+                            } else {
+                                throw new TypeError("Expected String or Integer, got " + ob.getClass().getName());
+                            }
+                        }
+                    }),
+                    Map.entry("ide:workspace:rename", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            Object ob = o.data.get(0);
+                            if(ob instanceof String) {
+                                String name = (String) ob;
+                                String newName = (String) o.data.get(1);
+                                parent.statusBar.renameWorkspace(name, newName);
+                            } else if(ob instanceof Integer) {
+                                int index = (int) ob;
+                                String newName = (String) o.data.get(1);
+                                parent.statusBar.renameWorkspace(index, newName);
+                            } else {
+                                throw new TypeError("Expected String or Integer, got " + ob.getClass().getName());
+                            }
+                        }
+                    }),
+                    Map.entry("ide:workspace:swap", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            int src = (int) o.data.get(0);
+                            int dst = (int) o.data.get(1);
+                            parent.statusBar.swapWorkspaces(src, dst);
+                        }
+                    }),
+                    Map.entry("ide:workspace:current", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            Pair<Integer, String> p = parent.statusBar.currentWorkspace();
+                            sendPacket(new IDEPacket("ide:workspace:current", List.of(p.fst(), p.snd())));
                         }
                     })
             );
