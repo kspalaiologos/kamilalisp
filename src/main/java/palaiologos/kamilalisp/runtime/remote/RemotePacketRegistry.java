@@ -11,7 +11,8 @@ import java.util.Set;
 
 public class RemotePacketRegistry {
     public static final Set<String> terminalKeys = Set.of(
-            "term:clear", "ide:workspace:add", "ide:workspace:has", "ide:workspace:delete"
+            "term:clear", "ide:workspace:add", "ide:workspace:has", "ide:workspace:delete",
+            "ide:workspace:select", "ide:workspace:swap", "ide:workspace:rename", "ide:workspace:current"
     );
 
     public static void register(Environment env, ObjectInputStream in, ObjectOutputStream out, Socket socket) {
@@ -19,5 +20,9 @@ public class RemotePacketRegistry {
         env.setPrimitive("ide:workspace:add", new Atom(new WorkspaceAdd(in, out, socket)));
         env.setPrimitive("ide:workspace:has", new Atom(new WorkspaceHas(in, out, socket)));
         env.setPrimitive("ide:workspace:delete", new Atom(new WorkspaceDelete(in, out, socket)));
+        env.setPrimitive("ide:workspace:select", new Atom(new WorkspaceSelect(in, out, socket)));
+        env.setPrimitive("ide:workspace:swap", new Atom(new WorkspaceRename(in, out, socket)));
+        env.setPrimitive("ide:workspace:rename", new Atom(new WorkspaceRename(in, out, socket)));
+        env.setPrimitive("ide:workspace:current", new Atom(new WorkspaceCurrent(in, out, socket)));
     }
 }

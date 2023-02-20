@@ -29,7 +29,6 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -430,6 +429,48 @@ public class TerminalPanel extends JPanel {
                             throw new RuntimeException("Unknown packet type: " + p.getClass().getName());
                         }
                     }
+                } catch (EOFException e) {
+                    // The remote has closed the connection. Close the terminal window.
+                    Container parentContainer = TerminalPanel.this.getParent();
+                    if (parentContainer instanceof JSplitPane) {
+                        // This was not the only window in the workspace.
+                        JSplitPane parentSplitPane = (JSplitPane) parentContainer;
+                        Container grandparentContainer = parentSplitPane.getParent();
+                        JComponent left = (JComponent) parentSplitPane.getLeftComponent();
+                        JComponent right = (JComponent) parentSplitPane.getRightComponent();
+                        if(grandparentContainer instanceof JSplitPane) {
+                            // This was not the only window in the workspace.
+                            JSplitPane grandparentSplitPane = (JSplitPane) grandparentContainer;
+                            if (grandparentSplitPane.getLeftComponent() == parentSplitPane) {
+                                if(TerminalPanel.this == left) {
+                                    grandparentSplitPane.setLeftComponent(right);
+                                } else {
+                                    grandparentSplitPane.setLeftComponent(left);
+                                }
+                            } else {
+                                if(TerminalPanel.this == left) {
+                                    grandparentSplitPane.setRightComponent(right);
+                                } else {
+                                    grandparentSplitPane.setRightComponent(left);
+                                }
+                            }
+                        } else {
+                            // Remove the split pane.
+                            grandparentContainer.remove(parentSplitPane);
+                            // Add the other component.
+                            if(TerminalPanel.this == left) {
+                                grandparentContainer.add(right);
+                            } else {
+                                grandparentContainer.add(left);
+                            }
+                        }
+                    } else {
+                        // This was the only window in the workspace.
+                        // Delete the workspace.
+                        parent.statusBar.deleteWorkspace(parent.statusBar.currentWorkspace().snd());
+                    }
+                    parentContainer.revalidate();
+                    parentContainer.repaint();
                 } catch (IOException | ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }
@@ -438,6 +479,8 @@ public class TerminalPanel extends JPanel {
 
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), "line-back");
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), "line-forward");
+        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK), "split-h");
+        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK), "split-v");
 
         getActionMap().put("line-back", new AbstractAction() {
             @Override
@@ -474,6 +517,54 @@ public class TerminalPanel extends JPanel {
                 } catch (BadLocationException e1) {
                     e1.printStackTrace();
                 }
+            }
+        });
+
+        getActionMap().put("split-h", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Container parentContainer = TerminalPanel.this.getParent();
+                parentContainer.remove(TerminalPanel.this);
+                JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, TerminalPanel.this, new TerminalPanel(parent));
+                splitPane.setResizeWeight(0.5);
+                splitPane.setDividerLocation(0.5);
+                if (parentContainer instanceof JSplitPane) {
+                    JComponent left = (JComponent) ((JSplitPane) parentContainer).getLeftComponent();
+                    if (left == TerminalPanel.this) {
+                        ((JSplitPane) parentContainer).setLeftComponent(splitPane);
+                    } else {
+                        ((JSplitPane) parentContainer).setRightComponent(splitPane);
+                    }
+                } else {
+                    parentContainer.add(splitPane);
+                }
+                ((TerminalPanel) splitPane.getRightComponent()).start();
+                parentContainer.revalidate();
+                parentContainer.repaint();
+            }
+        });
+
+        getActionMap().put("split-v", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Container parentContainer = TerminalPanel.this.getParent();
+                parentContainer.remove(TerminalPanel.this);
+                JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, TerminalPanel.this, new TerminalPanel(parent));
+                splitPane.setResizeWeight(0.5);
+                splitPane.setDividerLocation(0.5);
+                if (parentContainer instanceof JSplitPane) {
+                    JComponent left = (JComponent) ((JSplitPane) parentContainer).getLeftComponent();
+                    if (left == TerminalPanel.this) {
+                        ((JSplitPane) parentContainer).setLeftComponent(splitPane);
+                    } else {
+                        ((JSplitPane) parentContainer).setRightComponent(splitPane);
+                    }
+                } else {
+                    parentContainer.add(splitPane);
+                }
+                ((TerminalPanel) splitPane.getRightComponent()).start();
+                parentContainer.revalidate();
+                parentContainer.repaint();
             }
         });
     }
