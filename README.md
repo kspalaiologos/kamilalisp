@@ -73,7 +73,7 @@ KamilaLisp allows for actor programming, concurrent programming, imperative prog
 - Laurent, Taylor, MacLaurin and Puiseux series expansion.
 - Functional de Bruijn indices.
 - Possibility to write standalone non-interactive scripts.
-- Machine word operations (flt64:...) - Bessel functions, Hurwitz Zeta, Riemann Zeta, Upper/Lower Incomplete Gamma, Gamma, LogGamma, Pochhammer symbol, erf, erfc, Inverse erf, Inverse erfc, Digamma, Trigamma, Polygamma, Airy Ai, Bessel I, J, K and Y functions.
+- Machine word operations (flt64:...) - Bessel functions, Hurwitz Zeta, Riemann Zeta, Upper/Lower Incomplete Gamma, Gamma, LogGamma, Pochhammer symbol, erf, erfc, Inverse erf, Inverse erfc, Digamma, Trigamma, Polygamma, Airy Ai, Bessel I, J, K and Y functions, Lerch Phi, Spence's function and Polylogarithm.
 - Prompt styling.
 - Portable.
 
