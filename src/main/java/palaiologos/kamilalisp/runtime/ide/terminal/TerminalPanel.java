@@ -159,8 +159,8 @@ public class TerminalPanel extends JPanel {
         area.setBackground(Color.decode("#10141C"));
         area.setCurrentLineHighlightColor(Color.decode("#1E222A"));
         AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
-        atmf.putMapping("text/kamilalisp", "palaiologos.kamilalisp.runtime.ide.KamilaLispTokenMaker");
-        area.setSyntaxEditingStyle("text/kamilalisp");
+        atmf.putMapping("text/kamilalisp-term", "palaiologos.kamilalisp.runtime.ide.terminal.TerminalKamilaLispTokenMaker");
+        area.setSyntaxEditingStyle("text/kamilalisp-term");
         area.setAntiAliasingEnabled(true);
         area.setFont(IDE.aplFont);
         area.setCaretColor(Color.decode("#D5D5D5"));
