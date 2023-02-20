@@ -7,6 +7,7 @@ import palaiologos.kamilalisp.parsers.GrammarLexer;
 import palaiologos.kamilalisp.repl.Main;
 import palaiologos.kamilalisp.runtime.ide.AntlrTokenMaker;
 import palaiologos.kamilalisp.runtime.ide.MultiLineTokenInfo;
+import palaiologos.kamilalisp.runtime.remote.RemotePacketRegistry;
 
 import java.util.Set;
 
@@ -25,11 +26,6 @@ public class TerminalKamilaLispTokenMaker extends AntlrTokenMaker {
         };
     }
 
-    private static Set<String> terminalKeys = Set.of(
-            "term:clear",
-            "ide:workspace:add"
-    );
-
     @Override
     protected int convertType(String s, int type) {
         return switch (type) {
@@ -40,7 +36,7 @@ public class TerminalKamilaLispTokenMaker extends AntlrTokenMaker {
             case GrammarLexer.NAME -> {
                 if(s.equals("true") || s.equals("false"))
                     yield Token.LITERAL_BOOLEAN;
-                else if (Main.defaultRegistry.has(s) || terminalKeys.contains(s)) {
+                else if (Main.defaultRegistry.has(s) || RemotePacketRegistry.terminalKeys.contains(s)) {
                     if (s.contains(":"))
                         yield Token.RESERVED_WORD;
                     else

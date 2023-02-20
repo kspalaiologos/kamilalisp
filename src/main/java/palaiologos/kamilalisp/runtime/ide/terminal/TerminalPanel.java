@@ -31,8 +31,11 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 public class TerminalPanel extends JPanel {
     private static class AllowedEditRange {
@@ -278,64 +281,112 @@ public class TerminalPanel extends JPanel {
         jspGutter.setBorder(new MatteBorder(0, 0, 0, 1, Color.decode("#1E222A")));
         add(jspGutter, BorderLayout.WEST);
 
-        t = new Thread(() -> {
-            // TODO: Do.
-            String javaHome = System.getProperty("java.home");
-            String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
-            String classpath = System.getProperty("java.class.path");
-            String className = Main.class.getName();
-            List<String> command = new ArrayList<>();
-            command.add(javaBin);
-            command.add("-cp");
-            command.add(classpath);
-            command.add(className);
-            command.add("--remote");
-            ProcessBuilder builder = new ProcessBuilder(command);
-            try {
-                Process process = builder.start();
-                // Read the output.
-                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                int port = Integer.parseInt(reader.readLine());
-                // Close the reader.
-                reader.close();
-                // Connect to the remote.
-                Socket socket = new Socket("localhost", port);
-                // Create the streams.
-                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-                while(true) {
-                    Packet p = (Packet) ois.readObject();
-                    if(p instanceof PromptPacket) {
-                        String code = prompt().trim();
-                        oos.writeObject(new StringPacket(code));
-                    } else if(p instanceof StringPacket) {
-                        print(((StringPacket) p).data);
-                    } else if(p instanceof IDEPacket) {
-                        IDEPacket idep = (IDEPacket) p;
-                        switch(idep.kind) {
-                            case "term:clear":
-                                IDE.invokeSwing(() -> {
-                                    area.setText("");
-                                    gutter.setText("");
-                                });
-                                break;
-                            case "ide:workspace:add":
-                                IDE.invokeSwing(() -> {
-                                    if(idep.data.size() == 1) {
-                                        String name = (String) idep.data.get(0);
-                                        parent.statusBar.addWorkspace(name);
-                                    } else {
-                                        parent.statusBar.addWorkspace();
-                                    }
-                                });
-                                break;
-                        }
-                    } else {
-                        throw new RuntimeException("Unknown packet type: " + p.getClass().getName());
-                    }
+        t = new Thread(new Runnable() {
+            private ObjectInputStream ois;
+            private ObjectOutputStream oos;
+
+            private void sendPacket(Packet p) {
+                try {
+                    oos.writeObject(p);
+                    oos.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
+            }
+
+            private Map<String, Consumer<IDEPacket>> ideFunctions = Map.ofEntries(
+                    Map.entry("term:clear", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            area.setText("");
+                            gutter.setText("");
+                        }
+                    }),
+                    Map.entry("ide:workspace:add", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            if (o.data.size() == 1) {
+                                String name = (String) o.data.get(0);
+                                if(parent.statusBar.hasWorkspace(name))
+                                    throw new RuntimeException("Workspace already exists!");
+                                parent.statusBar.addWorkspace(name);
+                            } else {
+                                parent.statusBar.addWorkspace();
+                            }
+                        }
+                    }),
+                    Map.entry("ide:workspace:has", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            String name = (String) o.data.get(0);
+                            boolean r = parent.statusBar.hasWorkspace(name);
+                            sendPacket(new IDEPacket("ide:workspace:has", List.of(r)));
+                        }
+                    }),
+                    Map.entry("ide:workspace:delete", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            String name = (String) o.data.get(0);
+                            parent.statusBar.deleteWorkspace(name);
+                        }
+                    })
+            );
+
+            @Override
+            public void run() {
+                // TODO: Do.
+                String javaHome = System.getProperty("java.home");
+                String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
+                String classpath = System.getProperty("java.class.path");
+                String className = Main.class.getName();
+                List<String> command = new ArrayList<>();
+                command.add(javaBin);
+                command.add("-cp");
+                command.add(classpath);
+                command.add(className);
+                command.add("--remote");
+                ProcessBuilder builder = new ProcessBuilder(command);
+                try {
+                    Process process = builder.start();
+                    // Read the output.
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    int port = Integer.parseInt(reader.readLine());
+                    // Close the reader.
+                    reader.close();
+                    // Connect to the remote.
+                    Socket socket = new Socket("localhost", port);
+                    // Create the streams.
+                    oos = new ObjectOutputStream(socket.getOutputStream());
+                    ois = new ObjectInputStream(socket.getInputStream());
+                    while (true) {
+                        Packet p = (Packet) ois.readObject();
+                        if (p instanceof PromptPacket) {
+                            String code = TerminalPanel.this.prompt().trim();
+                            oos.writeObject(new StringPacket(code));
+                        } else if (p instanceof StringPacket) {
+                            TerminalPanel.this.print(((StringPacket) p).data);
+                        } else if (p instanceof IDEPacket) {
+                            IDEPacket idep = (IDEPacket) p;
+                            IDE.invokeSwing(() -> {
+                                Throwable t = null;
+                                try {
+                                    ideFunctions.get(idep.kind).accept(idep);
+                                } catch (Throwable e) {
+                                    t = e;
+                                }
+                                if(t == null) {
+                                    sendPacket(new IDEPacket("ide:ok", List.of()));
+                                } else {
+                                    sendPacket(new IDEPacket("ide:err", List.of(t)));
+                                }
+                            });
+                        } else {
+                            throw new RuntimeException("Unknown packet type: " + p.getClass().getName());
+                        }
+                    }
+                } catch (IOException | ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
 

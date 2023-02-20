@@ -9,22 +9,20 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
 
-public class WorkspaceAdd extends IDEFunction implements Lambda {
-    public WorkspaceAdd(ObjectInputStream in, ObjectOutputStream out, Socket socket) {
+public class WorkspaceDelete extends IDEFunction implements Lambda {
+    public WorkspaceDelete(ObjectInputStream in, ObjectOutputStream out, Socket socket) {
         super(in, out, socket);
     }
 
     @Override
     public Atom fapply(Environment env, List<Atom> args) {
-        if(args.size() == 0)
-            sendPacket();
-        else if(args.size() == 1)
-            sendPacket(List.of(args.get(0).getString()));
+        assertArity(args, 1);
+        sendPacket(List.of(args.get(0).toString()));
         return Atom.NULL;
     }
 
     @Override
     protected String name() {
-        return "ide:workspace:add";
+        return "ide:workspace:delete";
     }
 }
