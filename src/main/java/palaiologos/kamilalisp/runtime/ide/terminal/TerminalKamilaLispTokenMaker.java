@@ -30,7 +30,9 @@ public class TerminalKamilaLispTokenMaker extends AntlrTokenMaker {
             "ide:workspace:add",
             "ide:workspace:delete",
             "ide:workspace:select",
-            "ide:workspace:has"
+            "ide:workspace:has",
+            "ide:workspace:rename",
+            "ide:workspace:current"
     );
 
     @Override

@@ -7,6 +7,7 @@ import palaiologos.kamilalisp.runtime.ide.IDEStatusBar;
 
 import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -81,7 +82,7 @@ public class TerminalPrimitiveRegistry {
                     return Atom.NULL;
                 });
             } else {
-                throw new RuntimeException("ide:workspace:add: too many arguments");
+                throw new RuntimeException("ide:workspace:add: expected zero or one arguments");
             }
         }
 
@@ -104,7 +105,7 @@ public class TerminalPrimitiveRegistry {
                 String name = args.get(0).getString();
                 return invokeSwing(() -> new Atom(tp.hasWorkspace(name)));
             } else {
-                throw new RuntimeException("ide:workspace:add: too many arguments");
+                throw new RuntimeException("ide:workspace:add: expected one argument");
             }
         }
 
@@ -140,7 +141,7 @@ public class TerminalPrimitiveRegistry {
                     throw new TypeError("ide:workspace:delete: expected string or integer, got " + args.get(0).getType().toString());
                 }
             } else {
-                throw new RuntimeException("ide:workspace:delete: too many arguments");
+                throw new RuntimeException("ide:workspace:delete: expected one argument");
             }
         }
 
@@ -176,7 +177,7 @@ public class TerminalPrimitiveRegistry {
                     throw new TypeError("ide:workspace:select: expected string or integer, got " + args.get(0).getType().toString());
                 }
             } else {
-                throw new RuntimeException("ide:workspace:select: too many arguments");
+                throw new RuntimeException("ide:workspace:select: expected one argument");
             }
         }
 
@@ -186,11 +187,72 @@ public class TerminalPrimitiveRegistry {
         }
     }
 
+    private static class IdeStatusBarRename extends PrimitiveFunction implements Lambda {
+        private IDEStatusBar tp;
+
+        public IdeStatusBarRename(IDEStatusBar tp) {
+            this.tp = tp;
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if(args.size() == 2) {
+                if(args.get(0).getType() == Type.STRING) {
+                    String name = args.get(0).getString();
+                    String dest = args.get(1).getString();
+                    return invokeSwing(() -> {
+                        tp.renameWorkspace(name, dest);
+                        return Atom.NULL;
+                    });
+                } else if(args.get(0).getType() == Type.INTEGER) {
+                    int index = args.get(0).getInteger().intValueExact();
+                    String dest = args.get(1).getString();
+                    return invokeSwing(() -> {
+                        tp.renameWorkspace(index, dest);
+                        return Atom.NULL;
+                    });
+                } else {
+                    throw new TypeError("ide:workspace:rename: expected string or integer, got " + args.get(0).getType().toString());
+                }
+            } else {
+                throw new RuntimeException("ide:workspace:rename: expected two arguments");
+            }
+        }
+
+        @Override
+        protected String name() {
+            return "ide:workspace:rename";
+        }
+    }
+
+    private static class IdeStatusBarCurrent extends PrimitiveFunction implements SpecialForm, ReactiveFunction {
+        private IDEStatusBar tp;
+
+        public IdeStatusBarCurrent(IDEStatusBar tp) {
+            this.tp = tp;
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            return invokeSwing(() -> {
+                Pair<Integer, String> pair = tp.currentWorkspace();
+                return new Atom(List.of(new Atom(BigInteger.valueOf(pair.fst())), new Atom(pair.snd())));
+            });
+        }
+
+        @Override
+        protected String name() {
+            return "ide:workspace:current";
+        }
+    }
+
     public static void register(Environment e, TerminalPanel tp, IDEStatusBar sb) {
         e.setPrimitive("term:clear", new Atom(new TerminalClear(tp)));
         e.setPrimitive("ide:workspace:add", new Atom(new IdeStatusBarAdd(sb)));
         e.setPrimitive("ide:workspace:has", new Atom(new IdeStatusBarHas(sb)));
         e.setPrimitive("ide:workspace:delete", new Atom(new IdeStatusBarDelete(sb)));
         e.setPrimitive("ide:workspace:select", new Atom(new IdeStatusBarSelect(sb)));
+        e.setPrimitive("ide:workspace:rename", new Atom(new IdeStatusBarRename(sb)));
+        e.setPrimitive("ide:workspace:current", new Atom(new IdeStatusBarCurrent(sb)));
     }
 }

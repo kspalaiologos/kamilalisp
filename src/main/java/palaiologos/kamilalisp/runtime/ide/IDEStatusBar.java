@@ -1,5 +1,6 @@
 package palaiologos.kamilalisp.runtime.ide;
 
+import palaiologos.kamilalisp.atom.Pair;
 import palaiologos.kamilalisp.runtime.ide.terminal.TerminalPanel;
 
 import javax.swing.*;
@@ -122,6 +123,17 @@ public class IDEStatusBar extends JPanel {
             currentLabel.setText("\u2219 " + index + name);
         else
             currentLabel.setText("\u2218 " + index + name);
+    }
+
+    public void renameWorkspace(String oldName, String newName) {
+        int index = workspaceNames.indexOf(oldName);
+        if(index == -1)
+            throw new RuntimeException("ide:status-bar:rename: workspace does not exist");
+        renameWorkspace(index, newName);
+    }
+
+    public Pair<Integer, String> currentWorkspace() {
+        return new Pair<>(selectedWorkspace, workspaceNames.get(selectedWorkspace));
     }
 
     public void selectWorkspace(int index) {
