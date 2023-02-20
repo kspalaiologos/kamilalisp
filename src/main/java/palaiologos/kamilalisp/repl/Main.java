@@ -15,10 +15,15 @@ import org.jline.utils.AttributedStringBuilder;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.InterruptionError;
 import palaiologos.kamilalisp.runtime.ide.IDE;
+import palaiologos.kamilalisp.runtime.remote.Server;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -137,8 +142,12 @@ public class Main {
             if(args[0].equalsIgnoreCase("--ide")) {
                 FlatAtomOneDarkIJTheme.setup();
                 IDE ide = new IDE();
+                // TODO: Run scripts.
+            } else if(args[0].equalsIgnoreCase("--remote")) {
+                int port = 0;
                 if(args.length >= 2)
-                    evalScript(new Environment(defaultRegistry), args[1], args);
+                    port = Integer.parseInt(args[1]);
+                Server.run(port);
             } else
                 evalScript(new Environment(defaultRegistry), args[0], args);
         }

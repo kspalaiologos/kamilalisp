@@ -10,6 +10,10 @@ import palaiologos.kamilalisp.atom.Parser;
 import palaiologos.kamilalisp.error.InterruptionError;
 import palaiologos.kamilalisp.repl.Main;
 import palaiologos.kamilalisp.runtime.ide.IDE;
+import palaiologos.kamilalisp.runtime.remote.IDEPacket;
+import palaiologos.kamilalisp.runtime.remote.Packet;
+import palaiologos.kamilalisp.runtime.remote.PromptPacket;
+import palaiologos.kamilalisp.runtime.remote.StringPacket;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -23,7 +27,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -273,43 +279,53 @@ public class TerminalPanel extends JPanel {
         add(jspGutter, BorderLayout.WEST);
 
         t = new Thread(() -> {
-            Environment env = new Environment(Main.defaultRegistry);
-            TerminalPrimitiveRegistry.register(env, TerminalPanel.this, TerminalPanel.this.parent.statusBar);
-            int lineNumberOffset = 0;
-            while (true) {
-                String code = prompt().trim();
-                if (code.isEmpty() || code.trim().isEmpty() || code.trim().charAt(0) == ';')
-                    continue;
-                try {
-                    List<Atom> data;
-                    try {
-                        String cc;
-                        if (code.charAt(0) == '?') {
-                            cc = code.substring(1);
-                        } else if (code.charAt(0) == '(' && code.charAt(code.length() - 1) == ')') {
-                            cc = code;
-                        } else {
-                            cc = "(" + code + "\n)";
+            // TODO: Do.
+            String javaHome = System.getProperty("java.home");
+            String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
+            String classpath = System.getProperty("java.class.path");
+            String className = Main.class.getName();
+            List<String> command = new ArrayList<>();
+            command.add(javaBin);
+            command.add("-cp");
+            command.add(classpath);
+            command.add(className);
+            command.add("--remote");
+            ProcessBuilder builder = new ProcessBuilder(command);
+            try {
+                Process process = builder.start();
+                // Read the output.
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                int port = Integer.parseInt(reader.readLine());
+                // Close the reader.
+                reader.close();
+                // Connect to the remote.
+                Socket socket = new Socket("localhost", port);
+                // Create the streams.
+                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+                while(true) {
+                    Packet p = (Packet) ois.readObject();
+                    if(p instanceof PromptPacket) {
+                        String code = prompt().trim();
+                        oos.writeObject(new StringPacket(code));
+                    } else if(p instanceof StringPacket) {
+                        print(((StringPacket) p).data);
+                    } else if(p instanceof IDEPacket) {
+                        IDEPacket idep = (IDEPacket) p;
+                        switch(idep.kind) {
+                            case "term:clear":
+                                IDE.invokeSwing(() -> {
+                                    area.setText("");
+                                    gutter.setText("");
+                                });
+                                break;
                         }
-                        data = Parser.parse(lineNumberOffset, cc);
-                    } catch (ParseCancellationException e) {
-                        println("Syntax error: " + e.getMessage());
-                        continue;
+                    } else {
+                        throw new RuntimeException("Unknown packet type: " + p.getClass().getName());
                     }
-                    for (Atom atom : data) {
-                        Atom a = Evaluation.safeEvaluate(env, atom, (s, thr) -> {
-                            println(s);
-                            throw new InterruptionError();
-                        });
-                        if (a.equals(Atom.NULL))
-                            continue;
-                        println(a.toDisplayString());
-                    }
-                } catch (InterruptionError e) {
-                    // Ignore, we just wanted to unwind the stack.
                 }
-                // count newlines in code
-                lineNumberOffset += code.chars().filter(c -> c == '\n').count();
+            } catch (IOException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         });
 

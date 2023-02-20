@@ -41,6 +41,12 @@ public class Environment {
         data.put(key, value);
     }
 
+    public void overwritePrimitive(String key, Atom value) {
+        if(!data.containsKey(key))
+            throw new RuntimeException("Cannot overwrite non-existent primitive " + key + ".");
+        data.put(key, value);
+    }
+
     public void setPrimitive(String key, String altkey, Atom value) {
         if (data.containsKey(key)) {
             throw new RuntimeException("Redefinition of built-in function " + key + ".");

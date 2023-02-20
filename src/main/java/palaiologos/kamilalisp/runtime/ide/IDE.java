@@ -3,7 +3,10 @@ package palaiologos.kamilalisp.runtime.ide;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 public class IDE {
     JFrame frame;
@@ -17,6 +20,52 @@ public class IDE {
             aplFont = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(IDE.class.getResourceAsStream("/APL385.ttf"))).deriveFont(Font.BOLD, 15f);
             apl333Font = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(IDE.class.getResourceAsStream("/APL333.ttf"))).deriveFont(Font.BOLD, 12f);
         } catch (FontFormatException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T> T invokeSwing(Supplier<T> r) {
+        try {
+            AtomicReference<T> ref = new AtomicReference<>();
+            AtomicReference<RuntimeException> ex = new AtomicReference<>();
+            SwingUtilities.invokeAndWait(() -> {
+                try {
+                    ref.set(r.get());
+                } catch (Throwable e) {
+                    if(e instanceof ThreadDeath) { throw (ThreadDeath) e; }
+                    if (e instanceof RuntimeException) {
+                        ex.set((RuntimeException) e);
+                    } else {
+                        ex.set(new RuntimeException(e));
+                    }
+                }
+            });
+            if(ex.get() != null)
+                throw ex.get();
+            return ref.get();
+        } catch (InterruptedException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void invokeSwing(Runnable r) {
+        try {
+            AtomicReference<RuntimeException> ex = new AtomicReference<>();
+            SwingUtilities.invokeAndWait(() -> {
+                try {
+                    r.run();
+                } catch (Throwable e) {
+                    if(e instanceof ThreadDeath) { throw (ThreadDeath) e; }
+                    if (e instanceof RuntimeException) {
+                        ex.set((RuntimeException) e);
+                    } else {
+                        ex.set(new RuntimeException(e));
+                    }
+                }
+            });
+            if(ex.get() != null)
+                throw ex.get();
+        } catch (InterruptedException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }
