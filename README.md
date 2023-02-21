@@ -32,6 +32,7 @@ mvn package
 KamilaLisp allows for actor programming, concurrent programming, imperative programming, functional programming, array programming, pure functional programming, object-oriented programming, rudimentary logic programming, mathematical programming, backend development, numerical computation, system administration, symbolic computation (real and complex analysis) and event-driven programming. In more detail:
 
 - Arbitrary precision complex, integer and decimal arithmetic.
+- A fully-featured, remote IDE capable of communicating with KamilaLisp instances over the network. Supports multiple workspaces, contains an implementation of a hybrid tiling/floating window manager and editors.
 - Many mathematical functions (bernoulli, gamma, trigonometry, arcus functions, hyperbolic functions, inverse hyperbolic functions, FFT, IFFT)
 - Bit operations
 - Number theoretic, combinatoric and linear algebraic functions (permutations, Levi-Civita, etc...)
