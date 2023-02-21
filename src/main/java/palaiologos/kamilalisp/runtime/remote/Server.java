@@ -25,9 +25,14 @@ public class Server {
         int lineNumberOffset = 0;
         Environment env = new Environment(Main.defaultRegistry);
         RemotePacketRegistry.register(env, in, out, clientSocket);
+        boolean skipPrompt = false;
         while (true) {
-            out.writeObject(new PromptPacket());
-            out.flush();
+            if(!skipPrompt) {
+                out.writeObject(new PromptPacket());
+                out.flush();
+            } else {
+                skipPrompt = false;
+            }
             Packet p = (Packet) in.readObject();
             if(p instanceof StringPacket) {
                 String code = ((StringPacket) p).data;
@@ -86,6 +91,7 @@ public class Server {
                     out.writeObject(new IDEPacket("fix:err", List.of(err)));
                     out.flush();
                 }
+                skipPrompt = true;
             }
         }
     }

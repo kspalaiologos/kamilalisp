@@ -177,7 +177,7 @@ public class TerminalPanel extends TilingWMComponent {
         return text;
     }
 
-    public String prompt() {
+    public String prompt(ObjectInputStream ois, ObjectOutputStream oos) {
         terminalIO.lock();
         try {
             SwingUtilities.invokeAndWait(() -> {
@@ -207,10 +207,37 @@ public class TerminalPanel extends TilingWMComponent {
         synchronized (readingInput) {
             while (readingInput.get()) {
                 try {
-                    readingInput.wait();
+                    readingInput.wait(1L);
                 } catch (InterruptedException e) {
                     terminalIO.unlock();
                     throw new RuntimeException(e);
+                }
+                if(!auxiliaryPacketQueue.isEmpty()) {
+                    var aux = auxiliaryPacketQueue.poll();
+                    try {
+                        oos.writeObject(aux.fst());
+                    } catch (IOException e) {
+                        terminalIO.unlock();
+                        throw new RuntimeException(e);
+                    }
+                    if(aux.snd() != null) {
+                        aux.snd().onSent(() -> {
+                            Packet pckt;
+                            try {
+                                pckt = (Packet) ois.readObject();
+                            } catch (IOException | ClassNotFoundException e) {
+                                throw new RuntimeException(e);
+                            }
+                            return pckt;
+                        }, (pckt) -> {
+                            try {
+                                oos.writeObject(pckt);
+                                oos.flush();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+                    }
                 }
             }
         }
@@ -253,7 +280,7 @@ public class TerminalPanel extends TilingWMComponent {
         return text;
     }
 
-    private final ConcurrentLinkedQueue<Pair<Packet, AuxiliaryPacketCallback>> auxiliaryPacketQueue = new ConcurrentLinkedQueue<>();
+    public final ConcurrentLinkedQueue<Pair<Packet, AuxiliaryPacketCallback>> auxiliaryPacketQueue = new ConcurrentLinkedQueue<>();
 
     RSyntaxTextArea gutter;
     final AtomicBoolean readingInput = new AtomicBoolean(true);
@@ -558,31 +585,8 @@ public class TerminalPanel extends TilingWMComponent {
                     while (true) {
                         Packet p = (Packet) ois.readObject();
                         if (p instanceof PromptPacket) {
-                            if(!auxiliaryPacketQueue.isEmpty()) {
-                                var aux = auxiliaryPacketQueue.poll();
-                                oos.writeObject(aux.fst());
-                                if(aux.snd() != null) {
-                                    aux.snd().onSent(() -> {
-                                        Packet pckt;
-                                        try {
-                                            pckt = (Packet) ois.readObject();
-                                        } catch (IOException | ClassNotFoundException e) {
-                                            throw new RuntimeException(e);
-                                        }
-                                        return pckt;
-                                    }, (pckt) -> {
-                                        try {
-                                            oos.writeObject(pckt);
-                                            oos.flush();
-                                        } catch (IOException e) {
-                                            throw new RuntimeException(e);
-                                        }
-                                    });
-                                }
-                            } else {
-                                String code = TerminalPanel.this.prompt().trim();
-                                oos.writeObject(new StringPacket(code));
-                            }
+                            String code = TerminalPanel.this.prompt(ois, oos).trim();
+                            oos.writeObject(new StringPacket(code));
                         } else if (p instanceof StringPacket) {
                             TerminalPanel.this.print(((StringPacket) p).data);
                         } else if (p instanceof IDEPacket ip) {
