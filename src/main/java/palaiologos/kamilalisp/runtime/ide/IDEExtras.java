@@ -18,16 +18,19 @@ public class IDEExtras extends JPanel {
         }
     }
 
-    public IDEExtras() {
-        setLayout(new FlowLayout(FlowLayout.LEFT));
-        setBorder(new MatteBorder(2, 0, 0, 0, Color.decode("#1E222A")));
-        setBackground(Color.decode("#10141C"));
-
+    private static JLabel makeSeparator() {
         JLabel separator = new JLabel(" | ");
         separator.setFont(IDE.apl333Font);
         separator.setOpaque(true);
         separator.setBackground(Color.decode("#10141C"));
         separator.setForeground(Color.decode("#FFFFFF"));
+        return separator;
+    }
+
+    public IDEExtras() {
+        setLayout(new FlowLayout(FlowLayout.LEFT));
+        setBorder(new MatteBorder(2, 0, 0, 0, Color.decode("#1E222A")));
+        setBackground(Color.decode("#10141C"));
 
         JLabel networkStats = new JLabel();
         JLabel totalNetworkStats = new JLabel();
@@ -72,9 +75,9 @@ public class IDEExtras extends JPanel {
         }).start();
 
         add(networkStats);
-        add(separator);
+        add(makeSeparator());
         add(totalNetworkStats);
-        add(separator);
+        add(makeSeparator());
         add(memBar);
     }
 }
