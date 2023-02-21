@@ -57,7 +57,7 @@ public class Main {
         Environment env = new Environment(defaultRegistry);
         DefaultParser parser = new DefaultParser();
         parser.setEofOnUnclosedBracket(DefaultParser.Bracket.ROUND, DefaultParser.Bracket.SQUARE);
-        parser.setEscapeChars(new char[]{});
+        parser.setEscapeChars(new char[]{'\\'});
         parser.setQuoteChars(new char[]{'\"'});
         parser.eofOnUnclosedQuote(true);
         Terminal t = TerminalBuilder.builder().dumb(true).build();
