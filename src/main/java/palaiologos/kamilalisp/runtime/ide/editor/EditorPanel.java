@@ -48,6 +48,13 @@ public class EditorPanel extends TilingWMComponent {
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK), "fix");
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK), "exit");
 
+        getActionMap().put("exit", new AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                quit();
+            }
+        });
+
         getActionMap().put("fix", new AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
