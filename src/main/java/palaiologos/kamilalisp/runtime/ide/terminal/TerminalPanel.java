@@ -6,6 +6,7 @@ import palaiologos.kamilalisp.error.TypeError;
 import palaiologos.kamilalisp.repl.Main;
 import palaiologos.kamilalisp.runtime.ide.IDE;
 import palaiologos.kamilalisp.runtime.ide.RSTAFactory;
+import palaiologos.kamilalisp.runtime.ide.TilingWMComponent;
 import palaiologos.kamilalisp.runtime.ide.editor.EditorPanel;
 import palaiologos.kamilalisp.runtime.remote.IDEPacket;
 import palaiologos.kamilalisp.runtime.remote.Packet;
@@ -35,7 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
-public class TerminalPanel extends JPanel {
+public class TerminalPanel extends TilingWMComponent {
     private static class AllowedEditRange {
         int start;
         int byteOffset;
