@@ -1862,8 +1862,12 @@ private boolean fractionalFontMetricsEnabled;
 	 *
 	 * @return The painter to use for rendering tokens.
 	 */
-	TokenPainter getTokenPainter() {
+	public TokenPainter getTokenPainter() {
 		return tokenPainter;
+	}
+
+	public void setTokenPainter(TokenPainter painter) {
+		this.tokenPainter = painter;
 	}
 
 

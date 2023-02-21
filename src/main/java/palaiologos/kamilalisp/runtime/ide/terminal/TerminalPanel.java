@@ -38,6 +38,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 public class TerminalPanel extends TilingWMComponent {
+    private List<Pair<Integer, Integer>> allowedHighlightRanges = new ArrayList<>();
+
     private static class AllowedEditRange {
         int start;
         int byteOffset;
@@ -204,6 +206,8 @@ public class TerminalPanel extends TilingWMComponent {
             throw new RuntimeException(e);
         }
 
+        allowedHighlightRanges.add(new Pair<>(r.byteOffset, Integer.MAX_VALUE));
+
         synchronized (readingInput) {
             while (readingInput.get()) {
                 try {
@@ -263,6 +267,9 @@ public class TerminalPanel extends TilingWMComponent {
             terminalIO.unlock();
             throw new RuntimeException(e);
         }
+
+        allowedHighlightRanges.set(allowedHighlightRanges.size() - 1,
+                new Pair<>(allowedHighlightRanges.get(allowedHighlightRanges.size() - 1).fst(), area.getDocument().getLength()));
 
         String text;
         try {
@@ -419,6 +426,7 @@ public class TerminalPanel extends TilingWMComponent {
                         public void accept(IDEPacket o) {
                             area.setText("");
                             gutter.setText("");
+                            allowedHighlightRanges.clear();
                         }
                     }),
                     Map.entry("ide:workspace:add", new Consumer<IDEPacket>() {

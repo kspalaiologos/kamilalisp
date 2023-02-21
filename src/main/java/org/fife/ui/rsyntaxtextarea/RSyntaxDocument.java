@@ -20,7 +20,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.text.Segment;
 
-import org.fife.ui.rsyntaxtextarea.modes.AbstractMarkupTokenMaker;
 import org.fife.ui.rtextarea.RDocument;
 import org.fife.util.DynamicIntArray;
 
@@ -283,8 +282,7 @@ public class RSyntaxDocument extends RDocument implements Iterable<Token>,
 	 */
 	public boolean getCompleteMarkupCloseTags() {
 		// TODO: Remove terrible dependency on AbstractMarkupTokenMaker
-		return getLanguageIsMarkup() &&
-				((AbstractMarkupTokenMaker)tokenMaker).getCompleteCloseTags();
+		throw new RuntimeException("Not implemented. Fuck you.");
 	}
 
 
