@@ -267,9 +267,7 @@ public class TerminalPanel extends TilingWMComponent {
     Process localProcess;
 
     public TerminalPanel(IDE parent) {
-        setBackground(Color.decode("#10141C"));
-        setBorder(null);
-        setLayout(new BorderLayout());
+        super(parent);
         area = RSTAFactory.build();
         r = new AllowedEditRange();
         ((AbstractDocument)area.getDocument()).setDocumentFilter(
@@ -479,7 +477,7 @@ public class TerminalPanel extends TilingWMComponent {
                                 String kind = (String) o.data.get(0);
                                 switch(kind) {
                                     case "editor": {
-                                        horizontalSplit(new EditorPanel(TerminalPanel.this));
+                                        horizontalSplit(new EditorPanel(parent, TerminalPanel.this));
                                         break;
                                     }
                                     default: {
@@ -498,7 +496,7 @@ public class TerminalPanel extends TilingWMComponent {
                                 String kind = (String) o.data.get(0);
                                 switch(kind) {
                                     case "editor": {
-                                        verticalSplit(new EditorPanel(TerminalPanel.this));
+                                        verticalSplit(new EditorPanel(parent, TerminalPanel.this));
                                         break;
                                     }
                                     default: {
@@ -591,54 +589,7 @@ public class TerminalPanel extends TilingWMComponent {
                         }
                     }
                 } catch (Throwable t) {
-                    // The remote has closed the connection. Close the terminal window.
-                    boolean hasFocus = area.hasFocus();
-                    Container parentContainer = TerminalPanel.this.getParent();
-                    if (parentContainer instanceof JSplitPane parentSplitPane) {
-                        // This was not the only window in the workspace.
-                        Container grandparentContainer = parentSplitPane.getParent();
-                        JComponent left = (JComponent) parentSplitPane.getLeftComponent();
-                        JComponent right = (JComponent) parentSplitPane.getRightComponent();
-                        if(grandparentContainer instanceof JSplitPane grandparentSplitPane) {
-                            // This was not the only window in the workspace.
-                            if (grandparentSplitPane.getLeftComponent() == parentSplitPane) {
-                                if(TerminalPanel.this == left) {
-                                    grandparentSplitPane.setLeftComponent(right);
-                                    if(hasFocus) right.requestFocusInWindow();
-                                } else {
-                                    grandparentSplitPane.setLeftComponent(left);
-                                    if(hasFocus) left.requestFocusInWindow();
-                                }
-                            } else {
-                                if(TerminalPanel.this == left) {
-                                    grandparentSplitPane.setRightComponent(right);
-                                    if(hasFocus) right.requestFocusInWindow();
-                                } else {
-                                    grandparentSplitPane.setRightComponent(left);
-                                    if(hasFocus) left.requestFocusInWindow();
-                                }
-                            }
-                        } else {
-                            // Remove the split pane.
-                            grandparentContainer.remove(parentSplitPane);
-                            // Add the other component.
-                            if(TerminalPanel.this == left) {
-                                grandparentContainer.add(right);
-                                if(hasFocus) right.requestFocusInWindow();
-                            } else {
-                                grandparentContainer.add(left);
-                                if(hasFocus) left.requestFocusInWindow();
-                            }
-                        }
-                        grandparentContainer.revalidate();
-                        grandparentContainer.repaint();
-                    } else {
-                        // This was the only window in the workspace.
-                        // Delete the workspace.
-                        parent.statusBar.deleteWorkspace(parent.statusBar.currentWorkspace().snd());
-                    }
-                    parentContainer.revalidate();
-                    parentContainer.repaint();
+                    quit();
                 }
             }
         });
@@ -710,64 +661,7 @@ public class TerminalPanel extends TilingWMComponent {
         });
     }
 
-    private void horizontalSplit(JComponent extra) {
-        Container parentContainer = TerminalPanel.this.getParent();
-        if (parentContainer instanceof JSplitPane) {
-            JComponent left = (JComponent) ((JSplitPane) parentContainer).getLeftComponent();
-            parentContainer.remove(TerminalPanel.this);
-            JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, TerminalPanel.this, extra);
-            splitPane.setResizeWeight(0.5);
-            splitPane.setDividerLocation(0.5);
-            if (left == TerminalPanel.this) {
-                ((JSplitPane) parentContainer).setLeftComponent(splitPane);
-            } else {
-                ((JSplitPane) parentContainer).setRightComponent(splitPane);
-            }
-            if(extra instanceof TerminalPanel)
-                ((TerminalPanel) splitPane.getRightComponent()).start();
-        } else {
-            JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, TerminalPanel.this, extra);
-            splitPane.setResizeWeight(0.5);
-            splitPane.setDividerLocation(0.5);
-            parentContainer.remove(TerminalPanel.this);
-            parentContainer.add(splitPane, BorderLayout.CENTER);
-            if(extra instanceof TerminalPanel)
-                ((TerminalPanel) splitPane.getRightComponent()).start();
-        }
-        parentContainer.revalidate();
-        parentContainer.repaint();
-    }
-
-    private void verticalSplit(JComponent extra) {
-        Container parentContainer = TerminalPanel.this.getParent();
-        if (parentContainer instanceof JSplitPane) {
-            JComponent left = (JComponent) ((JSplitPane) parentContainer).getLeftComponent();
-            parentContainer.remove(TerminalPanel.this);
-            JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, TerminalPanel.this, extra);
-            splitPane.setResizeWeight(0.5);
-            splitPane.setDividerLocation(0.5);
-            if (left == TerminalPanel.this) {
-                ((JSplitPane) parentContainer).setLeftComponent(splitPane);
-            } else {
-                ((JSplitPane) parentContainer).setRightComponent(splitPane);
-            }
-            if(extra instanceof TerminalPanel)
-                ((TerminalPanel) splitPane.getRightComponent()).start();
-        } else {
-            JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, TerminalPanel.this, extra);
-            splitPane.setResizeWeight(0.5);
-            splitPane.setDividerLocation(0.5);
-            parentContainer.remove(TerminalPanel.this);
-            parentContainer.add(splitPane, BorderLayout.CENTER);
-            if(extra instanceof TerminalPanel)
-                ((TerminalPanel) splitPane.getRightComponent()).start();
-        }
-        parentContainer.revalidate();
-        parentContainer.repaint();
-    }
-
-    public TerminalPanel start() {
+    public void start() {
         t.start();
-        return this;
     }
 }
