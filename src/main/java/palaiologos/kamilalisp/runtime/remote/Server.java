@@ -71,6 +71,21 @@ public class Server {
                 }
                 // count newlines in code
                 lineNumberOffset += code.chars().filter(c -> c == '\n').count();
+            } else if(p instanceof FixPacket fix) {
+                Throwable err = null;
+                try {
+                    Atom ast = Parser.parse(0, fix.content).get(0);
+                    env.set(fix.name, Evaluation.evaluate(env, ast));
+                } catch(Throwable t) {
+                    err = t;
+                }
+                if(err == null) {
+                    out.writeObject(new IDEPacket("fix:ok", List.of()));
+                    out.flush();
+                } else {
+                    out.writeObject(new IDEPacket("fix:err", List.of(err)));
+                    out.flush();
+                }
             }
         }
     }
