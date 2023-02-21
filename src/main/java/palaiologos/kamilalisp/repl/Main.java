@@ -71,6 +71,7 @@ public class Main {
                 .highlighter(new LispHighlight(env))
                 .variable(LineReader.SECONDARY_PROMPT_PATTERN, promptPattern)
                 .variable(LineReader.INDENTATION, 3)
+                .variable(LineReader.BLINK_MATCHING_PAREN, 0)
                 .terminal(t)
                 .completer(new LispCompletion(env))
                 .build();
