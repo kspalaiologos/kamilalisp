@@ -48,7 +48,6 @@ public class IDEErrorModal extends IDEModal {
             @Override
             public void internalFrameClosed(InternalFrameEvent e) {
                 onClose.run();
-                IDEErrorModal.this.dispose();
             }
         });
         super.display();

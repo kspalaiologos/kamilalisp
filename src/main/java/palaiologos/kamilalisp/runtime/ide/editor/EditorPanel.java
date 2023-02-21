@@ -107,7 +107,7 @@ public class EditorPanel extends TilingWMComponent {
                         // Verify if objectName is a valid KamilaLisp identifier.
                         boolean valid = Parser.isValidIdentifier(objectName);
                         if (!valid) {
-                            IDEErrorModal error = new IDEErrorModal(parent.statusBar.getCurrentDesktopPane(), "Invalid object name" + objectName);
+                            IDEErrorModal error = new IDEErrorModal(parent.statusBar.getCurrentDesktopPane(), "Invalid object name - \"" + objectName + "\"");
                             EditorPanel.setEnabled(frame, false);
                             error.display(() -> {
                                 EditorPanel.setEnabled(frame, true);
