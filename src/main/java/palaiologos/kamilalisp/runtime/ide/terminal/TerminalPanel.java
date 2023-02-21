@@ -32,6 +32,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
@@ -253,6 +254,8 @@ public class TerminalPanel extends JPanel {
         terminalIO.unlock();
         return text;
     }
+
+    private ConcurrentLinkedQueue<Packet> auxiliaryPacketQueue = new ConcurrentLinkedQueue<>();
 
     RSyntaxTextArea gutter;
     final AtomicBoolean readingInput = new AtomicBoolean(true);
@@ -541,8 +544,13 @@ public class TerminalPanel extends JPanel {
                     while (true) {
                         Packet p = (Packet) ois.readObject();
                         if (p instanceof PromptPacket) {
-                            String code = TerminalPanel.this.prompt().trim();
-                            oos.writeObject(new StringPacket(code));
+                            if(!auxiliaryPacketQueue.isEmpty()) {
+                                Packet aux = auxiliaryPacketQueue.poll();
+                                oos.writeObject(aux);
+                            } else {
+                                String code = TerminalPanel.this.prompt().trim();
+                                oos.writeObject(new StringPacket(code));
+                            }
                         } else if (p instanceof StringPacket) {
                             TerminalPanel.this.print(((StringPacket) p).data);
                         } else if (p instanceof IDEPacket ip) {
