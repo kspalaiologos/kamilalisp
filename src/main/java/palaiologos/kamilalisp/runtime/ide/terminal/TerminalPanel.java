@@ -666,6 +666,7 @@ public class TerminalPanel extends TilingWMComponent {
             public void actionPerformed(ActionEvent e) {
                 JOptionPane pane = new JOptionPane("v0.2", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
                 JInternalFrame frame = pane.createInternalFrame(parent.statusBar.getCurrentDesktopPane(), "KamilaLisp Version");
+                frame.setFrameIcon(null);
                 frame.setVisible(true);
             }
         });
