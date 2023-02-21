@@ -18,7 +18,7 @@ public class IDEStatusBar extends JPanel {
     JToolBar workspacePanel;
     ArrayList<JLabel> workspaceLabels;
     ArrayList<JComponent> workspaceComponents;
-    private IDE parent;
+    private final IDE parent;
 
     public IDEStatusBar(IDE parent) {
         super(new FlowLayout());
@@ -128,9 +128,9 @@ public class IDEStatusBar extends JPanel {
         workspaceNames.set(index, name);
         JLabel currentLabel = workspaceLabels.get(index);
         if(index == selectedWorkspace)
-            currentLabel.setText("\u2219 " + index + name);
+            currentLabel.setText("∙ " + index + name);
         else
-            currentLabel.setText("\u2218 " + index + name);
+            currentLabel.setText("∘ " + index + name);
     }
 
     public void renameWorkspace(String oldName, String newName) {
@@ -151,13 +151,13 @@ public class IDEStatusBar extends JPanel {
             throw new RuntimeException("ide:status-bar:select: workspace does not exist");
         if(selectedWorkspace != -1) {
             JLabel currentLabel = workspaceLabels.get(selectedWorkspace);
-            currentLabel.setText("\u2218 " + selectedWorkspace + workspaceNames.get(selectedWorkspace));
+            currentLabel.setText("∘ " + selectedWorkspace + workspaceNames.get(selectedWorkspace));
             currentLabel.setBackground(Color.decode("#10141C"));
             parent.frame.remove(workspaceComponents.get(selectedWorkspace));
         }
         selectedWorkspace = index;
         JLabel newLabel = workspaceLabels.get(selectedWorkspace);
-        newLabel.setText("\u2219 " + selectedWorkspace + workspaceNames.get(selectedWorkspace));
+        newLabel.setText("∙ " + selectedWorkspace + workspaceNames.get(selectedWorkspace));
         newLabel.setBackground(Color.decode("#1E222A"));
         workspaceScrollPane.getViewport().scrollRectToVisible(newLabel.getBounds());
         parent.frame.add(workspaceComponents.get(selectedWorkspace), BorderLayout.CENTER);
