@@ -622,7 +622,7 @@ public class TerminalPanel extends TilingWMComponent {
                         }
                     }
                 } catch (Throwable t) {
-                    quit();
+                    SwingUtilities.invokeLater(() -> quit());
                 }
             }
         });

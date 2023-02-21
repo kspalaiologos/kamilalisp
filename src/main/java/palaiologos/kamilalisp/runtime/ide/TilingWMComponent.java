@@ -16,50 +16,49 @@ public abstract class TilingWMComponent extends JPanel {
         setLayout(new BorderLayout());
     }
 
+    // Call from swing thread.
     protected void quit() {
-        IDE.invokeSwing(() -> {
-            // The remote has closed the connection. Close the terminal window.
-            Container parentContainer = TilingWMComponent.this.getParent();
-            if (parentContainer instanceof JSplitPane parentSplitPane) {
+        // The remote has closed the connection. Close the terminal window.
+        Container parentContainer = TilingWMComponent.this.getParent();
+        if (parentContainer instanceof JSplitPane parentSplitPane) {
+            // This was not the only window in the workspace.
+            Container grandparentContainer = parentSplitPane.getParent();
+            JComponent left = (JComponent) parentSplitPane.getLeftComponent();
+            JComponent right = (JComponent) parentSplitPane.getRightComponent();
+            if(grandparentContainer instanceof JSplitPane grandparentSplitPane) {
                 // This was not the only window in the workspace.
-                Container grandparentContainer = parentSplitPane.getParent();
-                JComponent left = (JComponent) parentSplitPane.getLeftComponent();
-                JComponent right = (JComponent) parentSplitPane.getRightComponent();
-                if(grandparentContainer instanceof JSplitPane grandparentSplitPane) {
-                    // This was not the only window in the workspace.
-                    if (grandparentSplitPane.getLeftComponent() == parentSplitPane) {
-                        if(TilingWMComponent.this == left) {
-                            grandparentSplitPane.setLeftComponent(right);
-                        } else {
-                            grandparentSplitPane.setLeftComponent(left);
-                        }
+                if (grandparentSplitPane.getLeftComponent() == parentSplitPane) {
+                    if(TilingWMComponent.this == left) {
+                        grandparentSplitPane.setLeftComponent(right);
                     } else {
-                        if(TilingWMComponent.this == left) {
-                            grandparentSplitPane.setRightComponent(right);
-                        } else {
-                            grandparentSplitPane.setRightComponent(left);
-                        }
+                        grandparentSplitPane.setLeftComponent(left);
                     }
                 } else {
-                    // Remove the split pane.
-                    grandparentContainer.remove(parentSplitPane);
-                    // Add the other component.
                     if(TilingWMComponent.this == left) {
-                        grandparentContainer.add(right);
+                        grandparentSplitPane.setRightComponent(right);
                     } else {
-                        grandparentContainer.add(left);
+                        grandparentSplitPane.setRightComponent(left);
                     }
                 }
-                grandparentContainer.revalidate();
-                grandparentContainer.repaint();
             } else {
-                // This was the only window in the workspace.
-                // Delete the workspace.
-                parent.statusBar.deleteWorkspace(parent.statusBar.currentWorkspace().fst());
+                // Remove the split pane.
+                grandparentContainer.remove(parentSplitPane);
+                // Add the other component.
+                if(TilingWMComponent.this == left) {
+                    grandparentContainer.add(right);
+                } else {
+                    grandparentContainer.add(left);
+                }
             }
-            parentContainer.revalidate();
-            parentContainer.repaint();
-        });
+            grandparentContainer.revalidate();
+            grandparentContainer.repaint();
+        } else {
+            // This was the only window in the workspace.
+            // Delete the workspace.
+            parent.statusBar.deleteWorkspace(parent.statusBar.currentWorkspace().fst());
+        }
+        parentContainer.revalidate();
+        parentContainer.repaint();
     }
 
     protected void horizontalSplit(TilingWMComponent extra) {
