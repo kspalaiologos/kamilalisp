@@ -68,6 +68,7 @@ public class IDEStatusBar extends JPanel {
         JLabel lab = new JLabel();
         lab.setFont(IDE.apl333Font);
         lab.setOpaque(true);
+        lab.setForeground(Color.decode("#FFFFFF"));
         lab.setBorder(new EmptyBorder(5, 5, 5, 5));
         lab.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
