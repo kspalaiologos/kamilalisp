@@ -87,9 +87,7 @@ public class TerminalPanel extends TilingWMComponent {
     public void print(String s) {
         try {
             terminalIO.lock();
-            SwingUtilities.invokeAndWait(() -> {
-                area.append(s);
-            });
+            SwingUtilities.invokeAndWait(() -> area.append(s));
         } catch (InterruptedException | InvocationTargetException e) {
             throw new RuntimeException(e);
         } finally {
@@ -255,7 +253,7 @@ public class TerminalPanel extends TilingWMComponent {
         return text;
     }
 
-    private ConcurrentLinkedQueue<Pair<Packet, AuxiliaryPacketCallback>> auxiliaryPacketQueue = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<Pair<Packet, AuxiliaryPacketCallback>> auxiliaryPacketQueue = new ConcurrentLinkedQueue<>();
 
     RSyntaxTextArea gutter;
     final AtomicBoolean readingInput = new AtomicBoolean(true);
@@ -476,14 +474,9 @@ public class TerminalPanel extends TilingWMComponent {
                                 TerminalPanel.this.getActionMap().get("split-h").actionPerformed(null);
                             else {
                                 String kind = (String) o.data.get(0);
-                                switch(kind) {
-                                    case "editor": {
-                                        horizontalSplit(new EditorPanel(parent, TerminalPanel.this));
-                                        break;
-                                    }
-                                    default: {
-                                        throw new TypeError("Unknown split kind: " + kind);
-                                    }
+                                switch (kind) {
+                                    case "editor" -> horizontalSplit(new EditorPanel(parent, TerminalPanel.this));
+                                    default -> throw new TypeError("Unknown split kind: " + kind);
                                 }
                             }
                         }
@@ -495,14 +488,9 @@ public class TerminalPanel extends TilingWMComponent {
                                 TerminalPanel.this.getActionMap().get("split-v").actionPerformed(null);
                             else {
                                 String kind = (String) o.data.get(0);
-                                switch(kind) {
-                                    case "editor": {
-                                        verticalSplit(new EditorPanel(parent, TerminalPanel.this));
-                                        break;
-                                    }
-                                    default: {
-                                        throw new TypeError("Unknown split kind: " + kind);
-                                    }
+                                switch (kind) {
+                                    case "editor" -> verticalSplit(new EditorPanel(parent, TerminalPanel.this));
+                                    default -> throw new TypeError("Unknown split kind: " + kind);
                                 }
                             }
                         }
