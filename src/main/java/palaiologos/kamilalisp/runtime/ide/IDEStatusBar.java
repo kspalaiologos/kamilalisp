@@ -6,9 +6,11 @@ import palaiologos.kamilalisp.runtime.ide.terminal.TerminalPanel;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 
 public class IDEStatusBar extends JPanel {
@@ -70,8 +72,24 @@ public class IDEStatusBar extends JPanel {
         });
         workspaceLabels.add(lab);
         workspacePanel.add(lab);
+        JDesktopPane pane = new JDesktopPane();
+        pane.setBackground(Color.decode("#10141C"));
+        pane.setBorder(null);
+        pane.setOpaque(true);
+        JInternalFrame frame = new JInternalFrame(name, true, false, true, false);
+        frame.setLayout(new BorderLayout());
+        frame.setBorder(null);
+        ((BasicInternalFrameUI) frame.getUI()).setNorthPane(null);
+        frame.putClientProperty("JInternalFrame.isPalette", Boolean.TRUE);
+        frame.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
         TerminalPanel p = new TerminalPanel(parent);
-        workspaceComponents.add(p);
+        frame.add(p, BorderLayout.CENTER);
+        try {
+            frame.setMaximum(true);
+        } catch (PropertyVetoException e) { throw new RuntimeException(e); }
+        pane.add(frame);
+        frame.setVisible(true);
+        workspaceComponents.add(pane);
         selectWorkspace(noWorkspaces - 1);
         p.start();
     }
@@ -82,18 +100,15 @@ public class IDEStatusBar extends JPanel {
 
     public void deleteWorkspace(int number) {
         noWorkspaces--;
+        if(noWorkspaces == 0)
+            System.exit(1);
+        selectWorkspace(Math.min(number - 1, 0));
         workspaceNames.remove(number);
         workspacePanel.remove(workspaceLabels.get(number));
         workspacePanel.revalidate();
         workspacePanel.repaint();
         workspaceLabels.remove(number);
         workspaceComponents.remove(number);
-        if(selectedWorkspace == 0 || workspaceNames.isEmpty()) {
-            System.exit(1);
-        }
-        if (selectedWorkspace == number) {
-            selectWorkspace(selectedWorkspace - 1);
-        }
     }
 
     public void deleteWorkspace(String name) {

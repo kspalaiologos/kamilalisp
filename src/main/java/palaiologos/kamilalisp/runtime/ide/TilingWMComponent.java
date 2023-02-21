@@ -55,7 +55,7 @@ public abstract class TilingWMComponent extends JPanel {
             } else {
                 // This was the only window in the workspace.
                 // Delete the workspace.
-                parent.statusBar.deleteWorkspace(parent.statusBar.currentWorkspace().snd());
+                parent.statusBar.deleteWorkspace(parent.statusBar.currentWorkspace().fst());
             }
             parentContainer.revalidate();
             parentContainer.repaint();
