@@ -33,10 +33,9 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
+
+import static org.armedbear.lisp.Lisp.*;
 public final class SpecialOperators {
     // ### quote
     private static final SpecialOperator QUOTE = new sf_quote();

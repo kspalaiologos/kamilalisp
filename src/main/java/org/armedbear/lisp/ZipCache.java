@@ -32,34 +32,23 @@
  */
 package org.armedbear.lisp;
 
+import org.armedbear.lisp.util.HttpHead;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import org.armedbear.lisp.util.HttpHead;
-import static org.armedbear.lisp.Lisp.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.*;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import static org.armedbear.lisp.Lisp.*;
 
 /**
  * A cache for all zip/jar file access by JarPathname that uses the last

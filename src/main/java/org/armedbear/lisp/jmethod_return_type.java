@@ -33,9 +33,9 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.lang.reflect.Method;
+
+import static org.armedbear.lisp.Lisp.error;
 
 // ### jmethod-return-type method => class
 public final class jmethod_return_type extends Primitive

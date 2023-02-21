@@ -34,6 +34,7 @@
 package org.armedbear.lisp;
 
 import java.util.concurrent.ConcurrentHashMap;
+
 import static org.armedbear.lisp.Lisp.*;
 
 public abstract class LispClass extends StandardObject

@@ -33,7 +33,7 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
+import static org.armedbear.lisp.Lisp.T;
 
 public final class SimpleWarning extends Warning
 {

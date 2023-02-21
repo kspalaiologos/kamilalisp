@@ -33,7 +33,8 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
+import static org.armedbear.lisp.Lisp.PACKAGE_EXT;
+import static org.armedbear.lisp.Lisp.number;
 
 // ### gc
 public final class gc extends Primitive

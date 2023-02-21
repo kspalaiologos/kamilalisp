@@ -33,16 +33,16 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.armedbear.lisp.Lisp.*;
 
 public class JavaClassLoader extends URLClassLoader {
 

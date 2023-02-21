@@ -1,11 +1,7 @@
 package palaiologos.kamilalisp.runtime.ide.terminal;
 
-import org.antlr.v4.runtime.misc.ParseCancellationException;
-import org.fife.ui.rsyntaxtextarea.*;
-import org.fife.ui.rtextarea.RTextArea;
-import org.jline.terminal.Terminal;
-import palaiologos.kamilalisp.atom.*;
-import palaiologos.kamilalisp.error.InterruptionError;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import palaiologos.kamilalisp.atom.Pair;
 import palaiologos.kamilalisp.error.TypeError;
 import palaiologos.kamilalisp.repl.Main;
 import palaiologos.kamilalisp.runtime.ide.IDE;

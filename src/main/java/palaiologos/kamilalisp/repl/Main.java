@@ -1,7 +1,6 @@
 package palaiologos.kamilalisp.repl;
 
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatAtomOneDarkIJTheme;
-import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -17,11 +16,7 @@ import palaiologos.kamilalisp.error.InterruptionError;
 import palaiologos.kamilalisp.runtime.ide.IDE;
 import palaiologos.kamilalisp.runtime.remote.Server;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;

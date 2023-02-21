@@ -33,30 +33,15 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.PushbackReader;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.math.BigInteger;
-import java.nio.charset.Charset;
-import java.util.BitSet;
-
-import java.util.List;
-import java.util.LinkedList;
-import java.util.SortedMap;
-import java.util.Set;
-
 import org.armedbear.lisp.util.DecodingReader;
 import palaiologos.kamilalisp.runtime.cas.meta.FriCAS;
+
+import java.io.*;
+import java.math.BigInteger;
+import java.nio.charset.Charset;
+import java.util.*;
+
+import static org.armedbear.lisp.Lisp.*;
 
 /** The stream class
  *

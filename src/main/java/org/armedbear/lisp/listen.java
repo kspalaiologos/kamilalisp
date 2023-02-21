@@ -33,7 +33,8 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
+import static org.armedbear.lisp.Lisp.checkCharacterInputStream;
+import static org.armedbear.lisp.Lisp.inSynonymOf;
 
 // ### listen
 public final class listen extends Primitive

@@ -32,19 +32,12 @@
  */
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.io.*;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.text.MessageFormat;
-import java.util.Enumeration;
 import java.util.StringTokenizer;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
+
+import static org.armedbear.lisp.Lisp.*;
 
 public class Pathname extends LispObject
   implements Serializable

@@ -33,11 +33,11 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Map;
+
+import static org.armedbear.lisp.Lisp.*;
 
 public final class Extensions
 {

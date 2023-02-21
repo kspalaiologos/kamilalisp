@@ -33,9 +33,9 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.net.Socket;
+
+import static org.armedbear.lisp.Lisp.*;
 
 // ### %socket-close
 public final class socket_close extends Primitive

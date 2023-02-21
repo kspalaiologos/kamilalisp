@@ -1,6 +1,9 @@
 package palaiologos.kamilalisp.runtime.cas;
 
-import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.atom.Atom;
+import palaiologos.kamilalisp.atom.Environment;
+import palaiologos.kamilalisp.atom.Lambda;
+import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
 import java.util.List;
 

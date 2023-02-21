@@ -35,15 +35,15 @@
  */
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
-import java.lang.ref.WeakReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
+
+import static org.armedbear.lisp.Lisp.*;
 
 // ??? Replace standard Hashtable when this code is working; maybe not
 // because we have additional places for locking here.

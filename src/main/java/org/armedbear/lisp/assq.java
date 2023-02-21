@@ -33,7 +33,7 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
+import static org.armedbear.lisp.Lisp.PACKAGE_EXT;
 
 // ### assq item alist => entry
 public final class assq extends Primitive

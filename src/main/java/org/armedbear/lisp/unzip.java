@@ -33,14 +33,15 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
 import java.io.File;
-import java.io.InputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import static org.armedbear.lisp.Lisp.*;
 
 @DocString(name="unzip",
            args="pathname &optional directory => unzipped_pathnames",

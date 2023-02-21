@@ -33,7 +33,7 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
+import static org.armedbear.lisp.Lisp.checkStream;
 
 // ### stream-element-type
 public final class stream_element_type extends Primitive

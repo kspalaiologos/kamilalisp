@@ -33,11 +33,11 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import static org.armedbear.lisp.Lisp.*;
 
 // ### disassemble-class-bytes
 public final class disassemble_class_bytes extends Primitive

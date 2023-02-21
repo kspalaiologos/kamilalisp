@@ -33,9 +33,10 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.armedbear.lisp.Lisp.*;
 
 public final class LispCharacter extends LispObject
 {

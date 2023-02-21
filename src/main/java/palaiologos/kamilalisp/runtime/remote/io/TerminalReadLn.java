@@ -4,7 +4,6 @@ import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.runtime.remote.IDEPacket;
-import palaiologos.kamilalisp.runtime.remote.StringPacket;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

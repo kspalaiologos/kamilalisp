@@ -1,26 +1,16 @@
 /*     */ package org.armedbear.lisp.util;
 /*     */ 
-/*     */ import java.io.IOException;
-/*     */ import java.io.OutputStream;
-/*     */ import java.io.PushbackInputStream;
-/*     */ import java.io.PushbackReader;
-/*     */ import java.io.RandomAccessFile;
-/*     */ import java.io.Reader;
-/*     */ import java.io.StringReader;
-/*     */ import java.io.Writer;
-/*     */ import java.nio.ByteBuffer;
-/*     */ import java.nio.CharBuffer;
-/*     */ import java.nio.channels.FileChannel;
-/*     */ import java.nio.charset.Charset;
-/*     */ import java.nio.charset.CharsetDecoder;
-/*     */ import java.nio.charset.CharsetEncoder;
-/*     */ import java.nio.charset.CoderMalfunctionError;
-/*     */ import java.nio.charset.CoderResult;
-/*     */ import java.nio.charset.CodingErrorAction;
-/*     */ import java.nio.charset.UnsupportedCharsetException;
-/*     */ import org.armedbear.lisp.Lisp;
-/*     */ import org.armedbear.lisp.LispObject;
-/*     */ import org.armedbear.lisp.SimpleError;
+/*     */
+
+import org.armedbear.lisp.Lisp;
+import org.armedbear.lisp.LispObject;
+import org.armedbear.lisp.SimpleError;
+
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.*;
 /*     */ 
 /*     */ 
 /*     */ 

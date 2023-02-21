@@ -33,9 +33,10 @@
 
 package org.armedbear.lisp;
 
-import java.util.Map;
 import java.util.Collections;
+import java.util.Map;
 import java.util.WeakHashMap;
+
 import static org.armedbear.lisp.Lisp.*;
 
 public final class function_info

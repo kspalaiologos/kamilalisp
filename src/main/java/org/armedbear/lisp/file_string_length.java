@@ -33,7 +33,7 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
+import static org.armedbear.lisp.Lisp.checkStream;
 
 // ### file-string-length
 public final class file_string_length extends Primitive

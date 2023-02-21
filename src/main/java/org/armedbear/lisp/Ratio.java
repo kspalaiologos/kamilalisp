@@ -33,12 +33,12 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
-import java.math.BigInteger;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
+
+import static org.armedbear.lisp.Lisp.*;
 
 public final class Ratio extends LispObject
 {

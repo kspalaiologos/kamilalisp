@@ -33,9 +33,9 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.math.BigInteger;
+
+import static org.armedbear.lisp.Lisp.*;
 
 public final class DoubleFloat extends LispObject
 {

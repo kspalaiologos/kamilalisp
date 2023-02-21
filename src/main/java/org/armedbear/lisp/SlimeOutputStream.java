@@ -33,9 +33,9 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.io.StringWriter;
+
+import static org.armedbear.lisp.Lisp.*;
 
 public final class SlimeOutputStream extends Stream
 {

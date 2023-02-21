@@ -33,17 +33,10 @@
 
 package org.armedbear.lisp;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
-import java.lang.reflect.Method;
+import java.io.*;
 import java.math.BigInteger;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Hashtable;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class Lisp

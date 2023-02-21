@@ -33,7 +33,8 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
+import static org.armedbear.lisp.Lisp.PACKAGE_CL;
+import static org.armedbear.lisp.Lisp.error;
 
 public final class Nil extends Symbol
 {

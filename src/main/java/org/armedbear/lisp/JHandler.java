@@ -33,11 +33,11 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
+
+import static org.armedbear.lisp.Lisp.*;
 
 public final class JHandler
 {

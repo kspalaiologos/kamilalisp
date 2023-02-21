@@ -9,8 +9,6 @@ import palaiologos.kamilalisp.runtime.ide.AntlrTokenMaker;
 import palaiologos.kamilalisp.runtime.ide.MultiLineTokenInfo;
 import palaiologos.kamilalisp.runtime.remote.RemotePacketRegistry;
 
-import java.util.Set;
-
 public class TerminalKamilaLispTokenMaker extends AntlrTokenMaker {
     public TerminalKamilaLispTokenMaker() {
         super(new MultiLineTokenInfo(0, Token.LITERAL_STRING_DOUBLE_QUOTE,"\"","\""));

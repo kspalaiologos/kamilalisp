@@ -33,9 +33,9 @@
 
 package org.armedbear.lisp;
 
-import java.io.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.*;
 
 import static org.armedbear.lisp.Lisp.*;
 

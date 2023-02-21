@@ -33,9 +33,10 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.math.BigInteger;
+
+import static org.armedbear.lisp.Lisp.number;
+import static org.armedbear.lisp.Lisp.type_error;
 
 // logorc2 integer-1 integer-2 => result-integer
 // or integer-1 with complement of integer-2

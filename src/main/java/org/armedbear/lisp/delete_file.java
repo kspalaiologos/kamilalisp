@@ -33,10 +33,9 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.io.File;
-import java.io.IOException;
+
+import static org.armedbear.lisp.Lisp.*;
 
 public final class delete_file extends Primitive
 {

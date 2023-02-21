@@ -34,6 +34,7 @@
 package org.armedbear.lisp;
 
 import org.armedbear.lisp.Java.Buffers.AllocationPolicy;
+
 import static org.armedbear.lisp.Lisp.*;
 
 public final class ByteArrayOutputStream extends Stream

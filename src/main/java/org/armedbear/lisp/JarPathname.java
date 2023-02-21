@@ -32,22 +32,14 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.io.InputStream;
-import java.io.IOException;
-import java.io.File;
-import java.net.URL;
-import java.net.URI;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+
+import static org.armedbear.lisp.Lisp.*;
 
 public class JarPathname
   extends URLPathname

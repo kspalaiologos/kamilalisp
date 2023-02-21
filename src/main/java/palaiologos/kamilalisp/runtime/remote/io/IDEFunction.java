@@ -2,14 +2,12 @@ package palaiologos.kamilalisp.runtime.remote.io;
 
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
-import palaiologos.kamilalisp.atom.PrimitiveFunction;
 import palaiologos.kamilalisp.runtime.remote.IDEPacket;
 import palaiologos.kamilalisp.runtime.remote.Packet;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.net.Socket;
 import java.util.List;
 

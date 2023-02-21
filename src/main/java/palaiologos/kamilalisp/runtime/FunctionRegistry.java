@@ -40,7 +40,6 @@ import palaiologos.kamilalisp.runtime.regex.RegexSplit;
 import palaiologos.kamilalisp.runtime.sh.*;
 import palaiologos.kamilalisp.runtime.string.*;
 
-import java.io.File;
 import java.math.BigDecimal;
 
 public class FunctionRegistry {

@@ -33,10 +33,10 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.io.File;
 import java.io.IOException;
+
+import static org.armedbear.lisp.Lisp.*;
 
 // ### create-new-file
 public final class create_new_file extends Primitive

@@ -35,9 +35,6 @@ package org.armedbear.lisp;
 
 import static org.armedbear.lisp.Lisp.*;
 
-import java.io.IOException;
-import java.io.StringWriter;
-
 public final class StringOutputStream extends Stream
 {
     private final SeekableStringWriter stringWriter;

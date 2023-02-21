@@ -31,7 +31,8 @@
  */
 package org.armedbear.lisp;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * An annotation type to expose documentation to ABCL.
