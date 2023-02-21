@@ -5,6 +5,7 @@ import palaiologos.kamilalisp.atom.Pair;
 import palaiologos.kamilalisp.error.TypeError;
 import palaiologos.kamilalisp.repl.Main;
 import palaiologos.kamilalisp.runtime.ide.IDE;
+import palaiologos.kamilalisp.runtime.ide.NetCounter;
 import palaiologos.kamilalisp.runtime.ide.RSTAFactory;
 import palaiologos.kamilalisp.runtime.ide.TilingWMComponent;
 import palaiologos.kamilalisp.runtime.ide.editor.EditorPanel;
@@ -542,8 +543,30 @@ public class TerminalPanel extends TilingWMComponent {
                     // Connect to the remote.
                     Socket socket = new Socket("localhost", port);
                     // Create the streams.
-                    oos = new ObjectOutputStream(socket.getOutputStream());
-                    ois = new ObjectInputStream(socket.getInputStream());
+                    oos = new ObjectOutputStream(new OutputStream() {
+                        @Override
+                        public void write(int b) throws IOException {
+                            NetCounter.addOut(1);
+                            socket.getOutputStream().write(b);
+                        }
+                        @Override
+                        public void write(byte[] b, int off, int len) throws IOException {
+                            NetCounter.addOut(len);
+                            socket.getOutputStream().write(b, off, len);
+                        }
+                    });
+                    ois = new ObjectInputStream(new InputStream() {
+                        @Override
+                        public int read() throws IOException {
+                            NetCounter.addIn(1);
+                            return socket.getInputStream().read();
+                        }
+                        @Override
+                        public int read(byte[] b, int off, int len) throws IOException {
+                            NetCounter.addIn(len);
+                            return socket.getInputStream().read(b, off, len);
+                        }
+                    });
                     while (true) {
                         Packet p = (Packet) ois.readObject();
                         if (p instanceof PromptPacket) {
