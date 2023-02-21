@@ -26,5 +26,6 @@ public class RemotePacketRegistry {
         env.setPrimitive("ide:workspace:current", new Atom(new WorkspaceCurrent(in, out, socket)));
         env.set("io:writeln", new Atom(new TerminalWriteLn(in, out, socket)));
         env.set("io:write", new Atom(new TerminalWrite(in, out, socket)));
+        env.set("io:readln", new Atom(new TerminalReadLn(in, out, socket)));
     }
 }

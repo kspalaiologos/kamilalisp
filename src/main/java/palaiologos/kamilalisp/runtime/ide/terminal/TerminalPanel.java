@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 public class TerminalPanel extends JPanel {
@@ -67,7 +68,7 @@ public class TerminalPanel extends JPanel {
         public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
             // Our goal: only allow edits that start on line r.start forward.
             // If the edit is not within the allowed range, we will not perform it.
-            if(!readingInput.get()) {
+            if(!readingInput.get() && !readingRawInput.get()) {
                 fb.replace(offset, length, text, attrs);
                 return;
             }
@@ -79,57 +80,59 @@ public class TerminalPanel extends JPanel {
         }
     }
 
+    private ReentrantLock terminalIO = new ReentrantLock();
+
     public void print(String s) {
         try {
+            terminalIO.lock();
             SwingUtilities.invokeAndWait(() -> {
                 area.append(s);
             });
         } catch (InterruptedException | InvocationTargetException e) {
             throw new RuntimeException(e);
+        } finally {
+            terminalIO.unlock();
         }
     }
 
     public void println(String s) {
         try {
+            terminalIO.lock();
             SwingUtilities.invokeAndWait(() -> {
                 area.append(s);
                 area.append("\n");
             });
         } catch (InterruptedException | InvocationTargetException e) {
             throw new RuntimeException(e);
+        } finally {
+            terminalIO.unlock();
         }
     }
 
-    public String prompt() {
+    public String promptRaw() {
+        terminalIO.lock();
         try {
             SwingUtilities.invokeAndWait(() -> {
-                // If last line is empty, then replace the last gutter marker to become -->.
-                // Otherwise just add a new one.
-                if(!area.getText().isEmpty() && area.getText().charAt(area.getText().length() - 1) == '\n') {
-                    try {
-                        gutter.getDocument().remove(gutter.getText().length() - 4, 4);
-                    } catch (BadLocationException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                gutter.append("-->\n");
+                gutter.append("   \n");
                 try {
                     r.byteOffset = area.getDocument().getLength();
                     r.start = area.getLineOfOffset(r.byteOffset);
                 } catch (BadLocationException e) {
                     throw new RuntimeException(e);
                 }
-                readingInput.set(true);
+                readingRawInput.set(true);
             });
         } catch (InterruptedException | InvocationTargetException e) {
+            terminalIO.unlock();
             throw new RuntimeException(e);
         }
 
-        synchronized (readingInput) {
-            while (readingInput.get()) {
+        synchronized (readingRawInput) {
+            while (readingRawInput.get()) {
                 try {
-                    readingInput.wait();
+                    readingRawInput.wait();
                 } catch (InterruptedException e) {
+                    terminalIO.unlock();
                     throw new RuntimeException(e);
                 }
             }
@@ -153,24 +156,106 @@ public class TerminalPanel extends JPanel {
                 }
             });
         } catch (InterruptedException | InvocationTargetException e) {
+            terminalIO.unlock();
             throw new RuntimeException(e);
         }
 
+        String text;
         try {
-            String text = area.getText(r.byteOffset, area.getDocument().getLength() - r.byteOffset);
+            text = area.getText(r.byteOffset, area.getDocument().getLength() - r.byteOffset);
+            r.byteOffset = 0;
+            r.start = -1;
+        } catch (BadLocationException e) {
+            terminalIO.unlock();
+            throw new RuntimeException(e);
+        }
+
+        if(text.endsWith("\n"))
+            text = text.substring(0, text.length() - 1);
+
+        terminalIO.unlock();
+        return text;
+    }
+
+    public String prompt() {
+        terminalIO.lock();
+        try {
+            SwingUtilities.invokeAndWait(() -> {
+                // If last line is empty, then replace the last gutter marker to become -->.
+                // Otherwise just add a new one.
+                if(!area.getText().isEmpty() && area.getText().charAt(area.getText().length() - 1) == '\n') {
+                    try {
+                        gutter.getDocument().remove(gutter.getText().length() - 4, 4);
+                    } catch (BadLocationException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                gutter.append("-->\n");
+                try {
+                    r.byteOffset = area.getDocument().getLength();
+                    r.start = area.getLineOfOffset(r.byteOffset);
+                } catch (BadLocationException e) {
+                    throw new RuntimeException(e);
+                }
+                readingInput.set(true);
+            });
+        } catch (InterruptedException | InvocationTargetException e) {
+            terminalIO.unlock();
+            throw new RuntimeException(e);
+        }
+
+        synchronized (readingInput) {
+            while (readingInput.get()) {
+                try {
+                    readingInput.wait();
+                } catch (InterruptedException e) {
+                    terminalIO.unlock();
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        try {
+            SwingUtilities.invokeAndWait(() -> {
+                // Count trailing spaces in document text.
+                int trailingSpaces = 0;
+                for(int i = area.getText().length() - 1; i >= 0; i--) {
+                    if(area.getText().charAt(i) == ' ')
+                        trailingSpaces++;
+                    else
+                        break;
+                }
+                // Remove trailing spaces.
+                try {
+                    area.getDocument().remove(area.getText().length() - trailingSpaces, trailingSpaces);
+                } catch (BadLocationException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (InterruptedException | InvocationTargetException e) {
+            terminalIO.unlock();
+            throw new RuntimeException(e);
+        }
+
+        String text;
+        try {
+            text = area.getText(r.byteOffset, area.getDocument().getLength() - r.byteOffset);
             synchronized (lines) {
                 lines.add(text.substring(0, text.length() - 1));
             }
             r.byteOffset = 0;
             r.start = -1;
-            return text;
         } catch (BadLocationException e) {
+            terminalIO.unlock();
             throw new RuntimeException(e);
         }
+        terminalIO.unlock();
+        return text;
     }
 
     RSyntaxTextArea gutter;
     final AtomicBoolean readingInput = new AtomicBoolean(true);
+    final AtomicBoolean readingRawInput = new AtomicBoolean(false);
     AllowedEditRange r;
     RSyntaxTextArea area;
     Thread t;
@@ -282,6 +367,13 @@ public class TerminalPanel extends JPanel {
                         insertFixGutter();
                         synchronized (readingInput) {
                             readingInput.notify();
+                        }
+                    } else if(readingRawInput.get() && lastLineText.trim().isEmpty() && !(area.getDocument().getLength() == r.byteOffset)) {
+                        String text = area.getText(r.byteOffset, area.getDocument().getLength() - r.byteOffset);
+                        readingRawInput.set(false);
+                        insertFixGutter();
+                        synchronized (readingRawInput) {
+                            readingRawInput.notify();
                         }
                     } else {
                         insertFixGutter();
@@ -401,6 +493,16 @@ public class TerminalPanel extends JPanel {
                     })
             );
 
+            private Map<String, Consumer<IDEPacket>> asyncIdeFunctions = Map.ofEntries(
+                    Map.entry("io:readln", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            String s = promptRaw();
+                            sendPacket(new IDEPacket("io:readln", List.of(s)));
+                        }
+                    })
+            );
+
             @Override
             public void run() {
                 // TODO: Do.
@@ -436,19 +538,33 @@ public class TerminalPanel extends JPanel {
                             TerminalPanel.this.print(((StringPacket) p).data);
                         } else if (p instanceof IDEPacket) {
                             IDEPacket idep = (IDEPacket) p;
-                            IDE.invokeSwing(() -> {
+                            if(ideFunctions.containsKey(idep.kind)) {
+                                IDE.invokeSwing(() -> {
+                                    Throwable t = null;
+                                    try {
+                                        ideFunctions.get(idep.kind).accept(idep);
+                                    } catch (Throwable e) {
+                                        t = e;
+                                    }
+                                    if (t == null) {
+                                        sendPacket(new IDEPacket("ide:ok", List.of()));
+                                    } else {
+                                        sendPacket(new IDEPacket("ide:err", List.of(t)));
+                                    }
+                                });
+                            } else {
                                 Throwable t = null;
                                 try {
-                                    ideFunctions.get(idep.kind).accept(idep);
-                                } catch (Throwable e) {
+                                    asyncIdeFunctions.get(idep.kind).accept(idep);
+                                } catch(Throwable e) {
                                     t = e;
                                 }
-                                if(t == null) {
-                                    sendPacket(new IDEPacket("ide:ok", List.of()));
-                                } else {
+                                if(t != null) {
                                     sendPacket(new IDEPacket("ide:err", List.of(t)));
+                                } else {
+                                    sendPacket(new IDEPacket("ide:ok", List.of()));
                                 }
-                            });
+                            }
                         } else {
                             throw new RuntimeException("Unknown packet type: " + p.getClass().getName());
                         }

@@ -32,7 +32,6 @@ public class IDE {
                 try {
                     ref.set(r.get());
                 } catch (Throwable e) {
-                    if(e instanceof ThreadDeath) { throw (ThreadDeath) e; }
                     if (e instanceof RuntimeException) {
                         ex.set((RuntimeException) e);
                     } else {
@@ -55,7 +54,6 @@ public class IDE {
                 try {
                     r.run();
                 } catch (Throwable e) {
-                    if(e instanceof ThreadDeath) { throw (ThreadDeath) e; }
                     if (e instanceof RuntimeException) {
                         ex.set((RuntimeException) e);
                     } else {
