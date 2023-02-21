@@ -501,7 +501,7 @@ public class TerminalPanel extends JPanel {
                                 String kind = (String) o.data.get(0);
                                 switch(kind) {
                                     case "editor": {
-                                        horizontalSplit(new EditorPanel(TerminalPanel.this));
+                                        verticalSplit(new EditorPanel(TerminalPanel.this));
                                         break;
                                     }
                                     default: {
