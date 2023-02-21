@@ -3,6 +3,7 @@ package palaiologos.kamilalisp.runtime.ide.terminal;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextArea;
+import org.jline.terminal.Terminal;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.InterruptionError;
 import palaiologos.kamilalisp.error.TypeError;
@@ -261,6 +262,7 @@ public class TerminalPanel extends JPanel {
     Thread t;
     final List<String> lines = new ArrayList<>();
     int lineIndex = 0;
+    Process localProcess;
 
     public TerminalPanel(IDE parent) {
         setBackground(Color.decode("#10141C"));
@@ -485,6 +487,18 @@ public class TerminalPanel extends JPanel {
                             Pair<Integer, String> p = parent.statusBar.currentWorkspace();
                             sendPacket(new IDEPacket("ide:workspace:current", List.of(p.fst(), p.snd())));
                         }
+                    }),
+                    Map.entry("ide:split-h", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            TerminalPanel.this.getActionMap().get("split-h").actionPerformed(null);
+                        }
+                    }),
+                    Map.entry("ide:split-v", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            TerminalPanel.this.getActionMap().get("split-v").actionPerformed(null);
+                        }
                     })
             );
 
@@ -513,9 +527,9 @@ public class TerminalPanel extends JPanel {
                 command.add("--remote");
                 ProcessBuilder builder = new ProcessBuilder(command);
                 try {
-                    Process process = builder.start();
+                    localProcess = builder.start();
                     // Read the output.
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(localProcess.getInputStream()));
                     int port = Integer.parseInt(reader.readLine());
                     // Close the reader.
                     reader.close();
@@ -563,7 +577,7 @@ public class TerminalPanel extends JPanel {
                             throw new RuntimeException("Unknown packet type: " + p.getClass().getName());
                         }
                     }
-                } catch (EOFException e) {
+                } catch (Throwable t) {
                     // The remote has closed the connection. Close the terminal window.
                     boolean hasFocus = area.hasFocus();
                     Container parentContainer = TerminalPanel.this.getParent();
@@ -612,8 +626,6 @@ public class TerminalPanel extends JPanel {
                     }
                     parentContainer.revalidate();
                     parentContainer.repaint();
-                } catch (IOException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
                 }
             }
         });
@@ -622,6 +634,7 @@ public class TerminalPanel extends JPanel {
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), "line-forward");
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK), "split-h");
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK), "split-v");
+        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK), "kill");
 
         getActionMap().put("line-back", new AbstractAction() {
             @Override
@@ -716,6 +729,14 @@ public class TerminalPanel extends JPanel {
                 }
                 parentContainer.revalidate();
                 parentContainer.repaint();
+            }
+        });
+
+        getActionMap().put("kill", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                localProcess.destroyForcibly();
+                t.interrupt();
             }
         });
     }
