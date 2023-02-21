@@ -80,7 +80,7 @@ public class TerminalPanel extends JPanel {
         }
     }
 
-    private ReentrantLock terminalIO = new ReentrantLock();
+    private final ReentrantLock terminalIO = new ReentrantLock();
 
     public void print(String s) {
         try {
@@ -261,10 +261,8 @@ public class TerminalPanel extends JPanel {
     Thread t;
     final List<String> lines = new ArrayList<>();
     int lineIndex = 0;
-    private IDE parent;
 
     public TerminalPanel(IDE parent) {
-        this.parent = parent;
         setBackground(Color.decode("#10141C"));
         setBorder(null);
         setLayout(new BorderLayout());
@@ -369,7 +367,6 @@ public class TerminalPanel extends JPanel {
                             readingInput.notify();
                         }
                     } else if(readingRawInput.get() && lastLineText.trim().isEmpty() && !(area.getDocument().getLength() == r.byteOffset)) {
-                        String text = area.getText(r.byteOffset, area.getDocument().getLength() - r.byteOffset);
                         readingRawInput.set(false);
                         insertFixGutter();
                         synchronized (readingRawInput) {
@@ -408,7 +405,7 @@ public class TerminalPanel extends JPanel {
                 }
             }
 
-            private Map<String, Consumer<IDEPacket>> ideFunctions = Map.ofEntries(
+            private final Map<String, Consumer<IDEPacket>> ideFunctions = Map.ofEntries(
                     Map.entry("term:clear", new Consumer<IDEPacket>() {
                         @Override
                         public void accept(IDEPacket o) {
@@ -448,8 +445,7 @@ public class TerminalPanel extends JPanel {
                         @Override
                         public void accept(IDEPacket o) {
                             Object ob = o.data.get(0);
-                            if(ob instanceof String) {
-                                String name = (String) ob;
+                            if(ob instanceof String name) {
                                 parent.statusBar.selectWorkspace(name);
                             } else if(ob instanceof Integer) {
                                 int index = (int) ob;
@@ -463,8 +459,7 @@ public class TerminalPanel extends JPanel {
                         @Override
                         public void accept(IDEPacket o) {
                             Object ob = o.data.get(0);
-                            if(ob instanceof String) {
-                                String name = (String) ob;
+                            if(ob instanceof String name) {
                                 String newName = (String) o.data.get(1);
                                 parent.statusBar.renameWorkspace(name, newName);
                             } else if(ob instanceof Integer) {
@@ -493,7 +488,7 @@ public class TerminalPanel extends JPanel {
                     })
             );
 
-            private Map<String, Consumer<IDEPacket>> asyncIdeFunctions = Map.ofEntries(
+            private final Map<String, Consumer<IDEPacket>> asyncIdeFunctions = Map.ofEntries(
                     Map.entry("io:readln", new Consumer<IDEPacket>() {
                         @Override
                         public void accept(IDEPacket o) {
@@ -536,13 +531,12 @@ public class TerminalPanel extends JPanel {
                             oos.writeObject(new StringPacket(code));
                         } else if (p instanceof StringPacket) {
                             TerminalPanel.this.print(((StringPacket) p).data);
-                        } else if (p instanceof IDEPacket) {
-                            IDEPacket idep = (IDEPacket) p;
-                            if(ideFunctions.containsKey(idep.kind)) {
+                        } else if (p instanceof IDEPacket ip) {
+                            if(ideFunctions.containsKey(ip.kind)) {
                                 IDE.invokeSwing(() -> {
                                     Throwable t = null;
                                     try {
-                                        ideFunctions.get(idep.kind).accept(idep);
+                                        ideFunctions.get(ip.kind).accept(ip);
                                     } catch (Throwable e) {
                                         t = e;
                                     }
@@ -555,7 +549,7 @@ public class TerminalPanel extends JPanel {
                             } else {
                                 Throwable t = null;
                                 try {
-                                    asyncIdeFunctions.get(idep.kind).accept(idep);
+                                    asyncIdeFunctions.get(ip.kind).accept(ip);
                                 } catch(Throwable e) {
                                     t = e;
                                 }
@@ -573,15 +567,13 @@ public class TerminalPanel extends JPanel {
                     // The remote has closed the connection. Close the terminal window.
                     boolean hasFocus = area.hasFocus();
                     Container parentContainer = TerminalPanel.this.getParent();
-                    if (parentContainer instanceof JSplitPane) {
+                    if (parentContainer instanceof JSplitPane parentSplitPane) {
                         // This was not the only window in the workspace.
-                        JSplitPane parentSplitPane = (JSplitPane) parentContainer;
                         Container grandparentContainer = parentSplitPane.getParent();
                         JComponent left = (JComponent) parentSplitPane.getLeftComponent();
                         JComponent right = (JComponent) parentSplitPane.getRightComponent();
-                        if(grandparentContainer instanceof JSplitPane) {
+                        if(grandparentContainer instanceof JSplitPane grandparentSplitPane) {
                             // This was not the only window in the workspace.
-                            JSplitPane grandparentSplitPane = (JSplitPane) grandparentContainer;
                             if (grandparentSplitPane.getLeftComponent() == parentSplitPane) {
                                 if(TerminalPanel.this == left) {
                                     grandparentSplitPane.setLeftComponent(right);
