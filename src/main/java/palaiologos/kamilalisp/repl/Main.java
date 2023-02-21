@@ -16,10 +16,12 @@ import palaiologos.kamilalisp.error.InterruptionError;
 import palaiologos.kamilalisp.runtime.ide.IDE;
 import palaiologos.kamilalisp.runtime.remote.Server;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 
 public class Main {
@@ -134,6 +136,14 @@ public class Main {
         if (args.length >= 1) {
             if(args[0].equalsIgnoreCase("--ide")) {
                 FlatAtomOneDarkIJTheme.setup();
+                Enumeration<Object> keys = UIManager.getDefaults().keys();
+                var fr = new javax.swing.plaf.FontUIResource(IDE.apl333Font);
+                while (keys.hasMoreElements()) {
+                    Object key = keys.nextElement();
+                    Object value = UIManager.get (key);
+                    if (value instanceof javax.swing.plaf.FontUIResource)
+                        UIManager.put(key, fr);
+                }
                 IDE ide = new IDE();
                 // TODO: Run scripts.
             } else if(args[0].equalsIgnoreCase("--remote")) {

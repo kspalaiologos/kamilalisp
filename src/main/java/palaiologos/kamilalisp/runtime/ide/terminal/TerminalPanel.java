@@ -599,6 +599,7 @@ public class TerminalPanel extends TilingWMComponent {
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK), "split-h");
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK), "split-v");
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK), "kill");
+        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK), "version");
 
         getActionMap().put("line-back", new AbstractAction() {
             @Override
@@ -657,6 +658,15 @@ public class TerminalPanel extends TilingWMComponent {
             public void actionPerformed(ActionEvent e) {
                 localProcess.destroyForcibly();
                 t.interrupt();
+            }
+        });
+
+        getActionMap().put("version", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane pane = new JOptionPane("v0.2", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
+                JInternalFrame frame = pane.createInternalFrame(parent.statusBar.getCurrentDesktopPane(), "KamilaLisp Version");
+                frame.setVisible(true);
             }
         });
     }

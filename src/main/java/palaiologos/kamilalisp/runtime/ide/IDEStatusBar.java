@@ -19,8 +19,12 @@ public class IDEStatusBar extends JPanel {
     JScrollPane workspaceScrollPane;
     JToolBar workspacePanel;
     ArrayList<JLabel> workspaceLabels;
-    ArrayList<JComponent> workspaceComponents;
+    ArrayList<JDesktopPane> workspaceComponents;
     private final IDE parent;
+
+    public JDesktopPane getCurrentDesktopPane() {
+        return workspaceComponents.get(selectedWorkspace);
+    }
 
     public IDEStatusBar(IDE parent) {
         super(new FlowLayout());
@@ -129,8 +133,8 @@ public class IDEStatusBar extends JPanel {
         String lab2Text = lab2.getText();
         lab1.setText(lab2Text);
         lab2.setText(lab1Text);
-        JComponent comp1 = workspaceComponents.get(idx1);
-        JComponent comp2 = workspaceComponents.get(idx2);
+        JDesktopPane comp1 = workspaceComponents.get(idx1);
+        JDesktopPane comp2 = workspaceComponents.get(idx2);
         workspaceComponents.set(idx1, comp2);
         workspaceComponents.set(idx2, comp1);
         if(selectedWorkspace == idx1)
