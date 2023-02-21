@@ -38,7 +38,8 @@ public class Parser {
             };
             lex.removeErrorListeners();
             lex.addErrorListener(new ThrowingErrorListener(0));
-            return lex.nextToken().getType() == GrammarLexer.NAME;
+            var tokens = lex.getAllTokens();
+            return tokens.get(0).getType() == GrammarLexer.NAME && tokens.size() == 1;
         } catch(Throwable e) {
             return false;
         }
