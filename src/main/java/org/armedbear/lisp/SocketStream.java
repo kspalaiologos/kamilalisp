@@ -33,9 +33,10 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.net.Socket;
+
+import static org.armedbear.lisp.Lisp.T;
+import static org.armedbear.lisp.Lisp.error;
 
 public final class SocketStream extends TwoWayStream
 {

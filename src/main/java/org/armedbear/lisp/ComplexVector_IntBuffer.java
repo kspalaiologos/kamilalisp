@@ -32,10 +32,10 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+
+import static org.armedbear.lisp.Lisp.*;
 
 // A specialized vector of element type (UNSIGNED-BYTE 32) that is displaced to
 // another array, has a fill pointer, and/or is expressly adjustable.

@@ -31,10 +31,10 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+
+import static org.armedbear.lisp.Lisp.*;
 
 /** A vector with specialized underlying storage for (unsigned-byte 16) */
 public final class BasicVector_CharBuffer 

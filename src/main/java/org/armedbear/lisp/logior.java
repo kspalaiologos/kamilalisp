@@ -33,7 +33,7 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
+import static org.armedbear.lisp.Lisp.checkInteger;
 
 // ### logior &rest integers => result-integer
 public final class logior extends Primitive

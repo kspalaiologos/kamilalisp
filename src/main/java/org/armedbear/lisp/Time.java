@@ -33,11 +33,10 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
-import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.TimeZone;
+
+import static org.armedbear.lisp.Lisp.*;
 
 public final class Time
 {

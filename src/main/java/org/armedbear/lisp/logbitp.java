@@ -33,9 +33,9 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.math.BigInteger;
+
+import static org.armedbear.lisp.Lisp.*;
 
 // ### logbitp index integer => generalized-boolean
 public final class logbitp extends Primitive

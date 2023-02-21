@@ -30,7 +30,7 @@ public class Environment {
         return env;
     }
 
-    public void set(String key, Atom value) {
+    public synchronized void set(String key, Atom value) {
         data.put(key, value);
     }
 
@@ -38,6 +38,12 @@ public class Environment {
         if (data.containsKey(key)) {
             throw new RuntimeException("Redefinition of built-in function " + key + ".");
         }
+        data.put(key, value);
+    }
+
+    public void overwritePrimitive(String key, Atom value) {
+        if(!data.containsKey(key))
+            throw new RuntimeException("Cannot overwrite non-existent primitive " + key + ".");
         data.put(key, value);
     }
 
@@ -92,7 +98,7 @@ public class Environment {
         return new MathContext(precision);
     }
 
-    public void remove(String key) {
+    public synchronized void remove(String key) {
         if(has(key))
             data.remove(key);
         else if(parent != null)

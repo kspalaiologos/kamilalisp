@@ -33,10 +33,10 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
+import static org.armedbear.lisp.Lisp.NIL;
 
 public final class SiteName
 {

@@ -1,5 +1,6 @@
 package palaiologos.kamilalisp.repl;
 
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatAtomOneDarkIJTheme;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -12,11 +13,15 @@ import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.AttributedStringBuilder;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.InterruptionError;
+import palaiologos.kamilalisp.runtime.ide.IDE;
+import palaiologos.kamilalisp.runtime.remote.Server;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 
 public class Main {
@@ -47,12 +52,7 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        if (args.length >= 1) {
-            evalScript(new Environment(defaultRegistry), args[0], args);
-            return;
-        }
-
+    private static void terminalTTY() throws IOException {
         banner();
         Environment env = new Environment(defaultRegistry);
         DefaultParser parser = new DefaultParser();
@@ -128,6 +128,32 @@ public class Main {
             System.out.println("Bye.");
         } catch (UserInterruptException e) {
             System.out.println("Interrupted.");
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        if(args.length == 0)
+            terminalTTY();
+        if (args.length >= 1) {
+            if(args[0].equalsIgnoreCase("--ide")) {
+                FlatAtomOneDarkIJTheme.setup();
+                Enumeration<Object> keys = UIManager.getDefaults().keys();
+                var fr = new javax.swing.plaf.FontUIResource(IDE.apl333Font);
+                while (keys.hasMoreElements()) {
+                    Object key = keys.nextElement();
+                    Object value = UIManager.get (key);
+                    if (value instanceof javax.swing.plaf.FontUIResource)
+                        UIManager.put(key, fr);
+                }
+                IDE ide = new IDE();
+                // TODO: Run scripts.
+            } else if(args[0].equalsIgnoreCase("--remote")) {
+                int port = 0;
+                if(args.length >= 2)
+                    port = Integer.parseInt(args[1]);
+                Server.run(port);
+            } else
+                evalScript(new Environment(defaultRegistry), args[0], args);
         }
     }
 }

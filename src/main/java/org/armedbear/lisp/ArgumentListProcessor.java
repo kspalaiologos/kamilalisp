@@ -35,8 +35,9 @@
 package org.armedbear.lisp;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
 import static org.armedbear.lisp.Lisp.*;
 
 /** A class to parse a lambda list and match function call arguments with it.

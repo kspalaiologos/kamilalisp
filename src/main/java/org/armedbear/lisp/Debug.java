@@ -34,8 +34,6 @@
 package org.armedbear.lisp;
 
 import static org.armedbear.lisp.Lisp.*;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 public final class Debug
 {

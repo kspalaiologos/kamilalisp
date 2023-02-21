@@ -33,8 +33,6 @@
 
 package org.armedbear.lisp;
 
-import java.math.BigInteger;
-
 // ### lognot
 public final class lognot extends Primitive
 {

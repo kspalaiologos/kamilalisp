@@ -11,7 +11,12 @@ import java.util.List;
 
 public class Parser {
     public static Atom parseNumber(String input) {
-        GrammarLexer lex = new GrammarLexer(CharStreams.fromString(input));
+        GrammarLexer lex = new GrammarLexer(CharStreams.fromString(input)) {
+            @Override
+            public void skip() {
+                setChannel(HIDDEN);
+            }
+        };
         lex.removeErrorListeners();
         lex.addErrorListener(new ThrowingErrorListener(0));
         CommonTokenStream tokens = new CommonTokenStream(lex);
@@ -23,8 +28,29 @@ public class Parser {
         return visitor.visit(tree);
     }
 
+    public static boolean isValidIdentifier(String input) {
+        try {
+            GrammarLexer lex = new GrammarLexer(CharStreams.fromString(input)) {
+                @Override
+                public void skip() {
+                    setChannel(HIDDEN);
+                }
+            };
+            lex.removeErrorListeners();
+            lex.addErrorListener(new ThrowingErrorListener(0));
+            return lex.nextToken().getType() == GrammarLexer.NAME;
+        } catch(Throwable e) {
+            return false;
+        }
+    }
+
     public static List<Atom> parse(int lineNumberOffset, String input) {
-        GrammarLexer lex = new GrammarLexer(CharStreams.fromString(input));
+        GrammarLexer lex = new GrammarLexer(CharStreams.fromString(input)) {
+            @Override
+            public void skip() {
+                setChannel(HIDDEN);
+            }
+        };
         lex.removeErrorListeners();
         lex.addErrorListener(new ThrowingErrorListener(lineNumberOffset));
         CommonTokenStream tokens = new CommonTokenStream(lex);

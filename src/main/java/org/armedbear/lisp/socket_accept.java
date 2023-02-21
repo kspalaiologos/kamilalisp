@@ -33,10 +33,11 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.net.ServerSocket;
 import java.net.Socket;
+
+import static org.armedbear.lisp.Lisp.PACKAGE_SYS;
+import static org.armedbear.lisp.Lisp.error;
 
 // ### %socket-accept
 public final class socket_accept extends Primitive

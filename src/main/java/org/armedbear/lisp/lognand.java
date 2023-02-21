@@ -33,9 +33,10 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.math.BigInteger;
+
+import static org.armedbear.lisp.Lisp.number;
+import static org.armedbear.lisp.Lisp.type_error;
 
 public final class lognand extends Primitive
 {

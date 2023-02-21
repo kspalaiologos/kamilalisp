@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime.cas;
 
-import com.google.common.collect.Lists;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;

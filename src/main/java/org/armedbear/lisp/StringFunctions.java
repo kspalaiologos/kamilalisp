@@ -34,8 +34,9 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
 import java.util.Arrays;
+
+import static org.armedbear.lisp.Lisp.*;
 public final class StringFunctions {
     final static class StringIndicesAndChars {
         public AbstractString string1;

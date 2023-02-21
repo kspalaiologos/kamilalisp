@@ -33,9 +33,9 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.math.BigInteger;
+
+import static org.armedbear.lisp.Lisp.*;
 
 // ### logeqv
 // logeqv &rest integers => result-integer

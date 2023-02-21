@@ -34,12 +34,13 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
+import org.armedbear.lisp.util.Finalizer;
 
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import org.armedbear.lisp.util.Finalizer;
+
+import static org.armedbear.lisp.Lisp.*;
 
 public final class Primitives {
     // ### *

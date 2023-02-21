@@ -11,7 +11,6 @@ import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 public class Puiseux extends PrimitiveFunction implements Lambda {
     protected static Atom tex = new Atom("tex");

@@ -81,7 +81,7 @@ public class FriCAS {
             URL resUrl = FriCAS.class.getResource("/lisp/fricas.lisp");
             String urlString = resUrl.toString();
             String str = urlString.substring(0, urlString.length() - "/fricas.lisp".length());
-            instance.get().thread = new Thread(null, () -> {
+            instance.get().thread = new Thread(Thread.currentThread().getThreadGroup(), () -> {
                 List<Byte> cout = new ArrayList<>();
                 Interpreter interpreter = Interpreter.createInstance(nis, new OutputStream() {
                     @Override

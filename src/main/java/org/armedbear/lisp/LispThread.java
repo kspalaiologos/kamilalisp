@@ -34,16 +34,16 @@
 package org.armedbear.lisp;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
-import static org.armedbear.lisp.Lisp.*;
-
+import java.lang.reflect.Method;
+import java.text.MessageFormat;
 import java.util.Iterator;
+import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.Stack; 
-import java.text.MessageFormat;
+
+import static org.armedbear.lisp.Lisp.*;
 
 public final class LispThread extends LispObject
 {

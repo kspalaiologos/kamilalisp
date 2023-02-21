@@ -38,8 +38,8 @@ class LispHighlight implements Highlighter {
         return switch (t.getType()) {
             case GrammarLexer.BIN, GrammarLexer.FLOAT, GrammarLexer.HEX, GrammarLexer.LONG, GrammarLexer.COMPLEX ->
                     NUM_STYLE;
-            case GrammarLexer.NAME -> EMPTY_STYLE;
-            case GrammarLexer.TRASH -> isWs ? EMPTY_STYLE : COMMENT_STYLE;
+            case GrammarLexer.NAME, GrammarLexer.WS -> EMPTY_STYLE;
+            case GrammarLexer.COMMENT -> COMMENT_STYLE;
             case GrammarLexer.NIL -> NIL_STYLE;
             case GrammarLexer.STRING -> STR_STYLE;
             default -> DEF_STYLE;
@@ -59,7 +59,12 @@ class LispHighlight implements Highlighter {
             s = s.substring(1);
         }
 
-        lex = new GrammarLexer(CharStreams.fromString(s));
+        lex = new GrammarLexer(CharStreams.fromString(s)) {
+            @Override
+            public void skip() {
+                setChannel(HIDDEN);
+            }
+        };
 
         lex.removeErrorListeners();
         int written = 0;

@@ -33,9 +33,7 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
-import java.math.BigInteger;
+import static org.armedbear.lisp.Lisp.type_error;
 
 // ### logcount integer => number-of-on-bits
 public final class logcount extends Primitive

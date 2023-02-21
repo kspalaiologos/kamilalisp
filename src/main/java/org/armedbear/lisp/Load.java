@@ -33,12 +33,11 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.text.MessageFormat;
+
+import static org.armedbear.lisp.Lisp.*;
 
 /* This file holds ABCL's (FASL and non-FASL) loading behaviours.
  *

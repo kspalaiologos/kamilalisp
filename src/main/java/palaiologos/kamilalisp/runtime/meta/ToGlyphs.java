@@ -11,7 +11,12 @@ public class ToGlyphs extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         String code = args.get(0).getString();
-        GrammarLexer lex = new GrammarLexer(CharStreams.fromString(code));
+        GrammarLexer lex = new GrammarLexer(CharStreams.fromString(code)) {
+            @Override
+            public void skip() {
+                setChannel(HIDDEN);
+            }
+        };
         lex.removeErrorListeners();
         lex.addErrorListener(new Parser.ThrowingErrorListener(0));
         List<Token> tokens = (List<Token>) lex.getAllTokens();

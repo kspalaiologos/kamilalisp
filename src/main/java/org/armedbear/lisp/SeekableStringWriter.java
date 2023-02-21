@@ -33,10 +33,9 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.io.Writer;
-import java.text.MessageFormat;
+
+import static org.armedbear.lisp.Lisp.error;
 
 public final class SeekableStringWriter extends Writer {
     private final StringBuffer stringBuffer;

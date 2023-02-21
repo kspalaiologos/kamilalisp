@@ -33,11 +33,11 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.StringTokenizer;
-import java.text.MessageFormat;
+
+import static org.armedbear.lisp.Lisp.*;
 
 public final class LogicalPathname extends Pathname
 {

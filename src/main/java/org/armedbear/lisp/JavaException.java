@@ -33,10 +33,10 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
+import static org.armedbear.lisp.Lisp.T;
 
 public class JavaException extends LispError
 {

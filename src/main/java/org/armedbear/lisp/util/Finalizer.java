@@ -1,13 +1,10 @@
 /*     */ package org.armedbear.lisp.util;
 /*     */ 
-/*     */ import java.lang.ref.ReferenceQueue;
-/*     */ import java.lang.ref.WeakReference;
-/*     */ import java.util.Collections;
-/*     */ import java.util.HashMap;
-/*     */ import java.util.Iterator;
-/*     */ import java.util.LinkedList;
-/*     */ import java.util.Map;
-/*     */ import java.util.WeakHashMap;
+/*     */
+
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
+import java.util.*;
 /*     */ 
 /*     */ 
 /*     */ 

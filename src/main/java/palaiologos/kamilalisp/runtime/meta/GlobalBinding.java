@@ -11,7 +11,7 @@ public class GlobalBinding extends PrimitiveFunction implements SpecialForm {
     }
 
     @Override
-    public Atom apply(Environment env, List<Atom> args) {
+    public synchronized Atom apply(Environment env, List<Atom> args) {
         if (!env.isToplevel()) {
             throw new RuntimeException("def called outside of toplevel scope.");
         }

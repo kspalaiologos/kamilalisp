@@ -32,9 +32,9 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.nio.ByteBuffer;
+
+import static org.armedbear.lisp.Lisp.*;
 
 public final class ComplexArray_ByteBuffer
   extends AbstractArray

@@ -33,9 +33,7 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
-import java.math.BigInteger;
+import static org.armedbear.lisp.Lisp.checkInteger;
 
 // ### logand &rest integers => result-integer
 public final class logand extends Primitive

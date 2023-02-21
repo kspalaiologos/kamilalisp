@@ -32,10 +32,10 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+
+import static org.armedbear.lisp.Lisp.*;
 
 public final class SimpleArray_CharBuffer
   extends AbstractArray

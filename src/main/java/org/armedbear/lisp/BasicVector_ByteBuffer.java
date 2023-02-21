@@ -32,10 +32,10 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
-import java.nio.ByteBuffer;
 import java.nio.BufferOverflowException;
+import java.nio.ByteBuffer;
+
+import static org.armedbear.lisp.Lisp.*;
 
 
 // A basic vector is a specialized vector that is not displaced to another

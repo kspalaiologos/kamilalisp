@@ -33,7 +33,8 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
+import static org.armedbear.lisp.Lisp.T;
+import static org.armedbear.lisp.Lisp.type_error;
 
 public final class EchoStream extends Stream
 {

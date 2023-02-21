@@ -33,11 +33,10 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
-import java.io.File;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+
+import static org.armedbear.lisp.Lisp.*;
 
 public class RuntimeClass
 {

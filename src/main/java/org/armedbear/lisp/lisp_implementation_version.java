@@ -33,7 +33,6 @@
 
 package org.armedbear.lisp;
 
-import java.math.BigInteger;
 import java.text.MessageFormat;
 
 // ### lisp_implementation_version

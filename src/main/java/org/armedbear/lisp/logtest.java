@@ -33,9 +33,9 @@
 
 package org.armedbear.lisp;
 
-import static org.armedbear.lisp.Lisp.*;
-
 import java.math.BigInteger;
+
+import static org.armedbear.lisp.Lisp.*;
 
 // ### logtest integer-1 integer-2 => generalized-boolean
 // (logtest x y) == (not (zerop (logand x y)))

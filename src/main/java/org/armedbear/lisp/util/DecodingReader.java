@@ -1,20 +1,13 @@
 /*     */ package org.armedbear.lisp.util;
 /*     */ 
-/*     */ import palaiologos.kamilalisp.runtime.cas.meta.FriCAS;
+/*     */
 
-import java.io.IOException;
-/*     */ import java.io.InputStream;
-/*     */ import java.io.PushbackInputStream;
-/*     */ import java.io.PushbackReader;
-/*     */ import java.io.Reader;
-/*     */ import java.io.StringReader;
-/*     */ import java.nio.ByteBuffer;
-/*     */ import java.nio.CharBuffer;
-/*     */ import java.nio.charset.Charset;
-/*     */ import java.nio.charset.CharsetDecoder;
-/*     */ import java.nio.charset.CharsetEncoder;
-/*     */ import java.nio.charset.CoderResult;
-/*     */ import java.nio.charset.CodingErrorAction;
+import palaiologos.kamilalisp.runtime.cas.meta.FriCAS;
+
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.*;
 /*     */ 
 /*     */ 
 /*     */ 

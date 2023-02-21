@@ -35,8 +35,6 @@ package org.armedbear.lisp;
 
 import static org.armedbear.lisp.Lisp.*;
 
-import java.io.File;
-
 // ### file-write-date
 public final class file_write_date extends Primitive
 {
