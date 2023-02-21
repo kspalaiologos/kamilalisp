@@ -38,7 +38,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 public class TerminalPanel extends TilingWMComponent {
-    private List<Pair<Integer, Integer>> allowedHighlightRanges = new ArrayList<>();
+    public List<Pair<Integer, Integer>> allowedHighlightRanges = new ArrayList<>();
 
     private static class AllowedEditRange {
         int start;
@@ -206,7 +206,7 @@ public class TerminalPanel extends TilingWMComponent {
             throw new RuntimeException(e);
         }
 
-        allowedHighlightRanges.add(new Pair<>(r.byteOffset, Integer.MAX_VALUE));
+        allowedHighlightRanges.add(new Pair<>(r.start, Integer.MAX_VALUE));
 
         synchronized (readingInput) {
             while (readingInput.get()) {
@@ -268,8 +268,13 @@ public class TerminalPanel extends TilingWMComponent {
             throw new RuntimeException(e);
         }
 
-        allowedHighlightRanges.set(allowedHighlightRanges.size() - 1,
-                new Pair<>(allowedHighlightRanges.get(allowedHighlightRanges.size() - 1).fst(), area.getDocument().getLength()));
+        try {
+            allowedHighlightRanges.set(allowedHighlightRanges.size() - 1,
+                    new Pair<>(allowedHighlightRanges.get(allowedHighlightRanges.size() - 1).fst(), area.getLineOfOffset(area.getDocument().getLength())));
+        } catch (BadLocationException e) {
+            terminalIO.unlock();
+            throw new RuntimeException(e);
+        }
 
         String text;
         try {
@@ -301,7 +306,7 @@ public class TerminalPanel extends TilingWMComponent {
 
     public TerminalPanel(IDE parent) {
         super(parent);
-        area = RSTAFactory.build();
+        area = RSTAFactory.build(this);
         r = new AllowedEditRange();
         ((AbstractDocument)area.getDocument()).setDocumentFilter(
                 new NonEditableLineDocumentFilter(r));
@@ -309,7 +314,7 @@ public class TerminalPanel extends TilingWMComponent {
         sp.setBorder(null);
         add(sp, BorderLayout.CENTER);
         gutter = new RSyntaxTextArea(1,4);
-        gutter.setSyntaxEditingStyle("text/plain");
+        gutter.setSyntaxEditingStyle("text/plain", this);
         gutter.setBackground(Color.decode("#10141C"));
         gutter.setForeground(Color.decode("#E6E6E6"));
         gutter.setEditable(false);

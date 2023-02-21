@@ -2,13 +2,20 @@ package palaiologos.kamilalisp.runtime.ide;
 
 import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.Lexer;
+import org.apache.commons.lang3.StringUtils;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMakerBase;
+import org.fife.ui.rsyntaxtextarea.modes.PlainTextTokenMaker;
+import palaiologos.kamilalisp.atom.Pair;
+import palaiologos.kamilalisp.runtime.ide.terminal.TerminalPanel;
 
+import javax.swing.*;
 import javax.swing.text.Segment;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public abstract class AntlrTokenMaker extends TokenMakerBase {
 
@@ -46,7 +53,27 @@ public abstract class AntlrTokenMaker extends TokenMakerBase {
 
     protected abstract int convertType(String s, int type);
 
+    PlainTextTokenMaker tm = new PlainTextTokenMaker();
+
     public Token getTokenList(Segment text, int initialTokenType, int startOffset) {
+        // HACK: We assume that text is... in practice, the whole document.
+        // This is not a good assumption. This may break syntax highlighting if something changes.
+        if(arg instanceof TerminalPanel) {
+            TerminalPanel terminalPanel = (TerminalPanel) arg;
+            List<Pair<Integer, Integer>> ranges = terminalPanel.allowedHighlightRanges;
+            // NOTICE!!!
+            // Usually, text.array from text.offset into text.count contains a single line.
+            // IF the current line is contained in ranges, highlight.
+            // IF it is not, don't.
+            // Count the amount of linefeeds from the beginning of the array to text.offset.
+            int lineno = (int) IntStream.range(0, text.offset).filter(i -> text.array[i] == '\n').count();
+            boolean canHighlight = ranges.stream().anyMatch(pair -> pair.fst() <= lineno && lineno < pair.snd());
+            if(!canHighlight) {
+                // aha suck it.
+                return tm.getTokenList(text, initialTokenType, startOffset);
+            }
+        }
+
         String line = text.toString();
         resetTokenList();
 
@@ -202,4 +229,12 @@ public abstract class AntlrTokenMaker extends TokenMakerBase {
     }
 
     protected abstract Lexer createLexer(String text);
+
+    JComponent arg;
+
+    @Override
+    public void setArg(Object arg) {
+        if(arg != null)
+            this.arg = (JComponent) arg;
+    }
 }

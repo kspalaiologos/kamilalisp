@@ -114,7 +114,7 @@ public class RSyntaxDocument extends RDocument implements Iterable<Token>,
 		lastTokensOnLines.add(Token.NULL); // Initial (empty) line.
 		s = new Segment();
 		setTokenMakerFactory(tmf);
-		setSyntaxStyle(syntaxStyle);
+		setSyntaxStyle(syntaxStyle, null);
 	}
 
 
@@ -382,7 +382,6 @@ public class RSyntaxDocument extends RDocument implements Iterable<Token>,
 	 * Returns the syntax style being used.
 	 *
 	 * @return The syntax style.
-	 * @see #setSyntaxStyle(String)
 	 */
 	public String getSyntaxStyle() {
 		return syntaxStyle;
@@ -495,7 +494,7 @@ public class RSyntaxDocument extends RDocument implements Iterable<Token>,
 		this.s = new Segment();
 		int lineCount = getDefaultRootElement().getElementCount();
 		lastTokensOnLines = new DynamicIntArray(lineCount);
-		setSyntaxStyle(syntaxStyle); // Actually install (transient) TokenMaker
+		setSyntaxStyle(syntaxStyle, null); // Actually install (transient) TokenMaker
 
 	}
 
@@ -543,8 +542,8 @@ public class RSyntaxDocument extends RDocument implements Iterable<Token>,
 	 * @see #setSyntaxStyle(TokenMaker)
 	 * @see #getSyntaxStyle()
 	 */
-	public void setSyntaxStyle(String styleKey) {
-		tokenMaker = tokenMakerFactory.getTokenMaker(styleKey);
+	public void setSyntaxStyle(String styleKey, Object highlighterArg) {
+		tokenMaker = tokenMakerFactory.getTokenMaker(styleKey, highlighterArg);
 		updateSyntaxHighlightingInformation();
 		this.syntaxStyle = styleKey;
 	}
@@ -557,7 +556,6 @@ public class RSyntaxDocument extends RDocument implements Iterable<Token>,
 	 * <code>RSyntaxTextArea</code>.
 	 *
 	 * @param tokenMaker The new token maker to use.
-	 * @see #setSyntaxStyle(String)
 	 */
 	public void setSyntaxStyle(TokenMaker tokenMaker) {
 		this.tokenMaker = tokenMaker;

@@ -187,4 +187,5 @@ public interface TokenMaker {
 	boolean isMarkupLanguage();
 
 
+    void setArg(Object highlighterArg);
 }

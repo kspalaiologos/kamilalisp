@@ -39,7 +39,7 @@ public class EditorPanel extends TilingWMComponent {
     public EditorPanel(IDE parent, TerminalPanel owner) {
         super(parent);
         this.owner = owner;
-        area = RSTAFactory.build();
+        area = RSTAFactory.build(this);
         scrollPane = new RTextScrollPane(area);
         scrollPane.setBorder(null);
         scrollPane.getGutter().setBorderColor(Color.decode("#1E222A"));

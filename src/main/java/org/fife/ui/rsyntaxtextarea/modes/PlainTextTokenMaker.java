@@ -341,8 +341,13 @@ public class PlainTextTokenMaker extends AbstractJFlexTokenMaker {
 
 	}
 
+    @Override
+    public void setArg(Object highlighterArg) {
 
-	/**
+    }
+
+
+    /**
 	 * Refills the input buffer.
 	 *
 	 * @return      <code>true</code> if EOF was reached, otherwise

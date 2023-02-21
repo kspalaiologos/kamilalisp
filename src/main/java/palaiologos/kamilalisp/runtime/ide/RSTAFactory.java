@@ -4,14 +4,15 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 import org.fife.ui.rsyntaxtextarea.Token;
 
+import javax.swing.*;
 import java.awt.*;
 
 public class RSTAFactory {
-    public static RSyntaxTextArea build() {
+    public static RSyntaxTextArea build(JComponent parent) {
         RSyntaxTextArea area = new RSyntaxTextArea();
         area.setBackground(Color.decode("#10141C"));
         area.setCurrentLineHighlightColor(Color.decode("#1E222A"));
-        area.setSyntaxEditingStyle("text/kamilalisp-term");
+        area.setSyntaxEditingStyle("text/kamilalisp-term", parent);
         area.setAntiAliasingEnabled(true);
         area.setFont(IDE.aplFont);
         area.setCaretColor(Color.decode("#D5D5D5"));

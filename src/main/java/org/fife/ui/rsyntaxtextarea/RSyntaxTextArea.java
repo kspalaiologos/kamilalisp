@@ -349,7 +349,7 @@ private boolean fractionalFontMetricsEnabled;
 	 */
 	public RSyntaxTextArea(RSyntaxDocument doc) {
 		super(doc);
-		setSyntaxEditingStyle(doc.getSyntaxStyle());
+		setSyntaxEditingStyle(doc.getSyntaxStyle(), null);
 	}
 
 	/**
@@ -401,7 +401,7 @@ private boolean fractionalFontMetricsEnabled;
 	 */
 	public RSyntaxTextArea(RSyntaxDocument doc, String text,int rows,int cols) {
 		super(doc, text, rows, cols);
-		setSyntaxEditingStyle(doc.getSyntaxStyle());
+		setSyntaxEditingStyle(doc.getSyntaxStyle(), null);
 	}
 
 
@@ -1648,7 +1648,6 @@ private boolean fractionalFontMetricsEnabled;
 	 *
 	 * @return The style being used, such as
 	 *         {@link SyntaxConstants#SYNTAX_STYLE_JAVA}.
-	 * @see #setSyntaxEditingStyle(String)
 	 * @see SyntaxConstants
 	 */
 	public String getSyntaxEditingStyle() {
@@ -2553,7 +2552,7 @@ private boolean fractionalFontMetricsEnabled;
 			markOccurrencesSupport.clear();
 		}
 		super.setDocument(document);
-		setSyntaxEditingStyle(((RSyntaxDocument)document).getSyntaxStyle());
+		setSyntaxEditingStyle(((RSyntaxDocument)document).getSyntaxStyle(), null);
 		if (markOccurrencesSupport != null) {
 			markOccurrencesSupport.doMarkOccurrences();
 		}
@@ -3006,14 +3005,14 @@ private boolean fractionalFontMetricsEnabled;
 	 * @see #getSyntaxEditingStyle()
 	 * @see SyntaxConstants
 	 */
-	public void setSyntaxEditingStyle(String styleKey) {
+	public void setSyntaxEditingStyle(String styleKey, Object highlighterArg) {
 		if (styleKey==null) {
 			styleKey = SYNTAX_STYLE_NONE;
 		}
 		if (!styleKey.equals(syntaxStyleKey)) {
 			String oldStyle = syntaxStyleKey;
 			syntaxStyleKey = styleKey;
-			((RSyntaxDocument)getDocument()).setSyntaxStyle(styleKey);
+			((RSyntaxDocument)getDocument()).setSyntaxStyle(styleKey, highlighterArg);
 			firePropertyChange(SYNTAX_STYLE_PROPERTY, oldStyle, styleKey);
 			setActiveLineRange(-1, -1);
 		}

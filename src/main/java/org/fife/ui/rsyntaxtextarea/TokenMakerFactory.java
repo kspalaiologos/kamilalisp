@@ -75,11 +75,12 @@ public abstract class TokenMakerFactory {
 	 * @return The corresponding <code>TokenMaker</code>, or
 	 *         {@link PlainTextTokenMaker} if none matches the specified key.
 	 */
-	public final TokenMaker getTokenMaker(String key) {
+	public final TokenMaker getTokenMaker(String key, Object highlighterArg) {
 		TokenMaker tm = getTokenMakerImpl(key);
 		if (tm==null) {
 			tm = new PlainTextTokenMaker();
 		}
+		tm.setArg(highlighterArg);
 		return tm;
 	}
 
