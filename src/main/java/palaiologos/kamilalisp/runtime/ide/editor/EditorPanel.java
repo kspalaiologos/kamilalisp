@@ -14,6 +14,7 @@ public class EditorPanel extends TilingWMComponent {
     private final TerminalPanel owner;
     private final RSyntaxTextArea area;
     private final RTextScrollPane scrollPane;
+    private String objectName = null;
 
     public EditorPanel(IDE parent, TerminalPanel owner) {
         super(parent);

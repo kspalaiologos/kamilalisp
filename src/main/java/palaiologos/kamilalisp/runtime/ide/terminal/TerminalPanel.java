@@ -255,7 +255,7 @@ public class TerminalPanel extends TilingWMComponent {
         return text;
     }
 
-    private ConcurrentLinkedQueue<Packet> auxiliaryPacketQueue = new ConcurrentLinkedQueue<>();
+    private ConcurrentLinkedQueue<Pair<Packet, AuxiliaryPacketCallback>> auxiliaryPacketQueue = new ConcurrentLinkedQueue<>();
 
     RSyntaxTextArea gutter;
     final AtomicBoolean readingInput = new AtomicBoolean(true);
@@ -571,8 +571,26 @@ public class TerminalPanel extends TilingWMComponent {
                         Packet p = (Packet) ois.readObject();
                         if (p instanceof PromptPacket) {
                             if(!auxiliaryPacketQueue.isEmpty()) {
-                                Packet aux = auxiliaryPacketQueue.poll();
-                                oos.writeObject(aux);
+                                var aux = auxiliaryPacketQueue.poll();
+                                oos.writeObject(aux.fst());
+                                if(aux.snd() != null) {
+                                    aux.snd().onSent(() -> {
+                                        Packet pckt;
+                                        try {
+                                            pckt = (Packet) ois.readObject();
+                                        } catch (IOException | ClassNotFoundException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                        return pckt;
+                                    }, (pckt) -> {
+                                        try {
+                                            oos.writeObject(pckt);
+                                            oos.flush();
+                                        } catch (IOException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                    });
+                                }
                             } else {
                                 String code = TerminalPanel.this.prompt().trim();
                                 oos.writeObject(new StringPacket(code));
