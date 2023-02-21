@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 public class IDE {
     JFrame frame;
     public IDEStatusBar statusBar;
+    public IDEExtras extras;
 
     public static final Font aplFont;
     public static final Font apl333Font;
@@ -85,6 +86,8 @@ public class IDE {
         statusBar = new IDEStatusBar(this);
         frame.add(statusBar, BorderLayout.NORTH);
         frame.setBackground(Color.decode("#10141C"));
+        extras = new IDEExtras();
+        frame.add(extras, BorderLayout.SOUTH);
         frame.setVisible(true);
         statusBar.addWorkspace("Main");
     }
