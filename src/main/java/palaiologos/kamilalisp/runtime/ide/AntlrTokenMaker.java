@@ -70,6 +70,8 @@ public abstract class AntlrTokenMaker extends TokenMakerBase {
             boolean canHighlight = ranges.stream().anyMatch(pair -> pair.fst() <= lineno && lineno < pair.snd());
             if(!canHighlight) {
                 // aha suck it.
+                // this is absolutely going to break.
+                // leaving a comment for my future to shame my past self for doing this.
                 return tm.getTokenList(text, initialTokenType, startOffset);
             }
         }
