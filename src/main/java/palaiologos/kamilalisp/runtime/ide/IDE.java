@@ -1,5 +1,8 @@
 package palaiologos.kamilalisp.runtime.ide;
 
+import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
+import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -69,6 +72,10 @@ public class IDE {
     }
 
     public IDE() {
+        AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
+        atmf.putMapping("text/kamilalisp-term", "palaiologos.kamilalisp.runtime.ide.terminal.TerminalKamilaLispTokenMaker");
+        atmf.putMapping("text/kamilalisp", "palaiologos.kamilalisp.runtime.ide.KamilaLispTokenMaker");
+
         frame = new JFrame("KamilaLisp IDE");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);

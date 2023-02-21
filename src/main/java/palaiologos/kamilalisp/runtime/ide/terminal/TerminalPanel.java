@@ -9,6 +9,8 @@ import palaiologos.kamilalisp.error.InterruptionError;
 import palaiologos.kamilalisp.error.TypeError;
 import palaiologos.kamilalisp.repl.Main;
 import palaiologos.kamilalisp.runtime.ide.IDE;
+import palaiologos.kamilalisp.runtime.ide.RSTAFactory;
+import palaiologos.kamilalisp.runtime.ide.editor.EditorPanel;
 import palaiologos.kamilalisp.runtime.remote.IDEPacket;
 import palaiologos.kamilalisp.runtime.remote.Packet;
 import palaiologos.kamilalisp.runtime.remote.PromptPacket;
@@ -271,27 +273,7 @@ public class TerminalPanel extends JPanel {
         setBackground(Color.decode("#10141C"));
         setBorder(null);
         setLayout(new BorderLayout());
-        area = new RSyntaxTextArea();
-        area.setBackground(Color.decode("#10141C"));
-        area.setCurrentLineHighlightColor(Color.decode("#1E222A"));
-        AbstractTokenMakerFactory atmf = (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
-        atmf.putMapping("text/kamilalisp-term", "palaiologos.kamilalisp.runtime.ide.terminal.TerminalKamilaLispTokenMaker");
-        area.setSyntaxEditingStyle("text/kamilalisp-term");
-        area.setAntiAliasingEnabled(true);
-        area.setFont(IDE.aplFont);
-        area.setCaretColor(Color.decode("#D5D5D5"));
-        area.setForeground(Color.decode("#E6E6E6"));
-        SyntaxScheme scheme = area.getSyntaxScheme();
-        scheme.getStyle(Token.COMMENT_EOL).foreground = Color.decode("#676B79");
-        scheme.getStyle(Token.LITERAL_NUMBER_DECIMAL_INT).foreground = Color.decode("#FFB86C");
-        scheme.getStyle(Token.LITERAL_NUMBER_FLOAT).foreground = Color.decode("#FFB86C");
-        scheme.getStyle(Token.LITERAL_CHAR).foreground = Color.decode("#FFB86C");
-        scheme.getStyle(Token.LITERAL_BOOLEAN).foreground = Color.decode("#45A9F9");
-        scheme.getStyle(Token.VARIABLE).foreground = Color.decode("#E6E6E6");
-        scheme.getStyle(Token.RESERVED_WORD).foreground = Color.decode("#FF75B5");
-        scheme.getStyle(Token.OPERATOR).foreground = Color.decode("#B084EB");
-        scheme.getStyle(Token.FUNCTION).foreground = Color.decode("#FFCC95");
-        scheme.getStyle(Token.LITERAL_STRING_DOUBLE_QUOTE).foreground = Color.decode("#6FC1FF");
+        area = RSTAFactory.build();
         r = new AllowedEditRange();
         ((AbstractDocument)area.getDocument()).setDocumentFilter(
                 new NonEditableLineDocumentFilter(r));
@@ -494,13 +476,39 @@ public class TerminalPanel extends JPanel {
                     Map.entry("ide:split-h", new Consumer<IDEPacket>() {
                         @Override
                         public void accept(IDEPacket o) {
-                            TerminalPanel.this.getActionMap().get("split-h").actionPerformed(null);
+                            if(o.data.isEmpty())
+                                TerminalPanel.this.getActionMap().get("split-h").actionPerformed(null);
+                            else {
+                                String kind = (String) o.data.get(0);
+                                switch(kind) {
+                                    case "editor": {
+                                        horizontalSplit(new EditorPanel(TerminalPanel.this));
+                                        break;
+                                    }
+                                    default: {
+                                        throw new TypeError("Unknown split kind: " + kind);
+                                    }
+                                }
+                            }
                         }
                     }),
                     Map.entry("ide:split-v", new Consumer<IDEPacket>() {
                         @Override
                         public void accept(IDEPacket o) {
-                            TerminalPanel.this.getActionMap().get("split-v").actionPerformed(null);
+                            if(o.data.isEmpty())
+                                TerminalPanel.this.getActionMap().get("split-v").actionPerformed(null);
+                            else {
+                                String kind = (String) o.data.get(0);
+                                switch(kind) {
+                                    case "editor": {
+                                        horizontalSplit(new EditorPanel(TerminalPanel.this));
+                                        break;
+                                    }
+                                    default: {
+                                        throw new TypeError("Unknown split kind: " + kind);
+                                    }
+                                }
+                            }
                         }
                     })
             );
@@ -685,58 +693,14 @@ public class TerminalPanel extends JPanel {
         getActionMap().put("split-h", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Container parentContainer = TerminalPanel.this.getParent();
-                if (parentContainer instanceof JSplitPane) {
-                    JComponent left = (JComponent) ((JSplitPane) parentContainer).getLeftComponent();
-                    parentContainer.remove(TerminalPanel.this);
-                    JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, TerminalPanel.this, new TerminalPanel(parent));
-                    splitPane.setResizeWeight(0.5);
-                    splitPane.setDividerLocation(0.5);
-                    if (left == TerminalPanel.this) {
-                        ((JSplitPane) parentContainer).setLeftComponent(splitPane);
-                    } else {
-                        ((JSplitPane) parentContainer).setRightComponent(splitPane);
-                    }
-                    ((TerminalPanel) splitPane.getRightComponent()).start();
-                } else {
-                    JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, TerminalPanel.this, new TerminalPanel(parent));
-                    splitPane.setResizeWeight(0.5);
-                    splitPane.setDividerLocation(0.5);
-                    parentContainer.remove(TerminalPanel.this);
-                    parentContainer.add(splitPane, BorderLayout.CENTER);
-                    ((TerminalPanel) splitPane.getRightComponent()).start();
-                }
-                parentContainer.revalidate();
-                parentContainer.repaint();
+                horizontalSplit(new TerminalPanel(parent));
             }
         });
 
         getActionMap().put("split-v", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Container parentContainer = TerminalPanel.this.getParent();
-                if (parentContainer instanceof JSplitPane) {
-                    JComponent left = (JComponent) ((JSplitPane) parentContainer).getLeftComponent();
-                    parentContainer.remove(TerminalPanel.this);
-                    JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, TerminalPanel.this, new TerminalPanel(parent));
-                    splitPane.setResizeWeight(0.5);
-                    splitPane.setDividerLocation(0.5);
-                    if (left == TerminalPanel.this) {
-                        ((JSplitPane) parentContainer).setLeftComponent(splitPane);
-                    } else {
-                        ((JSplitPane) parentContainer).setRightComponent(splitPane);
-                    }
-                    ((TerminalPanel) splitPane.getRightComponent()).start();
-                } else {
-                    JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, TerminalPanel.this, new TerminalPanel(parent));
-                    splitPane.setResizeWeight(0.5);
-                    splitPane.setDividerLocation(0.5);
-                    parentContainer.remove(TerminalPanel.this);
-                    parentContainer.add(splitPane, BorderLayout.CENTER);
-                    ((TerminalPanel) splitPane.getRightComponent()).start();
-                }
-                parentContainer.revalidate();
-                parentContainer.repaint();
+                verticalSplit(new TerminalPanel(parent));
             }
         });
 
@@ -747,6 +711,62 @@ public class TerminalPanel extends JPanel {
                 t.interrupt();
             }
         });
+    }
+
+    private void horizontalSplit(JComponent extra) {
+        Container parentContainer = TerminalPanel.this.getParent();
+        if (parentContainer instanceof JSplitPane) {
+            JComponent left = (JComponent) ((JSplitPane) parentContainer).getLeftComponent();
+            parentContainer.remove(TerminalPanel.this);
+            JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, TerminalPanel.this, extra);
+            splitPane.setResizeWeight(0.5);
+            splitPane.setDividerLocation(0.5);
+            if (left == TerminalPanel.this) {
+                ((JSplitPane) parentContainer).setLeftComponent(splitPane);
+            } else {
+                ((JSplitPane) parentContainer).setRightComponent(splitPane);
+            }
+            if(extra instanceof TerminalPanel)
+                ((TerminalPanel) splitPane.getRightComponent()).start();
+        } else {
+            JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, TerminalPanel.this, extra);
+            splitPane.setResizeWeight(0.5);
+            splitPane.setDividerLocation(0.5);
+            parentContainer.remove(TerminalPanel.this);
+            parentContainer.add(splitPane, BorderLayout.CENTER);
+            if(extra instanceof TerminalPanel)
+                ((TerminalPanel) splitPane.getRightComponent()).start();
+        }
+        parentContainer.revalidate();
+        parentContainer.repaint();
+    }
+
+    private void verticalSplit(JComponent extra) {
+        Container parentContainer = TerminalPanel.this.getParent();
+        if (parentContainer instanceof JSplitPane) {
+            JComponent left = (JComponent) ((JSplitPane) parentContainer).getLeftComponent();
+            parentContainer.remove(TerminalPanel.this);
+            JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, TerminalPanel.this, extra);
+            splitPane.setResizeWeight(0.5);
+            splitPane.setDividerLocation(0.5);
+            if (left == TerminalPanel.this) {
+                ((JSplitPane) parentContainer).setLeftComponent(splitPane);
+            } else {
+                ((JSplitPane) parentContainer).setRightComponent(splitPane);
+            }
+            if(extra instanceof TerminalPanel)
+                ((TerminalPanel) splitPane.getRightComponent()).start();
+        } else {
+            JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, TerminalPanel.this, extra);
+            splitPane.setResizeWeight(0.5);
+            splitPane.setDividerLocation(0.5);
+            parentContainer.remove(TerminalPanel.this);
+            parentContainer.add(splitPane, BorderLayout.CENTER);
+            if(extra instanceof TerminalPanel)
+                ((TerminalPanel) splitPane.getRightComponent()).start();
+        }
+        parentContainer.revalidate();
+        parentContainer.repaint();
     }
 
     public TerminalPanel start() {

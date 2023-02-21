@@ -16,7 +16,10 @@ public class IDESplitV extends IDEFunction implements Lambda {
 
     @Override
     public Atom fapply(Environment env, List<Atom> args) {
-        sendPacket();
+        if(args.isEmpty())
+            sendPacket();
+        else
+            sendPacket(List.of(args.get(0).getIdentifier()));
         return Atom.NULL;
     }
 
