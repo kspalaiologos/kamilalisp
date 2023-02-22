@@ -18,12 +18,12 @@ public class XzInputStream extends PrimitiveFunction implements Lambda {
             return new Atom(new StreamWrapper.InputStreamUserdata(new XZCompressorInputStream(owner.stream)) {
                 @Override
                 public String toDisplayString() {
-                    return "io:xz-input-stream#" + owner.toDisplayString();
+                    return "io:xz-istream#" + owner.toDisplayString();
                 }
 
                 @Override
                 public Atom specialField(Object key) {
-                    throw new RuntimeException("io:xz-input-stream: unknown special field: " + key);
+                    throw new RuntimeException("io:xz-istream: unknown special field: " + key);
                 }
             });
         } catch (IOException e) {
@@ -33,6 +33,6 @@ public class XzInputStream extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "io:xz-input-stream";
+        return "io:xz-istream";
     }
 }

@@ -12,7 +12,7 @@ public class Xxh32DigestIOStreams {
     public static class Output extends AbstractDigestOutputStream {
         @Override
         protected String name() {
-            return "io:" + CODEC + "-output-stream";
+            return "io:" + CODEC + "-ostream";
         }
 
         @Override
@@ -45,7 +45,7 @@ public class Xxh32DigestIOStreams {
     public static class Input extends AbstractDigestInputStream {
         @Override
         protected String name() {
-            return "io:" + CODEC + "-input-stream";
+            return "io:" + CODEC + "-istream";
         }
 
         @Override

@@ -18,12 +18,12 @@ public class GzipInputStream extends PrimitiveFunction implements Lambda {
             return new Atom(new StreamWrapper.InputStreamUserdata(new GzipCompressorInputStream(owner.stream)) {
                 @Override
                 public String toDisplayString() {
-                    return "io:gzip-input-stream#" + owner.toDisplayString();
+                    return "io:gzip-istream#" + owner.toDisplayString();
                 }
 
                 @Override
                 public Atom specialField(Object key) {
-                    throw new RuntimeException("io:gzip-input-stream: unknown special field: " + key);
+                    throw new RuntimeException("io:gzip-istream: unknown special field: " + key);
                 }
             });
         } catch (IOException e) {
@@ -33,6 +33,6 @@ public class GzipInputStream extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "io:gzip-input-stream";
+        return "io:gzip-istream";
     }
 }

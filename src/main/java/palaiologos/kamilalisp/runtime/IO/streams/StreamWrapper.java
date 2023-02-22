@@ -70,6 +70,10 @@ public class StreamWrapper {
                             yield Atom.FALSE;
                         }
                     }
+                    case "transfer-to" ->
+                        new Atom(new InputStreamTransferTo());
+                    case "pipe-to" ->
+                        new Atom(new InputStreamPipeTo());
                     default -> specialField(key);
                 };
             } else {
@@ -105,6 +109,41 @@ public class StreamWrapper {
         public abstract String toDisplayString();
 
         public abstract Atom specialField(Object key);
+
+        private class InputStreamTransferTo extends PrimitiveFunction implements Lambda {
+            @Override
+            public Atom apply(Environment env, List<Atom> args) {
+                assertArity(args, 1);
+                StreamWrapper.OutputStreamUserdata arg = (StreamWrapper.OutputStreamUserdata) args.get(0).getUserdata();
+                try {
+                    return new Atom(BigInteger.valueOf(stream.transferTo(arg.getStream())));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            protected String name() {
+                return "io:input-stream:transfer-to";
+            }
+        }
+
+        private class InputStreamPipeTo extends PrimitiveFunction implements Lambda {
+            @Override
+            public Atom apply(Environment env, List<Atom> args) {
+                assertArity(args, 1);
+                StreamWrapper.OutputStreamUserdata arg = (StreamWrapper.OutputStreamUserdata) args.get(0).getUserdata();
+                new Thread(() -> {
+                    try { stream.transferTo(arg.getStream()); } catch (IOException e) { }
+                }).start();
+                return Atom.NULL;
+            }
+
+            @Override
+            protected String name() {
+                return "io:input-stream:transfer-to";
+            }
+        }
 
         private class InputStreamSkip extends PrimitiveFunction implements Lambda {
             @Override

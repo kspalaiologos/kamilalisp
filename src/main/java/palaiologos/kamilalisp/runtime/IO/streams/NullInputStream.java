@@ -14,18 +14,18 @@ public class NullInputStream extends PrimitiveFunction implements Lambda {
         return new Atom(new StreamWrapper.InputStreamUserdata(InputStream.nullInputStream()) {
             @Override
             public String toDisplayString() {
-                return "io:null-input-stream";
+                return "io:null-istream";
             }
 
             @Override
             public Atom specialField(Object key) {
-                throw new RuntimeException("io:null-input-stream does not have a special field " + key);
+                throw new RuntimeException("io:null-istream does not have a special field " + key);
             }
         });
     }
 
     @Override
     protected String name() {
-        return "io:null-input-stream";
+        return "io:null-istream";
     }
 }

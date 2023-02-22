@@ -14,18 +14,18 @@ public class NullOutputStream extends PrimitiveFunction implements Lambda {
         return new Atom(new StreamWrapper.OutputStreamUserdata(OutputStream.nullOutputStream()) {
             @Override
             public String toDisplayString() {
-                return "io:null-output-stream";
+                return "io:null-ostream";
             }
 
             @Override
             public Atom specialField(Object key) {
-                throw new RuntimeException("io:null-output-stream does not have a special field " + key);
+                throw new RuntimeException("io:null-ostream does not have a special field " + key);
             }
         });
     }
 
     @Override
     protected String name() {
-        return "io:null-output-stream";
+        return "io:null-ostream";
     }
 }

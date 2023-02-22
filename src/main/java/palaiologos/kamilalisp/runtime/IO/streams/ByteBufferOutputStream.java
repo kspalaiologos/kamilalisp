@@ -25,23 +25,23 @@ public class ByteBufferOutputStream extends PrimitiveFunction implements Lambda 
         }) {
             @Override
             public String toDisplayString() {
-                return "io:byte-buffer-output-stream (" + data.size() + "bytes)";
+                return "io:byte-buffer-ostream (" + data.size() + "bytes)";
             }
 
             @Override
             public Atom specialField(Object key) {
                 if (!(key instanceof String))
-                    throw new RuntimeException("io:byte-buffer-output-stream: special field key must be a string");
+                    throw new RuntimeException("io:byte-buffer-ostream: special field key must be a string");
                 if (key.equals("data")) {
                     return new Atom(data);
                 }
-                throw new RuntimeException("io:byte-buffer-output-stream: unknown special field: " + key);
+                throw new RuntimeException("io:byte-buffer-ostream: unknown special field: " + key);
             }
         });
     }
 
     @Override
     protected String name() {
-        return "io:byte-buffer-output-stream";
+        return "io:byte-buffer-ostream";
     }
 }

@@ -33,18 +33,18 @@ public class HistogramOutputStream extends PrimitiveFunction implements Lambda {
         return new Atom(new StreamWrapper.OutputStreamUserdata(os) {
             @Override
             public String toDisplayString() {
-                return "io:histogram-output-stream#" + original.toDisplayString();
+                return "io:histogram-ostream#" + original.toDisplayString();
             }
 
             @Override
             public Atom specialField(Object key) {
                 if (!(key instanceof String))
-                    throw new RuntimeException("io:histogram-output-stream: special field key must be a string");
+                    throw new RuntimeException("io:histogram-ostream: special field key must be a string");
                 return switch ((String) key) {
                     case "histogram" ->
                             new Atom(Arrays.stream(histogram).map(x -> new Atom(BigInteger.valueOf(x.get()))).toList());
                     case "bytes" -> new Atom(BigInteger.valueOf(bytes.get()));
-                    default -> throw new RuntimeException("io:histogram-output-stream: unknown special field: " + key);
+                    default -> throw new RuntimeException("io:histogram-ostream: unknown special field: " + key);
                 };
             }
         });
@@ -52,6 +52,6 @@ public class HistogramOutputStream extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "io:histogram-output-stream";
+        return "io:histogram-ostream";
     }
 }

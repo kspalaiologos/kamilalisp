@@ -13,7 +13,7 @@ public class ByteBufferInputStream extends PrimitiveFunction implements Lambda {
         List<Atom> data = args.get(0).getList();
         for (Atom a : data)
             if (a.getType() != Type.INTEGER)
-                throw new RuntimeException("io:byte-buffer-input-stream: data must be a list of bytes");
+                throw new RuntimeException("io:byte-buffer-istream: data must be a list of bytes");
         return new Atom(new StreamWrapper.InputStreamUserdata(new InputStream() {
             private int pos = 0;
 
@@ -29,18 +29,18 @@ public class ByteBufferInputStream extends PrimitiveFunction implements Lambda {
         }) {
             @Override
             public String toDisplayString() {
-                return "io:byte-buffer-input-stream (" + data.size() + "bytes)";
+                return "io:byte-buffer-istream (" + data.size() + "bytes)";
             }
 
             @Override
             public Atom specialField(Object key) {
-                throw new RuntimeException("io:byte-buffer-input-stream: unknown special field: " + key);
+                throw new RuntimeException("io:byte-buffer-istream: unknown special field: " + key);
             }
         });
     }
 
     @Override
     protected String name() {
-        return "io:byte-buffer-input-stream";
+        return "io:byte-buffer-istream";
     }
 }

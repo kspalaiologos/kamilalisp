@@ -16,18 +16,18 @@ public class Lz4InputStream extends PrimitiveFunction implements Lambda {
         return new Atom(new StreamWrapper.InputStreamUserdata(new BlockLZ4CompressorInputStream(owner.stream)) {
             @Override
             public String toDisplayString() {
-                return "io:lz4-input-stream#" + owner.toDisplayString();
+                return "io:lz4-istream#" + owner.toDisplayString();
             }
 
             @Override
             public Atom specialField(Object key) {
-                throw new RuntimeException("io:lz4-input-stream: unknown special field: " + key);
+                throw new RuntimeException("io:lz4-istream: unknown special field: " + key);
             }
         });
     }
 
     @Override
     protected String name() {
-        return "io:lz4-input-stream";
+        return "io:lz4-istream";
     }
 }

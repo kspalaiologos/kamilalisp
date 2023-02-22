@@ -25,18 +25,18 @@ public class TeeOutputStream extends PrimitiveFunction implements Lambda {
         return new Atom(new StreamWrapper.OutputStreamUserdata(os) {
             @Override
             public String toDisplayString() {
-                return "io:tee-output-stream#(" + streams.stream().map(StreamWrapper.OutputStreamUserdata::toDisplayString).collect(Collectors.joining(",")) + ")";
+                return "io:tee-ostream#(" + streams.stream().map(StreamWrapper.OutputStreamUserdata::toDisplayString).collect(Collectors.joining(",")) + ")";
             }
 
             @Override
             public Atom specialField(Object key) {
-                throw new RuntimeException("io:tee-output-stream does not have a special field " + key);
+                throw new RuntimeException("io:tee-ostream does not have a special field " + key);
             }
         });
     }
 
     @Override
     protected String name() {
-        return "io:tee-output-stream";
+        return "io:tee-ostream";
     }
 }

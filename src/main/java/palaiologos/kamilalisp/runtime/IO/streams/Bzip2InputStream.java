@@ -18,12 +18,12 @@ public class Bzip2InputStream extends PrimitiveFunction implements Lambda {
             return new Atom(new StreamWrapper.InputStreamUserdata(new BZip2CompressorInputStream(owner.stream)) {
                 @Override
                 public String toDisplayString() {
-                    return "io:bzip2-input-stream#" + owner.toDisplayString();
+                    return "io:bzip2-istream#" + owner.toDisplayString();
                 }
 
                 @Override
                 public Atom specialField(Object key) {
-                    throw new RuntimeException("io:bzip2-input-stream: unknown special field: " + key);
+                    throw new RuntimeException("io:bzip2-istream: unknown special field: " + key);
                 }
             });
         } catch (IOException e) {
@@ -33,6 +33,6 @@ public class Bzip2InputStream extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "io:bzip2-input-stream";
+        return "io:bzip2-istream";
     }
 }

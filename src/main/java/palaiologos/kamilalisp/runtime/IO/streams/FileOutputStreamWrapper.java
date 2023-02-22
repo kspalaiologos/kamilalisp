@@ -20,7 +20,7 @@ public class FileOutputStreamWrapper extends PrimitiveFunction implements Lambda
             return new Atom(new StreamWrapper.OutputStreamUserdata(fos) {
                 @Override
                 public String toDisplayString() {
-                    return "io:file-output-stream {path: " + name + "}";
+                    return "io:file-ostream {path: " + name + "}";
                 }
 
                 @Override
@@ -35,6 +35,6 @@ public class FileOutputStreamWrapper extends PrimitiveFunction implements Lambda
 
     @Override
     protected String name() {
-        return "io:file-output-stream";
+        return "io:file-ostream";
     }
 }
