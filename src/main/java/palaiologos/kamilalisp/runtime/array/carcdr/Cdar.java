@@ -10,7 +10,7 @@ import java.util.List;
 public class Cdar extends PrimitiveFunction implements Lambda {
     @Override
     public String name() {
-        return "caar";
+        return "cdar";
     }
 
     @Override
