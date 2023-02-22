@@ -62,14 +62,7 @@ public class StreamWrapper {
                             yield Atom.FALSE;
                         }
                     }
-                    case "close" -> {
-                        try {
-                            stream.close();
-                            yield Atom.TRUE;
-                        } catch (IOException e) {
-                            yield Atom.FALSE;
-                        }
-                    }
+                    case "close" -> new Atom(new InputStreamClose());
                     case "transfer-to" ->
                         new Atom(new InputStreamTransferTo());
                     case "pipe-to" ->
@@ -109,6 +102,21 @@ public class StreamWrapper {
         public abstract String toDisplayString();
 
         public abstract Atom specialField(Object key);
+
+        private class InputStreamClose extends PrimitiveFunction implements SpecialForm, ReactiveFunction {
+            @Override
+            public Atom apply(Environment env, List<Atom> args) {
+                try {
+                    stream.close();
+                } catch (IOException e) { }
+                return Atom.NULL;
+            }
+
+            @Override
+            protected String name() {
+                return "io:input-stream:close";
+            }
+        }
 
         private class InputStreamTransferTo extends PrimitiveFunction implements Lambda {
             @Override
@@ -234,22 +242,8 @@ public class StreamWrapper {
             if (key instanceof String str) {
                 return switch (str) {
                     case "write" -> new Atom(new OutputStreamWrite());
-                    case "close" -> {
-                        try {
-                            stream.close();
-                            yield Atom.TRUE;
-                        } catch (IOException e) {
-                            yield Atom.FALSE;
-                        }
-                    }
-                    case "flush" -> {
-                        try {
-                            stream.flush();
-                            yield Atom.TRUE;
-                        } catch (IOException e) {
-                            yield Atom.FALSE;
-                        }
-                    }
+                    case "close" -> new Atom(new OutputStreamClose());
+                    case "flush" -> new Atom(new OutputStreamFlush());
                     default -> specialField(key);
                 };
             } else {
@@ -306,6 +300,40 @@ public class StreamWrapper {
             @Override
             protected String name() {
                 return "io:output-stream:write";
+            }
+        }
+
+        private class OutputStreamFlush extends PrimitiveFunction implements SpecialForm, ReactiveFunction {
+            @Override
+            public Atom apply(Environment env, List<Atom> args) {
+                try {
+                    stream.flush();
+                    return Atom.NULL;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            protected String name() {
+                return "io:output-stream:flush";
+            }
+        }
+
+        private class OutputStreamClose extends PrimitiveFunction implements SpecialForm, ReactiveFunction {
+            @Override
+            public Atom apply(Environment env, List<Atom> args) {
+                try {
+                    stream.close();
+                    return Atom.NULL;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            protected String name() {
+                return "io:output-stream:close";
             }
         }
     }

@@ -5,6 +5,7 @@ import palaiologos.kamilalisp.runtime.IO.streams.StreamWrapper;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -62,14 +63,8 @@ public class Process extends PrimitiveFunction implements Lambda {
                 case "pid" -> new Atom(BigInteger.valueOf(process.pid()));
                 case "is-alive?" -> process.isAlive() ? Atom.TRUE : Atom.FALSE;
                 case "exit-value" -> new Atom(BigInteger.valueOf(process.exitValue()));
-                case "kill" -> {
-                    process.destroy();
-                    yield Atom.NULL;
-                }
-                case "force-kill" -> {
-                    process.destroyForcibly();
-                    yield Atom.NULL;
-                }
+                case "kill" -> new Atom(new Kill());
+                case "force-kill" -> new Atom(new ForceKill());
                 case "stdout" -> stdout;
                 case "stdin" -> stdin;
                 case "stderr" -> stderr;
@@ -110,6 +105,32 @@ public class Process extends PrimitiveFunction implements Lambda {
         @Override
         public boolean coerceBoolean() {
             return process.isAlive();
+        }
+
+        private class ForceKill extends PrimitiveFunction implements SpecialForm, ReactiveFunction {
+            @Override
+            public Atom apply(Environment env, List<Atom> args) {
+                process.destroyForcibly();
+                return Atom.NULL;
+            }
+
+            @Override
+            protected String name() {
+                return "sh:process.force-kill";
+            }
+        }
+
+        private class Kill extends PrimitiveFunction implements SpecialForm, ReactiveFunction {
+            @Override
+            public Atom apply(Environment env, List<Atom> args) {
+                process.destroy();
+                return Atom.NULL;
+            }
+
+            @Override
+            protected String name() {
+                return "sh:process.kill";
+            }
         }
     }
 
