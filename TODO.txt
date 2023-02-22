@@ -9,7 +9,7 @@
 - unit testing
 - bzip3 (needs java porting).
 - GUI features.
-- input & output stream management.
+- auto-generate the rest of SHA digest I/O streams.
 - further IDE extensions/testing.
 - document new features.
 - cas: solve systems of equations, solve DEs,
