@@ -11,7 +11,7 @@ import java.util.List;
 
 public class StreamWrapper {
     public abstract static class InputStreamUserdata implements Userdata {
-        private final InputStream stream;
+        public final InputStream stream;
 
         private class InputStreamSkip extends PrimitiveFunction implements Lambda {
             @Override
@@ -174,7 +174,7 @@ public class StreamWrapper {
     }
 
     public abstract static class OutputStreamUserdata implements Userdata {
-        private final OutputStream stream;
+        public final OutputStream stream;
 
         private class OutputStreamWrite extends PrimitiveFunction implements Lambda {
             @Override

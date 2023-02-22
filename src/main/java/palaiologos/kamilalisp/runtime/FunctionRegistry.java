@@ -3,10 +3,7 @@ package palaiologos.kamilalisp.runtime;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.runtime.IO.*;
-import palaiologos.kamilalisp.runtime.IO.streams.FileInputStreamWrapper;
-import palaiologos.kamilalisp.runtime.IO.streams.FileOutputStreamWrapper;
-import palaiologos.kamilalisp.runtime.IO.streams.InputStreamOf;
-import palaiologos.kamilalisp.runtime.IO.streams.OutputStreamOf;
+import palaiologos.kamilalisp.runtime.IO.streams.*;
 import palaiologos.kamilalisp.runtime.array.*;
 import palaiologos.kamilalisp.runtime.array.carcdr.*;
 import palaiologos.kamilalisp.runtime.array.hof.*;
@@ -182,6 +179,10 @@ public class FunctionRegistry {
         env.setPrimitive("io:get-file-buffer", "⍫⎕⊢", new Atom(new GetFileBuffer()));
         env.setPrimitive("io:file-input-stream", new Atom(new FileInputStreamWrapper()));
         env.setPrimitive("io:file-output-stream", new Atom(new FileOutputStreamWrapper()));
+        env.setPrimitive("io:histogram-input-stream", new Atom(new HistogramInputStream()));
+        env.setPrimitive("io:histogram-output-stream", new Atom(new HistogramOutputStream()));
+        env.setPrimitive("io:byte-buffer-input-stream", new Atom(new ByteBufferInputStream()));
+        env.setPrimitive("io:byte-buffer-output-stream", new Atom(new ByteBufferOutputStream()));
         env.setPrimitive("io:input-stream-of", new Atom(new InputStreamOf()));
         env.setPrimitive("io:output-stream-of", new Atom(new OutputStreamOf()));
 
