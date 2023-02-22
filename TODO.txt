@@ -9,6 +9,9 @@
 - unit testing
 - bzip3 (needs java porting).
 - GUI features.
+- input & output stream management.
+- further IDE extensions/testing.
+- document new features.
 - cas: solve systems of equations, solve DEs,
   compute eigenvalues, eigenvectors, solve systems of equations,
   discrete sums.
