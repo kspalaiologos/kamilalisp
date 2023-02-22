@@ -14,5 +14,10 @@ public class SysArch {
         env.setPrimitive("sh:os-name", new Atom(bean.getName()));
         env.setPrimitive("sh:os-arch", new Atom(bean.getArch()));
         env.setPrimitive("sh:os-version", new Atom(bean.getVersion()));
+
+        String javaHome = System.getProperty("java.home");
+        String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
+        env.setPrimitive("sh:java-bin", new Atom(javaBin));
+        env.setPrimitive("sh:java-home", new Atom(javaHome));
     }
 }

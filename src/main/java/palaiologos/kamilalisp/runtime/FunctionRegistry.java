@@ -40,6 +40,7 @@ import palaiologos.kamilalisp.runtime.regex.RegexMatches;
 import palaiologos.kamilalisp.runtime.regex.RegexReplace;
 import palaiologos.kamilalisp.runtime.regex.RegexSplit;
 import palaiologos.kamilalisp.runtime.sh.*;
+import palaiologos.kamilalisp.runtime.sh.Process;
 import palaiologos.kamilalisp.runtime.string.*;
 
 import java.math.BigDecimal;
@@ -376,6 +377,7 @@ public class FunctionRegistry {
         env.setPrimitive("sh:mv", new Atom(new Mv()));
         env.setPrimitive("sh:access", new Atom(new Access()));
         env.setPrimitive("sh:absolute", new Atom(new Absolute()));
+        env.setPrimitive("sh:process", new Atom(new Process()));
         SysArch.registerProperties(env);
 
         env.setPrimitive("date:from", new Atom(new DateTimeFrom()));
