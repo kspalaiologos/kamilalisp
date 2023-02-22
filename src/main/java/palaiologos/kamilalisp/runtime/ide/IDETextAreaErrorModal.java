@@ -6,7 +6,7 @@ import javax.swing.event.InternalFrameEvent;
 import java.awt.*;
 
 public class IDETextAreaErrorModal extends IDEModal {
-    private JButton confirmButton;
+    private final JButton confirmButton;
 
     public IDETextAreaErrorModal(JDesktopPane parentComponent, String message, String text) {
         super(parentComponent);

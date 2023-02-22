@@ -8,46 +8,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record DateTime(LocalDateTime value) implements Userdata {
-    private static class AddOp extends PrimitiveFunction implements Lambda {
-        private final DateTime value;
-
-        public AddOp(DateTime value) {
-            this.value = value;
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if(args.size() == 0)
-                throw new TypeError("Expected 1 or more arguments to `datetime.add'");
-            return args.stream().reduce(new Atom(value), AbstractTime::add);
-        }
-
-        @Override
-        public String name() {
-            return "datetime.add";
-        }
-    }
-
-    private static class SubOp extends PrimitiveFunction implements Lambda {
-        private final DateTime value;
-
-        public SubOp(DateTime value) {
-            this.value = value;
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if(args.size() == 0)
-                throw new TypeError("Expected 1 or more arguments to `datetime.sub'");
-            return args.stream().reduce(new Atom(value), AbstractTime::sub);
-        }
-
-        @Override
-        public String name() {
-            return "datetime.sub";
-        }
-    }
-
     @Override
     public Atom field(Object key) {
         if (!(key instanceof String))
@@ -109,6 +69,46 @@ public record DateTime(LocalDateTime value) implements Userdata {
     @Override
     public boolean coerceBoolean() {
         return true;
+    }
+
+    private static class AddOp extends PrimitiveFunction implements Lambda {
+        private final DateTime value;
+
+        public AddOp(DateTime value) {
+            this.value = value;
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 0)
+                throw new TypeError("Expected 1 or more arguments to `datetime.add'");
+            return args.stream().reduce(new Atom(value), AbstractTime::add);
+        }
+
+        @Override
+        public String name() {
+            return "datetime.add";
+        }
+    }
+
+    private static class SubOp extends PrimitiveFunction implements Lambda {
+        private final DateTime value;
+
+        public SubOp(DateTime value) {
+            this.value = value;
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 0)
+                throw new TypeError("Expected 1 or more arguments to `datetime.sub'");
+            return args.stream().reduce(new Atom(value), AbstractTime::sub);
+        }
+
+        @Override
+        public String name() {
+            return "datetime.sub";
+        }
     }
 
 }

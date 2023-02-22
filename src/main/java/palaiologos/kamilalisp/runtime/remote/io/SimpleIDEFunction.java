@@ -16,7 +16,7 @@ import java.util.List;
 public abstract class SimpleIDEFunction extends PrimitiveFunction {
     public ObjectInputStream in;
     public ObjectOutputStream out;
-    private Socket socket;
+    private final Socket socket;
 
     public SimpleIDEFunction(ObjectInputStream in, ObjectOutputStream out, Socket socket) {
         this.in = in;
@@ -63,10 +63,10 @@ public abstract class SimpleIDEFunction extends PrimitiveFunction {
     Packet receivePacket() {
         try {
             Packet p = (Packet) in.readObject();
-            if(p instanceof IDEPacket) {
-                if(((IDEPacket) p).kind.equals("ide:err")) {
+            if (p instanceof IDEPacket) {
+                if (((IDEPacket) p).kind.equals("ide:err")) {
                     throw new RuntimeException((Throwable) ((IDEPacket) p).data.get(0));
-                } else if(((IDEPacket) p).kind.equals("ide:ok")) {
+                } else if (((IDEPacket) p).kind.equals("ide:ok")) {
                     return receivePacket();
                 }
             }
@@ -77,5 +77,6 @@ public abstract class SimpleIDEFunction extends PrimitiveFunction {
     }
 
     abstract public Atom apply(Environment env, List<Atom> args);
+
     abstract protected String name();
 }

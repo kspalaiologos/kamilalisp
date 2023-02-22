@@ -19,7 +19,7 @@ Useful links:
 
 ## Setup
 
-You need Java17 JDK installed to build KamilaLisp yourself. Alternatively, you could download a JAR file from the Github Actions artifacts tab.
+You need **Java17 JDK** (newer JDKs are unfortunately not supported by one of the build tools) installed to build KamilaLisp yourself. Alternatively, you could download a JAR file from the Github Actions artifacts tab.
 
 ```
 git clone https://github.com/kspalaiologos/kamilalisp

@@ -23,6 +23,22 @@ public class BufferAtomList {
         };
     }
 
+    public static List<Atom> from(long[] data) {
+        return new AbstractList<>() {
+            @Override
+            public Atom get(int index) {
+                if (index < 0 || index >= data.length)
+                    throw new IndexOutOfBoundsException();
+                return new Atom(BigInteger.valueOf(data[index]));
+            }
+
+            @Override
+            public int size() {
+                return data.length;
+            }
+        };
+    }
+
     public static List<Atom> from(byte[] data, int size) {
         return new AbstractList<>() {
             @Override
@@ -30,6 +46,22 @@ public class BufferAtomList {
                 if (index < 0 || index >= size)
                     throw new IndexOutOfBoundsException();
                 return new Atom(BigInteger.valueOf(data[index]));
+            }
+
+            @Override
+            public int size() {
+                return size;
+            }
+        };
+    }
+
+    public static List<Atom> from(byte[] data, int off, int size) {
+        return new AbstractList<>() {
+            @Override
+            public Atom get(int index) {
+                if (index < 0 || index >= size)
+                    throw new IndexOutOfBoundsException();
+                return new Atom(BigInteger.valueOf(data[off + index]));
             }
 
             @Override

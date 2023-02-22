@@ -19,7 +19,7 @@ public class AppendFile extends PrimitiveFunction implements Lambda {
     public Atom apply(Environment env, List<Atom> args) {
         assertArity(args, 2);
         String fileName = args.get(0).getString();
-        if(args.get(1).getType() == Type.STRING) {
+        if (args.get(1).getType() == Type.STRING) {
             String content = args.get(1).getString();
             try {
                 Files.writeString(new File(fileName).getAbsoluteFile().toPath(), content, StandardOpenOption.APPEND);

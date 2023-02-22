@@ -66,8 +66,7 @@ public class TarLoad extends PrimitiveFunction implements Lambda {
 
         @Override
         public boolean equals(Userdata other) {
-            if (other instanceof TarArchiveUserdata) {
-                TarArchiveUserdata otherTar = (TarArchiveUserdata) other;
+            if (other instanceof TarArchiveUserdata otherTar) {
                 return otherTar.archive.equals(archive);
             } else {
                 return false;

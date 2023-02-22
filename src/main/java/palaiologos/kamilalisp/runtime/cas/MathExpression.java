@@ -6,34 +6,11 @@ import palaiologos.kamilalisp.atom.*;
 import java.util.*;
 
 public class MathExpression implements Userdata {
-    private final Set<String> args;
-    private final Atom data;
-    private final Environment e;
-    private final String expressionCache;
-
-    public MathExpression(Environment e, Set<String> args, Atom data) {
-        this.args = args;
-        this.data = data;
-        this.e = e;
-
-        args.forEach(x -> {
-            if(allowedFunctions.contains(x))
-                throw new RuntimeException("Identifier " + x + " is not allowed as a variable, as it denotes a function already.");
-        });
-
-        expressionCache = stringifyExpression(data);
-    }
-
-    public Set<String> getArgs() {
-        return args;
-    }
-
     private static final Set<String> allowedFunctions = Set.of(
             "sin", "cos", "tan", "cot", "asin", "acos", "atan", "acot",
             "exp", "ln", "log2", "log10", "sqrt", "sec", "csc", "asec", "acsc",
             "dilog", "polylog"
     );
-
     private static final Map<String, Integer> expectedArities = Map.ofEntries(
             Map.entry("sin", 1),
             Map.entry("cos", 1),
@@ -55,44 +32,86 @@ public class MathExpression implements Userdata {
             Map.entry("dilog", 1),
             Map.entry("polylog", 2)
     );
-
     private static final Map<String, String> primitiveTranslations = Map.ofEntries(
             Map.entry("ln", "log")
     );
+    private final Set<String> args;
+    private final Atom data;
+    private final Environment e;
+    private final String expressionCache;
+
+    public MathExpression(Environment e, Set<String> args, Atom data) {
+        this.args = args;
+        this.data = data;
+        this.e = e;
+
+        args.forEach(x -> {
+            if (allowedFunctions.contains(x))
+                throw new RuntimeException("Identifier " + x + " is not allowed as a variable, as it denotes a function already.");
+        });
+
+        expressionCache = stringifyExpression(data);
+    }
+
+    public static MathExpression constantExpression(Environment env, Atom a) {
+        if (a.getType() == Type.USERDATA && a.isUserdata(MathExpression.class))
+            return a.getUserdata(MathExpression.class);
+        return new MathExpression(env, Set.of(), a);
+    }
+
+    public static void unknownsFrom(Atom expr, Set<String> dest) {
+        if (expr.getType() == Type.USERDATA && expr.isUserdata(MathExpression.class)) {
+            MathExpression me = expr.getUserdata(MathExpression.class);
+            dest.addAll(me.args);
+        } else if (expr.getType() == Type.LIST) {
+            if (expr.getList().isEmpty())
+                throw new RuntimeException("Invalid expression: " + expr);
+            for (Atom a : expr.getList().subList(1, expr.getList().size()))
+                unknownsFrom(a, dest);
+        } else if (expr.getType() == Type.IDENTIFIER) {
+            dest.add(expr.getIdentifier());
+        } else if (!expr.isNumeric()) {
+            throw new RuntimeException("Invalid expression: " + expr);
+        }
+    }
+
+    public Set<String> getArgs() {
+        return args;
+    }
 
     private String stringifyExpression(Atom tree) {
-        if(tree.getType() == Type.IDENTIFIER) {
+        if (tree.getType() == Type.IDENTIFIER) {
             String id = tree.getIdentifier();
-            if(id.startsWith("`")) {
-                if(!e.has(id.substring(1)))
+            if (id.startsWith("`")) {
+                if (!e.has(id.substring(1)))
                     throw new RuntimeException("Unknown identifier: " + id.substring(1));
                 return "(" + stringifyExpression(e.get(id.substring(1))) + ")";
-            } else if(id.equals("pi")) {
+            } else if (id.equals("pi")) {
                 return "%pi";
-            } else if(id.equals("e")) {
+            } else if (id.equals("e")) {
                 return "exp(1)";
-            } else if(id.equals("oo")) {
+            } else if (id.equals("oo")) {
                 return "%plusInfinity";
-            } else if(id.equals("-oo")) {
+            } else if (id.equals("-oo")) {
                 return "%minusInfinity";
             } else {
-                if(!id.matches("[a-zA-Z]+"))
+                if (!id.matches("[a-zA-Z]+"))
                     throw new RuntimeException("Invalid identifier: " + id);
-                if(!args.contains(id))
+                if (!args.contains(id))
                     throw new RuntimeException("Unbound identifier: " + id);
                 return id;
             }
-        } else if(tree.getType() == Type.REAL) {
+        } else if (tree.getType() == Type.REAL) {
             return tree.getReal().toString();
         } else if (tree.getType() == Type.INTEGER) {
             return tree.getInteger().toString();
-        } else if(tree.getType() == Type.COMPLEX) {
+        } else if (tree.getType() == Type.COMPLEX) {
             String re = tree.getComplex().re.toString();
             String im = tree.getComplex().im.toString();
             return re + "+(" + im + "*%i)";
-        } else if(tree.getType() == Type.LIST) {
+        } else if (tree.getType() == Type.LIST) {
             Atom head = tree.getList().get(0);
-            if(head.getType() != Type.IDENTIFIER) {
+            if (head.getType() != Type.IDENTIFIER) {
                 throw new RuntimeException("Invalid function call.");
             }
             String id = head.getIdentifier();
@@ -146,7 +165,9 @@ public class MathExpression implements Userdata {
                     else
                         throw new RuntimeException("Invalid arity for function: gamma");
                 }
-                case "o" -> { return "0"; }
+                case "o" -> {
+                    return "0";
+                }
                 case "gamma" -> {
                     if (tree.getList().size() == 2)
                         return "gamma(" + stringifyExpression(tree.getList().get(1)) + ")";
@@ -173,7 +194,7 @@ public class MathExpression implements Userdata {
     }
 
     public Atom force() {
-        if(!args.isEmpty())
+        if (!args.isEmpty())
             throw new IllegalArgumentException("The function is not constant.");
         return Evaluation.evaluate(e, data);
     }
@@ -184,9 +205,9 @@ public class MathExpression implements Userdata {
 
     @Override
     public Atom field(Object key) {
-        if(!(key instanceof String keyStr))
+        if (!(key instanceof String keyStr))
             throw new RuntimeException("Invalid key type: " + key.getClass().getName());
-        if(!args.contains(keyStr))
+        if (!args.contains(keyStr))
             throw new RuntimeException("Invalid argument: " + keyStr);
         return new Atom(new MathExpressionSubstitute(keyStr));
     }
@@ -203,31 +224,9 @@ public class MathExpression implements Userdata {
 
     @Override
     public boolean equals(Userdata other) {
-        if(!(other instanceof MathExpression otherExpr))
+        if (!(other instanceof MathExpression otherExpr))
             return false;
         return expressionCache.equals(otherExpr.expressionCache);
-    }
-
-    public static MathExpression constantExpression(Environment env, Atom a) {
-        if(a.getType() == Type.USERDATA && a.isUserdata(MathExpression.class))
-            return a.getUserdata(MathExpression.class);
-        return new MathExpression(env, Set.of(), a);
-    }
-
-    public static void unknownsFrom(Atom expr, Set<String> dest) {
-        if(expr.getType() == Type.USERDATA && expr.isUserdata(MathExpression.class)) {
-            MathExpression me = expr.getUserdata(MathExpression.class);
-            dest.addAll(me.args);
-        } else if(expr.getType() == Type.LIST) {
-            if(expr.getList().isEmpty())
-                throw new RuntimeException("Invalid expression: " + expr);
-            for(Atom a : expr.getList().subList(1, expr.getList().size()))
-                unknownsFrom(a, dest);
-        } else if(expr.getType() == Type.IDENTIFIER) {
-            dest.add(expr.getIdentifier());
-        } else if(!expr.isNumeric()) {
-            throw new RuntimeException("Invalid expression: " + expr);
-        }
     }
 
     @Override
@@ -251,7 +250,7 @@ public class MathExpression implements Userdata {
     }
 
     private class MathExpressionSubstitute extends PrimitiveFunction implements Lambda {
-        private String keyStr;
+        private final String keyStr;
 
         public MathExpressionSubstitute(String keyStr) {
             this.keyStr = keyStr;
@@ -270,14 +269,14 @@ public class MathExpression implements Userdata {
         }
 
         private Atom substituteRecursively(Atom data, Atom sub) {
-            if(data.getType() == Type.IDENTIFIER) {
-                if(data.getIdentifier().equals(keyStr))
+            if (data.getType() == Type.IDENTIFIER) {
+                if (data.getIdentifier().equals(keyStr))
                     return sub;
                 else
                     return data;
-            } else if(data.getType() == Type.LIST) {
+            } else if (data.getType() == Type.LIST) {
                 List<Atom> newList = new ArrayList<>();
-                for(Atom a : data.getList())
+                for (Atom a : data.getList())
                     newList.add(substituteRecursively(a, sub));
                 return new Atom(newList);
             } else {

@@ -621,8 +621,8 @@ public class SAIS {
     }
 
     private static class ByteArray implements BaseArray {
-        private byte[] m_A;
-        private int m_pos;
+        private final byte[] m_A;
+        private final int m_pos;
 
         ByteArray(byte[] A) {
             m_A = A;
@@ -643,8 +643,8 @@ public class SAIS {
     }
 
     private static class CharArray implements BaseArray {
-        private char[] m_A;
-        private int m_pos;
+        private final char[] m_A;
+        private final int m_pos;
 
         CharArray(char[] A) {
             m_A = A;
@@ -665,8 +665,8 @@ public class SAIS {
     }
 
     private static class ShortArray implements BaseArray {
-        private short[] m_A;
-        private int m_pos;
+        private final short[] m_A;
+        private final int m_pos;
 
         ShortArray(short[] A) {
             m_A = A;
@@ -687,8 +687,8 @@ public class SAIS {
     }
 
     private static class IntArray implements BaseArray {
-        private int[] m_A;
-        private int m_pos;
+        private final int[] m_A;
+        private final int m_pos;
 
         IntArray(int[] A, int pos) {
             m_A = A;
@@ -709,8 +709,8 @@ public class SAIS {
     }
 
     private static class StringArray implements BaseArray {
-        private String m_A;
-        private int m_pos;
+        private final String m_A;
+        private final int m_pos;
 
         StringArray(String A) {
             m_A = A;

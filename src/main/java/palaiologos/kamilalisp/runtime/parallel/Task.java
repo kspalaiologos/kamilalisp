@@ -75,7 +75,7 @@ public class Task extends PrimitiveFunction implements Lambda {
     private record TaskUserdata(Thread t, TaskThread task) implements Userdata {
         @Override
         public Atom field(Object key) {
-            if(!(key instanceof String))
+            if (!(key instanceof String))
                 throw new IllegalArgumentException("Key must be a string");
             switch ((String) key) {
                 case "alive" -> {

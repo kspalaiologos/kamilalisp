@@ -164,6 +164,18 @@ public class Flt64Spence {
             2.240041814626069927477E-20,
             4.784036597230791011855E-25,
     };
+    public static final Flt64Base.Flt64Function fPolylogarithm = new Flt64Base.Flt64Function() {
+        @Override
+        protected String name() {
+            return "flt64:polylog";
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            return Flt64Base.toAtom(polylog(args.get(0).getInteger().intValueExact(), Flt64Base.toFlt64(args.get(1))));
+        }
+    };
 
     private static double polevl(double x, double[] p, int N) {
         int i = N, dx = 0;
@@ -490,17 +502,4 @@ public class Flt64Spence {
         }
         return s;
     }
-
-    public static final Flt64Base.Flt64Function fPolylogarithm = new Flt64Base.Flt64Function() {
-        @Override
-        protected String name() {
-            return "flt64:polylog";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            assertArity(args, 2);
-            return Flt64Base.toAtom(polylog(args.get(0).getInteger().intValueExact(), Flt64Base.toFlt64(args.get(1))));
-        }
-    };
 }

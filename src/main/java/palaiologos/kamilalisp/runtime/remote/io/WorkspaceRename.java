@@ -18,11 +18,11 @@ public class WorkspaceRename extends IDEFunction implements Lambda {
     @Override
     public Atom fapply(Environment env, List<Atom> args) {
         assertArity(args, 2);
-        if(args.get(0).getType() == Type.INTEGER) {
+        if (args.get(0).getType() == Type.INTEGER) {
             int idx = args.get(0).getInteger().intValueExact();
             String newName = args.get(1).getString();
             sendPacket(List.of(idx, newName));
-        } else if(args.get(0).getType() == Type.STRING) {
+        } else if (args.get(0).getType() == Type.STRING) {
             String oldName = args.get(0).getString();
             String newName = args.get(1).getString();
             sendPacket(List.of(oldName, newName));

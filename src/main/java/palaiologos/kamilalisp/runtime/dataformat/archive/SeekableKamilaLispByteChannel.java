@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SeekableKamilaLispByteChannel implements SeekableByteChannel {
     private static final int NAIVE_RESIZE_LIMIT = 1073741823;
     private final AtomicBoolean closed;
-    private List<Atom> data;
+    private final List<Atom> data;
     private int position;
     private int size;
 
@@ -23,7 +23,7 @@ public class SeekableKamilaLispByteChannel implements SeekableByteChannel {
     }
 
     public long position() {
-        return (long) this.position;
+        return this.position;
     }
 
     public SeekableByteChannel position(long newPosition) throws IOException {
@@ -37,7 +37,7 @@ public class SeekableKamilaLispByteChannel implements SeekableByteChannel {
     }
 
     public long size() {
-        return (long) this.size;
+        return this.size;
     }
 
     public SeekableByteChannel truncate(long newSize) {

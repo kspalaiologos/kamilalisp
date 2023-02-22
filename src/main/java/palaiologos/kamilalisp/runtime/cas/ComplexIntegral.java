@@ -14,19 +14,19 @@ import java.util.List;
 public class ComplexIntegral extends Integral {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if(args.size() == 2 || args.size() == 3) {
+        if (args.size() == 2 || args.size() == 3) {
             MathExpression expr = Evaluation.evaluate(env, args.get(0)).getUserdata(MathExpression.class);
             Atom var = args.get(1);
             HashPMap<Atom, Atom> options = env.has("cas-options") ? env.get("cas-options").getUserdata(HashMapUserData.class).value() : HashTreePMap.from(new HashMap<Atom, Atom>());
             var.assertTypes(Type.IDENTIFIER);
             String differential = var.getIdentifier().substring(1);
-            if(!differential.matches("[a-zA-Z]+") || differential.isEmpty())
+            if (!differential.matches("[a-zA-Z]+") || differential.isEmpty())
                 throw new RuntimeException("Invalid differential.");
             String instruction = "complexIntegrate(" + expr.getExpression() + ", " + differential + ")\n";
             EvaluationResult r = (EvaluationResult) FriCAS.withFriCas(x -> {
                 x.apply(")clear all\n");
                 x.apply(")set output algebra off\n");
-                if(options.getOrDefault(tex, Atom.FALSE).equals(Atom.TRUE)) {
+                if (options.getOrDefault(tex, Atom.FALSE).equals(Atom.TRUE)) {
                     x.apply(")set output fortran off\n");
                     x.apply(")set output tex on\n");
                 } else {
@@ -36,27 +36,28 @@ public class ComplexIntegral extends Integral {
                 x.apply("digits(" + env.get("fr") + ")\n");
                 return x.apply(instruction);
             });
-            if(r.isSuccessful()) {
-                if(options.getOrDefault(tex, Atom.FALSE).equals(Atom.TRUE)) {
+            if (r.isSuccessful()) {
+                if (options.getOrDefault(tex, Atom.FALSE).equals(Atom.TRUE)) {
                     return new Atom(r.getResult());
                 }
                 HashPMap<Atom, Atom> a;
                 try {
                     a = FortranParser.parse(r.getResult()).getUserdata(HashMapUserData.class).value();
                 } catch (Exception e) {
-                    if(StackFrame.isDebug())
+                    if (StackFrame.isDebug())
                         throw new RuntimeException("Failed to evaluate integral (parse), command=" + instruction + ", result=" + r.getResult() + ", why=" + e.getMessage());
                     throw new RuntimeException("Failed to evaluate integral.");
                 }
-                if(a.size() == 0) {
+                if (a.size() == 0) {
                     // No solution.
                     return Atom.NULL;
-                } if(a.size() == 1) {
+                }
+                if (a.size() == 1) {
                     // One solution.
                     Atom solution = a.entrySet().stream().findFirst().get().getValue();
-                    if(solution.getType() == Type.STRING) {
+                    if (solution.getType() == Type.STRING) {
                         String s = solution.getString();
-                        if(s.equals("failed")) {
+                        if (s.equals("failed")) {
                             throw new RuntimeException("Failed to evaluate integral.");
                         } else {
                             throw new RuntimeException("Unknown error in evaluating the integral: " + s);
@@ -69,7 +70,7 @@ public class ComplexIntegral extends Integral {
                     return processSolution(env, expr, differential, a);
                 }
             } else {
-                if(StackFrame.isDebug())
+                if (StackFrame.isDebug())
                     throw new RuntimeException("Failed to evaluate integral, command=" + instruction + ", result=" + r.getResult());
                 throw new RuntimeException("Failed to evaluate integral.");
             }

@@ -18,6 +18,7 @@ public class RSTAFactory {
         area.setCaretColor(Color.decode("#D5D5D5"));
         area.setForeground(Color.decode("#E6E6E6"));
         SyntaxScheme scheme = area.getSyntaxScheme();
+        scheme.restoreDefaults(IDE.aplFont, false);
         scheme.getStyle(Token.COMMENT_EOL).foreground = Color.decode("#676B79");
         scheme.getStyle(Token.LITERAL_NUMBER_DECIMAL_INT).foreground = Color.decode("#FFB86C");
         scheme.getStyle(Token.LITERAL_NUMBER_FLOAT).foreground = Color.decode("#FFB86C");
