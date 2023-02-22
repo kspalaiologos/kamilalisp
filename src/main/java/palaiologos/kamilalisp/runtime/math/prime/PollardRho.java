@@ -6,9 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 class PollardRho {
-    private static final BigInteger ZERO = new BigInteger("0");
-    private static final BigInteger ONE = new BigInteger("1");
-    private static final BigInteger TWO = new BigInteger("2");
     private static final SecureRandom random = new SecureRandom();
     private List<BigInteger> factors = new ArrayList<>();
 
@@ -18,20 +15,20 @@ class PollardRho {
         BigInteger x = new BigInteger(N.bitLength(), random);
         BigInteger xx = x;
 
-        if (N.mod(TWO).compareTo(ZERO) == 0) return TWO;
+        if (N.mod(BigInteger.TWO).compareTo(BigInteger.ZERO) == 0) return BigInteger.TWO;
 
         do {
             x = x.multiply(x).mod(N).add(c).mod(N);
             xx = xx.multiply(xx).mod(N).add(c).mod(N);
             xx = xx.multiply(xx).mod(N).add(c).mod(N);
             divisor = x.subtract(xx).gcd(N);
-        } while ((divisor.compareTo(ONE)) == 0);
+        } while ((divisor.compareTo(BigInteger.ONE)) == 0);
 
         return divisor;
     }
 
     public void factor(BigInteger N) {
-        if (N.compareTo(ONE) == 0) return;
+        if (N.compareTo(BigInteger.ONE) == 0) return;
         if (N.isProbablePrime(100)) {
             factors.add(N);
             return;
