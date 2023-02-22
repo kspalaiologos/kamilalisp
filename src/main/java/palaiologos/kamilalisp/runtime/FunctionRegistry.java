@@ -199,7 +199,15 @@ public class FunctionRegistry {
         env.setPrimitive("io:null-output-stream", new Atom(new NullOutputStream()));
         env.setPrimitive("io:md5-input-stream", new Atom(new Md5DigestIOStreams.Input()));
         env.setPrimitive("io:md5-output-stream", new Atom(new Md5DigestIOStreams.Output()));
-
+        env.setPrimitive("io:md2-input-stream", new Atom(new Md2DigestIOStreams.Input()));
+        env.setPrimitive("io:md2-output-stream", new Atom(new Md2DigestIOStreams.Output()));
+        env.setPrimitive("io:adler32-input-stream", new Atom(new Adler32DigestIOStreams.Input()));
+        env.setPrimitive("io:adler32-output-stream", new Atom(new Adler32DigestIOStreams.Output()));
+        env.setPrimitive("io:crc32-output-stream", new Atom(new CRC32DigestIOStreams.Output()));
+        env.setPrimitive("io:crc32-input-stream", new Atom(new CRC32DigestIOStreams.Input()));
+        env.setPrimitive("io:crc32c-output-stream", new Atom(new CRC32CDigestIOStreams.Output()));
+        env.setPrimitive("io:crc32c-input-stream", new Atom(new CRC32CDigestIOStreams.Input()));
+        
         env.setPrimitive("digest:md2", new Atom(new Md2Digest()));
         env.setPrimitive("digest:md5", new Atom(new Md5Digest()));
         env.setPrimitive("digest:sha1", new Atom(new Sha1Digest()));
