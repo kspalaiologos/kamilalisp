@@ -12,10 +12,46 @@ public class Process extends PrimitiveFunction implements Lambda {
     private static class ProcessUserdata implements Userdata {
         private final java.lang.Process process;
         private final String processName;
+        private final Atom stdout;
+        private final Atom stdin;
+        private final Atom stderr;
 
         private ProcessUserdata(String name, java.lang.Process process) {
             this.process = process;
             this.processName = name;
+            this.stdout = new Atom(new StreamWrapper.InputStreamUserdata(new BufferedInputStream(process.getInputStream())) {
+                @Override
+                public String toDisplayString() {
+                    return ProcessUserdata.this.toDisplayString() + ".stdin";
+                }
+
+                @Override
+                public Atom specialField(Object key) {
+                    throw new UnsupportedOperationException("sh:process.stdin does not support special fields");
+                }
+            });
+            this.stdin = new Atom(new StreamWrapper.OutputStreamUserdata(new BufferedOutputStream(process.getOutputStream())) {
+                @Override
+                public String toDisplayString() {
+                    return ProcessUserdata.this.toDisplayString() + ".stdout";
+                }
+
+                @Override
+                public Atom specialField(Object key) {
+                    throw new UnsupportedOperationException("sh:process.stdout does not support special fields");
+                }
+            });
+            this.stderr = new Atom(new StreamWrapper.InputStreamUserdata(new BufferedInputStream(process.getErrorStream())) {
+                @Override
+                public String toDisplayString() {
+                    return ProcessUserdata.this.toDisplayString() + ".stderr";
+                }
+
+                @Override
+                public Atom specialField(Object key) {
+                    throw new UnsupportedOperationException("sh:process.stderr does not support special fields");
+                }
+            });
         }
 
         @Override
@@ -34,42 +70,9 @@ public class Process extends PrimitiveFunction implements Lambda {
                     process.destroyForcibly();
                     yield Atom.NULL;
                 }
-                case "stdout" ->
-                    new Atom(new StreamWrapper.InputStreamUserdata(new BufferedInputStream(process.getInputStream())) {
-                        @Override
-                        public String toDisplayString() {
-                            return ProcessUserdata.this.toDisplayString() + ".stdin";
-                        }
-
-                        @Override
-                        public Atom specialField(Object key) {
-                            throw new UnsupportedOperationException("sh:process.stdin does not support special fields");
-                        }
-                    });
-                case "stdin" ->
-                    new Atom(new StreamWrapper.OutputStreamUserdata(new BufferedOutputStream(process.getOutputStream())) {
-                        @Override
-                        public String toDisplayString() {
-                            return ProcessUserdata.this.toDisplayString() + ".stdout";
-                        }
-
-                        @Override
-                        public Atom specialField(Object key) {
-                            throw new UnsupportedOperationException("sh:process.stdout does not support special fields");
-                        }
-                    });
-                case "stderr" ->
-                    new Atom(new StreamWrapper.InputStreamUserdata(new BufferedInputStream(process.getErrorStream())) {
-                        @Override
-                        public String toDisplayString() {
-                            return ProcessUserdata.this.toDisplayString() + ".stderr";
-                        }
-
-                        @Override
-                        public Atom specialField(Object key) {
-                            throw new UnsupportedOperationException("sh:process.stderr does not support special fields");
-                        }
-                    });
+                case "stdout" -> stdout;
+                case "stdin" -> stdin;
+                case "stderr" -> stderr;
                 default -> throw new IllegalArgumentException("sh:process does not have a field named " + key);
             };
         }
