@@ -5,6 +5,7 @@ import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.runtime.IO.*;
 import palaiologos.kamilalisp.runtime.IO.streams.FileInputStreamWrapper;
 import palaiologos.kamilalisp.runtime.IO.streams.FileOutputStreamWrapper;
+import palaiologos.kamilalisp.runtime.IO.streams.InputStreamOf;
 import palaiologos.kamilalisp.runtime.array.*;
 import palaiologos.kamilalisp.runtime.array.carcdr.*;
 import palaiologos.kamilalisp.runtime.array.hof.*;
@@ -180,6 +181,7 @@ public class FunctionRegistry {
         env.setPrimitive("io:get-file-buffer", "⍫⎕⊢", new Atom(new GetFileBuffer()));
         env.setPrimitive("io:file-input-stream", new Atom(new FileInputStreamWrapper()));
         env.setPrimitive("io:file-output-stream", new Atom(new FileOutputStreamWrapper()));
+        env.setPrimitive("io:input-stream-of", new Atom(new InputStreamOf()));
 
         env.setPrimitive("saca:sais", new Atom(new SacaSais()));
         env.setPrimitive("saca:bwt", new Atom(new SacaBwt()));
