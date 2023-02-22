@@ -3,6 +3,8 @@ package palaiologos.kamilalisp.runtime.sh;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.runtime.IO.streams.StreamWrapper;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -33,7 +35,7 @@ public class Process extends PrimitiveFunction implements Lambda {
                     yield Atom.NULL;
                 }
                 case "stdout" ->
-                    new Atom(new StreamWrapper.InputStreamUserdata(process.getInputStream()) {
+                    new Atom(new StreamWrapper.InputStreamUserdata(new BufferedInputStream(process.getInputStream())) {
                         @Override
                         public String toDisplayString() {
                             return ProcessUserdata.this.toDisplayString() + ".stdin";
@@ -45,7 +47,7 @@ public class Process extends PrimitiveFunction implements Lambda {
                         }
                     });
                 case "stdin" ->
-                    new Atom(new StreamWrapper.OutputStreamUserdata(process.getOutputStream()) {
+                    new Atom(new StreamWrapper.OutputStreamUserdata(new BufferedOutputStream(process.getOutputStream())) {
                         @Override
                         public String toDisplayString() {
                             return ProcessUserdata.this.toDisplayString() + ".stdout";
@@ -57,7 +59,7 @@ public class Process extends PrimitiveFunction implements Lambda {
                         }
                     });
                 case "stderr" ->
-                    new Atom(new StreamWrapper.InputStreamUserdata(process.getErrorStream()) {
+                    new Atom(new StreamWrapper.InputStreamUserdata(new BufferedInputStream(process.getErrorStream())) {
                         @Override
                         public String toDisplayString() {
                             return ProcessUserdata.this.toDisplayString() + ".stderr";
@@ -112,9 +114,8 @@ public class Process extends PrimitiveFunction implements Lambda {
     public Atom apply(Environment env, List<Atom> args) {
         if(args.isEmpty())
             throw new IllegalArgumentException("sh:process requires at least one argument");
-        ProcessBuilder builder = new ProcessBuilder(args.stream().map(Atom::getString).toList());
         try {
-            var process = builder.start();
+            var process = Runtime.getRuntime().exec(args.stream().map(Atom::getString).toArray(String[]::new));
             return new Atom(new ProcessUserdata(args.get(0).getString(), process));
         } catch (Exception e) {
             throw new RuntimeException(e);
