@@ -13,6 +13,7 @@ import palaiologos.kamilalisp.runtime.array.sais.SacaUnbwt;
 import palaiologos.kamilalisp.runtime.cas.*;
 import palaiologos.kamilalisp.runtime.dataformat.*;
 import palaiologos.kamilalisp.runtime.dataformat.archive.*;
+import palaiologos.kamilalisp.runtime.dataformat.digest.*;
 import palaiologos.kamilalisp.runtime.datetime.*;
 import palaiologos.kamilalisp.runtime.flt64.Flt64Base;
 import palaiologos.kamilalisp.runtime.hashmap.*;
@@ -196,6 +197,23 @@ public class FunctionRegistry {
         env.setPrimitive("io:tee-output-stream", new Atom(new TeeOutputStream()));
         env.setPrimitive("io:null-input-stream", new Atom(new NullInputStream()));
         env.setPrimitive("io:null-output-stream", new Atom(new NullOutputStream()));
+
+        env.setPrimitive("digest:md2", new Atom(new Md2Digest()));
+        env.setPrimitive("digest:md5", new Atom(new Md5Digest()));
+        env.setPrimitive("digest:sha1", new Atom(new Sha1Digest()));
+        env.setPrimitive("digest:sha256", new Atom(new Sha256Digest()));
+        env.setPrimitive("digest:sha384", new Atom(new Sha384Digest()));
+        env.setPrimitive("digest:sha512", new Atom(new Sha512Digest()));
+        env.setPrimitive("digest:xxh32", new Atom(new XXHash32Digest()));
+        env.setPrimitive("digest:crc32", new Atom(new CRC32Digest()));
+        env.setPrimitive("digest:crc32c", new Atom(new CRC32CDigest()));
+        env.setPrimitive("digest:adler32", new Atom(new Adler32Digest()));
+        env.setPrimitive("digest:sha3224", new Atom(new Sha3224Digest()));
+        env.setPrimitive("digest:sha3256", new Atom(new Sha3256Digest()));
+        env.setPrimitive("digest:sha3384", new Atom(new Sha3384Digest()));
+        env.setPrimitive("digest:sha3512", new Atom(new Sha3512Digest()));
+        env.setPrimitive("digest:sha512224", new Atom(new Sha512224Digest()));
+        env.setPrimitive("digest:sha512256", new Atom(new Sha512256Digest()));
 
         env.setPrimitive("saca:sais", new Atom(new SacaSais()));
         env.setPrimitive("saca:bwt", new Atom(new SacaBwt()));
