@@ -183,6 +183,14 @@ public class FunctionRegistry {
         env.setPrimitive("io:histogram-output-stream", new Atom(new HistogramOutputStream()));
         env.setPrimitive("io:byte-buffer-input-stream", new Atom(new ByteBufferInputStream()));
         env.setPrimitive("io:byte-buffer-output-stream", new Atom(new ByteBufferOutputStream()));
+        env.setPrimitive("io:gzip-input-stream", new Atom(new GzipInputStream()));
+        env.setPrimitive("io:gzip-output-stream", new Atom(new GzipOutputStream()));
+        env.setPrimitive("io:bzip2-input-stream", new Atom(new Bzip2InputStream()));
+        env.setPrimitive("io:bzip2-output-stream", new Atom(new Bzip2OutputStream()));
+        env.setPrimitive("io:lz4-input-stream", new Atom(new Lz4InputStream()));
+        env.setPrimitive("io:lz4-output-stream", new Atom(new Lz4OutputStream()));
+        env.setPrimitive("io:xz-input-stream", new Atom(new XzInputStream()));
+        env.setPrimitive("io:xz-output-stream", new Atom(new XzOutputStream()));
         env.setPrimitive("io:input-stream-of", new Atom(new InputStreamOf()));
         env.setPrimitive("io:output-stream-of", new Atom(new OutputStreamOf()));
 
