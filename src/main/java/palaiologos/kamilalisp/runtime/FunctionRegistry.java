@@ -193,6 +193,9 @@ public class FunctionRegistry {
         env.setPrimitive("io:xz-output-stream", new Atom(new XzOutputStream()));
         env.setPrimitive("io:input-stream-of", new Atom(new InputStreamOf()));
         env.setPrimitive("io:output-stream-of", new Atom(new OutputStreamOf()));
+        env.setPrimitive("io:tee-output-stream", new Atom(new TeeOutputStream()));
+        env.setPrimitive("io:null-input-stream", new Atom(new NullInputStream()));
+        env.setPrimitive("io:null-output-stream", new Atom(new NullOutputStream()));
 
         env.setPrimitive("saca:sais", new Atom(new SacaSais()));
         env.setPrimitive("saca:bwt", new Atom(new SacaBwt()));
