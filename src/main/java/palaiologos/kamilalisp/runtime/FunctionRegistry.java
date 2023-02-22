@@ -197,6 +197,8 @@ public class FunctionRegistry {
         env.setPrimitive("io:tee-output-stream", new Atom(new TeeOutputStream()));
         env.setPrimitive("io:null-input-stream", new Atom(new NullInputStream()));
         env.setPrimitive("io:null-output-stream", new Atom(new NullOutputStream()));
+        env.setPrimitive("io:md5-input-stream", new Atom(new Md5DigestIOStreams.Input()));
+        env.setPrimitive("io:md5-output-stream", new Atom(new Md5DigestIOStreams.Output()));
 
         env.setPrimitive("digest:md2", new Atom(new Md2Digest()));
         env.setPrimitive("digest:md5", new Atom(new Md5Digest()));
