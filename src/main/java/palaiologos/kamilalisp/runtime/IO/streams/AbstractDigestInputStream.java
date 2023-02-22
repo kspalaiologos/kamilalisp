@@ -11,6 +11,27 @@ import java.security.MessageDigest;
 import java.util.List;
 
 public abstract class AbstractDigestInputStream extends PrimitiveFunction implements Lambda {
+    private class DigestEnabled extends PrimitiveFunction implements Lambda {
+        private final DigestInputStream stream;
+
+        public DigestEnabled(DigestInputStream stream) {
+            this.stream = stream;
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 1);
+            boolean enabled = args.get(0).coerceBool();
+            stream.on(enabled);
+            return Atom.NULL;
+        }
+
+        @Override
+        protected String name() {
+            return AbstractDigestInputStream.this.name() + ".enabled";
+        }
+    }
+
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         assertArity(args, 1);
@@ -26,6 +47,8 @@ public abstract class AbstractDigestInputStream extends PrimitiveFunction implem
                 if(key.equals("digest")) {
                     byte[] digest = ((DigestInputStream) stream).getMessageDigest().digest();
                     return new Atom(Hex.encodeHexString(digest));
+                } else if(key.equals("enabled")) {
+                    return new Atom(new DigestEnabled((DigestInputStream) stream));
                 } else {
                     throw new RuntimeException(name() + ": unknown special field: " + key);
                 }
