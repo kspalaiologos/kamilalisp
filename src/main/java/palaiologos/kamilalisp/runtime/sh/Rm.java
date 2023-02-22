@@ -17,11 +17,11 @@ public class Rm extends ShellFunction {
         boolean recursive = flags.contains("r");
         boolean force = flags.contains("f");
         String path = args.get(0).getString();
-        if(!recursive) {
+        if (!recursive) {
             File file = new File(path).getAbsoluteFile();
-            if(!file.exists() && !force)
+            if (!file.exists() && !force)
                 throw new RuntimeException("File " + path + " does not exist");
-            if(!file.delete() && !force)
+            if (!file.delete() && !force)
                 throw new RuntimeException("Could not delete file " + path);
         } else {
             recursiveDelete(force, new File(path).getAbsoluteFile());
@@ -30,15 +30,15 @@ public class Rm extends ShellFunction {
     }
 
     private void recursiveDelete(boolean force, File absoluteFile) {
-        if(absoluteFile.isDirectory()) {
+        if (absoluteFile.isDirectory()) {
             File[] files = absoluteFile.listFiles();
-            if(files == null)
+            if (files == null)
                 throw new RuntimeException("Could not list files in " + absoluteFile.getAbsolutePath());
             for (File file : files) {
                 recursiveDelete(force, file);
             }
         }
-        if(!absoluteFile.delete() && !force)
+        if (!absoluteFile.delete() && !force)
             throw new RuntimeException("Could not delete file " + absoluteFile.getAbsolutePath());
     }
 }

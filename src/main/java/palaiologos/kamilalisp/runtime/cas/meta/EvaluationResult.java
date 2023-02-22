@@ -1,9 +1,9 @@
 package palaiologos.kamilalisp.runtime.cas.meta;
 
 public class EvaluationResult {
-    private boolean wasSuccessful;
-    private String result;
-    private String type;
+    private final boolean wasSuccessful;
+    private final String result;
+    private final String type;
 
     public EvaluationResult(boolean successful, String text, String type) {
         this.wasSuccessful = successful;

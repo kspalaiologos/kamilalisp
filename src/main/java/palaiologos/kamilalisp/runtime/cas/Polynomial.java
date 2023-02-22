@@ -22,14 +22,14 @@ public class Polynomial extends PrimitiveFunction implements Lambda {
     public Atom apply(Environment env, List<Atom> args) {
         assertArity(args, 1);
         List<Atom> coefficients = args.get(0).getList();
-        if(coefficients.isEmpty())
+        if (coefficients.isEmpty())
             throw new RuntimeException("Polynomial must have at least one coefficient.");
-        else if(coefficients.size() == 1)
+        else if (coefficients.size() == 1)
             return new Atom(List.of(coefficients.get(0)));
         Set<String> variables = new LinkedHashSet<>();
         variables.add("x");
         Atom result = coefficients.get(0);
-        for(int i = 1; i < coefficients.size(); i++) {
+        for (int i = 1; i < coefficients.size(); i++) {
             MathExpression.unknownsFrom(coefficients.get(i), variables);
             result = new Atom(List.of(plus, coefficients.get(i), new Atom(List.of(times, x, result))));
         }

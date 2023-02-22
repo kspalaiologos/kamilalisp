@@ -1,7 +1,5 @@
 package palaiologos.kamilalisp.runtime.ide;
 
-import palaiologos.kamilalisp.runtime.ide.terminal.TerminalPanel;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -25,16 +23,16 @@ public abstract class TilingWMComponent extends JPanel {
             Container grandparentContainer = parentSplitPane.getParent();
             JComponent left = (JComponent) parentSplitPane.getLeftComponent();
             JComponent right = (JComponent) parentSplitPane.getRightComponent();
-            if(grandparentContainer instanceof JSplitPane grandparentSplitPane) {
+            if (grandparentContainer instanceof JSplitPane grandparentSplitPane) {
                 // This was not the only window in the workspace.
                 if (grandparentSplitPane.getLeftComponent() == parentSplitPane) {
-                    if(TilingWMComponent.this == left) {
+                    if (TilingWMComponent.this == left) {
                         grandparentSplitPane.setLeftComponent(right);
                     } else {
                         grandparentSplitPane.setLeftComponent(left);
                     }
                 } else {
-                    if(TilingWMComponent.this == left) {
+                    if (TilingWMComponent.this == left) {
                         grandparentSplitPane.setRightComponent(right);
                     } else {
                         grandparentSplitPane.setRightComponent(left);
@@ -44,7 +42,7 @@ public abstract class TilingWMComponent extends JPanel {
                 // Remove the split pane.
                 grandparentContainer.remove(parentSplitPane);
                 // Add the other component.
-                if(TilingWMComponent.this == left) {
+                if (TilingWMComponent.this == left) {
                     grandparentContainer.add(right);
                 } else {
                     grandparentContainer.add(left);

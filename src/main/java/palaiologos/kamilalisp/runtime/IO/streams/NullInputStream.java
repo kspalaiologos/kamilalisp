@@ -6,7 +6,6 @@ import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 
 public class NullInputStream extends PrimitiveFunction implements Lambda {

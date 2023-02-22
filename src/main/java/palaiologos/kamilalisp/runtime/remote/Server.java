@@ -27,14 +27,14 @@ public class Server {
         RemotePacketRegistry.register(env, in, out, clientSocket);
         boolean skipPrompt = false;
         while (true) {
-            if(!skipPrompt) {
+            if (!skipPrompt) {
                 out.writeObject(new PromptPacket());
                 out.flush();
             } else {
                 skipPrompt = false;
             }
             Packet p = (Packet) in.readObject();
-            if(p instanceof StringPacket) {
+            if (p instanceof StringPacket) {
                 String code = ((StringPacket) p).data;
                 if (code == null)
                     break;
@@ -76,15 +76,15 @@ public class Server {
                 }
                 // count newlines in code
                 lineNumberOffset += code.chars().filter(c -> c == '\n').count();
-            } else if(p instanceof FixPacket fix) {
+            } else if (p instanceof FixPacket fix) {
                 Throwable err = null;
                 try {
                     Atom ast = Parser.parse(0, fix.content).get(0);
                     env.set(fix.name, Evaluation.evaluate(env, ast));
-                } catch(Throwable t) {
+                } catch (Throwable t) {
                     err = t;
                 }
-                if(err == null) {
+                if (err == null) {
                     out.writeObject(new IDEPacket("fix:ok", List.of()));
                     out.flush();
                 } else {

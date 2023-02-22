@@ -20,10 +20,10 @@ public abstract class IDEFunction extends SimpleIDEFunction {
         Atom result = fapply(env, args);
         try {
             Packet p = (Packet) in.readObject();
-            if(p instanceof IDEPacket) {
-                if(((IDEPacket) p).kind.equals("ide:err")) {
+            if (p instanceof IDEPacket) {
+                if (((IDEPacket) p).kind.equals("ide:err")) {
                     throw new RuntimeException((Throwable) ((IDEPacket) p).data.get(0));
-                } else if(((IDEPacket) p).kind.equals("ide:ok")) {
+                } else if (((IDEPacket) p).kind.equals("ide:ok")) {
                     return result;
                 }
             }
@@ -34,5 +34,6 @@ public abstract class IDEFunction extends SimpleIDEFunction {
     }
 
     abstract protected Atom fapply(Environment env, List<Atom> args);
+
     abstract protected String name();
 }

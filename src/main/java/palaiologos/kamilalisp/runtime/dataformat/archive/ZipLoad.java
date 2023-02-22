@@ -68,8 +68,7 @@ public class ZipLoad extends PrimitiveFunction implements Lambda {
 
         @Override
         public boolean equals(Userdata other) {
-            if (other instanceof ZipArchiveUserdata) {
-                ZipArchiveUserdata otherZip = (ZipArchiveUserdata) other;
+            if (other instanceof ZipArchiveUserdata otherZip) {
                 return otherZip.archive.equals(archive);
             } else {
                 return false;

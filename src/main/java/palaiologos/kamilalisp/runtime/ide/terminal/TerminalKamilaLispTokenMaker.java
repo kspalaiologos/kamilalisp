@@ -11,12 +11,12 @@ import palaiologos.kamilalisp.runtime.remote.RemotePacketRegistry;
 
 public class TerminalKamilaLispTokenMaker extends AntlrTokenMaker {
     public TerminalKamilaLispTokenMaker() {
-        super(new MultiLineTokenInfo(0, Token.LITERAL_STRING_DOUBLE_QUOTE,"\"","\""));
+        super(new MultiLineTokenInfo(0, Token.LITERAL_STRING_DOUBLE_QUOTE, "\"", "\""));
     }
 
     @Override
     protected Lexer createLexer(String text) {
-        return new GrammarLexer(CharStreams.fromString(text))  {
+        return new GrammarLexer(CharStreams.fromString(text)) {
             @Override
             public void skip() {
                 setChannel(HIDDEN);
@@ -32,7 +32,7 @@ public class TerminalKamilaLispTokenMaker extends AntlrTokenMaker {
             case GrammarLexer.COMPLEX -> Token.LITERAL_CHAR;
             case GrammarLexer.NIL -> Token.LITERAL_BOOLEAN;
             case GrammarLexer.NAME -> {
-                if(s.equals("true") || s.equals("false"))
+                if (s.equals("true") || s.equals("false"))
                     yield Token.LITERAL_BOOLEAN;
                 else if (Main.defaultRegistry.has(s) || RemotePacketRegistry.terminalKeys.contains(s)) {
                     if (s.contains(":"))

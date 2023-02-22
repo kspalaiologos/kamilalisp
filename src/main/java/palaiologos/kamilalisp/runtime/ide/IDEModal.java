@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class IDEModal extends JInternalFrame {
-    private JDesktopPane parentComponent;
+    private final JDesktopPane parentComponent;
 
     public IDEModal(JDesktopPane parentComponent) {
         this.parentComponent = parentComponent;
@@ -24,14 +24,15 @@ public class IDEModal extends JInternalFrame {
         int y = (parentSize.height - iFrameSize.height) / 2 + iFrameCoord.y;
         int ovrx = x + iFrameSize.width - rootSize.width;
         int ovry = y + iFrameSize.height - rootSize.height;
-        x = Math.max((ovrx > 0? x - ovrx: x), 0);
-        y = Math.max((ovry > 0? y - ovry: y), 0);
+        x = Math.max((ovrx > 0 ? x - ovrx : x), 0);
+        y = Math.max((ovry > 0 ? y - ovry : y), 0);
         setBounds(x, y, iFrameSize.width, iFrameSize.height);
         parentComponent.validate();
         setVisible(true);
         parentComponent.add(this, JLayeredPane.MODAL_LAYER);
         try {
             setSelected(true);
-        } catch (java.beans.PropertyVetoException ex) {}
+        } catch (java.beans.PropertyVetoException ex) {
+        }
     }
 }

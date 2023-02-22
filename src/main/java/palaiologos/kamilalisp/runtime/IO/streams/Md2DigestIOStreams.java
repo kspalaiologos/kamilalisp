@@ -11,7 +11,7 @@ public class Md2DigestIOStreams {
     public static class Output extends AbstractDigestOutputStream {
         @Override
         protected String name() {
-            return "io:" + CODEC +"-output-stream";
+            return "io:" + CODEC + "-output-stream";
         }
 
         @Override

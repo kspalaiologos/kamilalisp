@@ -14,11 +14,10 @@ public class Access extends ShellFunction {
     @Override
     protected Atom execute(String flags, List<Atom> args) {
         File f = new File(args.get(0).getString()).getAbsoluteFile();
-        StringBuilder sb = new StringBuilder();
-        sb.append(f.exists() ? "e" : "-");
-        sb.append(f.canRead() ? "r" : "-");
-        sb.append(f.canWrite() ? "w" : "-");
-        sb.append(f.canExecute() ? "x" : "-");
-        return new Atom(sb.toString());
+        String sb = (f.exists() ? "e" : "-") +
+                (f.canRead() ? "r" : "-") +
+                (f.canWrite() ? "w" : "-") +
+                (f.canExecute() ? "x" : "-");
+        return new Atom(sb);
     }
 }

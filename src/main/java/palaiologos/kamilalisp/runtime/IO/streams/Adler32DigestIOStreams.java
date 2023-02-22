@@ -1,7 +1,6 @@
 package palaiologos.kamilalisp.runtime.IO.streams;
 
 import com.google.common.primitives.Longs;
-import org.apache.commons.codec.digest.DigestUtils;
 
 import java.security.MessageDigest;
 import java.util.zip.Adler32;
@@ -12,7 +11,7 @@ public class Adler32DigestIOStreams {
     public static class Output extends AbstractDigestOutputStream {
         @Override
         protected String name() {
-            return "io:" + CODEC +"-output-stream";
+            return "io:" + CODEC + "-output-stream";
         }
 
         @Override

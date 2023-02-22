@@ -1,13 +1,11 @@
 package palaiologos.kamilalisp.runtime.IO.streams;
 
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.apache.commons.compress.compressors.lz4.BlockLZ4CompressorOutputStream;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
-import java.io.IOException;
 import java.util.List;
 
 public class Lz4OutputStream extends PrimitiveFunction implements Lambda {

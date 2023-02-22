@@ -1,9 +1,10 @@
 package palaiologos.kamilalisp.runtime.IO.streams;
 
-import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.atom.Atom;
+import palaiologos.kamilalisp.atom.Environment;
+import palaiologos.kamilalisp.atom.Lambda;
+import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class ByteBufferOutputStream extends PrimitiveFunction implements Lambda 
 
             @Override
             public Atom specialField(Object key) {
-                if(!(key instanceof String))
+                if (!(key instanceof String))
                     throw new RuntimeException("io:byte-buffer-output-stream: special field key must be a string");
                 if (key.equals("data")) {
                     return new Atom(data);

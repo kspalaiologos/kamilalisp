@@ -207,7 +207,7 @@ public class FunctionRegistry {
         env.setPrimitive("io:crc32-input-stream", new Atom(new CRC32DigestIOStreams.Input()));
         env.setPrimitive("io:crc32c-output-stream", new Atom(new CRC32CDigestIOStreams.Output()));
         env.setPrimitive("io:crc32c-input-stream", new Atom(new CRC32CDigestIOStreams.Input()));
-        
+
         env.setPrimitive("digest:md2", new Atom(new Md2Digest()));
         env.setPrimitive("digest:md5", new Atom(new Md5Digest()));
         env.setPrimitive("digest:sha1", new Atom(new Sha1Digest()));

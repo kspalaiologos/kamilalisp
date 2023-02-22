@@ -13,73 +13,6 @@ public class StreamWrapper {
     public abstract static class InputStreamUserdata implements Userdata {
         public final InputStream stream;
 
-        private class InputStreamSkip extends PrimitiveFunction implements Lambda {
-            @Override
-            public Atom apply(Environment env, List<Atom> args) {
-                try {
-                    return new Atom(BigInteger.valueOf(stream.skip(args.get(0).getInteger().longValue())));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            @Override
-            protected String name() {
-                return "io:input-stream:skip";
-            }
-        }
-
-        private class InputStreamRead extends PrimitiveFunction implements Lambda {
-            @Override
-            public Atom apply(Environment env, List<Atom> args) {
-                try {
-                    byte[] buffer = new byte[args.get(0).getInteger().intValue()];
-                    int read = stream.read(buffer);
-                    return new Atom(BufferAtomList.from(buffer, read));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            @Override
-            protected String name() {
-                return "io:input-stream:read";
-            }
-        }
-
-        private class InputStreamSkipN extends PrimitiveFunction implements Lambda {
-            @Override
-            public Atom apply(Environment env, List<Atom> args) {
-                try {
-                    stream.skipNBytes(args.get(0).getInteger().longValue());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                return Atom.NULL;
-            }
-
-            @Override
-            protected String name() {
-                return "io:input-stream:skip-n";
-            }
-        }
-
-        private class InputStreamReadN extends PrimitiveFunction implements Lambda {
-            @Override
-            public Atom apply(Environment env, List<Atom> args) {
-                try {
-                    return new Atom(BufferAtomList.from(stream.readNBytes(args.get(0).getInteger().intValue())));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            @Override
-            protected String name() {
-                return "io:input-stream:read-n";
-            }
-        }
-
         public InputStreamUserdata(InputStream stream) {
             this.stream = stream;
         }
@@ -95,7 +28,7 @@ public class StreamWrapper {
 
         @Override
         public Atom field(Object key) {
-            if(key instanceof String str) {
+            if (key instanceof String str) {
                 return switch (str) {
                     case "available" -> {
                         try {
@@ -163,35 +96,21 @@ public class StreamWrapper {
         public boolean coerceBoolean() {
             try {
                 return stream.available() > 0;
-            } catch(IOException e) {
+            } catch (IOException e) {
                 return false;
             }
         }
 
         @Override
         public abstract String toDisplayString();
+
         public abstract Atom specialField(Object key);
-    }
 
-    public abstract static class OutputStreamUserdata implements Userdata {
-        public final OutputStream stream;
-
-        private class OutputStreamWrite extends PrimitiveFunction implements Lambda {
+        private class InputStreamSkip extends PrimitiveFunction implements Lambda {
             @Override
             public Atom apply(Environment env, List<Atom> args) {
                 try {
-                    if(args.get(0).getType() == Type.LIST) {
-                        List<Atom> buffer = args.get(0).getList();
-                        byte[] bytes = new byte[buffer.size()];
-                        for (int i = 0; i < buffer.size(); i++)
-                            bytes[i] = buffer.get(i).getInteger().byteValue();
-                        stream.write(bytes);
-                    } else if(args.get(0).getType() == Type.INTEGER) {
-                        stream.write(args.get(0).getInteger().intValue());
-                    } else {
-                        throw new RuntimeException("io:output-stream:write: expected integer or list");
-                    }
-                    return Atom.NULL;
+                    return new Atom(BigInteger.valueOf(stream.skip(args.get(0).getInteger().longValue())));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -199,9 +118,64 @@ public class StreamWrapper {
 
             @Override
             protected String name() {
-                return "io:output-stream:write";
+                return "io:input-stream:skip";
             }
         }
+
+        private class InputStreamRead extends PrimitiveFunction implements Lambda {
+            @Override
+            public Atom apply(Environment env, List<Atom> args) {
+                try {
+                    byte[] buffer = new byte[args.get(0).getInteger().intValue()];
+                    int read = stream.read(buffer);
+                    return new Atom(BufferAtomList.from(buffer, read));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            protected String name() {
+                return "io:input-stream:read";
+            }
+        }
+
+        private class InputStreamSkipN extends PrimitiveFunction implements Lambda {
+            @Override
+            public Atom apply(Environment env, List<Atom> args) {
+                try {
+                    stream.skipNBytes(args.get(0).getInteger().longValue());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                return Atom.NULL;
+            }
+
+            @Override
+            protected String name() {
+                return "io:input-stream:skip-n";
+            }
+        }
+
+        private class InputStreamReadN extends PrimitiveFunction implements Lambda {
+            @Override
+            public Atom apply(Environment env, List<Atom> args) {
+                try {
+                    return new Atom(BufferAtomList.from(stream.readNBytes(args.get(0).getInteger().intValue())));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            protected String name() {
+                return "io:input-stream:read-n";
+            }
+        }
+    }
+
+    public abstract static class OutputStreamUserdata implements Userdata {
+        public final OutputStream stream;
 
         public OutputStreamUserdata(OutputStream stream) {
             this.stream = stream;
@@ -218,7 +192,7 @@ public class StreamWrapper {
 
         @Override
         public Atom field(Object key) {
-            if(key instanceof String str) {
+            if (key instanceof String str) {
                 return switch (str) {
                     case "write" -> new Atom(new OutputStreamWrite());
                     case "close" -> {
@@ -266,6 +240,34 @@ public class StreamWrapper {
 
         @Override
         public abstract String toDisplayString();
+
         public abstract Atom specialField(Object key);
+
+        private class OutputStreamWrite extends PrimitiveFunction implements Lambda {
+            @Override
+            public Atom apply(Environment env, List<Atom> args) {
+                try {
+                    if (args.get(0).getType() == Type.LIST) {
+                        List<Atom> buffer = args.get(0).getList();
+                        byte[] bytes = new byte[buffer.size()];
+                        for (int i = 0; i < buffer.size(); i++)
+                            bytes[i] = buffer.get(i).getInteger().byteValue();
+                        stream.write(bytes);
+                    } else if (args.get(0).getType() == Type.INTEGER) {
+                        stream.write(args.get(0).getInteger().intValue());
+                    } else {
+                        throw new RuntimeException("io:output-stream:write: expected integer or list");
+                    }
+                    return Atom.NULL;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            protected String name() {
+                return "io:output-stream:write";
+            }
+        }
     }
 }

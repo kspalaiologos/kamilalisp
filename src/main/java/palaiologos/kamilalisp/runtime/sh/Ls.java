@@ -28,15 +28,15 @@ public class Ls extends ShellFunction {
         boolean t = flags.contains("t"); // Print extra times (creation, access).
 
         List<File> files = new ArrayList<>();
-        if(args.size() == 0) {
+        if (args.size() == 0) {
             listFiles(files, ".");
-        } else if(args.size() == 1) {
+        } else if (args.size() == 1) {
             Atom arg = args.get(0);
-            if(arg.getType() == Type.STRING) {
+            if (arg.getType() == Type.STRING) {
                 listFiles(files, arg.getString());
-            } else if(arg.getType() == Type.LIST) {
+            } else if (arg.getType() == Type.LIST) {
                 for (Atom atom : arg.getList()) {
-                    if(atom.getType() != Type.STRING)
+                    if (atom.getType() != Type.STRING)
                         throw new TypeError("Invalid argument in sh:ls, unexpected " + atom.getType());
                     listFiles(files, atom.getString());
                 }
@@ -47,7 +47,7 @@ public class Ls extends ShellFunction {
 
         List<Atom> output = new ArrayList<>();
         File cwd = new File(".").getAbsoluteFile();
-        if(l) {
+        if (l) {
             for (File file : files) {
                 String name = file.getName();
                 long size = file.length();
@@ -65,20 +65,20 @@ public class Ls extends ShellFunction {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                if(file.isDirectory())
+                if (file.isDirectory())
                     name += "/";
-                if(h) {
+                if (h) {
                     String sizeStr;
-                    if(size < 1024)
+                    if (size < 1024)
                         sizeStr = size + "B";
-                    else if(size < 1024 * 1024)
+                    else if (size < 1024 * 1024)
                         sizeStr = size / 1024 + "K";
-                    else if(size < 1024 * 1024 * 1024)
+                    else if (size < 1024 * 1024 * 1024)
                         sizeStr = size / (1024 * 1024) + "M";
                     else
                         sizeStr = size / (1024 * 1024 * 1024) + "G";
                     List<Atom> properties;
-                    if(t) {
+                    if (t) {
                         properties = List.of(
                                 new Atom(name),
                                 new Atom(sizeStr),
@@ -98,7 +98,7 @@ public class Ls extends ShellFunction {
                     output.add(new Atom(properties));
                 } else {
                     List<Atom> properties;
-                    if(t) {
+                    if (t) {
                         properties = List.of(
                                 new Atom(name),
                                 new Atom(BigInteger.valueOf(size)),
@@ -129,11 +129,11 @@ public class Ls extends ShellFunction {
 
     private void listFiles(List<File> files, String s) {
         File file = new File(s);
-        if(!file.exists())
+        if (!file.exists())
             throw new RuntimeException("File " + s + " does not exist");
-        if(file.isDirectory()) {
+        if (file.isDirectory()) {
             File[] files1 = file.listFiles();
-            if(files1 == null)
+            if (files1 == null)
                 throw new RuntimeException("Cannot list files in " + s);
             files.addAll(Arrays.asList(files1));
         } else {

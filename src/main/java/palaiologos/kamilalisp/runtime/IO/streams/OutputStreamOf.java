@@ -4,8 +4,6 @@ import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.runtime.dataformat.BufferAtomList;
 import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.List;
@@ -20,7 +18,7 @@ public class OutputStreamOf extends PrimitiveFunction implements Lambda {
         Atom close = data.getOrDefault(new Atom("close"), Atom.NULL);
         Atom flush = data.getOrDefault(new Atom("flush"), Atom.NULL);
         Atom toString = data.getOrDefault(new Atom("to-string"), Atom.NULL);
-        if(write.equals(Atom.NULL))
+        if (write.equals(Atom.NULL))
             throw new RuntimeException("io:output-stream-of - write must be defined.");
         OutputStream os = new OutputStream() {
             @Override
@@ -40,13 +38,13 @@ public class OutputStreamOf extends PrimitiveFunction implements Lambda {
 
             @Override
             public void flush() {
-                if(!flush.equals(Atom.NULL))
+                if (!flush.equals(Atom.NULL))
                     Evaluation.evaluate(env, flush.getCallable(), List.of());
             }
 
             @Override
             public void close() {
-                if(!close.equals(Atom.NULL))
+                if (!close.equals(Atom.NULL))
                     Evaluation.evaluate(env, close.getCallable(), List.of());
             }
         };

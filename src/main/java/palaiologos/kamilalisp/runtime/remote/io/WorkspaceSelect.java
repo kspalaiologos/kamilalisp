@@ -18,9 +18,9 @@ public class WorkspaceSelect extends IDEFunction implements Lambda {
     @Override
     public Atom fapply(Environment env, List<Atom> args) {
         assertArity(args, 1);
-        if(args.get(0).getType() == Type.INTEGER)
+        if (args.get(0).getType() == Type.INTEGER)
             sendPacket(List.of(args.get(0).getInteger().intValueExact()));
-        else if(args.get(0).getType() == Type.STRING)
+        else if (args.get(0).getType() == Type.STRING)
             sendPacket(List.of(args.get(0).getString()));
         else
             throw new IllegalArgumentException("Expected integer or string");

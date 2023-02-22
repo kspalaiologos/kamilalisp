@@ -14,17 +14,13 @@ import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 
 public class IDEStatusBar extends JPanel {
+    private final IDE parent;
     int noWorkspaces, selectedWorkspace;
     ArrayList<String> workspaceNames;
     JScrollPane workspaceScrollPane;
     JToolBar workspacePanel;
     ArrayList<JLabel> workspaceLabels;
     ArrayList<JDesktopPane> workspaceComponents;
-    private final IDE parent;
-
-    public JDesktopPane getCurrentDesktopPane() {
-        return workspaceComponents.get(selectedWorkspace);
-    }
 
     public IDEStatusBar(IDE parent) {
         super(new FlowLayout());
@@ -43,7 +39,7 @@ public class IDEStatusBar extends JPanel {
         workspacePanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(e.getClickCount() % 2 == 0) {
+                if (e.getClickCount() % 2 == 0) {
                     addWorkspace();
                 }
             }
@@ -56,6 +52,10 @@ public class IDEStatusBar extends JPanel {
         workspaceScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         workspaceScrollPane.setColumnHeaderView(workspaceScrollPane.getHorizontalScrollBar());
         add(workspaceScrollPane, BorderLayout.CENTER);
+    }
+
+    public JDesktopPane getCurrentDesktopPane() {
+        return workspaceComponents.get(selectedWorkspace);
     }
 
     public boolean hasWorkspace(String name) {
@@ -91,7 +91,9 @@ public class IDEStatusBar extends JPanel {
         frame.add(p, BorderLayout.CENTER);
         try {
             frame.setMaximum(true);
-        } catch (PropertyVetoException e) { throw new RuntimeException(e); }
+        } catch (PropertyVetoException e) {
+            throw new RuntimeException(e);
+        }
         pane.add(frame);
         frame.setVisible(true);
         workspaceComponents.add(pane);
@@ -105,7 +107,7 @@ public class IDEStatusBar extends JPanel {
 
     public void deleteWorkspace(int number) {
         noWorkspaces--;
-        if(noWorkspaces == 0)
+        if (noWorkspaces == 0)
             System.exit(1);
         selectWorkspace(Math.min(number - 1, 0));
         workspaceNames.remove(number);
@@ -118,7 +120,7 @@ public class IDEStatusBar extends JPanel {
 
     public void deleteWorkspace(String name) {
         int index = workspaceNames.indexOf(name);
-        if(index == -1)
+        if (index == -1)
             throw new RuntimeException("ide:status-bar:delete: workspace does not exist");
         deleteWorkspace(index);
     }
@@ -138,16 +140,16 @@ public class IDEStatusBar extends JPanel {
         JDesktopPane comp2 = workspaceComponents.get(idx2);
         workspaceComponents.set(idx1, comp2);
         workspaceComponents.set(idx2, comp1);
-        if(selectedWorkspace == idx1)
+        if (selectedWorkspace == idx1)
             selectWorkspace(idx2);
-        else if(selectedWorkspace == idx2)
+        else if (selectedWorkspace == idx2)
             selectWorkspace(idx1);
     }
 
     public void renameWorkspace(int index, String name) {
         workspaceNames.set(index, name);
         JLabel currentLabel = workspaceLabels.get(index);
-        if(index == selectedWorkspace)
+        if (index == selectedWorkspace)
             currentLabel.setText("∙ " + index + name);
         else
             currentLabel.setText("∘ " + index + name);
@@ -155,7 +157,7 @@ public class IDEStatusBar extends JPanel {
 
     public void renameWorkspace(String oldName, String newName) {
         int index = workspaceNames.indexOf(oldName);
-        if(index == -1)
+        if (index == -1)
             throw new RuntimeException("ide:status-bar:rename: workspace does not exist");
         renameWorkspace(index, newName);
     }
@@ -165,11 +167,11 @@ public class IDEStatusBar extends JPanel {
     }
 
     public void selectWorkspace(int index) {
-        if(index <= -1)
+        if (index <= -1)
             return;
-        if(index > noWorkspaces - 1)
+        if (index > noWorkspaces - 1)
             throw new RuntimeException("ide:status-bar:select: workspace does not exist");
-        if(selectedWorkspace != -1) {
+        if (selectedWorkspace != -1) {
             JLabel currentLabel = workspaceLabels.get(selectedWorkspace);
             currentLabel.setText("∘ " + selectedWorkspace + workspaceNames.get(selectedWorkspace));
             currentLabel.setBackground(Color.decode("#10141C"));

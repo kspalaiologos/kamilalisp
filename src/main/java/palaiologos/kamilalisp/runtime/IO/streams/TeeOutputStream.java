@@ -7,10 +7,7 @@ import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class TeeOutputStream extends PrimitiveFunction implements Lambda {

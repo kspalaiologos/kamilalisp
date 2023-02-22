@@ -10,7 +10,7 @@ import java.util.List;
 public class TypeName extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        return new Atom(args.stream().map(x -> switch(x.getType()) {
+        return new Atom(args.stream().map(x -> switch (x.getType()) {
             case INTEGER -> "integer";
             case REAL -> "float";
             case COMPLEX -> "complex";

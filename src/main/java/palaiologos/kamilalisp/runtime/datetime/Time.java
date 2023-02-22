@@ -8,46 +8,6 @@ import java.time.Duration;
 import java.util.List;
 
 public record Time(Duration value) implements Userdata {
-    private static class AddOp extends PrimitiveFunction implements Lambda {
-        private final Time value;
-
-        public AddOp(Time value) {
-            this.value = value;
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if(args.size() == 0)
-                throw new TypeError("Expected 1 or more arguments to `time.add'");
-            return args.stream().reduce(new Atom(value), AbstractTime::add);
-        }
-
-        @Override
-        public String name() {
-            return "time.add";
-        }
-    }
-
-    private static class SubOp extends PrimitiveFunction implements Lambda {
-        private final Time value;
-
-        public SubOp(Time value) {
-            this.value = value;
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> args) {
-            if(args.size() == 0)
-                throw new TypeError("Expected 1 or more arguments to `time.sub'");
-            return args.stream().reduce(new Atom(value), AbstractTime::sub);
-        }
-
-        @Override
-        public String name() {
-            return "time.sub";
-        }
-    }
-
     @Override
     public Atom field(Object key) {
         if (!(key instanceof String))
@@ -96,6 +56,46 @@ public record Time(Duration value) implements Userdata {
     @Override
     public boolean coerceBoolean() {
         return true;
+    }
+
+    private static class AddOp extends PrimitiveFunction implements Lambda {
+        private final Time value;
+
+        public AddOp(Time value) {
+            this.value = value;
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 0)
+                throw new TypeError("Expected 1 or more arguments to `time.add'");
+            return args.stream().reduce(new Atom(value), AbstractTime::add);
+        }
+
+        @Override
+        public String name() {
+            return "time.add";
+        }
+    }
+
+    private static class SubOp extends PrimitiveFunction implements Lambda {
+        private final Time value;
+
+        public SubOp(Time value) {
+            this.value = value;
+        }
+
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if (args.size() == 0)
+                throw new TypeError("Expected 1 or more arguments to `time.sub'");
+            return args.stream().reduce(new Atom(value), AbstractTime::sub);
+        }
+
+        @Override
+        public String name() {
+            return "time.sub";
+        }
     }
 
 }

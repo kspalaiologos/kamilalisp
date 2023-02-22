@@ -1,7 +1,6 @@
 package palaiologos.kamilalisp.runtime.IO.streams;
 
 import com.google.common.primitives.Longs;
-import org.apache.commons.codec.digest.PureJavaCrc32;
 import org.apache.commons.codec.digest.PureJavaCrc32C;
 
 import java.security.MessageDigest;
@@ -12,7 +11,7 @@ public class CRC32CDigestIOStreams {
     public static class Output extends AbstractDigestOutputStream {
         @Override
         protected String name() {
-            return "io:" + CODEC +"-output-stream";
+            return "io:" + CODEC + "-output-stream";
         }
 
         @Override

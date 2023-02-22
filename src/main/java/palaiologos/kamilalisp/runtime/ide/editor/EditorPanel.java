@@ -4,7 +4,6 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import palaiologos.kamilalisp.atom.Pair;
 import palaiologos.kamilalisp.atom.Parser;
-import palaiologos.kamilalisp.parsers.GrammarLexer;
 import palaiologos.kamilalisp.runtime.ide.*;
 import palaiologos.kamilalisp.runtime.ide.terminal.TerminalPanel;
 import palaiologos.kamilalisp.runtime.remote.FixPacket;
@@ -26,15 +25,6 @@ public class EditorPanel extends TilingWMComponent {
     private final RSyntaxTextArea area;
     private final RTextScrollPane scrollPane;
     private String objectName = null;
-
-    private static void setEnabled(Component component, boolean enabled) {
-        component.setEnabled(enabled);
-        if (component instanceof Container) {
-            for (Component child : ((Container) component).getComponents()) {
-                setEnabled(child, enabled);
-            }
-        }
-    }
 
     public EditorPanel(IDE parent, TerminalPanel owner) {
         super(parent);
@@ -121,7 +111,7 @@ public class EditorPanel extends TilingWMComponent {
                             owner.auxiliaryPacketQueue.add(new Pair<>(new FixPacket(objectName, area.getText()), (recv, sent) -> {
                                 IDEPacket packet = (IDEPacket) recv.get();
                                 frame.dispose();
-                                if(packet.kind.equals("fix:ok")) {
+                                if (packet.kind.equals("fix:ok")) {
                                     EditorPanel.setEnabled(EditorPanel.this, true);
                                 } else {
                                     Throwable t = (Throwable) packet.data.get(0);
@@ -130,7 +120,9 @@ public class EditorPanel extends TilingWMComponent {
                                     t.printStackTrace(pw);
                                     String errmsg = sw.toString();
                                     pw.close();
-                                    try { sw.close(); } catch (IOException e2) { /* Unreachable */ }
+                                    try {
+                                        sw.close();
+                                    } catch (IOException e2) { /* Unreachable */ }
                                     IDETextAreaErrorModal error = new IDETextAreaErrorModal(parent.statusBar.getCurrentDesktopPane(), "Fix failed:", errmsg);
                                     error.display(() -> {
                                         EditorPanel.setEnabled(EditorPanel.this, true);
@@ -156,6 +148,15 @@ public class EditorPanel extends TilingWMComponent {
                 }
             }
         });
+    }
+
+    private static void setEnabled(Component component, boolean enabled) {
+        component.setEnabled(enabled);
+        if (component instanceof Container) {
+            for (Component child : ((Container) component).getComponents()) {
+                setEnabled(child, enabled);
+            }
+        }
     }
 
     public void start() {

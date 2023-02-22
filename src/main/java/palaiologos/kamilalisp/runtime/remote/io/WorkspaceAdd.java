@@ -16,9 +16,9 @@ public class WorkspaceAdd extends IDEFunction implements Lambda {
 
     @Override
     public Atom fapply(Environment env, List<Atom> args) {
-        if(args.size() == 0)
+        if (args.size() == 0)
             sendPacket();
-        else if(args.size() == 1)
+        else if (args.size() == 1)
             sendPacket(List.of(args.get(0).getString()));
         return Atom.NULL;
     }

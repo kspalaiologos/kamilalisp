@@ -6,7 +6,7 @@ import javax.swing.event.InternalFrameEvent;
 import java.awt.*;
 
 public class IDEErrorModal extends IDEModal {
-    private JButton confirmButton;
+    private final JButton confirmButton;
 
     public IDEErrorModal(JDesktopPane parentComponent, String message) {
         super(parentComponent);

@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public class InputStreamOf extends PrimitiveFunction implements Lambda {
     @Override
@@ -26,7 +25,7 @@ public class InputStreamOf extends PrimitiveFunction implements Lambda {
         Atom close = data.getOrDefault(new Atom("close"), Atom.NULL);
         Atom toString = data.getOrDefault(new Atom("to-string"), Atom.NULL);
 
-        if(readByte.equals(Atom.NULL))
+        if (readByte.equals(Atom.NULL))
             throw new RuntimeException("io:input-stream-of - read-byte must be defined.");
         InputStream is = new InputStream() {
             @Override
@@ -36,7 +35,7 @@ public class InputStreamOf extends PrimitiveFunction implements Lambda {
 
             @Override
             public int available() throws IOException {
-                if(available.equals(Atom.NULL))
+                if (available.equals(Atom.NULL))
                     return super.available();
                 return Evaluation.evaluate(env, available.getCallable(), List.of()).getInteger().intValue();
             }
@@ -48,12 +47,12 @@ public class InputStreamOf extends PrimitiveFunction implements Lambda {
 
             @Override
             public int read(byte[] bytes, int off, int len) throws IOException {
-                if(read.equals(Atom.NULL))
+                if (read.equals(Atom.NULL))
                     return super.read(bytes, off, len);
                 List<Atom> result = Evaluation.evaluate(env, read.getCallable(), List.of(new Atom(BigInteger.valueOf(len)))).getList();
                 int first = result.get(0).getInteger().intValue();
                 List<Atom> second = result.get(1).getList();
-                for(int i = 0; i < second.size(); i++) {
+                for (int i = 0; i < second.size(); i++) {
                     bytes[off + i] = second.get(i).getInteger().byteValue();
                 }
                 return first;
@@ -61,9 +60,9 @@ public class InputStreamOf extends PrimitiveFunction implements Lambda {
 
             @Override
             public long skip(long l) throws IOException {
-                if(skip.equals(Atom.NULL))
+                if (skip.equals(Atom.NULL))
                     return super.skip(l);
-                if(l == 1) {
+                if (l == 1) {
                     return Evaluation.evaluate(env, skipByte.getCallable(), List.of()).getInteger().longValue();
                 } else {
                     return Evaluation.evaluate(env, skip.getCallable(), List.of(new Atom(BigInteger.valueOf(l)))).getInteger().longValue();
@@ -72,18 +71,18 @@ public class InputStreamOf extends PrimitiveFunction implements Lambda {
 
             @Override
             public void skipNBytes(long n) throws IOException {
-                if(skipN.equals(Atom.NULL))
+                if (skipN.equals(Atom.NULL))
                     super.skipNBytes(n);
                 Evaluation.evaluate(env, skipN.getCallable(), List.of(new Atom(BigInteger.valueOf(n))));
             }
 
             @Override
             public byte[] readAllBytes() throws IOException {
-                if(readAll.equals(Atom.NULL))
+                if (readAll.equals(Atom.NULL))
                     return super.readAllBytes();
                 List<Atom> result = Evaluation.evaluate(env, readAll.getCallable(), List.of()).getList();
                 byte[] bytes = new byte[result.size()];
-                for(int i = 0; i < bytes.length; i++) {
+                for (int i = 0; i < bytes.length; i++) {
                     bytes[i] = result.get(i).getInteger().byteValue();
                 }
                 return bytes;
@@ -98,11 +97,11 @@ public class InputStreamOf extends PrimitiveFunction implements Lambda {
 
             @Override
             public int readNBytes(byte[] b, int off, int len) throws IOException {
-                if(readN.equals(Atom.NULL))
+                if (readN.equals(Atom.NULL))
                     return super.readNBytes(b, off, len);
                 List<Atom> result = Evaluation.evaluate(env, readN.getCallable(), List.of(new Atom(BigInteger.valueOf(len)))).getList();
                 byte[] bytes = new byte[result.size()];
-                for(int i = 0; i < bytes.length; i++) {
+                for (int i = 0; i < bytes.length; i++) {
                     bytes[i] = result.get(i).getInteger().byteValue();
                 }
                 System.arraycopy(bytes, 0, b, off, bytes.length);
@@ -111,7 +110,7 @@ public class InputStreamOf extends PrimitiveFunction implements Lambda {
 
             @Override
             public void close() throws IOException {
-                if(close.equals(Atom.NULL)) {
+                if (close.equals(Atom.NULL)) {
                     super.close();
                 } else {
                     Evaluation.evaluate(env, close.getCallable(), List.of());

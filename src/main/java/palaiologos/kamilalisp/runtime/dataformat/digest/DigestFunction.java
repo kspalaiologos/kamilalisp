@@ -11,19 +11,19 @@ public abstract class DigestFunction extends PrimitiveFunction implements Lambda
     }
 
     private Atom digest(Atom a) {
-        if(a.getType() == Type.STRING)
+        if (a.getType() == Type.STRING)
             return new Atom(digest(a.getString()));
-        else if(a.getType() == Type.LIST) {
+        else if (a.getType() == Type.LIST) {
             byte[] data = new byte[a.getList().size()];
-            for(int i = 0; i < data.length; i++)
+            for (int i = 0; i < data.length; i++)
                 data[i] = a.getList().get(i).getInteger().byteValue();
             return new Atom(digest(data));
-        }
-        else
+        } else
             throw new RuntimeException(name() + ": unsupported type: " + a.getType());
     }
 
     // Digest-specific code:
     abstract String digest(String s);
+
     abstract String digest(byte[] data);
 }

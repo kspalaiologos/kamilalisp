@@ -18,7 +18,7 @@ public class Basename extends ShellFunction {
     protected Atom execute(String flags, List<Atom> args) {
         assertArity(args, 1);
         String path = args.get(0).getString();
-        if(path.isEmpty() || path.endsWith(File.separator))
+        if (path.isEmpty() || path.endsWith(File.separator))
             return new Atom(args);
         String[] components = StringUtils.splitByWholeSeparator(path, File.separator);
         String file = components[components.length - 1];
@@ -26,7 +26,7 @@ public class Basename extends ShellFunction {
         String name = FileNameUtils.getBaseName(file);
         String ext = FileNameUtils.getExtension(file);
         List<Atom> result = new ArrayList<>();
-        for(int i = 0; i < components.length - 1; i++)
+        for (int i = 0; i < components.length - 1; i++)
             result.add(new Atom(components[i]));
         result.add(new Atom(name));
         result.add(new Atom(ext));

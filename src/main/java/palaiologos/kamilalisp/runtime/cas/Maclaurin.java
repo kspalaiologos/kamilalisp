@@ -27,7 +27,7 @@ public class Maclaurin extends PrimitiveFunction implements Lambda {
         EvaluationResult r = (EvaluationResult) FriCAS.withFriCas(x -> {
             x.apply(")clear all\n");
             x.apply(")set output algebra off\n");
-            if(options.getOrDefault(tex, Atom.FALSE).equals(Atom.TRUE)) {
+            if (options.getOrDefault(tex, Atom.FALSE).equals(Atom.TRUE)) {
                 x.apply(")set output fortran off\n");
                 x.apply(")set output tex on\n");
             } else {
@@ -38,26 +38,26 @@ public class Maclaurin extends PrimitiveFunction implements Lambda {
             x.apply(")set streams calculate " + options.getOrDefault(terms, new Atom(BigInteger.valueOf(5))).getInteger().toString() + "\n");
             return x.apply(instruction);
         });
-        if(!r.isSuccessful()) {
-            if(StackFrame.isDebug())
+        if (!r.isSuccessful()) {
+            if (StackFrame.isDebug())
                 throw new RuntimeException("Failed to compute the maclaurin series, command=" + instruction + ", result=" + r.getResult());
             throw new RuntimeException("Failed to compute the maclaurin series.");
         } else {
-            if(options.getOrDefault(tex, Atom.FALSE).equals(Atom.TRUE)) {
+            if (options.getOrDefault(tex, Atom.FALSE).equals(Atom.TRUE)) {
                 return new Atom(r.getResult());
             }
             HashPMap<Atom, Atom> a;
             try {
                 a = FortranParser.parse(r.getResult()).getUserdata(HashMapUserData.class).value();
             } catch (Exception e) {
-                if(StackFrame.isDebug())
+                if (StackFrame.isDebug())
                     throw new RuntimeException("Failed to compute the maclaurin series (parse), command=" + instruction + ", result=" + r.getResult() + ", why=" + e.getMessage());
                 throw new RuntimeException("Failed to compute the maclaurin series.");
             }
 
-            if(a.size() == 0) {
+            if (a.size() == 0) {
                 return Atom.NULL;
-            } else if(a.size() == 1) {
+            } else if (a.size() == 1) {
                 Atom entry = a.entrySet().stream().findFirst().get().getValue();
                 return new Atom(new MathExpression(env, expr.getArgs(), entry));
             } else {
