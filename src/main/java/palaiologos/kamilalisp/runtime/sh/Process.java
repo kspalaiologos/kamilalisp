@@ -20,21 +20,20 @@ public class Process extends PrimitiveFunction implements Lambda {
         public Atom field(Object key) {
             if(!(key instanceof String))
                 throw new IllegalArgumentException("sh:process field name must be a string");
-            switch ((String) key) {
-                case "pid":
-                    return new Atom(BigInteger.valueOf(process.pid()));
-                case "is-alive?":
-                    return process.isAlive() ? Atom.TRUE : Atom.FALSE;
-                case "exit-value":
-                    return new Atom(BigInteger.valueOf(process.exitValue()));
-                case "kill":
+            return switch ((String) key) {
+                case "pid" -> new Atom(BigInteger.valueOf(process.pid()));
+                case "is-alive?" -> process.isAlive() ? Atom.TRUE : Atom.FALSE;
+                case "exit-value" -> new Atom(BigInteger.valueOf(process.exitValue()));
+                case "kill" -> {
                     process.destroy();
-                    return Atom.NULL;
-                case "force-kill":
+                    yield Atom.NULL;
+                }
+                case "force-kill" -> {
                     process.destroyForcibly();
-                    return Atom.NULL;
-                case "stdout":
-                    return new Atom(new StreamWrapper.InputStreamUserdata(process.getInputStream()) {
+                    yield Atom.NULL;
+                }
+                case "stdout" ->
+                    new Atom(new StreamWrapper.InputStreamUserdata(process.getInputStream()) {
                         @Override
                         public String toDisplayString() {
                             return ProcessUserdata.this.toDisplayString() + ".stdin";
@@ -45,8 +44,8 @@ public class Process extends PrimitiveFunction implements Lambda {
                             throw new UnsupportedOperationException("sh:process.stdin does not support special fields");
                         }
                     });
-                case "stdin":
-                    return new Atom(new StreamWrapper.OutputStreamUserdata(process.getOutputStream()) {
+                case "stdin" ->
+                    new Atom(new StreamWrapper.OutputStreamUserdata(process.getOutputStream()) {
                         @Override
                         public String toDisplayString() {
                             return ProcessUserdata.this.toDisplayString() + ".stdout";
@@ -57,8 +56,8 @@ public class Process extends PrimitiveFunction implements Lambda {
                             throw new UnsupportedOperationException("sh:process.stdout does not support special fields");
                         }
                     });
-                case "stderr":
-                    return new Atom(new StreamWrapper.InputStreamUserdata(process.getErrorStream()) {
+                case "stderr" ->
+                    new Atom(new StreamWrapper.InputStreamUserdata(process.getErrorStream()) {
                         @Override
                         public String toDisplayString() {
                             return ProcessUserdata.this.toDisplayString() + ".stderr";
@@ -69,9 +68,8 @@ public class Process extends PrimitiveFunction implements Lambda {
                             throw new UnsupportedOperationException("sh:process.stderr does not support special fields");
                         }
                     });
-                default:
-                    throw new IllegalArgumentException("sh:process does not have a field named " + key);
-            }
+                default -> throw new IllegalArgumentException("sh:process does not have a field named " + key);
+            };
         }
 
         @Override
