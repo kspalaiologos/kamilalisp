@@ -175,16 +175,15 @@ public class IDEStatusBar extends JPanel {
             JLabel currentLabel = workspaceLabels.get(selectedWorkspace);
             currentLabel.setText("∘ " + selectedWorkspace + workspaceNames.get(selectedWorkspace));
             currentLabel.setBackground(Color.decode("#10141C"));
-            parent.frame.remove(workspaceComponents.get(selectedWorkspace));
         }
         selectedWorkspace = index;
         JLabel newLabel = workspaceLabels.get(selectedWorkspace);
         newLabel.setText("∙ " + selectedWorkspace + workspaceNames.get(selectedWorkspace));
         newLabel.setBackground(Color.decode("#1E222A"));
         workspaceScrollPane.getViewport().scrollRectToVisible(newLabel.getBounds());
-        parent.frame.add(workspaceComponents.get(selectedWorkspace), BorderLayout.CENTER);
-        parent.frame.revalidate();
-        parent.frame.repaint();
+        parent.splitPane.setRightComponent(workspaceComponents.get(selectedWorkspace));
+        parent.splitPane.revalidate();
+        parent.splitPane.repaint();
     }
 
     public void selectWorkspace(String name) {
