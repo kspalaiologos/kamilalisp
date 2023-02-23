@@ -81,7 +81,22 @@ public class EditorPanel extends TilingWMComponent {
         add(topPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
 
-        close.addActionListener(e -> tryQuit());
+        close.addActionListener(e -> {
+            tryReset(() -> {
+                getActionMap().get("fix").actionPerformed(null);
+                quit();
+            });
+        });
+
+        neu.addActionListener(e -> {
+            tryReset(() -> {
+                getActionMap().get("fix").actionPerformed(null);
+                area.setText("");
+                name.setText("Untitled");
+                objectName = null;
+            });
+        });
+
         fix.addActionListener(e -> getActionMap().get("fix").actionPerformed(null));
 
         area.getDocument().addDocumentListener(new DocumentListener() {
@@ -113,7 +128,10 @@ public class EditorPanel extends TilingWMComponent {
         getActionMap().put("exit", new AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                tryQuit();
+                tryReset(() -> {
+                    getActionMap().get("fix").actionPerformed(null);
+                    quit();
+                });
             }
         });
 
@@ -227,7 +245,7 @@ public class EditorPanel extends TilingWMComponent {
         });
     }
 
-    private void tryQuit() {
+    private void tryReset(Runnable callback) {
         // Check if the symbol name ends with " *". If it does, it means that the symbol has been modified.
         // If it has, ask the user if they want to fix the changes.
         if (name.getText().endsWith(" *")) {
@@ -268,8 +286,7 @@ public class EditorPanel extends TilingWMComponent {
             layout.setVerticalGroup(vGroup);
             button.addActionListener(e1 -> {
                 frame.dispose();
-                getActionMap().get("fix").actionPerformed(null);
-                quit();
+                callback.run();
             });
             cancel.addActionListener(e1 -> frame.dispose());
             frame.addInternalFrameListener(new InternalFrameAdapter() {
@@ -282,7 +299,7 @@ public class EditorPanel extends TilingWMComponent {
             frame.display();
             EditorPanel.setEnabled(EditorPanel.this, false);
         } else {
-            quit();
+            callback.run();
         }
     }
 
