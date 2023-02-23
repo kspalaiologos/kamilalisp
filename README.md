@@ -61,7 +61,7 @@ KamilaLisp allows for actor programming, concurrent programming, imperative prog
 - Sockets (`net:client`, `net:server` and their SSL counterparts).
 - Parallel processing using the actor model (daemon threads, task threads, message passing paradigm).
 - Regular expressions.
-- KamilaLisp as a shell (implementations of `sh:ls`, `sh:glob`, `sh:mv`, `sh:basename`, etc... - all usable from the REPL and from code, as they return plain data structures).
+- KamilaLisp as a shell (implementations of `sh:ls`, `sh:glob`, `sh:mv`, `sh:basename`, etc... - all usable from the REPL and from code, as they return plain data structures, launching and manipulating external processes).
 - String functions (Shannon entropy, unicode handling, byte buffers, levenshtein distance, string interpolation/formatting)
 - On-The-Fly Lexical scanner generation.
 - Function compositions, partial application, variadic functions, static scoping.
