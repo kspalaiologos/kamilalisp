@@ -28,6 +28,7 @@ public class EditorPanel extends TilingWMComponent {
     private final RSyntaxTextArea area;
     private final RTextScrollPane scrollPane;
     private String objectName = null;
+    private JLabel name;
 
     public EditorPanel(IDE parent, TerminalPanel owner) {
         super(parent);
@@ -36,17 +37,39 @@ public class EditorPanel extends TilingWMComponent {
         scrollPane = new RTextScrollPane(area);
         scrollPane.setBorder(null);
         scrollPane.getGutter().setBorderColor(Color.decode("#1E222A"));
-        JPanel topPanel = new JPanel(new BorderLayout());
+        JPanel topPanel = new JPanel(new FlowLayout());
         topPanel.setBackground(Color.decode("#10141C"));
         topPanel.setBorder(null);
-        JLabel name = new JLabel("Untitled");
+        name = new JLabel("Untitled");
         name.setForeground(Color.decode("#FFFFFF"));
         name.setBackground(Color.decode("#10141C"));
         name.setOpaque(true);
         name.setBorder(new EmptyBorder(5, 5, 5, 5));
-        topPanel.add(name, BorderLayout.WEST);
+        JButton fix = new JButton();
+        fix.setIcon(new ImageIcon(getClass().getResource("/ui/hammer.png")));
+        fix.setBackground(Color.decode("#10141C"));
+        JButton save = new JButton();
+        save.setIcon(new ImageIcon(getClass().getResource("/ui/floppy-disk.png")));
+        save.setBackground(Color.decode("#10141C"));
+        JButton open = new JButton();
+        open.setIcon(new ImageIcon(getClass().getResource("/ui/folder-open.png")));
+        open.setBackground(Color.decode("#10141C"));
+        JButton neu = new JButton();
+        neu.setIcon(new ImageIcon(getClass().getResource("/ui/file.png")));
+        neu.setBackground(Color.decode("#10141C"));
+        JButton close = new JButton();
+        close.setIcon(new ImageIcon(getClass().getResource("/ui/circle-xmark.png")));
+        close.setBackground(Color.decode("#10141C"));
+        topPanel.add(name);
+        topPanel.add(neu);
+        topPanel.add(open);
+        topPanel.add(save);
+        topPanel.add(fix);
+        topPanel.add(close);
         add(topPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
+
+        close.addActionListener(e -> tryQuit());
 
         area.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -77,7 +100,7 @@ public class EditorPanel extends TilingWMComponent {
         getActionMap().put("exit", new AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                quit();
+                tryQuit();
             }
         });
 
@@ -131,15 +154,11 @@ public class EditorPanel extends TilingWMComponent {
                     layout.setAutoCreateGaps(true);
                     layout.setAutoCreateContainerGaps(true);
                     JLabel label = new JLabel("Object name:");
-                    JLabel icon = new JLabel();
-                    icon.setIcon(UIManager.getIcon("OptionPane.questionIcon"));
                     JTextField field = new JTextField(15);
                     JButton button = new JButton("Fix");
                     JButton cancel = new JButton("Cancel");
                     // Horizontal layout: group 1 is only icon, group 2 is the rest of components.
                     GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
-                    hGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                            .addComponent(icon));
                     hGroup.addGroup(layout.createParallelGroup()
                             .addComponent(label)
                             .addComponent(field)
@@ -150,7 +169,6 @@ public class EditorPanel extends TilingWMComponent {
                     // Vertical: group 1 is label and field, group 2 is buttons.
                     GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
                     vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                            .addComponent(icon)
                             .addGroup(layout.createSequentialGroup()
                                     .addComponent(label)
                                     .addComponent(field)));
@@ -196,6 +214,65 @@ public class EditorPanel extends TilingWMComponent {
         });
     }
 
+    private void tryQuit() {
+        // Check if the symbol name ends with " *". If it does, it means that the symbol has been modified.
+        // If it has, ask the user if they want to fix the changes.
+        if (name.getText().endsWith(" *")) {
+            IDEModal frame = new IDEModal(parent.statusBar.getCurrentDesktopPane());
+            frame.setTitle("Fix");
+            frame.setMaximizable(false);
+            frame.setResizable(false);
+            frame.setClosable(true);
+            frame.setIconifiable(false);
+            frame.setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
+            JPanel contentPane = new JPanel();
+            contentPane.setBorder(null);
+            contentPane.setBackground(Color.decode("#10141C"));
+            frame.setContentPane(contentPane);
+            GroupLayout layout = new GroupLayout(contentPane);
+            contentPane.setLayout(layout);
+            layout.setAutoCreateGaps(true);
+            layout.setAutoCreateContainerGaps(true);
+            JLabel label = new JLabel("Do you want to fix the changes before quitting?");
+            JButton button = new JButton("Fix");
+            JButton cancel = new JButton("Quit");
+            // Horizontal layout: group 1 is only icon, group 2 is the rest of components.
+            GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
+            hGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                    .addComponent(label));
+            hGroup.addGroup(layout.createParallelGroup()
+                    .addGroup(layout.createSequentialGroup()
+                            .addComponent(button)
+                            .addComponent(cancel)));
+            layout.setHorizontalGroup(hGroup);
+            // Vertical: group 1 is label and field, group 2 is buttons.
+            GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
+            vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(label));
+            vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(button)
+                    .addComponent(cancel));
+            layout.setVerticalGroup(vGroup);
+            button.addActionListener(e1 -> {
+                frame.dispose();
+                getActionMap().get("fix").actionPerformed(null);
+                quit();
+            });
+            cancel.addActionListener(e1 -> frame.dispose());
+            frame.addInternalFrameListener(new InternalFrameAdapter() {
+                @Override
+                public void internalFrameClosed(InternalFrameEvent e) {
+                    EditorPanel.setEnabled(EditorPanel.this, true);
+                    area.requestFocusInWindow();
+                }
+            });
+            frame.display();
+            EditorPanel.setEnabled(EditorPanel.this, false);
+        } else {
+            quit();
+        }
+    }
+
     private static void setEnabled(Component component, boolean enabled) {
         component.setEnabled(enabled);
         if (component instanceof Container) {
@@ -203,8 +280,5 @@ public class EditorPanel extends TilingWMComponent {
                 setEnabled(child, enabled);
             }
         }
-    }
-
-    public void start() {
     }
 }

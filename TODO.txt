@@ -12,7 +12,7 @@
 - auto-generate the rest of SHA digest I/O streams.
 - further IDE extensions/testing.
 - document new features.
-- cas: solve systems of equations, solve DEs,
+- cas: solve systems of equations, solve DEs, gradient, jacobian,
   compute eigenvalues, eigenvectors, solve systems of equations,
   discrete sums.
 
