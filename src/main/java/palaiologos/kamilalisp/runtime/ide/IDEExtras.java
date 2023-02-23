@@ -62,15 +62,14 @@ public class IDEExtras extends JPanel {
     }
 
     private static String toHuman(long bytes) {
-        double bytesD = bytes;
-        if (bytesD < 1024) {
+        if ((double) bytes < 1024) {
             return bytes + " B";
-        } else if (bytesD < 1024 * 1024) {
-            return String.format("%.2f kiB", bytesD / 1024);
-        } else if (bytesD < 1024 * 1024 * 1024) {
-            return String.format("%.2f MiB", bytesD / 1024 / 1024);
+        } else if ((double) bytes < 1024 * 1024) {
+            return String.format("%.2f kiB", (double) bytes / 1024);
+        } else if ((double) bytes < 1024 * 1024 * 1024) {
+            return String.format("%.2f MiB", (double) bytes / 1024 / 1024);
         } else {
-            return String.format("%.2f GiB", bytesD / 1024 / 1024 / 1024);
+            return String.format("%.2f GiB", (double) bytes / 1024 / 1024 / 1024);
         }
     }
 
