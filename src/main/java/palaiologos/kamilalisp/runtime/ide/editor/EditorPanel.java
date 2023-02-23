@@ -10,6 +10,9 @@ import palaiologos.kamilalisp.runtime.remote.FixPacket;
 import palaiologos.kamilalisp.runtime.remote.IDEPacket;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import java.awt.*;
@@ -33,7 +36,40 @@ public class EditorPanel extends TilingWMComponent {
         scrollPane = new RTextScrollPane(area);
         scrollPane.setBorder(null);
         scrollPane.getGutter().setBorderColor(Color.decode("#1E222A"));
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBackground(Color.decode("#10141C"));
+        topPanel.setBorder(null);
+        JLabel name = new JLabel("Untitled");
+        name.setForeground(Color.decode("#FFFFFF"));
+        name.setBackground(Color.decode("#10141C"));
+        name.setOpaque(true);
+        name.setBorder(new EmptyBorder(5, 5, 5, 5));
+        topPanel.add(name, BorderLayout.WEST);
+        add(topPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
+
+        area.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                if(!name.getText().endsWith(" *")) {
+                    name.setText(name.getText() + " *");
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                if(!name.getText().endsWith(" *")) {
+                    name.setText(name.getText() + " *");
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                if(!name.getText().endsWith(" *")) {
+                    name.setText(name.getText() + " *");
+                }
+            }
+        });
 
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK), "fix");
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK), "exit");
@@ -46,6 +82,36 @@ public class EditorPanel extends TilingWMComponent {
         });
 
         getActionMap().put("fix", new AbstractAction() {
+            private void doFix() {
+                owner.auxiliaryPacketQueue.add(new Pair<>(new FixPacket(objectName, area.getText()), (recv, sent) -> {
+                    IDEPacket packet = (IDEPacket) recv.get();
+                    if (packet.kind.equals("fix:ok")) {
+                        EditorPanel.setEnabled(EditorPanel.this, true);
+                        if(name.getText().endsWith(" *")) {
+                            name.setText(name.getText().substring(0, name.getText().length() - 2));
+                        }
+                    } else {
+                        Throwable t = (Throwable) packet.data.get(0);
+                        StringWriter sw = new StringWriter();
+                        PrintWriter pw = new PrintWriter(sw);
+                        t.printStackTrace(pw);
+                        String errmsg = sw.toString();
+                        pw.close();
+                        try {
+                            sw.close();
+                        } catch (IOException e2) { /* Unreachable */ }
+                        IDETextAreaErrorModal error = new IDETextAreaErrorModal(parent.statusBar.getCurrentDesktopPane(), "Fix failed:", errmsg);
+                        error.display(() -> {
+                            EditorPanel.setEnabled(EditorPanel.this, true);
+                            area.requestFocusInWindow();
+                        });
+                    }
+                }));
+                synchronized (owner.auxiliaryPacketQueue) {
+                    owner.auxiliaryPacketQueue.notify();
+                }
+            }
+
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 if (objectName == null) {
@@ -93,9 +159,8 @@ public class EditorPanel extends TilingWMComponent {
                             .addComponent(cancel));
                     layout.setVerticalGroup(vGroup);
                     button.addActionListener(e1 -> {
-                        objectName = field.getText();
                         // Verify if objectName is a valid KamilaLisp identifier.
-                        boolean valid = Parser.isValidIdentifier(objectName);
+                        boolean valid = Parser.isValidIdentifier(field.getText());
                         if (!valid) {
                             IDEErrorModal error = new IDEErrorModal(parent.statusBar.getCurrentDesktopPane(), "Invalid object name - \"" + objectName + "\"");
                             EditorPanel.setEnabled(frame, false);
@@ -108,31 +173,10 @@ public class EditorPanel extends TilingWMComponent {
                                 }
                             });
                         } else {
-                            owner.auxiliaryPacketQueue.add(new Pair<>(new FixPacket(objectName, area.getText()), (recv, sent) -> {
-                                IDEPacket packet = (IDEPacket) recv.get();
-                                frame.dispose();
-                                if (packet.kind.equals("fix:ok")) {
-                                    EditorPanel.setEnabled(EditorPanel.this, true);
-                                } else {
-                                    Throwable t = (Throwable) packet.data.get(0);
-                                    StringWriter sw = new StringWriter();
-                                    PrintWriter pw = new PrintWriter(sw);
-                                    t.printStackTrace(pw);
-                                    String errmsg = sw.toString();
-                                    pw.close();
-                                    try {
-                                        sw.close();
-                                    } catch (IOException e2) { /* Unreachable */ }
-                                    IDETextAreaErrorModal error = new IDETextAreaErrorModal(parent.statusBar.getCurrentDesktopPane(), "Fix failed:", errmsg);
-                                    error.display(() -> {
-                                        EditorPanel.setEnabled(EditorPanel.this, true);
-                                        area.requestFocusInWindow();
-                                    });
-                                }
-                            }));
-                            synchronized (owner.auxiliaryPacketQueue) {
-                                owner.auxiliaryPacketQueue.notify();
-                            }
+                            objectName = field.getText();
+                            name.setText(objectName);
+                            frame.dispose();
+                            doFix();
                         }
                     });
                     cancel.addActionListener(e1 -> frame.dispose());
@@ -145,6 +189,8 @@ public class EditorPanel extends TilingWMComponent {
                     });
                     frame.display();
                     EditorPanel.setEnabled(EditorPanel.this, false);
+                } else {
+                    doFix();
                 }
             }
         });

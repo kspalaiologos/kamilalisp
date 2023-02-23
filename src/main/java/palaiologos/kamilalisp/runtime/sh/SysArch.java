@@ -19,5 +19,6 @@ public class SysArch {
         String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
         env.setPrimitive("sh:java-bin", new Atom(javaBin));
         env.setPrimitive("sh:java-home", new Atom(javaHome));
+        env.setPrimitive("sh:pid", new Atom(String.valueOf(ProcessHandle.current().pid())));
     }
 }

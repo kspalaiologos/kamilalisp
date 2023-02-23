@@ -1,5 +1,7 @@
 package palaiologos.kamilalisp.runtime.ide;
 
+import palaiologos.kamilalisp.runtime.ide.terminal.TerminalPanel;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -72,14 +74,12 @@ public abstract class TilingWMComponent extends JPanel {
             } else {
                 ((JSplitPane) parentContainer).setRightComponent(splitPane);
             }
-            extra.start();
         } else {
             JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, TilingWMComponent.this, extra);
             splitPane.setResizeWeight(0.5);
             splitPane.setDividerLocation(0.5);
             parentContainer.remove(TilingWMComponent.this);
             parentContainer.add(splitPane, BorderLayout.CENTER);
-            extra.start();
         }
         parentContainer.revalidate();
         parentContainer.repaint();
@@ -98,18 +98,14 @@ public abstract class TilingWMComponent extends JPanel {
             } else {
                 ((JSplitPane) parentContainer).setRightComponent(splitPane);
             }
-            extra.start();
         } else {
             JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, TilingWMComponent.this, extra);
             splitPane.setResizeWeight(0.5);
             splitPane.setDividerLocation(0.5);
             parentContainer.remove(TilingWMComponent.this);
             parentContainer.add(splitPane, BorderLayout.CENTER);
-            extra.start();
         }
         parentContainer.revalidate();
         parentContainer.repaint();
     }
-
-    public abstract void start();
 }

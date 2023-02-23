@@ -167,236 +167,6 @@ public class TerminalPanel extends TilingWMComponent {
         jspGutter.setBorder(new MatteBorder(0, 0, 0, 1, Color.decode("#1E222A")));
         add(jspGutter, BorderLayout.WEST);
 
-        t = new Thread(new Runnable() {
-            private ObjectInputStream ois;
-            private ObjectOutputStream oos;
-            private final Map<String, Consumer<IDEPacket>> ideFunctions = Map.ofEntries(
-                    Map.entry("term:clear", new Consumer<IDEPacket>() {
-                        @Override
-                        public void accept(IDEPacket o) {
-                            area.setText("");
-                            gutter.setText("");
-                            allowedHighlightRanges.clear();
-                        }
-                    }),
-                    Map.entry("ide:workspace:add", new Consumer<IDEPacket>() {
-                        @Override
-                        public void accept(IDEPacket o) {
-                            if (o.data.size() == 1) {
-                                String name = (String) o.data.get(0);
-                                if (parent.statusBar.hasWorkspace(name))
-                                    throw new RuntimeException("Workspace already exists!");
-                                parent.statusBar.addWorkspace(name);
-                            } else {
-                                parent.statusBar.addWorkspace();
-                            }
-                        }
-                    }),
-                    Map.entry("ide:workspace:has", new Consumer<IDEPacket>() {
-                        @Override
-                        public void accept(IDEPacket o) {
-                            String name = (String) o.data.get(0);
-                            boolean r = parent.statusBar.hasWorkspace(name);
-                            sendPacket(new IDEPacket("ide:workspace:has", List.of(r)));
-                        }
-                    }),
-                    Map.entry("ide:workspace:delete", new Consumer<IDEPacket>() {
-                        @Override
-                        public void accept(IDEPacket o) {
-                            String name = (String) o.data.get(0);
-                            parent.statusBar.deleteWorkspace(name);
-                        }
-                    }),
-                    Map.entry("ide:workspace:select", new Consumer<IDEPacket>() {
-                        @Override
-                        public void accept(IDEPacket o) {
-                            Object ob = o.data.get(0);
-                            if (ob instanceof String name) {
-                                parent.statusBar.selectWorkspace(name);
-                            } else if (ob instanceof Integer) {
-                                int index = (int) ob;
-                                parent.statusBar.selectWorkspace(index);
-                            } else {
-                                throw new TypeError("Expected String or Integer, got " + ob.getClass().getName());
-                            }
-                        }
-                    }),
-                    Map.entry("ide:workspace:rename", new Consumer<IDEPacket>() {
-                        @Override
-                        public void accept(IDEPacket o) {
-                            Object ob = o.data.get(0);
-                            if (ob instanceof String name) {
-                                String newName = (String) o.data.get(1);
-                                parent.statusBar.renameWorkspace(name, newName);
-                            } else if (ob instanceof Integer) {
-                                int index = (int) ob;
-                                String newName = (String) o.data.get(1);
-                                parent.statusBar.renameWorkspace(index, newName);
-                            } else {
-                                throw new TypeError("Expected String or Integer, got " + ob.getClass().getName());
-                            }
-                        }
-                    }),
-                    Map.entry("ide:workspace:swap", new Consumer<IDEPacket>() {
-                        @Override
-                        public void accept(IDEPacket o) {
-                            int src = (int) o.data.get(0);
-                            int dst = (int) o.data.get(1);
-                            parent.statusBar.swapWorkspaces(src, dst);
-                        }
-                    }),
-                    Map.entry("ide:workspace:current", new Consumer<IDEPacket>() {
-                        @Override
-                        public void accept(IDEPacket o) {
-                            Pair<Integer, String> p = parent.statusBar.currentWorkspace();
-                            sendPacket(new IDEPacket("ide:workspace:current", List.of(p.fst(), p.snd())));
-                        }
-                    }),
-                    Map.entry("ide:split-h", new Consumer<IDEPacket>() {
-                        @Override
-                        public void accept(IDEPacket o) {
-                            if (o.data.isEmpty())
-                                TerminalPanel.this.getActionMap().get("split-h").actionPerformed(null);
-                            else {
-                                String kind = (String) o.data.get(0);
-                                if (kind.equals("editor")) {
-                                    horizontalSplit(new EditorPanel(parent, TerminalPanel.this));
-                                } else {
-                                    throw new TypeError("Unknown split kind: " + kind);
-                                }
-                            }
-                        }
-                    }),
-                    Map.entry("ide:split-v", new Consumer<IDEPacket>() {
-                        @Override
-                        public void accept(IDEPacket o) {
-                            if (o.data.isEmpty())
-                                TerminalPanel.this.getActionMap().get("split-v").actionPerformed(null);
-                            else {
-                                String kind = (String) o.data.get(0);
-                                if (kind.equals("editor")) {
-                                    verticalSplit(new EditorPanel(parent, TerminalPanel.this));
-                                } else {
-                                    throw new TypeError("Unknown split kind: " + kind);
-                                }
-                            }
-                        }
-                    })
-            );
-            private final Map<String, Consumer<IDEPacket>> asyncIdeFunctions = Map.ofEntries(
-                    Map.entry("io:readln", new Consumer<IDEPacket>() {
-                        @Override
-                        public void accept(IDEPacket o) {
-                            String s = promptRaw();
-                            sendPacket(new IDEPacket("io:readln", List.of(s)));
-                        }
-                    })
-            );
-
-            private void sendPacket(Packet p) {
-                try {
-                    oos.writeObject(p);
-                    oos.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void run() {
-                // TODO: Do.
-                String javaHome = System.getProperty("java.home");
-                String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
-                String classpath = System.getProperty("java.class.path");
-                String className = Main.class.getName();
-                List<String> command = new ArrayList<>();
-                command.add(javaBin);
-                command.add("-cp");
-                command.add(classpath);
-                command.add(className);
-                command.add("--remote");
-                ProcessBuilder builder = new ProcessBuilder(command);
-                try {
-                    localProcess = builder.start();
-                    // Read the output.
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(localProcess.getInputStream()));
-                    int port = Integer.parseInt(reader.readLine());
-                    // Close the reader.
-                    reader.close();
-                    // Connect to the remote.
-                    Socket socket = new Socket("localhost", port);
-                    // Create the streams.
-                    oos = new ObjectOutputStream(new OutputStream() {
-                        @Override
-                        public void write(int b) throws IOException {
-                            NetCounter.addOut(1);
-                            socket.getOutputStream().write(b);
-                        }
-
-                        @Override
-                        public void write(byte[] b, int off, int len) throws IOException {
-                            NetCounter.addOut(len);
-                            socket.getOutputStream().write(b, off, len);
-                        }
-                    });
-                    ois = new ObjectInputStream(new InputStream() {
-                        @Override
-                        public int read() throws IOException {
-                            NetCounter.addIn(1);
-                            return socket.getInputStream().read();
-                        }
-
-                        @Override
-                        public int read(byte[] b, int off, int len) throws IOException {
-                            NetCounter.addIn(len);
-                            return socket.getInputStream().read(b, off, len);
-                        }
-                    });
-                    while (true) {
-                        Packet p = (Packet) ois.readObject();
-                        if (p instanceof PromptPacket) {
-                            String code = TerminalPanel.this.prompt(ois, oos).trim();
-                            oos.writeObject(new StringPacket(code));
-                        } else if (p instanceof StringPacket) {
-                            TerminalPanel.this.print(((StringPacket) p).data);
-                        } else if (p instanceof IDEPacket ip) {
-                            if (ideFunctions.containsKey(ip.kind)) {
-                                IDE.invokeSwing(() -> {
-                                    Throwable t = null;
-                                    try {
-                                        ideFunctions.get(ip.kind).accept(ip);
-                                    } catch (Throwable e) {
-                                        t = e;
-                                    }
-                                    if (t == null) {
-                                        sendPacket(new IDEPacket("ide:ok", List.of()));
-                                    } else {
-                                        sendPacket(new IDEPacket("ide:err", List.of(t)));
-                                    }
-                                });
-                            } else {
-                                Throwable t = null;
-                                try {
-                                    asyncIdeFunctions.get(ip.kind).accept(ip);
-                                } catch (Throwable e) {
-                                    t = e;
-                                }
-                                if (t != null) {
-                                    sendPacket(new IDEPacket("ide:err", List.of(t)));
-                                } else {
-                                    sendPacket(new IDEPacket("ide:ok", List.of()));
-                                }
-                            }
-                        } else {
-                            throw new RuntimeException("Unknown packet type: " + p.getClass().getName());
-                        }
-                    }
-                } catch (Throwable t) {
-                    SwingUtilities.invokeLater(() -> quit());
-                }
-            }
-        });
-
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), "line-back");
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), "line-forward");
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK), "split-h");
@@ -444,14 +214,18 @@ public class TerminalPanel extends TilingWMComponent {
         getActionMap().put("split-h", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                horizontalSplit(new TerminalPanel(parent));
+                TerminalPanel tp = new TerminalPanel(parent);
+                horizontalSplit(tp);
+                tp.start(null, 0);
             }
         });
 
         getActionMap().put("split-v", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                verticalSplit(new TerminalPanel(parent));
+                TerminalPanel tp = new TerminalPanel(parent);
+                verticalSplit(tp);
+                tp.start(null, 0);
             }
         });
 
@@ -670,7 +444,255 @@ public class TerminalPanel extends TilingWMComponent {
         return text;
     }
 
-    public void start() {
+    public void start(String host, int port) {
+        t = new Thread(new Runnable() {
+            private ObjectInputStream ois;
+            private ObjectOutputStream oos;
+            private final Map<String, Consumer<IDEPacket>> ideFunctions = Map.ofEntries(
+                    Map.entry("term:clear", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            area.setText("");
+                            gutter.setText("");
+                            allowedHighlightRanges.clear();
+                        }
+                    }),
+                    Map.entry("ide:workspace:add", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            if (o.data.size() == 1) {
+                                String name = (String) o.data.get(0);
+                                if (parent.statusBar.hasWorkspace(name))
+                                    throw new RuntimeException("Workspace already exists!");
+                                parent.statusBar.addWorkspace(name);
+                            } else {
+                                parent.statusBar.addWorkspace();
+                            }
+                        }
+                    }),
+                    Map.entry("ide:workspace:has", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            String name = (String) o.data.get(0);
+                            boolean r = parent.statusBar.hasWorkspace(name);
+                            sendPacket(new IDEPacket("ide:workspace:has", List.of(r)));
+                        }
+                    }),
+                    Map.entry("ide:workspace:delete", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            String name = (String) o.data.get(0);
+                            parent.statusBar.deleteWorkspace(name);
+                        }
+                    }),
+                    Map.entry("ide:workspace:select", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            Object ob = o.data.get(0);
+                            if (ob instanceof String name) {
+                                parent.statusBar.selectWorkspace(name);
+                            } else if (ob instanceof Integer) {
+                                int index = (int) ob;
+                                parent.statusBar.selectWorkspace(index);
+                            } else {
+                                throw new TypeError("Expected String or Integer, got " + ob.getClass().getName());
+                            }
+                        }
+                    }),
+                    Map.entry("ide:workspace:rename", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            Object ob = o.data.get(0);
+                            if (ob instanceof String name) {
+                                String newName = (String) o.data.get(1);
+                                parent.statusBar.renameWorkspace(name, newName);
+                            } else if (ob instanceof Integer) {
+                                int index = (int) ob;
+                                String newName = (String) o.data.get(1);
+                                parent.statusBar.renameWorkspace(index, newName);
+                            } else {
+                                throw new TypeError("Expected String or Integer, got " + ob.getClass().getName());
+                            }
+                        }
+                    }),
+                    Map.entry("ide:workspace:swap", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            int src = (int) o.data.get(0);
+                            int dst = (int) o.data.get(1);
+                            parent.statusBar.swapWorkspaces(src, dst);
+                        }
+                    }),
+                    Map.entry("ide:workspace:current", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            Pair<Integer, String> p = parent.statusBar.currentWorkspace();
+                            sendPacket(new IDEPacket("ide:workspace:current", List.of(p.fst(), p.snd())));
+                        }
+                    }),
+                    Map.entry("ide:split-h", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            if (o.data.isEmpty())
+                                TerminalPanel.this.getActionMap().get("split-h").actionPerformed(null);
+                            else {
+                                String kind = (String) o.data.get(0);
+                                if (kind.equals("editor")) {
+                                    horizontalSplit(new EditorPanel(parent, TerminalPanel.this));
+                                } else if(kind.equals("remote")) {
+                                    TerminalPanel tp = new TerminalPanel(parent);
+                                    horizontalSplit(tp);
+                                    tp.start((String) o.data.get(1), (int) o.data.get(2));
+                                } else {
+                                    throw new TypeError("Unknown split kind: " + kind);
+                                }
+                            }
+                        }
+                    }),
+                    Map.entry("ide:split-v", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            if (o.data.isEmpty())
+                                TerminalPanel.this.getActionMap().get("split-v").actionPerformed(null);
+                            else {
+                                String kind = (String) o.data.get(0);
+                                if (kind.equals("editor")) {
+                                    verticalSplit(new EditorPanel(parent, TerminalPanel.this));
+                                } else if(kind.equals("remote")) {
+                                    TerminalPanel tp = new TerminalPanel(parent);
+                                    verticalSplit(tp);
+                                    tp.start((String) o.data.get(1), (int) o.data.get(2));
+                                } else {
+                                    throw new TypeError("Unknown split kind: " + kind);
+                                }
+                            }
+                        }
+                    })
+            );
+            private final Map<String, Consumer<IDEPacket>> asyncIdeFunctions = Map.ofEntries(
+                    Map.entry("io:readln", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            String s = promptRaw();
+                            sendPacket(new IDEPacket("io:readln", List.of(s)));
+                        }
+                    })
+            );
+
+            private void sendPacket(Packet p) {
+                try {
+                    oos.writeObject(p);
+                    oos.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void run() {
+                // TODO: Do.
+                String myHost = host;
+                int myPort = port;
+                if(myHost == null) {
+                    try {
+                        String javaHome = System.getProperty("java.home");
+                        String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
+                        String classpath = System.getProperty("java.class.path");
+                        String className = Main.class.getName();
+                        List<String> command = new ArrayList<>();
+                        command.add(javaBin);
+                        command.add("-cp");
+                        command.add(classpath);
+                        command.add(className);
+                        command.add("--remote");
+                        ProcessBuilder builder = new ProcessBuilder(command);
+                        localProcess = builder.start();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(localProcess.getInputStream()));
+                        myPort = Integer.parseInt(reader.readLine());
+                        myHost = "localhost";
+                        reader.close();
+                    } catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    localProcess = null;
+                }
+                try {
+                    // Connect to the remote.
+                    Socket socket = new Socket(myHost, myPort);
+                    // Create the streams.
+                    oos = new ObjectOutputStream(new OutputStream() {
+                        @Override
+                        public void write(int b) throws IOException {
+                            NetCounter.addOut(1);
+                            socket.getOutputStream().write(b);
+                        }
+
+                        @Override
+                        public void write(byte[] b, int off, int len) throws IOException {
+                            NetCounter.addOut(len);
+                            socket.getOutputStream().write(b, off, len);
+                        }
+                    });
+                    ois = new ObjectInputStream(new InputStream() {
+                        @Override
+                        public int read() throws IOException {
+                            NetCounter.addIn(1);
+                            return socket.getInputStream().read();
+                        }
+
+                        @Override
+                        public int read(byte[] b, int off, int len) throws IOException {
+                            NetCounter.addIn(len);
+                            return socket.getInputStream().read(b, off, len);
+                        }
+                    });
+                    while (true) {
+                        Packet p = (Packet) ois.readObject();
+                        if (p instanceof PromptPacket) {
+                            String code = TerminalPanel.this.prompt(ois, oos).trim();
+                            oos.writeObject(new StringPacket(code));
+                        } else if (p instanceof StringPacket) {
+                            TerminalPanel.this.print(((StringPacket) p).data);
+                        } else if (p instanceof IDEPacket ip) {
+                            if (ideFunctions.containsKey(ip.kind)) {
+                                IDE.invokeSwing(() -> {
+                                    Throwable t = null;
+                                    try {
+                                        ideFunctions.get(ip.kind).accept(ip);
+                                    } catch (Throwable e) {
+                                        t = e;
+                                    }
+                                    if (t == null) {
+                                        sendPacket(new IDEPacket("ide:ok", List.of()));
+                                    } else {
+                                        sendPacket(new IDEPacket("ide:err", List.of(t)));
+                                    }
+                                });
+                            } else {
+                                Throwable t = null;
+                                try {
+                                    asyncIdeFunctions.get(ip.kind).accept(ip);
+                                } catch (Throwable e) {
+                                    t = e;
+                                }
+                                if (t != null) {
+                                    sendPacket(new IDEPacket("ide:err", List.of(t)));
+                                } else {
+                                    sendPacket(new IDEPacket("ide:ok", List.of()));
+                                }
+                            }
+                        } else {
+                            throw new RuntimeException("Unknown packet type: " + p.getClass().getName());
+                        }
+                    }
+                } catch (Throwable t) {
+                    if(localProcess != null && localProcess.isAlive())
+                        localProcess.destroy();
+                    SwingUtilities.invokeLater(() -> quit());
+                }
+            }
+        });
         t.start();
     }
 

@@ -45,7 +45,6 @@ public class IDETextAreaErrorModal extends IDEModal {
     public void display(Runnable onClose) {
         confirmButton.addActionListener(e -> {
             onClose.run();
-            dispose();
         });
         addInternalFrameListener(new InternalFrameAdapter() {
             @Override

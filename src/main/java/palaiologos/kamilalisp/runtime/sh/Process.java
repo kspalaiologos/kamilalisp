@@ -5,7 +5,6 @@ import palaiologos.kamilalisp.runtime.IO.streams.StreamWrapper;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 

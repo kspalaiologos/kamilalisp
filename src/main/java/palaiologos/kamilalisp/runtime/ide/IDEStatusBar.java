@@ -98,7 +98,7 @@ public class IDEStatusBar extends JPanel {
         frame.setVisible(true);
         workspaceComponents.add(pane);
         selectWorkspace(noWorkspaces - 1);
-        p.start();
+        p.start(null, 0);
     }
 
     public void addWorkspace() {

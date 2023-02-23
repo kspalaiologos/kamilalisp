@@ -1,7 +1,6 @@
 package palaiologos.kamilalisp.runtime.IO.streams;
 
 import com.google.common.primitives.Longs;
-import org.apache.commons.codec.digest.PureJavaCrc32;
 import org.apache.commons.codec.digest.XXHash32;
 
 import java.security.MessageDigest;
