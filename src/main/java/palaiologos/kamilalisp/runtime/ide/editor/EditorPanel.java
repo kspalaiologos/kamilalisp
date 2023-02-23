@@ -30,6 +30,15 @@ public class EditorPanel extends TilingWMComponent {
     private String objectName = null;
     private JLabel name;
 
+    private static JLabel makeSeparator() {
+        JLabel separator = new JLabel(" | ");
+        separator.setFont(IDE.apl333Font);
+        separator.setOpaque(true);
+        separator.setBackground(Color.decode("#10141C"));
+        separator.setForeground(Color.decode("#FFFFFF"));
+        return separator;
+    }
+
     public EditorPanel(IDE parent, TerminalPanel owner) {
         super(parent);
         this.owner = owner;
@@ -37,7 +46,7 @@ public class EditorPanel extends TilingWMComponent {
         scrollPane = new RTextScrollPane(area);
         scrollPane.setBorder(null);
         scrollPane.getGutter().setBorderColor(Color.decode("#1E222A"));
-        JPanel topPanel = new JPanel(new FlowLayout());
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.setBackground(Color.decode("#10141C"));
         topPanel.setBorder(null);
         name = new JLabel("Untitled");
@@ -48,28 +57,32 @@ public class EditorPanel extends TilingWMComponent {
         JButton fix = new JButton();
         fix.setIcon(new ImageIcon(getClass().getResource("/ui/hammer.png")));
         fix.setBackground(Color.decode("#10141C"));
-        JButton save = new JButton();
-        save.setIcon(new ImageIcon(getClass().getResource("/ui/floppy-disk.png")));
-        save.setBackground(Color.decode("#10141C"));
+        fix.setBorder(null);
         JButton open = new JButton();
         open.setIcon(new ImageIcon(getClass().getResource("/ui/folder-open.png")));
         open.setBackground(Color.decode("#10141C"));
+        open.setBorder(null);
         JButton neu = new JButton();
         neu.setIcon(new ImageIcon(getClass().getResource("/ui/file.png")));
         neu.setBackground(Color.decode("#10141C"));
+        neu.setBorder(null);
         JButton close = new JButton();
         close.setIcon(new ImageIcon(getClass().getResource("/ui/circle-xmark.png")));
         close.setBackground(Color.decode("#10141C"));
+        close.setBorder(null);
         topPanel.add(name);
         topPanel.add(neu);
+        topPanel.add(makeSeparator());
         topPanel.add(open);
-        topPanel.add(save);
+        topPanel.add(makeSeparator());
         topPanel.add(fix);
+        topPanel.add(makeSeparator());
         topPanel.add(close);
         add(topPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
 
         close.addActionListener(e -> tryQuit());
+        fix.addActionListener(e -> getActionMap().get("fix").actionPerformed(null));
 
         area.getDocument().addDocumentListener(new DocumentListener() {
             @Override
