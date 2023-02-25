@@ -81,7 +81,7 @@ KamilaLisp allows for actor programming, concurrent programming, imperative prog
 
 Project Euler #25 by @der-teufel-programming:
 
-```
+```lisp
 (defun fib-next st \append (cdr st) \[+ car cdr] st)
 (defun help st
      (if (= 1000 \digits@caar st)
