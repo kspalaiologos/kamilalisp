@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime.ide.editor;
+package palaiologos.kamilalisp.runtime.ide.project;
 
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream;
@@ -22,6 +22,12 @@ public class ProjectDataRegistry {
         this.parent = parent;
     }
 
+    public void setNamespace(String newName) {
+        lock.lock();
+        projectNamespace = newName;
+        lock.unlock();
+    }
+
     public void setKey(String key, String value) {
         if(!key.startsWith(projectNamespace + ":") && !key.startsWith("public:" + projectNamespace + ":")
                 || projectNamespace.isEmpty())
@@ -32,6 +38,7 @@ public class ProjectDataRegistry {
         parent.project.projectTreeModel.addElement(key);
         parent.project.projectTree.revalidate();
         parent.project.projectTree.repaint();
+        parent.project.unsavedChanges = true;
     }
 
     public String getKey(String key) {

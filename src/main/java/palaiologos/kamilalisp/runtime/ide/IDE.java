@@ -2,7 +2,6 @@ package palaiologos.kamilalisp.runtime.ide;
 
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
-import palaiologos.kamilalisp.runtime.ide.editor.ProjectDataRegistry;
 import palaiologos.kamilalisp.runtime.ide.project.ProjectPanel;
 
 import javax.swing.*;
