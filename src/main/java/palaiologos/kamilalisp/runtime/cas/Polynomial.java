@@ -26,7 +26,7 @@ public class Polynomial extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("Polynomial must have at least one coefficient.");
         else if (coefficients.size() == 1)
             return new Atom(List.of(coefficients.get(0)));
-        Set<String> variables = new LinkedHashSet<>();
+        LinkedHashSet<String> variables = new LinkedHashSet<>();
         variables.add("x");
         Atom result = coefficients.get(0);
         for (int i = 1; i < coefficients.size(); i++) {

@@ -35,12 +35,11 @@ public class MathExpression implements Userdata {
     private static final Map<String, String> primitiveTranslations = Map.ofEntries(
             Map.entry("ln", "log")
     );
-    private final Set<String> args;
-    private final Atom data;
-    private final Environment e;
-    private final String expressionCache;
+    final LinkedHashSet<String> args;
+    final Atom data;
+    final Environment e;
 
-    public MathExpression(Environment e, Set<String> args, Atom data) {
+    public MathExpression(Environment e, LinkedHashSet<String> args, Atom data) {
         this.args = args;
         this.data = data;
         this.e = e;
@@ -50,13 +49,15 @@ public class MathExpression implements Userdata {
                 throw new RuntimeException("Identifier " + x + " is not allowed as a variable, as it denotes a function already.");
         });
 
-        expressionCache = stringifyExpression(data);
+        stringifyExpression(data);
     }
+
+    public static LinkedHashSet emptyArguments = new LinkedHashSet();
 
     public static MathExpression constantExpression(Environment env, Atom a) {
         if (a.getType() == Type.USERDATA && a.isUserdata(MathExpression.class))
             return a.getUserdata(MathExpression.class);
-        return new MathExpression(env, Set.of(), a);
+        return new MathExpression(env, emptyArguments, a);
     }
 
     public static void unknownsFrom(Atom expr, Set<String> dest) {
@@ -75,7 +76,7 @@ public class MathExpression implements Userdata {
         }
     }
 
-    public Set<String> getArgs() {
+    public LinkedHashSet<String> getArgs() {
         return args;
     }
 
@@ -183,6 +184,19 @@ public class MathExpression implements Userdata {
                         if (primitiveTranslations.containsKey(id))
                             id = primitiveTranslations.get(id);
                         return id + "(" + tree.getList().stream().skip(1).map(this::stringifyExpression).reduce((x, y) -> x + "," + y).get() + ")";
+                    } else if(e.has(id)) {
+                        if(e.get(id).getType() != Type.USERDATA || !(e.get(id).getUserdata() instanceof MathExpression))
+                            throw new RuntimeException("Invalid function: " + id);
+                        MathExpression f = e.get(id).getUserdata(MathExpression.class);
+                        if(f.args.size() != tree.getList().size() - 1)
+                            throw new RuntimeException("Invalid arity for function: " + id);
+                        int i = 0;
+                        Atom expr = f.data;
+                        for(String arg : f.args) {
+                            expr = substituteRecursively(expr, arg, tree.getList().get(i + 1));
+                            i++;
+                        }
+                        return stringifyExpression(expr);
                     } else {
                         throw new RuntimeException("Unknown function: " + id);
                     }
@@ -200,7 +214,7 @@ public class MathExpression implements Userdata {
     }
 
     public String getExpression() {
-        return expressionCache;
+        return stringifyExpression(data);
     }
 
     @Override
@@ -214,7 +228,7 @@ public class MathExpression implements Userdata {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(expressionCache, args, data);
+        return Objects.hashCode(args, data);
     }
 
     @Override
@@ -226,7 +240,7 @@ public class MathExpression implements Userdata {
     public boolean equals(Userdata other) {
         if (!(other instanceof MathExpression otherExpr))
             return false;
-        return expressionCache.equals(otherExpr.expressionCache);
+        return stringifyExpression(data).equals(otherExpr.stringifyExpression(data));
     }
 
     @Override
@@ -249,6 +263,22 @@ public class MathExpression implements Userdata {
         return true;
     }
 
+    private Atom substituteRecursively(Atom data, String key, Atom sub) {
+        if (data.getType() == Type.IDENTIFIER) {
+            if (data.getIdentifier().equals(key))
+                return sub;
+            else
+                return data;
+        } else if (data.getType() == Type.LIST) {
+            List<Atom> newList = new ArrayList<>();
+            for (Atom a : data.getList())
+                newList.add(substituteRecursively(a, key, sub));
+            return new Atom(newList);
+        } else {
+            return data;
+        }
+    }
+
     private class MathExpressionSubstitute extends PrimitiveFunction implements Lambda {
         private final String keyStr;
 
@@ -259,29 +289,13 @@ public class MathExpression implements Userdata {
         @Override
         public Atom apply(Environment env, List<Atom> args) {
             assertArity(args, 1);
-            Set<String> variables = new LinkedHashSet<>();
+            LinkedHashSet<String> variables = new LinkedHashSet<>();
             unknownsFrom(args.get(0), variables);
             MathExpression me = new MathExpression(env, variables, args.get(0));
-            Atom result = substituteRecursively(MathExpression.this.data, me.data);
-            Set<String> returnVariables = new LinkedHashSet<>();
+            Atom result = substituteRecursively(MathExpression.this.data, keyStr, me.data);
+            LinkedHashSet<String> returnVariables = new LinkedHashSet<>();
             unknownsFrom(result, returnVariables);
             return new Atom(new MathExpression(env, returnVariables, result));
-        }
-
-        private Atom substituteRecursively(Atom data, Atom sub) {
-            if (data.getType() == Type.IDENTIFIER) {
-                if (data.getIdentifier().equals(keyStr))
-                    return sub;
-                else
-                    return data;
-            } else if (data.getType() == Type.LIST) {
-                List<Atom> newList = new ArrayList<>();
-                for (Atom a : data.getList())
-                    newList.add(substituteRecursively(a, sub));
-                return new Atom(newList);
-            } else {
-                return data;
-            }
         }
 
         @Override

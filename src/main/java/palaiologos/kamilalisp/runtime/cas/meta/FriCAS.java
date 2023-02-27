@@ -45,9 +45,8 @@ public class FriCAS {
                         cout.add((byte) b);
                         if (b == '\n') {
                             byte[] data = new byte[cout.size()];
-                            for (int i = 0; i < cout.size(); i++) {
+                            for (int i = 0; i < cout.size(); i++)
                                 data[i] = cout.get(i);
-                            }
                             instance.get().cout.add(new String(data));
                             cout.clear();
                         }

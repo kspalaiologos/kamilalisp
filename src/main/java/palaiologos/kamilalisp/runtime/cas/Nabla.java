@@ -1,21 +1,18 @@
 package palaiologos.kamilalisp.runtime.cas;
 
 import org.pcollections.HashPMap;
-import org.pcollections.HashTreePMap;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.runtime.cas.meta.EvaluationResult;
 import palaiologos.kamilalisp.runtime.cas.meta.FortranParser;
 import palaiologos.kamilalisp.runtime.cas.meta.FriCAS;
 import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Derivative extends PrimitiveFunction implements Lambda {
-    protected static Atom tex = new Atom("tex");
-
+public class Nabla extends PrimitiveFunction implements Lambda {
     private static boolean hasVariable(Atom a, String name) {
         if (a.getType() == Type.IDENTIFIER) {
             return a.getIdentifier().equals(name);
@@ -28,24 +25,12 @@ public class Derivative extends PrimitiveFunction implements Lambda {
         return false;
     }
 
-    @Override
-    public Atom apply(Environment env, List<Atom> args) {
-        assertArity(args, 2);
-        String var = args.get(0).getIdentifier();
-        MathExpression expr = args.get(1).getUserdata(MathExpression.class);
-        HashPMap<Atom, Atom> options = env.has("cas-options") ? env.get("cas-options").getUserdata(HashMapUserData.class).value() : HashTreePMap.from(new HashMap<Atom, Atom>());
-        String instruction =
-                "D(" + expr.getExpression() + ", " + var + ")\n";
+    public static MathExpression d(Environment env, MathExpression expr, String var) {
+        String instruction = "D(" + expr.getExpression() + ", " + var + ")\n";
         EvaluationResult r = (EvaluationResult) FriCAS.withFriCas(x -> {
             x.apply(")clear all\n");
             x.apply(")set output algebra off\n");
-            if (options.getOrDefault(tex, Atom.FALSE).equals(Atom.TRUE)) {
-                x.apply(")set output fortran off\n");
-                x.apply(")set output tex on\n");
-            } else {
-                x.apply(")set output tex off\n");
-                x.apply(")set output fortran on\n");
-            }
+            x.apply(")set output fortran on\n");
             x.apply("digits(" + env.get("fr") + ")\n");
             return x.apply(instruction);
         });
@@ -54,9 +39,6 @@ public class Derivative extends PrimitiveFunction implements Lambda {
                 throw new RuntimeException("Failed to compute the derivative, command=" + instruction + ", result=" + r.getResult());
             throw new RuntimeException("Failed to compute the derivative.");
         } else {
-            if (options.getOrDefault(tex, Atom.FALSE).equals(Atom.TRUE)) {
-                return new Atom(r.getResult());
-            }
             HashPMap<Atom, Atom> a;
             try {
                 a = FortranParser.parse(r.getResult()).getUserdata(HashMapUserData.class).value();
@@ -67,7 +49,7 @@ public class Derivative extends PrimitiveFunction implements Lambda {
             }
 
             if (a.size() == 0) {
-                return Atom.NULL;
+                throw new RuntimeException("Failed to compute the derivative, CAS result empty.");
             } else if (a.size() == 1) {
                 Atom entry = a.entrySet().stream().findFirst().get().getValue();
                 if (entry.getType() == Type.STRING) {
@@ -80,7 +62,7 @@ public class Derivative extends PrimitiveFunction implements Lambda {
                 for(String s : expr.getArgs())
                     if (hasVariable(entry, s))
                         args2.add(s);
-                return new Atom(new MathExpression(env, args2, entry));
+                return new MathExpression(env, args2, entry);
             } else {
                 throw new RuntimeException("Failed to compute the derivative, CAS arity error.");
             }
@@ -88,7 +70,23 @@ public class Derivative extends PrimitiveFunction implements Lambda {
     }
 
     @Override
+    public Atom apply(Environment env, List<Atom> args) {
+        Set<String> exprArgs;
+        MathExpression expr;
+        if(args.size() == 1) {
+            expr = args.get(0).getUserdata(MathExpression.class);
+            exprArgs = expr.getArgs();
+        } else if(args.size() == 2) {
+            exprArgs = args.get(0).getList().stream().map(Atom::getIdentifier).collect(LinkedHashSet::new, LinkedHashSet::add, LinkedHashSet::addAll);
+            expr = args.get(1).getUserdata(MathExpression.class);
+        } else {
+            throw new RuntimeException("cas:nabla - expected one or two arguments");
+        }
+        return new Atom(exprArgs.stream().map(x -> new Atom(d(env, expr, x))).toList());
+    }
+
+    @Override
     protected String name() {
-        return "cas:D";
+        return "nabla";
     }
 }

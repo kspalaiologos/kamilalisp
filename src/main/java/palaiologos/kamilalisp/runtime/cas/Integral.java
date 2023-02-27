@@ -17,7 +17,7 @@ public class Integral extends PrimitiveFunction implements SpecialForm {
     protected static Atom tex = new Atom("tex");
 
     protected static Atom expressionFromList(Environment env, Set<String> args, String differential, Atom expression) {
-        Set<String> newArgs = new LinkedHashSet<>(args);
+        LinkedHashSet<String> newArgs = new LinkedHashSet<>(args);
         newArgs.add(differential);
         return new Atom(new MathExpression(env, newArgs, expression));
     }

@@ -57,7 +57,7 @@ public class ComplexLimit extends Limit {
                 throw new RuntimeException("Failed to evaluate limit.");
             }
 
-            Set<String> newVariables = new LinkedHashSet<>(function.getArgs());
+            LinkedHashSet<String> newVariables = new LinkedHashSet<>(function.getArgs());
             newVariables.remove(variable);
 
             if (a.size() == 0) {
