@@ -2,6 +2,7 @@ package palaiologos.kamilalisp.runtime.ide;
 
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
+import palaiologos.kamilalisp.runtime.ide.project.ProjectPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,6 +27,8 @@ public class IDE {
 
     public IDEStatusBar statusBar;
     public IDEExtras extras;
+    public ProjectPanel project;
+    public JSplitPane splitPane;
     JFrame frame;
 
     public IDE() {
@@ -38,14 +41,20 @@ public class IDE {
         frame.setSize(800, 600);
         frame.setIconImage(new ImageIcon(Objects.requireNonNull(IDE.class.getResource("/icon.png"))).getImage());
         frame.setLocationRelativeTo(null);
+        frame.setBackground(Color.decode("#10141C"));
         frame.setLayout(new BorderLayout());
         statusBar = new IDEStatusBar(this);
         frame.add(statusBar, BorderLayout.NORTH);
-        frame.setBackground(Color.decode("#10141C"));
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        project = new ProjectPanel(this);
+        splitPane.setLeftComponent(project);
+        frame.add(splitPane, BorderLayout.CENTER);
         extras = new IDEExtras();
         frame.add(extras, BorderLayout.SOUTH);
         frame.setVisible(true);
         statusBar.addWorkspace("Main");
+        frame.revalidate();
+        frame.repaint();
     }
 
     public static <T> T invokeSwing(Supplier<T> r) {

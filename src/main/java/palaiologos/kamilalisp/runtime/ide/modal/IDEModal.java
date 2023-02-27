@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime.ide;
+package palaiologos.kamilalisp.runtime.ide.modal;
 
 import javax.swing.*;
 import java.awt.*;

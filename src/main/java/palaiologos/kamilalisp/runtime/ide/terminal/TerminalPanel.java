@@ -88,7 +88,7 @@ public class TerminalPanel extends TilingWMComponent {
                 int lines = area.getLineOfOffset(area.getDocument().getLength()) + 1;
                 // Add a new line to the gutter until the amount of lines in the document is equal to the amount of lines in the gutter.
                 while (gutter.getLineCount() - 1 < lines) {
-                    gutter.getDocument().insertString(gutter.getDocument().getLength(), (readingInput.get() ? "..." : "   ") + System.lineSeparator(), null);
+                    gutter.getDocument().insertString(gutter.getDocument().getLength(), (readingInput.get() ? "..." : "   ") + "\n", null);
                 }
             }
 
