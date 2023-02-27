@@ -35,10 +35,12 @@ public class ProjectDataRegistry {
         lock.lock();
         data.put(key, value);
         lock.unlock();
-        parent.project.projectTreeModel.addElement(key);
-        parent.project.projectTree.revalidate();
-        parent.project.projectTree.repaint();
-        parent.project.unsavedChanges = true;
+        if(parent != null) {
+            parent.project.projectTreeModel.addElement(key);
+            parent.project.projectTree.revalidate();
+            parent.project.projectTree.repaint();
+            parent.project.unsavedChanges = true;
+        }
     }
 
     public String getKey(String key) {
@@ -94,8 +96,10 @@ public class ProjectDataRegistry {
         lock.lock();
         data.clear();
         lock.unlock();
-        parent.project.projectTreeModel.clear();
-        parent.project.projectTree.revalidate();
-        parent.project.projectTree.repaint();
+        if(parent != null) {
+            parent.project.projectTreeModel.clear();
+            parent.project.projectTree.revalidate();
+            parent.project.projectTree.repaint();
+        }
     }
 }
