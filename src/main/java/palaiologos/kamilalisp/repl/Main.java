@@ -55,11 +55,7 @@ public class Main {
     private static void terminalTTY() throws IOException {
         banner();
         Environment env = new Environment(defaultRegistry);
-        DefaultParser parser = new DefaultParser();
-        parser.setEofOnUnclosedBracket(DefaultParser.Bracket.ROUND, DefaultParser.Bracket.SQUARE);
-        parser.setEscapeChars(new char[]{}); // XXX: Should be \\, but JLine processes escapes *everywhere*, not just in strings. Clap clap.
-        parser.setQuoteChars(new char[]{'\"'});
-        parser.eofOnUnclosedQuote(true);
+        DefaultParser parser = new JLineParser();
         Terminal t = TerminalBuilder.builder().dumb(true).build();
         // Bug workaround for JLine3.
         String promptPattern = t.getType().equals(Terminal.TYPE_DUMB) || t.getType().equals(Terminal.TYPE_DUMB_COLOR) ? "" : "%P. ";

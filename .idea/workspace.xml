@@ -5,19 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="96eb8b4e-68c4-49a9-86c2-149d391f2918" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/cas/MfnVariables.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/cas/Nabla.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/repl/JLineParser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/repl/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/repl/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/FunctionRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/FunctionRegistry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/cas/ComplexLimit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/cas/ComplexLimit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/cas/Derivative.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/cas/Derivative.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/cas/Fn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/cas/Fn.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/cas/Integral.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/cas/Integral.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/cas/Limit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/cas/Limit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/cas/MathExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/cas/MathExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/cas/Polynomial.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/cas/Polynomial.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/cas/meta/FriCAS.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/cas/meta/FriCAS.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/ide/terminal/TerminalPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/ide/terminal/TerminalPanel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -214,12 +205,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/repl/Main.java</url>
-          <line>92</line>
+          <line>88</line>
           <option name="timeStamp" value="27" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/repl/Main.java</url>
-          <line>93</line>
+          <line>89</line>
           <option name="timeStamp" value="28" />
         </line-breakpoint>
       </breakpoints>

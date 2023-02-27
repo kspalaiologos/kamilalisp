@@ -3,6 +3,7 @@ package palaiologos.kamilalisp.runtime.ide.terminal;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import palaiologos.kamilalisp.atom.Pair;
 import palaiologos.kamilalisp.error.TypeError;
+import palaiologos.kamilalisp.repl.JLineParser;
 import palaiologos.kamilalisp.repl.Main;
 import palaiologos.kamilalisp.runtime.ide.IDE;
 import palaiologos.kamilalisp.runtime.ide.NetCounter;
@@ -104,41 +105,15 @@ public class TerminalPanel extends TilingWMComponent {
                         // Check if quotes are balanced.
                         String text = area.getText(r.byteOffset, area.getDocument().getLength() - r.byteOffset);
                         // Ignore escapes.
-                        String q = text.replace("\\\"", "");
-                        long amount = q.chars().filter(ch -> ch == '"').count();
-                        // Eek. Unbalanced quotes.
-                        if (amount % 2 != 0) {
+                        if(JLineParser.isTerminated(text)) {
+                            readingInput.set(false);
+                            insertFixGutter();
+                            synchronized (readingInput) {
+                                readingInput.notify();
+                            }
+                        } else {
                             insertFixGutter();
                             return;
-                        }
-                        // OK, quotes are balanced. Remove every instance of quotation in the input.
-                        q = q.replaceAll("\"[^\"]*\"", "");
-                        // Count open and closed parens.
-                        long open = q.chars().filter(ch -> ch == '(').count();
-                        long closed = q.chars().filter(ch -> ch == ')').count();
-                        if (open != closed) {
-                            insertFixGutter();
-                            return;
-                        }
-                        // Count open and closed braces.
-                        open = q.chars().filter(ch -> ch == '{').count();
-                        closed = q.chars().filter(ch -> ch == '}').count();
-                        if (open != closed) {
-                            insertFixGutter();
-                            return;
-                        }
-                        // Count open and closed brackets.
-                        open = q.chars().filter(ch -> ch == '[').count();
-                        closed = q.chars().filter(ch -> ch == ']').count();
-                        if (open != closed) {
-                            insertFixGutter();
-                            return;
-                        }
-                        // OK, it appears that we are done reading the input...
-                        readingInput.set(false);
-                        insertFixGutter();
-                        synchronized (readingInput) {
-                            readingInput.notify();
                         }
                     } else if (readingRawInput.get() && lastLineText.trim().isEmpty() && !(area.getDocument().getLength() == r.byteOffset)) {
                         readingRawInput.set(false);
