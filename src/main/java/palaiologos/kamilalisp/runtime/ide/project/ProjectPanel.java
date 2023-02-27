@@ -2,10 +2,10 @@ package palaiologos.kamilalisp.runtime.ide.project;
 
 import palaiologos.kamilalisp.atom.Parser;
 import palaiologos.kamilalisp.runtime.ide.IDE;
-import palaiologos.kamilalisp.runtime.ide.IDEErrorModal;
-import palaiologos.kamilalisp.runtime.ide.IDEModal;
+import palaiologos.kamilalisp.runtime.ide.modal.IDEErrorModal;
+import palaiologos.kamilalisp.runtime.ide.modal.IDEFileChooserModal;
+import palaiologos.kamilalisp.runtime.ide.modal.IDEModal;
 import palaiologos.kamilalisp.runtime.ide.TilingWMComponent;
-import palaiologos.kamilalisp.runtime.ide.editor.EditorPanel;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
+import java.io.File;
 import java.util.Objects;
 
 public class ProjectPanel extends TilingWMComponent {
@@ -160,19 +161,13 @@ public class ProjectPanel extends TilingWMComponent {
             public void actionPerformed(ActionEvent e) {
                 tryReset(() -> {});
                 JFileChooser chooser = new JFileChooser();
-                chooser.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        JInternalFrame parent = (JInternalFrame) SwingUtilities.getAncestorOfClass(JInternalFrame.class, chooser);
-                        if (JFileChooser.CANCEL_SELECTION.equals(e.getActionCommand())) {
-                            // Dialog was canceled
-                        } else if (JFileChooser.APPROVE_SELECTION.equals(e.getActionCommand())) {
-                            // Dialog was "approved"
-                        }
-                        parent.dispose();
+                IDEFileChooserModal modal = new IDEFileChooserModal(parent.statusBar.getCurrentDesktopPane(), parent, new JFileChooser(), (evt) -> {
+                    System.out.println("File selected?: " + JFileChooser.APPROVE_SELECTION.equals(e.getActionCommand()));
+                    if (JFileChooser.APPROVE_SELECTION.equals(e.getActionCommand())) {
+                        System.out.println("File selected: " + chooser.getSelectedFile().getAbsolutePath());
                     }
                 });
-                JOptionPane.showInternalOptionDialog(parent.statusBar.getCurrentDesktopPane(), chooser, "Choose", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, new Object[0], null);
+                modal.display();
             }
         });
     }
