@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime.matrix;
+package palaiologos.kamilalisp.runtime.math;
 
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
@@ -14,13 +14,13 @@ public class Transpose extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if (args.size() != 1)
-            throw new TypeError("matrix:transpose takes exactly one argument");
+            throw new TypeError("transpose takes exactly one argument");
         List<Atom> arg = args.get(0).getList();
         if (arg.isEmpty())
             return Atom.NULL;
         // Assert all members are of the same length:
         if (arg.stream().map(x -> x.getList().size()).distinct().count() != 1)
-            throw new TypeError("matrix:transpose takes a matrix as argument");
+            throw new TypeError("transpose takes a matrix as argument");
         if (arg.get(0).getList().isEmpty())
             return args.get(0);
         return new Atom(new AbstractList<Atom>() {
@@ -40,6 +40,6 @@ public class Transpose extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "matrix:transpose";
+        return "transpose";
     }
 }

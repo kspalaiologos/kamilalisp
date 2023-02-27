@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime.matrix;
+package palaiologos.kamilalisp.runtime.math.num;
 
 import ch.obermuhlner.math.big.BigComplex;
 import palaiologos.kamilalisp.atom.Atom;
@@ -28,6 +28,6 @@ public class Trace extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "matrix:trace";
+        return "num:trace";
     }
 }
