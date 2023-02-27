@@ -11,7 +11,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
 
-public class FixProject extends IDEFunction implements Lambda {
+public class FixProject extends IDEFunction implements SpecialForm, ReactiveFunction {
     public FixProject(ObjectInputStream in, ObjectOutputStream out, Socket socket) {
         super(in, out, socket);
     }
@@ -29,7 +29,7 @@ public class FixProject extends IDEFunction implements Lambda {
         Atom result = Evaluation.evaluate(childEnv, data.get(data.size() - 1));
         for (String key : childEnv.keys())
             env.set(key, childEnv.get(key));
-        return result;
+        return Atom.NULL;
     }
 
     @Override
