@@ -78,6 +78,7 @@ public class ProjectPanel extends TilingWMComponent {
         topPanel.add(export);
         projectTree = new JList<>(projectTreeModel);
         projectTree.setBackground(Color.decode("#10141C"));
+        projectTree.setFont(IDE.aplFont);
         setLayout(new BorderLayout());
         add(topPanel, BorderLayout.NORTH);
         add(projectTree, BorderLayout.CENTER);
