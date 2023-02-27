@@ -160,11 +160,17 @@ public class ProjectPanel extends TilingWMComponent {
             @Override
             public void actionPerformed(ActionEvent e) {
                 tryReset(() -> {});
-                JFileChooser chooser = new JFileChooser();
-                IDEFileChooserModal modal = new IDEFileChooserModal(parent.statusBar.getCurrentDesktopPane(), parent, new JFileChooser(), (evt) -> {
-                    System.out.println("File selected?: " + JFileChooser.APPROVE_SELECTION.equals(e.getActionCommand()));
-                    if (JFileChooser.APPROVE_SELECTION.equals(e.getActionCommand())) {
-                        System.out.println("File selected: " + chooser.getSelectedFile().getAbsolutePath());
+                JFileChooser jfc = new JFileChooser();
+                jfc.setDialogType(JFileChooser.OPEN_DIALOG);
+                IDEFileChooserModal modal = new IDEFileChooserModal(parent.statusBar.getCurrentDesktopPane(), parent, jfc, (evt) -> {
+                    if (JFileChooser.APPROVE_SELECTION.equals(evt.getActionCommand())) {
+                        File src = jfc.getSelectedFile().getAbsoluteFile();
+                        if(!src.exists()) {
+                            IDEErrorModal error = new IDEErrorModal(parent.statusBar.getCurrentDesktopPane(), "File does not exist.");
+                            error.display(() -> { });
+                        } else {
+                            System.out.println("Opening file " + src.getAbsolutePath());
+                        }
                     }
                 });
                 modal.display();
