@@ -28,9 +28,8 @@ import palaiologos.kamilalisp.runtime.math.prime.NextPrime;
 import palaiologos.kamilalisp.runtime.math.prime.PrimeFactors;
 import palaiologos.kamilalisp.runtime.math.prime.PrimeNo;
 import palaiologos.kamilalisp.runtime.math.trig.*;
-import palaiologos.kamilalisp.runtime.matrix.LUDecomposition;
-import palaiologos.kamilalisp.runtime.matrix.Trace;
-import palaiologos.kamilalisp.runtime.matrix.Transpose;
+import palaiologos.kamilalisp.runtime.math.num.LUDecomposition;
+import palaiologos.kamilalisp.runtime.math.num.Trace;
 import palaiologos.kamilalisp.runtime.meta.*;
 import palaiologos.kamilalisp.runtime.net.*;
 import palaiologos.kamilalisp.runtime.parallel.Daemon;
@@ -142,6 +141,7 @@ public class FunctionRegistry {
         env.setPrimitive("bipartition", "⍡¨", new Atom(new Bipartition()));
         env.setPrimitive("partition", "⍡", new Atom(new PartitionRange()));
         env.setPrimitive("windows", "⌹‡⍡", new Atom(new Windows()));
+        env.setPrimitive("transpose", "⎕⍉", new Atom(new Transpose()));
 
         env.setPrimitive("img:write", "≣⊣", new Atom(new WriteImage()));
         env.setPrimitive("img:read", "≣⊢", new Atom(new LoadImage()));
@@ -234,9 +234,8 @@ public class FunctionRegistry {
         env.setPrimitive("saca:bwt", new Atom(new SacaBwt()));
         env.setPrimitive("saca:unbwt", new Atom(new SacaUnbwt()));
 
-        env.setPrimitive("matrix:transpose", "⎕⍉", new Atom(new Transpose()));
-        env.setPrimitive("matrix:LU", "⎕↙↗", new Atom(new LUDecomposition()));
-        env.setPrimitive("matrix:trace", "⎕∑", new Atom(new Trace()));
+        env.setPrimitive("num:LU", "⎕↙↗", new Atom(new LUDecomposition()));
+        env.setPrimitive("num:trace", "⎕∑", new Atom(new Trace()));
 
         env.setPrimitive("bit:and", "⌶∧", new Atom(new BitAnd()));
         env.setPrimitive("bit:or", "⌶∨", new Atom(new BitOr()));

@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime.matrix;
+package palaiologos.kamilalisp.runtime.math.num;
 
 import ch.obermuhlner.math.big.BigComplex;
 import palaiologos.kamilalisp.atom.*;
@@ -103,6 +103,6 @@ public class LUDecomposition extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "matrix:LU";
+        return "num:LU";
     }
 }
