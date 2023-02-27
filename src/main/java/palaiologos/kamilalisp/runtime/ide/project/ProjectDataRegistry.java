@@ -89,4 +89,13 @@ public class ProjectDataRegistry {
         ois.close();
         lock.unlock();
     }
+
+    public void clear() {
+        lock.lock();
+        data.clear();
+        lock.unlock();
+        parent.project.projectTreeModel.clear();
+        parent.project.projectTree.revalidate();
+        parent.project.projectTree.repaint();
+    }
 }

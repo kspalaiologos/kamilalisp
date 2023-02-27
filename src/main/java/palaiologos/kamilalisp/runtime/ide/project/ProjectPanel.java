@@ -140,6 +140,7 @@ public class ProjectPanel extends TilingWMComponent {
                         });
                     } else {
                         dataRegistry.setNamespace(field.getText());
+                        dataRegistry.clear();
                         frame.dispose();
                         unsavedChanges = true;
                     }
