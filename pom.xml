@@ -92,6 +92,7 @@
             <version>1.15</version>
         </dependency>
 
+        <!-- GUI -->
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
@@ -102,6 +103,23 @@
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf-intellij-themes</artifactId>
             <version>3.0</version>
+        </dependency>
+
+        <!-- Audio -->
+        <dependency>
+            <groupId>com.googlecode.soundlibs</groupId>
+            <artifactId>tritonus-share</artifactId>
+            <version>0.3.7-2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.soundlibs</groupId>
+            <artifactId>mp3spi</artifactId>
+            <version>1.9.5-1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.soundlibs</groupId>
+            <artifactId>vorbisspi</artifactId>
+            <version>1.0.3-1</version>
         </dependency>
 
         <!-- Testing dependencies. -->
