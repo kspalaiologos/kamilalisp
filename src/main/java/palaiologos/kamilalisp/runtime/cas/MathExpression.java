@@ -49,10 +49,10 @@ public class MathExpression implements Userdata {
                 throw new RuntimeException("Identifier " + x + " is not allowed as a variable, as it denotes a function already.");
         });
 
-        stringifyExpression(data);
+        stringifyExpression(e, data);
     }
 
-    public static LinkedHashSet emptyArguments = new LinkedHashSet();
+    public static LinkedHashSet<String> emptyArguments = new LinkedHashSet<>();
 
     public static MathExpression constantExpression(Environment env, Atom a) {
         if (a.getType() == Type.USERDATA && a.isUserdata(MathExpression.class))
@@ -80,27 +80,45 @@ public class MathExpression implements Userdata {
         return args;
     }
 
-    private String stringifyExpression(Atom tree) {
+    private Atom expandIdentifiers(Environment e, Atom tree) {
         if (tree.getType() == Type.IDENTIFIER) {
             String id = tree.getIdentifier();
             if (id.startsWith("`")) {
                 if (!e.has(id.substring(1)))
                     throw new RuntimeException("Unknown identifier: " + id.substring(1));
-                return "(" + stringifyExpression(e.get(id.substring(1))) + ")";
-            } else if (id.equals("pi")) {
-                return "%pi";
-            } else if (id.equals("e")) {
-                return "exp(1)";
-            } else if (id.equals("oo")) {
-                return "%plusInfinity";
-            } else if (id.equals("-oo")) {
-                return "%minusInfinity";
-            } else {
-                if (!id.matches("[a-zA-Z]+"))
-                    throw new RuntimeException("Invalid identifier: " + id);
-                if (!args.contains(id))
-                    throw new RuntimeException("Unbound identifier: " + id);
-                return id;
+                return expandIdentifiers(e, e.get(id.substring(1)));
+            }
+            return tree;
+        } else if(tree.getType() == Type.LIST) {
+            return new Atom(tree.getList().stream().map(x -> expandIdentifiers(e, x)).toList());
+        } else {
+            return tree;
+        }
+    }
+
+    private String stringifyExpression(Environment e, Atom tree) {
+        if (tree.getType() == Type.IDENTIFIER) {
+            String id = tree.getIdentifier();
+            switch (id) {
+                case "pi" -> {
+                    return "%pi";
+                }
+                case "e" -> {
+                    return "exp(1)";
+                }
+                case "oo" -> {
+                    return "%plusInfinity";
+                }
+                case "-oo" -> {
+                    return "%minusInfinity";
+                }
+                default -> {
+                    if (!id.matches("[a-zA-Z]+"))
+                        throw new RuntimeException("Invalid identifier: " + id);
+                    if (!args.contains(id))
+                        throw new RuntimeException("Unbound identifier: " + id);
+                    return id;
+                }
             }
         } else if (tree.getType() == Type.REAL) {
             return tree.getReal().toString();
@@ -121,40 +139,40 @@ public class MathExpression implements Userdata {
                     if (tree.getList().size() == 1)
                         throw new RuntimeException("Invalid arity for function: +");
                     if (tree.getList().size() == 2)
-                        return "conj(" + stringifyExpression(tree.getList().get(1)) + ")";
-                    return tree.getList().stream().skip(1).map(this::stringifyExpression).reduce((x, y) -> "((" + x + ")+(" + y + "))").get();
+                        return "conj(" + stringifyExpression(e, tree.getList().get(1)) + ")";
+                    return tree.getList().stream().skip(1).map(x -> stringifyExpression(e, x)).reduce((x, y) -> "((" + x + ")+(" + y + "))").get();
                 }
                 case "-" -> {
                     if (tree.getList().size() == 1)
                         throw new RuntimeException("Invalid arity for function: -");
                     if (tree.getList().size() == 2)
-                        return "-(" + stringifyExpression(tree.getList().get(1)) + ")";
-                    return tree.getList().stream().skip(1).map(this::stringifyExpression).reduce((x, y) -> "((" + x + ")-(" + y + "))").get();
+                        return "-(" + stringifyExpression(e, tree.getList().get(1)) + ")";
+                    return tree.getList().stream().skip(1).map(x -> stringifyExpression(e, x)).reduce((x, y) -> "((" + x + ")-(" + y + "))").get();
                 }
                 case "*" -> {
                     if (tree.getList().size() == 1)
                         throw new RuntimeException("Invalid arity for function: *");
                     if (tree.getList().size() == 2)
-                        return "signum(" + stringifyExpression(tree.getList().get(1)) + ")";
-                    return tree.getList().stream().skip(1).map(this::stringifyExpression).reduce((x, y) -> "((" + x + ")*(" + y + "))").get();
+                        return "signum(" + stringifyExpression(e, tree.getList().get(1)) + ")";
+                    return tree.getList().stream().skip(1).map(x -> stringifyExpression(e, x)).reduce((x, y) -> "((" + x + ")*(" + y + "))").get();
                 }
                 case "/" -> {
                     if (tree.getList().size() == 1)
                         throw new RuntimeException("Invalid arity for function: /");
                     if (tree.getList().size() == 2)
-                        return "1/(" + stringifyExpression(tree.getList().get(1)) + ")";
-                    return tree.getList().stream().skip(1).map(this::stringifyExpression).reduce((x, y) -> "((" + x + ")/(" + y + "))").get();
+                        return "1/(" + stringifyExpression(e, tree.getList().get(1)) + ")";
+                    return tree.getList().stream().skip(1).map(x -> stringifyExpression(e, x)).reduce((x, y) -> "((" + x + ")/(" + y + "))").get();
                 }
                 case "**" -> {
                     if (tree.getList().size() <= 2)
                         throw new RuntimeException("Invalid arity for function: **");
-                    return tree.getList().stream().skip(1).map(this::stringifyExpression).reduce((x, y) -> "((" + x + ")^(" + y + "))").get();
+                    return tree.getList().stream().skip(1).map(x -> stringifyExpression(e, x)).reduce((x, y) -> "((" + x + ")^(" + y + "))").get();
                 }
                 case "pi" -> {
                     if (tree.getList().size() == 1)
                         return "%pi";
                     else if (tree.getList().size() == 2)
-                        return "(%pi*(" + stringifyExpression(tree.getList().get(1)) + "))";
+                        return "(%pi*(" + stringifyExpression(e, tree.getList().get(1)) + "))";
                     else
                         throw new RuntimeException("Invalid arity for function: gamma");
                 }
@@ -162,7 +180,7 @@ public class MathExpression implements Userdata {
                     if (tree.getList().size() == 1)
                         return "exp(1)";
                     else if (tree.getList().size() == 2)
-                        return "(exp(1)*(" + stringifyExpression(tree.getList().get(1)) + "))";
+                        return "(exp(1)*(" + stringifyExpression(e, tree.getList().get(1)) + "))";
                     else
                         throw new RuntimeException("Invalid arity for function: gamma");
                 }
@@ -171,9 +189,9 @@ public class MathExpression implements Userdata {
                 }
                 case "gamma" -> {
                     if (tree.getList().size() == 2)
-                        return "gamma(" + stringifyExpression(tree.getList().get(1)) + ")";
+                        return "gamma(" + stringifyExpression(e, tree.getList().get(1)) + ")";
                     else if (tree.getList().size() == 3)
-                        return "gamma(" + stringifyExpression(tree.getList().get(1)) + "," + stringifyExpression(tree.getList().get(2)) + ")";
+                        return "gamma(" + stringifyExpression(e, tree.getList().get(1)) + "," + stringifyExpression(e, tree.getList().get(2)) + ")";
                     else
                         throw new RuntimeException("Invalid arity for function: gamma");
                 }
@@ -183,7 +201,7 @@ public class MathExpression implements Userdata {
                             throw new RuntimeException("Invalid arity for function: " + id);
                         if (primitiveTranslations.containsKey(id))
                             id = primitiveTranslations.get(id);
-                        return id + "(" + tree.getList().stream().skip(1).map(this::stringifyExpression).reduce((x, y) -> x + "," + y).get() + ")";
+                        return id + "(" + tree.getList().stream().skip(1).map(x -> stringifyExpression(e, x)).reduce((x, y) -> x + "," + y).get() + ")";
                     } else if(e.has(id)) {
                         if(e.get(id).getType() != Type.USERDATA || !(e.get(id).getUserdata() instanceof MathExpression))
                             throw new RuntimeException("Invalid function: " + id);
@@ -193,10 +211,10 @@ public class MathExpression implements Userdata {
                         int i = 0;
                         Atom expr = f.data;
                         for(String arg : f.args) {
-                            expr = substituteRecursively(expr, arg, tree.getList().get(i + 1));
+                            expr = substituteRecursively(expr, arg, expandIdentifiers(e, tree.getList().get(i + 1)));
                             i++;
                         }
-                        return stringifyExpression(expr);
+                        return stringifyExpression(f.e, expr);
                     } else {
                         throw new RuntimeException("Unknown function: " + id);
                     }
@@ -214,7 +232,7 @@ public class MathExpression implements Userdata {
     }
 
     public String getExpression() {
-        return stringifyExpression(data);
+        return stringifyExpression(e, data);
     }
 
     @Override
@@ -240,7 +258,7 @@ public class MathExpression implements Userdata {
     public boolean equals(Userdata other) {
         if (!(other instanceof MathExpression otherExpr))
             return false;
-        return stringifyExpression(data).equals(otherExpr.stringifyExpression(data));
+        return stringifyExpression(e, data).equals(otherExpr.stringifyExpression(otherExpr.e, otherExpr.data));
     }
 
     @Override
