@@ -7,7 +7,9 @@ import palaiologos.kamilalisp.atom.Parser;
 import palaiologos.kamilalisp.runtime.ide.*;
 import palaiologos.kamilalisp.runtime.ide.modal.IDEErrorModal;
 import palaiologos.kamilalisp.runtime.ide.modal.IDEModal;
+import palaiologos.kamilalisp.runtime.ide.modal.IDEOkCancelModal;
 import palaiologos.kamilalisp.runtime.ide.modal.IDETextAreaErrorModal;
+import palaiologos.kamilalisp.runtime.ide.project.ProjectPanel;
 import palaiologos.kamilalisp.runtime.ide.terminal.TerminalPanel;
 import palaiologos.kamilalisp.runtime.remote.FixPacket;
 import palaiologos.kamilalisp.runtime.remote.IDEPacket;
@@ -19,6 +21,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyVetoException;
@@ -320,53 +323,12 @@ public class EditorPanel extends TilingWMComponent {
         // Check if the symbol name ends with " *". If it does, it means that the symbol has been modified.
         // If it has, ask the user if they want to fix the changes.
         if (name.getText().endsWith(" *")) {
-            IDEModal frame = new IDEModal(parent.statusBar.getCurrentDesktopPane());
-            frame.setTitle("Fix");
-            frame.setMaximizable(false);
-            frame.setResizable(false);
-            frame.setClosable(true);
-            frame.setIconifiable(false);
-            frame.setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
-            JPanel contentPane = new JPanel();
-            contentPane.setBorder(null);
-            contentPane.setBackground(Color.decode("#10141C"));
-            frame.setContentPane(contentPane);
-            GroupLayout layout = new GroupLayout(contentPane);
-            contentPane.setLayout(layout);
-            layout.setAutoCreateGaps(true);
-            layout.setAutoCreateContainerGaps(true);
-            JLabel label = new JLabel("Do you want to fix the changes before proceeding?");
-            JButton button = new JButton("Fix");
-            JButton cancel = new JButton("Quit");
-            // Horizontal layout: group 1 is only icon, group 2 is the rest of components.
-            GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
-            hGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                    .addComponent(label));
-            hGroup.addGroup(layout.createParallelGroup()
-                    .addGroup(layout.createSequentialGroup()
-                            .addComponent(button)
-                            .addComponent(cancel)));
-            layout.setHorizontalGroup(hGroup);
-            // Vertical: group 1 is label and field, group 2 is buttons.
-            GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
-            vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(label));
-            vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(button)
-                    .addComponent(cancel));
-            layout.setVerticalGroup(vGroup);
-            button.addActionListener(e1 -> {
-                frame.dispose();
+            IDEOkCancelModal frame = new IDEOkCancelModal(parent.statusBar.getCurrentDesktopPane(), "Fix", "Do you want to save the changes before proceeding?", "Save", "Quit", () -> {
                 getActionMap().get("fix").actionPerformed(null);
                 callback.run();
-            });
-            cancel.addActionListener(e1 -> frame.dispose());
-            frame.addInternalFrameListener(new InternalFrameAdapter() {
-                @Override
-                public void internalFrameClosed(InternalFrameEvent e) {
-                    EditorPanel.setEnabled(EditorPanel.this, true);
-                    area.requestFocusInWindow();
-                }
+            }, () -> { }, () -> {
+                EditorPanel.setEnabled(EditorPanel.this, true);
+                area.requestFocusInWindow();
             });
             frame.display();
             EditorPanel.setEnabled(EditorPanel.this, false);

@@ -67,6 +67,7 @@ public class ProjectDataRegistry {
 
     public void writeTo(OutputStream os) throws IOException {
         lock.lock();
+        os.write("@KLP-BIN".getBytes());
         XZCompressorOutputStream gos = new XZCompressorOutputStream(os, LZMA2Options.PRESET_MAX);
         ObjectOutputStream oos = new ObjectOutputStream(gos);
         oos.writeObject(projectNamespace);
@@ -77,6 +78,10 @@ public class ProjectDataRegistry {
 
     public void readFrom(InputStream is) throws IOException, ClassNotFoundException {
         lock.lock();
+        byte[] magic = new byte[8];
+        is.read(magic);
+        if(!new String(magic).equals("@KLP-BIN"))
+            throw new IOException("Invalid magic");
         XZCompressorInputStream gis = new XZCompressorInputStream(is);
         ObjectInputStream ois = new ObjectInputStream(gis);
         projectNamespace = (String) ois.readObject();

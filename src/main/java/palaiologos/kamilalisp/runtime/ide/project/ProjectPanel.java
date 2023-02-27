@@ -2,20 +2,20 @@ package palaiologos.kamilalisp.runtime.ide.project;
 
 import palaiologos.kamilalisp.atom.Parser;
 import palaiologos.kamilalisp.runtime.ide.IDE;
-import palaiologos.kamilalisp.runtime.ide.modal.IDEErrorModal;
-import palaiologos.kamilalisp.runtime.ide.modal.IDEFileChooserModal;
-import palaiologos.kamilalisp.runtime.ide.modal.IDEModal;
+import palaiologos.kamilalisp.runtime.ide.modal.*;
 import palaiologos.kamilalisp.runtime.ide.TilingWMComponent;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
-import java.io.File;
+import java.io.*;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class ProjectPanel extends TilingWMComponent {
     public ProjectDataRegistry dataRegistry;
@@ -162,6 +162,8 @@ public class ProjectPanel extends TilingWMComponent {
                 tryReset(() -> {});
                 JFileChooser jfc = new JFileChooser();
                 jfc.setDialogType(JFileChooser.OPEN_DIALOG);
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("KamilaLisp project files", "kpr");
+                jfc.setFileFilter(filter);
                 IDEFileChooserModal modal = new IDEFileChooserModal(parent.statusBar.getCurrentDesktopPane(), parent, jfc, (evt) -> {
                     if (JFileChooser.APPROVE_SELECTION.equals(evt.getActionCommand())) {
                         File src = jfc.getSelectedFile().getAbsoluteFile();
@@ -169,7 +171,101 @@ public class ProjectPanel extends TilingWMComponent {
                             IDEErrorModal error = new IDEErrorModal(parent.statusBar.getCurrentDesktopPane(), "File does not exist.");
                             error.display(() -> { });
                         } else {
-                            System.out.println("Opening file " + src.getAbsolutePath());
+                            Throwable t = null;
+                            try {
+                                FileInputStream fis = new FileInputStream(src);
+                                parent.project.dataRegistry.readFrom(fis);
+                            } catch(IOException | ClassNotFoundException e1) {
+                                t = e1;
+                            }
+                            if(t != null) {
+                                IDETextAreaErrorModal error = new IDETextAreaErrorModal(parent.statusBar.getCurrentDesktopPane(), "Error while reading file.", t);
+                                error.display(() -> { });
+                            }
+                        }
+                    }
+                });
+                modal.display();
+            }
+        });
+
+        save.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tryReset(() -> {});
+                JFileChooser jfc = new JFileChooser();
+                jfc.setDialogType(JFileChooser.SAVE_DIALOG);
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("KamilaLisp project files", "kpr");
+                jfc.setFileFilter(filter);
+                IDEFileChooserModal modal = new IDEFileChooserModal(parent.statusBar.getCurrentDesktopPane(), parent, jfc, new Consumer<>() {
+                    private void write(File src) {
+                        Throwable t = null;
+                        try {
+                            FileOutputStream fos = new FileOutputStream(src);
+                            parent.project.dataRegistry.writeTo(fos);
+                        } catch(IOException e1) {
+                            t = e1;
+                        }
+                        if(t != null) {
+                            IDETextAreaErrorModal error = new IDETextAreaErrorModal(parent.statusBar.getCurrentDesktopPane(), "Error while writing file.", t);
+                            error.display(() -> { });
+                        }
+                    }
+
+                    @Override
+                    public void accept(ActionEvent evt) {
+                        if (JFileChooser.APPROVE_SELECTION.equals(evt.getActionCommand())) {
+                            File src = jfc.getSelectedFile().getAbsoluteFile();
+                            if(src.exists()) {
+                                IDEOkCancelModal frame = new IDEOkCancelModal(parent.statusBar.getCurrentDesktopPane(), "Overwrite", "File exists. Overwrite?", "Overwrite", "Cancel", () -> {
+                                    write(src);
+                                }, () -> { }, () -> { });
+                                frame.display();
+                            } else {
+                                write(src);
+                            }
+                        }
+                    }
+                });
+                modal.display();
+            }
+        });
+
+        export.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tryReset(() -> {});
+                JFileChooser jfc = new JFileChooser();
+                jfc.setDialogType(JFileChooser.SAVE_DIALOG);
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("KamilaLisp project files", "kpr");
+                jfc.setFileFilter(filter);
+                IDEFileChooserModal modal = new IDEFileChooserModal(parent.statusBar.getCurrentDesktopPane(), parent, jfc, new Consumer<>() {
+                    private void write(File src) {
+                        Throwable t = null;
+                        try {
+                            FileOutputStream fos = new FileOutputStream(src);
+                            parent.project.dataRegistry.serialiseTo(fos);
+                        } catch(IOException e1) {
+                            t = e1;
+                        }
+                        if(t != null) {
+                            IDETextAreaErrorModal error = new IDETextAreaErrorModal(parent.statusBar.getCurrentDesktopPane(), "Error while exporting file.", t);
+                            error.display(() -> { });
+                        }
+                    }
+
+                    @Override
+                    public void accept(ActionEvent evt) {
+                        if (JFileChooser.APPROVE_SELECTION.equals(evt.getActionCommand())) {
+                            File src = jfc.getSelectedFile().getAbsoluteFile();
+                            if(src.exists()) {
+                                IDEOkCancelModal frame = new IDEOkCancelModal(parent.statusBar.getCurrentDesktopPane(), "Overwrite", "File exists. Overwrite?", "Overwrite", "Cancel", () -> {
+                                    write(src);
+                                }, () -> { }, () -> { });
+                                frame.display();
+                            } else {
+                                write(src);
+                            }
                         }
                     }
                 });
@@ -182,53 +278,12 @@ public class ProjectPanel extends TilingWMComponent {
         // Check if the symbol name ends with " *". If it does, it means that the symbol has been modified.
         // If it has, ask the user if they want to fix the changes.
         if (unsavedChanges) {
-            IDEModal frame = new IDEModal(parent.statusBar.getCurrentDesktopPane());
-            frame.setTitle("Fix");
-            frame.setMaximizable(false);
-            frame.setResizable(false);
-            frame.setClosable(true);
-            frame.setIconifiable(false);
-            frame.setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
-            JPanel contentPane = new JPanel();
-            contentPane.setBorder(null);
-            contentPane.setBackground(Color.decode("#10141C"));
-            frame.setContentPane(contentPane);
-            GroupLayout layout = new GroupLayout(contentPane);
-            contentPane.setLayout(layout);
-            layout.setAutoCreateGaps(true);
-            layout.setAutoCreateContainerGaps(true);
-            JLabel label = new JLabel("Do you want to save the changes before proceeding?");
-            JButton button = new JButton("Save");
-            JButton cancel = new JButton("Quit");
-            // Horizontal layout: group 1 is only icon, group 2 is the rest of components.
-            GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
-            hGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                    .addComponent(label));
-            hGroup.addGroup(layout.createParallelGroup()
-                    .addGroup(layout.createSequentialGroup()
-                            .addComponent(button)
-                            .addComponent(cancel)));
-            layout.setHorizontalGroup(hGroup);
-            // Vertical: group 1 is label and field, group 2 is buttons.
-            GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
-            vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(label));
-            vGroup.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(button)
-                    .addComponent(cancel));
-            layout.setVerticalGroup(vGroup);
-            button.addActionListener(e1 -> {
-                frame.dispose();
+            IDEOkCancelModal frame = new IDEOkCancelModal(parent.statusBar.getCurrentDesktopPane(), "Fix", "Do you want to save the changes before proceeding?", "Save", "Quit", () -> {
                 for(ActionListener a : save.getActionListeners())
                     a.actionPerformed(null);
                 callback.run();
-            });
-            cancel.addActionListener(e1 -> frame.dispose());
-            frame.addInternalFrameListener(new InternalFrameAdapter() {
-                @Override
-                public void internalFrameClosed(InternalFrameEvent e) {
-                    ProjectPanel.setEnabled(ProjectPanel.this, true);
-                }
+            }, () -> { }, () -> {
+                ProjectPanel.setEnabled(ProjectPanel.this, true);
             });
             frame.display();
             ProjectPanel.setEnabled(ProjectPanel.this, false);

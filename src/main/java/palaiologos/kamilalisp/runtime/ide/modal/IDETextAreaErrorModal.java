@@ -1,12 +1,28 @@
 package palaiologos.kamilalisp.runtime.ide.modal;
 
+import palaiologos.kamilalisp.runtime.ide.editor.EditorPanel;
+
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import java.awt.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class IDETextAreaErrorModal extends IDEModal {
     private final JButton confirmButton;
+
+    private static String throwableToString(Throwable thr) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        thr.printStackTrace(pw);
+        return sw.toString();
+    }
+
+    public IDETextAreaErrorModal(JDesktopPane parentComponent, String message, Throwable thr) {
+        this(parentComponent, message, throwableToString(thr));
+    }
 
     public IDETextAreaErrorModal(JDesktopPane parentComponent, String message, String text) {
         super(parentComponent);
