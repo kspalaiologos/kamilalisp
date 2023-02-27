@@ -567,6 +567,19 @@ public class TerminalPanel extends TilingWMComponent {
                                 }
                             }
                         }
+                    }),
+                    Map.entry("ide:fix-project", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket idePacket) {
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            try {
+                                parent.project.dataRegistry.serialiseTo(baos);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            String code = baos.toString();
+                            sendPacket(new StringPacket(code));
+                        }
                     })
             );
             private final Map<String, Consumer<IDEPacket>> asyncIdeFunctions = Map.ofEntries(

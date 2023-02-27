@@ -13,7 +13,7 @@ public class RemotePacketRegistry {
     public static final Set<String> terminalKeys = Set.of(
             "term:clear", "ide:workspace:add", "ide:workspace:has", "ide:workspace:delete",
             "ide:workspace:select", "ide:workspace:swap", "ide:workspace:rename", "ide:workspace:current",
-            "ide:split-h", "ide:split-v"
+            "ide:split-h", "ide:split-v", "ide:fix-project"
     );
 
     public static void register(Environment env, ObjectInputStream in, ObjectOutputStream out, Socket socket) {
@@ -30,5 +30,6 @@ public class RemotePacketRegistry {
         env.set("io:readln", new Atom(new TerminalReadLn(in, out, socket)));
         env.setPrimitive("ide:split-h", new Atom(new IDESplitH(in, out, socket)));
         env.setPrimitive("ide:split-v", new Atom(new IDESplitV(in, out, socket)));
+        env.setPrimitive("ide:fix-project", new Atom(new FixProject(in, out, socket)));
     }
 }
