@@ -143,8 +143,8 @@ public class EditorPanel extends TilingWMComponent {
                         });
                     } else {
                         objectName = field.getText();
-                        name.setText(objectName);
                         area.setText(parent.project.dataRegistry.getKey(objectName));
+                        name.setText(objectName);
                         frame.dispose();
                     }
                 });
