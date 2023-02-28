@@ -212,6 +212,11 @@ public class FunctionRegistry {
         env.setPrimitive("io:sha1-ostream", new Atom(new Sha1DigestIOStreams.Output()));
         env.setPrimitive("io:xxh32-istream", new Atom(new Xxh32DigestIOStreams.Input()));
         env.setPrimitive("io:xxh32-ostream", new Atom(new Xxh32DigestIOStreams.Output()));
+        env.setPrimitive("io:audio-ostream", new Atom(new AudioOutputStream()));
+        env.setPrimitive("io:encode-le", new Atom(new EncodeLE()));
+        env.setPrimitive("io:encode-be", new Atom(new EncodeBE()));
+        env.setPrimitive("io:decode-le", new Atom(new DecodeLE()));
+        env.setPrimitive("io:decode-be", new Atom(new DecodeBE()));
 
         env.setPrimitive("digest:md2", new Atom(new Md2Digest()));
         env.setPrimitive("digest:md5", new Atom(new Md5Digest()));

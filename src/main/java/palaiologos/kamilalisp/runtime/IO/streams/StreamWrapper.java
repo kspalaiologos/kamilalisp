@@ -103,7 +103,7 @@ public class StreamWrapper {
 
         public abstract Atom specialField(Object key);
 
-        private class InputStreamClose extends PrimitiveFunction implements SpecialForm, ReactiveFunction {
+        private class InputStreamClose extends PrimitiveFunction implements Lambda {
             @Override
             public Atom apply(Environment env, List<Atom> args) {
                 try {
@@ -149,7 +149,7 @@ public class StreamWrapper {
 
             @Override
             protected String name() {
-                return "io:input-stream:transfer-to";
+                return "io:input-stream:pipe-to";
             }
         }
 
@@ -303,7 +303,7 @@ public class StreamWrapper {
             }
         }
 
-        private class OutputStreamFlush extends PrimitiveFunction implements SpecialForm, ReactiveFunction {
+        private class OutputStreamFlush extends PrimitiveFunction implements Lambda {
             @Override
             public Atom apply(Environment env, List<Atom> args) {
                 try {
@@ -320,7 +320,7 @@ public class StreamWrapper {
             }
         }
 
-        private class OutputStreamClose extends PrimitiveFunction implements SpecialForm, ReactiveFunction {
+        private class OutputStreamClose extends PrimitiveFunction implements Lambda {
             @Override
             public Atom apply(Environment env, List<Atom> args) {
                 try {

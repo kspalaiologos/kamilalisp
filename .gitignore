@@ -73,3 +73,5 @@ doc/*.fdb_latexmk
 
 ## Binaries ##
 target/
+
+.idea/workspace.xml
