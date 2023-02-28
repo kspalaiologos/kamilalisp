@@ -48,13 +48,8 @@ public class MatrixTrace extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if (args.size() == 1) {
-            return trace(env, args.get(0));
-        } else if (args.size() < 1) {
-            throw new TypeError("matrix:trace expects at least 1 argument.");
-        } else {
-            return new Atom(args.stream().map(x -> trace(env, x)).toList());
-        }
+        assertArity(args, 1);
+        return trace(env, args.get(0));
     }
 
     @Override
