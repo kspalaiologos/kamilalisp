@@ -54,22 +54,6 @@ public class AudioOutputStream extends PrimitiveFunction implements Lambda {
 
                 @Override
                 public Atom specialField(Object key) {
-                    if(key.equals("do-sine")) {
-                        byte[] buffer = new byte[64];
-                        double step = Math.PI / buffer.length;
-                        double angle = Math.PI * 2;
-                        int i = buffer.length;
-                        while (i > 0) {
-                            double sine = Math.sin(angle);
-                            int sample = (int) Math.round(sine * 32767);
-                            buffer[--i] = (byte) (sample >> 8);
-                            buffer[--i] = (byte) sample;
-                            angle -= step;
-                        }
-                        for(i = 0; i < 500; i++)
-                            line.write(buffer, 0, buffer.length);
-                        return Atom.NULL;
-                    }
                     throw new RuntimeException("io:audio-ostream does not have a special field " + key);
                 }
             });
