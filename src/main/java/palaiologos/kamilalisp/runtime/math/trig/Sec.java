@@ -24,7 +24,7 @@ public class Sec extends PrimitiveFunction implements Lambda {
             else
                 return new Atom(result);
         } else if (a.getType() == Type.LIST) {
-            return new Atom(a.getList().stream().map(x -> trig1(env, a)).collect(Collectors.toList()));
+            return new Atom(a.getList().stream().map(x -> trig1(env, x)).collect(Collectors.toList()));
         } else {
             throw new TypeError("`" + name + "' not defined for: " + a.getType());
         }

@@ -15,17 +15,12 @@ import java.util.List;
 public class AudioOutputStream extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        boolean isSigned = switch(args.get(0).getIdentifier()) {
-            case "signed" -> true;
-            case "unsigned" -> false;
-            default -> throw new RuntimeException("Unknown audio format " + args.get(0).getIdentifier());
-        };
-        int sampleRate = args.get(1).getInteger().intValueExact();
-        int sampleSize = args.get(2).getInteger().intValueExact();
-        int channels = args.get(3).getInteger().intValueExact();
+        int sampleRate = args.get(0).getInteger().intValueExact();
+        int sampleSize = args.get(1).getInteger().intValueExact();
+        int channels = args.get(2).getInteger().intValueExact();
 
         try {
-            AudioFormat af = new AudioFormat((float) sampleRate, sampleSize, channels, isSigned, false);
+            AudioFormat af = new AudioFormat((float) sampleRate, sampleSize, channels, true, false);
             DataLine.Info info = new DataLine.Info(SourceDataLine.class, af);
             SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
             line.open(af, 4096);
@@ -59,6 +54,22 @@ public class AudioOutputStream extends PrimitiveFunction implements Lambda {
 
                 @Override
                 public Atom specialField(Object key) {
+                    if(key.equals("do-sine")) {
+                        byte[] buffer = new byte[64];
+                        double step = Math.PI / buffer.length;
+                        double angle = Math.PI * 2;
+                        int i = buffer.length;
+                        while (i > 0) {
+                            double sine = Math.sin(angle);
+                            int sample = (int) Math.round(sine * 32767);
+                            buffer[--i] = (byte) (sample >> 8);
+                            buffer[--i] = (byte) sample;
+                            angle -= step;
+                        }
+                        for(i = 0; i < 500; i++)
+                            line.write(buffer, 0, buffer.length);
+                        return Atom.NULL;
+                    }
                     throw new RuntimeException("io:audio-ostream does not have a special field " + key);
                 }
             });

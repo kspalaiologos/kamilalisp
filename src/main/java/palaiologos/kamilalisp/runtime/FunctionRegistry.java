@@ -213,8 +213,18 @@ public class FunctionRegistry {
         env.setPrimitive("io:xxh32-istream", new Atom(new Xxh32DigestIOStreams.Input()));
         env.setPrimitive("io:xxh32-ostream", new Atom(new Xxh32DigestIOStreams.Output()));
         env.setPrimitive("io:audio-ostream", new Atom(new AudioOutputStream()));
-        env.setPrimitive("io:encode-le", new Atom(new EncodeLE()));
-        env.setPrimitive("io:encode-be", new Atom(new EncodeBE()));
+        env.setPrimitive("io:encode-le-u16", new Atom(new EncodeLE16()));
+        env.setPrimitive("io:encode-be-u16", new Atom(new EncodeBE16()));
+        env.setPrimitive("io:encode-le-u32", new Atom(new EncodeLE32()));
+        env.setPrimitive("io:encode-be-u32", new Atom(new EncodeBE32()));
+        env.setPrimitive("io:encode-le-u64", new Atom(new EncodeLE64()));
+        env.setPrimitive("io:encode-be-u64", new Atom(new EncodeBE64()));
+        env.setPrimitive("io:encode-le-s16", new Atom(new EncodeLES16()));
+        env.setPrimitive("io:encode-be-s16", new Atom(new EncodeBES16()));
+        env.setPrimitive("io:encode-le-s32", new Atom(new EncodeLES32()));
+        env.setPrimitive("io:encode-be-s32", new Atom(new EncodeBES32()));
+        env.setPrimitive("io:encode-le-s64", new Atom(new EncodeLES64()));
+        env.setPrimitive("io:encode-be-s64", new Atom(new EncodeBES64()));
         env.setPrimitive("io:decode-le", new Atom(new DecodeLE()));
         env.setPrimitive("io:decode-be", new Atom(new DecodeBE()));
 
