@@ -10,7 +10,6 @@ import palaiologos.kamilalisp.runtime.array.hof.*;
 import palaiologos.kamilalisp.runtime.array.sais.SacaBwt;
 import palaiologos.kamilalisp.runtime.array.sais.SacaSais;
 import palaiologos.kamilalisp.runtime.array.sais.SacaUnbwt;
-import palaiologos.kamilalisp.runtime.audio.AudioFileType;
 import palaiologos.kamilalisp.runtime.cas.*;
 import palaiologos.kamilalisp.runtime.dataformat.*;
 import palaiologos.kamilalisp.runtime.dataformat.archive.*;
@@ -340,8 +339,6 @@ public class FunctionRegistry {
         env.setPrimitive("regex:matches?", "⍫⊖∊?", new Atom(new RegexMatches()));
         env.setPrimitive("regex:replace", "⍫⊖⍆", new Atom(new RegexReplace()));
         env.setPrimitive("regex:split", "⍫⊖⍭", new Atom(new RegexSplit()));
-
-        env.setPrimitive("audio:file-type", new Atom(new AudioFileType()));
 
         env.setPrimitive("xml:parse", new Atom(new XmlParse()));
         env.setPrimitive("xml:write", new Atom(new XmlWrite()));

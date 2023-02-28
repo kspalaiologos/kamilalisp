@@ -5,11 +5,100 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="96eb8b4e-68c4-49a9-86c2-149d391f2918" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/audio/AudioRead.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/M5V-ALON.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Tsundere Alley - Give It To You.mp3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__ch_obermuhlner_big_math_2_3_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_code_findbugs_jsr305_3_0_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_errorprone_error_prone_annotations_2_11_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_guava_failureaccess_1_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_guava_guava_31_1_jre.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_guava_listenablefuture_9999_0_empty_to_avoid_conflict_with_guava.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_j2objc_j2objc_annotations_1_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_antlr_antlr4_runtime_4_11_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_compress_1_22.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_csv_1_10_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_lang3_3_12_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_text_1_10_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apiguardian_apiguardian_api_1_1_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_checkerframework_checker_qual_3_12_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jline_jline_3_22_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_9_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_engine_5_9_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_9_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_engine_1_9_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_opentest4j_opentest4j_1_2_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_pcollections_pcollections_4_0_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_tukaani_xz_1_9.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/kamilalisp.iml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/ChannelData.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/Constants.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/FLACDecoder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/FLACEncoder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/FixedPredictor.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/FrameDecodeException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/FrameListener.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/FrameListeners.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/LPCPredictor.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/PCMProcessor.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/PCMProcessors.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/apps/Analyser.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/apps/Decoder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/apps/ExtensionFileFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/apps/FlacPacker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/apps/Player.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/apps/SeekTablePlayer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/apps/SndPlayer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/apps/Tester.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/frame/BadHeaderException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/frame/Channel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/frame/ChannelConstant.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/frame/ChannelFixed.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/frame/ChannelLPC.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/frame/ChannelVerbatim.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/frame/EntropyCodingMethod.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/frame/EntropyPartitionedRice.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/frame/EntropyPartitionedRiceContents.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/frame/Frame.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/frame/Header.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/io/BitInputStream.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/io/BitOutputStream.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/io/RandomFileInputStream.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/metadata/Application.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/metadata/CueIndex.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/metadata/CueSheet.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/metadata/CueTrack.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/metadata/Metadata.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/metadata/Padding.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/metadata/Picture.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/metadata/SeekPoint.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/metadata/SeekTable.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/metadata/StreamInfo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/metadata/Unknown.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/metadata/Violation.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/metadata/VorbisComment.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/metadata/VorbisString.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/sound/spi/Flac2PcmAudioInputStream.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/sound/spi/FlacAudioFileReader.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/sound/spi/FlacAudioFormat.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/sound/spi/FlacEncoding.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/sound/spi/FlacFileFormatType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/sound/spi/FlacFormatConversionProvider.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/sound/spi/RingedAudioInputStream.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/util/BitMath.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/util/ByteData.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/util/CRC16.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/util/CRC8.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/util/LittleEndianDataOutput.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/util/PCMDecoder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/util/RiceCodes.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/util/RingBuffer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/kc7bfi/jflac/util/WavWriter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/FunctionRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/FunctionRegistry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/audio/AudioFileType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/audio/AudioRead.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

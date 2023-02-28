@@ -105,23 +105,6 @@
             <version>3.0</version>
         </dependency>
 
-        <!-- Audio -->
-        <dependency>
-            <groupId>com.googlecode.soundlibs</groupId>
-            <artifactId>tritonus-share</artifactId>
-            <version>0.3.7-2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.soundlibs</groupId>
-            <artifactId>mp3spi</artifactId>
-            <version>1.9.5-1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.soundlibs</groupId>
-            <artifactId>vorbisspi</artifactId>
-            <version>1.0.3-1</version>
-        </dependency>
-
         <!-- Testing dependencies. -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -209,8 +192,6 @@
                         <option>-forceprocessing</option>
                         <option>-keep class palaiologos.kamilalisp.error.** { *; }</option>
                         <option>-keep class palaiologos.kamilalisp.runtime.ide.** { *; }</option>
-                        <option>-keep class javazoom.spi.** { *; }</option>
-                        <option>-keep class org.kc7bfi.jflac.sound.spi.** { *; }</option>
                         <option>-keepclasseswithmembers public class * { public static void main(java.lang.String[]); }</option>
                         <option>-keepclassmembers enum  * { public static **[] values(); public static ** valueOf(java.lang.String); }</option>
                         <option>-keepclasseswithmembers,includedescriptorclasses,allowshrinking class * { native &lt;methods&gt;; }</option>
