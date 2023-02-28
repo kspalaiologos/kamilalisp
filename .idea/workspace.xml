@@ -5,12 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="96eb8b4e-68c4-49a9-86c2-149d391f2918" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/audio/AudioFileType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/hashmap/HashMapGetOrDefault.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/audio/AudioRead.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/kamilalisp.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/FunctionRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/FunctionRegistry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -205,11 +204,6 @@
           <url>file://$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/meta/GlobalBinding.java</url>
           <line>14</line>
           <option name="timeStamp" value="26" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/palaiologos/kamilalisp/runtime/audio/AudioFileType.java</url>
-          <line>42</line>
-          <option name="timeStamp" value="34" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

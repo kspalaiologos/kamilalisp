@@ -210,6 +210,7 @@
                         <option>-keep class palaiologos.kamilalisp.error.** { *; }</option>
                         <option>-keep class palaiologos.kamilalisp.runtime.ide.** { *; }</option>
                         <option>-keep class javazoom.spi.** { *; }</option>
+                        <option>-keep class org.kc7bfi.jflac.sound.spi.** { *; }</option>
                         <option>-keepclasseswithmembers public class * { public static void main(java.lang.String[]); }</option>
                         <option>-keepclassmembers enum  * { public static **[] values(); public static ** valueOf(java.lang.String); }</option>
                         <option>-keepclasseswithmembers,includedescriptorclasses,allowshrinking class * { native &lt;methods&gt;; }</option>
