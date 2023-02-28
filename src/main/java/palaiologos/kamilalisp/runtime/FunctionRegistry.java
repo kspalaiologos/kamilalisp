@@ -10,6 +10,7 @@ import palaiologos.kamilalisp.runtime.array.hof.*;
 import palaiologos.kamilalisp.runtime.array.sais.SacaBwt;
 import palaiologos.kamilalisp.runtime.array.sais.SacaSais;
 import palaiologos.kamilalisp.runtime.array.sais.SacaUnbwt;
+import palaiologos.kamilalisp.runtime.audio.AudioFileType;
 import palaiologos.kamilalisp.runtime.cas.*;
 import palaiologos.kamilalisp.runtime.dataformat.*;
 import palaiologos.kamilalisp.runtime.dataformat.archive.*;
@@ -340,6 +341,8 @@ public class FunctionRegistry {
         env.setPrimitive("regex:replace", "⍫⊖⍆", new Atom(new RegexReplace()));
         env.setPrimitive("regex:split", "⍫⊖⍭", new Atom(new RegexSplit()));
 
+        env.setPrimitive("audio:file-type", new Atom(new AudioFileType()));
+
         env.setPrimitive("xml:parse", new Atom(new XmlParse()));
         env.setPrimitive("xml:write", new Atom(new XmlWrite()));
         env.setPrimitive("xml:escape", new Atom(new XmlEscape()));
@@ -412,6 +415,7 @@ public class FunctionRegistry {
         env.setPrimitive("hashmap:contains-key?", "⍔⍎?", new Atom(new HashMapContainsKey()));
         env.setPrimitive("hashmap:contains-value?", "⍔⍕?", new Atom(new HashMapContainsValue()));
         env.setPrimitive("hashmap:get", "⍔⍆", new Atom(new HashMapGet()));
+        env.setPrimitive("hashmap:get-or", "⍔⍆?", new Atom(new HashMapGetOrDefault()));
         env.setPrimitive("hashmap:adjoin", "⍔+", new Atom(new HashMapAdjoin()));
         env.setPrimitive("hashmap:minus", "⍔-", new Atom(new HashMapMinus()));
         env.setPrimitive("hashmap:merge", "⍔⋃", new Atom(new HashMapMerge()));
