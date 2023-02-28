@@ -282,6 +282,7 @@ public class FunctionRegistry {
         env.setPrimitive("re", new Atom(new Re()));
         env.setPrimitive("complex-parts", new Atom(new ComplexParts()));
         env.setPrimitive("im", new Atom(new Im()));
+        env.setPrimitive("o", new Atom(new O()));
         env.setPrimitive("csc", new Atom(new Csc()));
         env.setPrimitive("sec", new Atom(new Sec()));
         env.setPrimitive("cot", new Atom(new Cot()));
