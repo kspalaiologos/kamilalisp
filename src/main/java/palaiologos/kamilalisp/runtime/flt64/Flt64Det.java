@@ -9,6 +9,44 @@ import palaiologos.kamilalisp.runtime.array.Rank;
 import java.util.List;
 
 public class Flt64Det extends PrimitiveFunction implements Lambda {
+    public static double det(double[][] A) {
+        if(A.length <= 1)
+            throw new RuntimeException("Expected at least a 2x2 matrix.");
+        else if(A.length == 2) {
+            // 2x2 determinant.
+            return A[0][0] * A[1][1] - A[0][1] * A[1][0];
+        } else if(A.length == 3) {
+            // 3x3 determinant.
+            return
+                    A[0][0] * A[1][1] * A[2][2] +
+                            A[0][1] * A[1][2] * A[2][0] +
+                            A[0][2] * A[1][0] * A[2][1] -
+                            A[0][2] * A[1][1] * A[2][0] -
+                            A[0][1] * A[1][0] * A[2][2] -
+                            A[0][0] * A[1][2] * A[2][1]
+            ;
+        } else {
+            double[][][] lup;
+            try {
+                lup = Flt64PLU.lu(A);
+            } catch(ArithmeticException e) {
+                return 0;
+            }
+
+            double sumDiagP = 0;
+            double prodL = 1, prodU = 1;
+            for (int i = 0; i < lup[2].length; i++)
+                sumDiagP += lup[2][i][i];
+            for (int i = 0; i < lup[0].length; i++)
+                prodL *= lup[0][i][i];
+            for (int i = 0; i < lup[1].length; i++)
+                prodU *= lup[1][i][i];
+
+            double detp = (lup[2].length - sumDiagP - 1) % 2 == 0 ? 1 : -1;
+            return detp * prodL * prodU;
+        }
+    }
+
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         Atom a1 = args.get(0);
@@ -23,45 +61,11 @@ public class Flt64Det extends PrimitiveFunction implements Lambda {
 
         double[][] A = l1.stream().map(x -> x.stream().mapToDouble(Flt64Base::toFlt64).toArray()).toArray(double[][]::new);
 
-        if(A.length <= 1)
-            throw new RuntimeException("Expected at least a 2x2 matrix.");
-        else if(A.length == 2) {
-            // 2x2 determinant.
-            return Flt64Base.toAtom(A[0][0] * A[1][1] - A[0][1] * A[1][0]);
-        } else if(A.length == 3) {
-            // 3x3 determinant.
-            return Flt64Base.toAtom(
-                    A[0][0] * A[1][1] * A[2][2] +
-                    A[0][1] * A[1][2] * A[2][0] +
-                    A[0][2] * A[1][0] * A[2][1] -
-                    A[0][2] * A[1][1] * A[2][0] -
-                    A[0][1] * A[1][0] * A[2][2] -
-                    A[0][0] * A[1][2] * A[2][1]
-            );
-        } else {
-            double[][][] lup;
-            try {
-                lup = Flt64PLU.lu(A);
-            } catch(ArithmeticException e) {
-                return Atom.FALSE;
-            }
-
-            double sumDiagP = 0;
-            double prodL = 1, prodU = 1;
-            for (int i = 0; i < lup[2].length; i++)
-                sumDiagP += lup[2][i][i];
-            for (int i = 0; i < lup[0].length; i++)
-                prodL *= lup[0][i][i];
-            for (int i = 0; i < lup[1].length; i++)
-                prodU *= lup[1][i][i];
-
-            double detp = (lup[2].length - sumDiagP - 1) % 2 == 0 ? 1 : -1;
-            return Flt64Base.toAtom(detp * prodL * prodU);
-        }
+        return Flt64Base.toAtom(det(A));
     }
 
     @Override
     protected String name() {
-        return null;
+        return "flt64:det";
     }
 }

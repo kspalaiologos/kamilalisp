@@ -6,17 +6,11 @@ import palaiologos.kamilalisp.runtime.array.Rank;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
 import java.util.List;
 
 public class Det extends PrimitiveFunction implements Lambda {
-    @Override
-    public Atom apply(Environment env, List<Atom> args) {
-        Atom a1 = args.get(0);
-        if (Rank.computeRank(a1) != 2) {
-            throw new RuntimeException("Expected a matrix of rank 2.");
-        }
-
-        List<List<Atom>> l1 = a1.getList().stream().map(Atom::getList).toList();
+    public static Atom det(MathContext mc, List<List<Atom>> l1) {
         if (l1.stream().anyMatch(x -> x.size() != l1.get(0).size())) {
             throw new RuntimeException("Expected a square matrix.");
         }
@@ -48,7 +42,7 @@ public class Det extends PrimitiveFunction implements Lambda {
                 BigDecimal[][] A = l1.stream().map(x -> x.stream().map(Atom::getReal).toArray(BigDecimal[]::new)).toArray(BigDecimal[][]::new);
                 BigDecimal[][][] lup;
                 try {
-                    lup = PLUDecomposition.lu(env.getMathContext(), A);
+                    lup = PLUDecomposition.lu(mc, A);
                 } catch (ArithmeticException e) {
                     return Atom.FALSE;
                 }
@@ -63,7 +57,7 @@ public class Det extends PrimitiveFunction implements Lambda {
 
                 BigDecimal detp = BigInteger.valueOf(lup[2].length - 1).subtract(sumDiagP).remainder(BigInteger.TWO).compareTo(BigInteger.ZERO) == 0 ? BigDecimal.ONE : BigDecimal.ONE.negate();
                 BigDecimal result = detp.multiply(prodL).multiply(prodU);
-                result = result.setScale(env.getMathContext().getPrecision(), env.getMathContext().getRoundingMode());
+                result = result.setScale(mc.getPrecision(), mc.getRoundingMode());
                 return new Atom(result);
             }
         } else {
@@ -93,7 +87,7 @@ public class Det extends PrimitiveFunction implements Lambda {
                 BigComplex[][] A = l1.stream().map(x -> x.stream().map(Atom::getComplex).toArray(BigComplex[]::new)).toArray(BigComplex[][]::new);
                 BigComplex[][][] lup;
                 try {
-                    lup = PLUDecomposition.lu(env.getMathContext(), A);
+                    lup = PLUDecomposition.lu(mc, A);
                 } catch (ArithmeticException e) {
                     return Atom.FALSE;
                 }
@@ -108,11 +102,22 @@ public class Det extends PrimitiveFunction implements Lambda {
 
                 BigComplex detp = BigInteger.valueOf(lup[2].length - 1).subtract(sumDiagP).remainder(BigInteger.TWO).compareTo(BigInteger.ZERO) == 0 ? BigComplex.ONE : BigComplex.ONE.negate();
                 BigComplex result = detp.multiply(prodL).multiply(prodU);
-                BigDecimal re = result.re.setScale(env.getMathContext().getPrecision(), env.getMathContext().getRoundingMode());
-                BigDecimal im = result.im.setScale(env.getMathContext().getPrecision(), env.getMathContext().getRoundingMode());
+                BigDecimal re = result.re.setScale(mc.getPrecision(), mc.getRoundingMode());
+                BigDecimal im = result.im.setScale(mc.getPrecision(), mc.getRoundingMode());
                 return new Atom(BigComplex.valueOf(re, im));
             }
         }
+    }
+
+    @Override
+    public Atom apply(Environment env, List<Atom> args) {
+        Atom a1 = args.get(0);
+        if (Rank.computeRank(a1) != 2) {
+            throw new RuntimeException("Expected a matrix of rank 2.");
+        }
+
+        List<List<Atom>> l1 = a1.getList().stream().map(Atom::getList).toList();
+        return det(env.getMathContext(), l1);
     }
 
     @Override

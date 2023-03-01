@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Slash extends PrimitiveFunction implements Lambda {
-    private static Atom quot2(Environment e, Atom a, Atom b) {
+    public static Atom quot2(Environment e, Atom a, Atom b) {
         a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
         b.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.STRING, Type.LIST);
         if (a.getType() == Type.COMPLEX && b.getType() == Type.COMPLEX) {
@@ -41,7 +41,7 @@ public class Slash extends PrimitiveFunction implements Lambda {
         }
     }
 
-    private static Atom quot1(Environment e, Atom a) {
+    public static Atom quot1(Environment e, Atom a) {
         a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
         if (a.getType() == Type.COMPLEX) {
             return new Atom(a.getComplex().reciprocal(e.getMathContext()));
