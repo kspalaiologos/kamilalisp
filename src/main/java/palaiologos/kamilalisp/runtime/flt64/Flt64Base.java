@@ -336,6 +336,7 @@ public class Flt64Base {
         env.setPrimitive("flt64:>", new Atom(Flt64Cmp.gt));
         env.setPrimitive("flt64:>=", new Atom(Flt64Cmp.ge));
         env.setPrimitive("flt64:LU", new Atom(new Flt64LU()));
+        env.setPrimitive("flt64:PLU", new Atom(new Flt64PLU()));
         env.setPrimitive("flt64:trace", new Atom(new Flt64Trace()));
         env.setPrimitive("flt64:e", toAtom(Math.E));
         env.setPrimitive("flt64:pi", toAtom(Math.PI));
