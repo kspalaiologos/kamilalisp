@@ -79,6 +79,10 @@ public class MathExpression implements Userdata {
     public LinkedHashSet<String> getArgs() {
         return args;
     }
+    
+    public Atom getData() {
+        return data;
+    }
 
     private Atom expandIdentifiers(Environment e, Atom tree) {
         if (tree.getType() == Type.IDENTIFIER) {
