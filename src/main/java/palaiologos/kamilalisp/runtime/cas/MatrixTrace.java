@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime.matrix;
+package palaiologos.kamilalisp.runtime.cas;
 
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
@@ -54,6 +54,6 @@ public class MatrixTrace extends PrimitiveFunction implements Lambda {
 
     @Override
     public String name() {
-        return "matrix:trace";
+        return "cas:matrix:trace";
     }
 }
