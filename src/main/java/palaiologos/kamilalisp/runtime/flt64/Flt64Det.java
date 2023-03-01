@@ -10,8 +10,10 @@ import java.util.List;
 
 public class Flt64Det extends PrimitiveFunction implements Lambda {
     public static double det(double[][] A) {
-        if(A.length <= 1)
-            throw new RuntimeException("Expected at least a 2x2 matrix.");
+        if(A.length == 0)
+            throw new RuntimeException("Empty matrix.");
+        else if(A.length == 1)
+            return A[0][0];
         else if(A.length == 2) {
             // 2x2 determinant.
             return A[0][0] * A[1][1] - A[0][1] * A[1][0];

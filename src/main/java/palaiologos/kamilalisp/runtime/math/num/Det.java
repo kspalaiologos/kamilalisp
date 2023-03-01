@@ -16,8 +16,10 @@ public class Det extends PrimitiveFunction implements Lambda {
         }
 
         if (l1.stream().allMatch(x -> x.stream().allMatch(y -> y.getType() == Type.INTEGER || y.getType() == Type.REAL))) {
-            if (l1.size() <= 1) {
-                throw new RuntimeException("Expected at least a 2x2 matrix.");
+            if (l1.size() == 0) {
+                throw new RuntimeException("Empty matrix.");
+            } else if (l1.size() == 1) {
+                return l1.get(0).get(0);
             } else if (l1.size() == 2) {
                 BigDecimal a = l1.get(0).get(0).getReal();
                 BigDecimal b = l1.get(0).get(1).getReal();
@@ -61,8 +63,10 @@ public class Det extends PrimitiveFunction implements Lambda {
                 return new Atom(result);
             }
         } else {
-            if (l1.size() <= 1) {
+            if (l1.size() == 0) {
                 throw new RuntimeException("Expected at least a 2x2 matrix.");
+            } else if (l1.size() == 1) {
+                return l1.get(0).get(0);
             } else if (l1.size() == 2) {
                 BigComplex a = l1.get(0).get(0).getComplex();
                 BigComplex b = l1.get(0).get(1).getComplex();
