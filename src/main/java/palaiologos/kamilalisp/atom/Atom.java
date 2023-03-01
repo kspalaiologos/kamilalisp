@@ -2,7 +2,7 @@ package palaiologos.kamilalisp.atom;
 
 import ch.obermuhlner.math.big.BigComplex;
 import palaiologos.kamilalisp.error.TypeError;
-import palaiologos.kamilalisp.runtime.Index;
+import palaiologos.kamilalisp.runtime.meta.Index;
 
 import javax.annotation.Nonnull;
 import java.math.BigDecimal;

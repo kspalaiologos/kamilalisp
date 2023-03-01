@@ -34,6 +34,15 @@ public class Flt64LU extends PrimitiveFunction implements Lambda {
                 }
             }
         }
+
+        // check if lower/upper contains NaN
+        for (int i = 0; i < A.length; i++) {
+            for (int j = 0; j < A.length; j++) {
+                if (Double.isNaN(lower[i][j]) || Double.isNaN(upper[i][j])) {
+                    throw new ArithmeticException("Singular matrix.");
+                }
+            }
+        }
     }
 
     @Override

@@ -66,32 +66,36 @@ public class PLUDecomposition extends PrimitiveFunction implements Lambda {
     }
 
     static BigDecimal[][][] lu(MathContext mc, BigDecimal[][] A) {
-        int n = A.length;
-        BigDecimal[][] L = new BigDecimal[n][n];
-        BigDecimal[][] U = new BigDecimal[n][n];
-        for(int i = 0; i < n; i++) {
-            Arrays.fill(L[i], BigDecimal.ZERO);
-            Arrays.fill(U[i], BigDecimal.ZERO);
-        }
-        BigDecimal[][] P = pivotize(A);
-        BigDecimal[][] A2 = matrixMul(P, A);
+        try {
+            int n = A.length;
+            BigDecimal[][] L = new BigDecimal[n][n];
+            BigDecimal[][] U = new BigDecimal[n][n];
+            for (int i = 0; i < n; i++) {
+                Arrays.fill(L[i], BigDecimal.ZERO);
+                Arrays.fill(U[i], BigDecimal.ZERO);
+            }
+            BigDecimal[][] P = pivotize(A);
+            BigDecimal[][] A2 = matrixMul(P, A);
 
-        for (int j = 0; j < n; j++) {
-            L[j][j] = BigDecimal.ONE;
-            for (int i = 0; i < j + 1; i++) {
-                BigDecimal s1 = BigDecimal.ZERO;
-                for (int k = 0; k < i; k++)
-                    s1 = s1.add(U[k][j].multiply(L[i][k]));
-                U[i][j] = A2[i][j].subtract(s1);
+            for (int j = 0; j < n; j++) {
+                L[j][j] = BigDecimal.ONE;
+                for (int i = 0; i < j + 1; i++) {
+                    BigDecimal s1 = BigDecimal.ZERO;
+                    for (int k = 0; k < i; k++)
+                        s1 = s1.add(U[k][j].multiply(L[i][k]));
+                    U[i][j] = A2[i][j].subtract(s1);
+                }
+                for (int i = j; i < n; i++) {
+                    BigDecimal s2 = BigDecimal.ZERO;
+                    for (int k = 0; k < j; k++)
+                        s2 = s2.add(U[k][j].multiply(L[i][k]));
+                    L[i][j] = A2[i][j].subtract(s2).divide(U[j][j], mc);
+                }
             }
-            for (int i = j; i < n; i++) {
-                BigDecimal s2 = BigDecimal.ZERO;
-                for (int k = 0; k < j; k++)
-                    s2 = s2.add(U[k][j].multiply(L[i][k]));
-                L[i][j] = A2[i][j].subtract(s2).divide(U[j][j], mc);
-            }
+            return new BigDecimal[][][]{L, U, P};
+        } catch (ArithmeticException e) {
+            throw new RuntimeException("Singular matrix.");
         }
-        return new BigDecimal[][][]{L, U, P};
     }
 
     // Complex case
@@ -147,32 +151,36 @@ public class PLUDecomposition extends PrimitiveFunction implements Lambda {
     }
 
     static BigComplex[][][] lu(MathContext mc, BigComplex[][] A) {
-        int n = A.length;
-        BigComplex[][] L = new BigComplex[n][n];
-        BigComplex[][] U = new BigComplex[n][n];
-        for(int i = 0; i < n; i++) {
-            Arrays.fill(L[i], BigComplex.ZERO);
-            Arrays.fill(U[i], BigComplex.ZERO);
-        }
-        BigComplex[][] P = pivotize(mc, A);
-        BigComplex[][] A2 = matrixMul(P, A);
+        try {
+            int n = A.length;
+            BigComplex[][] L = new BigComplex[n][n];
+            BigComplex[][] U = new BigComplex[n][n];
+            for (int i = 0; i < n; i++) {
+                Arrays.fill(L[i], BigComplex.ZERO);
+                Arrays.fill(U[i], BigComplex.ZERO);
+            }
+            BigComplex[][] P = pivotize(mc, A);
+            BigComplex[][] A2 = matrixMul(P, A);
 
-        for (int j = 0; j < n; j++) {
-            L[j][j] = BigComplex.ONE;
-            for (int i = 0; i < j + 1; i++) {
-                BigComplex s1 = BigComplex.ZERO;
-                for (int k = 0; k < i; k++)
-                    s1 = s1.add(U[k][j].multiply(L[i][k]));
-                U[i][j] = A2[i][j].subtract(s1);
+            for (int j = 0; j < n; j++) {
+                L[j][j] = BigComplex.ONE;
+                for (int i = 0; i < j + 1; i++) {
+                    BigComplex s1 = BigComplex.ZERO;
+                    for (int k = 0; k < i; k++)
+                        s1 = s1.add(U[k][j].multiply(L[i][k]));
+                    U[i][j] = A2[i][j].subtract(s1);
+                }
+                for (int i = j; i < n; i++) {
+                    BigComplex s2 = BigComplex.ZERO;
+                    for (int k = 0; k < j; k++)
+                        s2 = s2.add(U[k][j].multiply(L[i][k]));
+                    L[i][j] = A2[i][j].subtract(s2).divide(U[j][j], mc);
+                }
             }
-            for (int i = j; i < n; i++) {
-                BigComplex s2 = BigComplex.ZERO;
-                for (int k = 0; k < j; k++)
-                    s2 = s2.add(U[k][j].multiply(L[i][k]));
-                L[i][j] = A2[i][j].subtract(s2).divide(U[j][j], mc);
-            }
+            return new BigComplex[][][]{L, U, P};
+        } catch (ArithmeticException e) {
+            throw new RuntimeException("Singular matrix.");
         }
-        return new BigComplex[][][]{L, U, P};
     }
 
     @Override

@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime;
+package palaiologos.kamilalisp.runtime.meta;
 
 import com.google.common.collect.Lists;
 import palaiologos.kamilalisp.atom.*;

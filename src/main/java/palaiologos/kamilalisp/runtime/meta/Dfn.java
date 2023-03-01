@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime;
+package palaiologos.kamilalisp.runtime.meta;
 
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.TypeError;

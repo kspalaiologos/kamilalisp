@@ -4,8 +4,8 @@ import ch.obermuhlner.math.big.BigComplex;
 import org.apache.commons.text.StringEscapeUtils;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.CodeAtom;
-import palaiologos.kamilalisp.runtime.Map;
-import palaiologos.kamilalisp.runtime.*;
+import palaiologos.kamilalisp.runtime.meta.*;
+import palaiologos.kamilalisp.runtime.meta.Map;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

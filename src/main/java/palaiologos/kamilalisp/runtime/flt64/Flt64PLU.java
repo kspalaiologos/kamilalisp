@@ -76,6 +76,15 @@ public class Flt64PLU extends PrimitiveFunction implements Lambda {
                 L[i][j] = (A2[i][j] - s2) / U[j][j];
             }
         }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (Double.isNaN(L[i][j]) || Double.isNaN(P[i][j]) || Double.isNaN(U[i][j])) {
+                    throw new ArithmeticException("Singular matrix.");
+                }
+            }
+        }
+
         return new double[][][]{L, U, P};
     }
 

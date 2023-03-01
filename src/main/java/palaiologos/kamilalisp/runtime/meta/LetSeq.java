@@ -1,7 +1,6 @@
 package palaiologos.kamilalisp.runtime.meta;
 
 import palaiologos.kamilalisp.atom.*;
-import palaiologos.kamilalisp.runtime.Dfn;
 
 import java.util.List;
 

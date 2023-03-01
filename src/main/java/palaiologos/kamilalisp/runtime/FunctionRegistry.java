@@ -23,6 +23,7 @@ import palaiologos.kamilalisp.runtime.math.*;
 import palaiologos.kamilalisp.runtime.math.bit.*;
 import palaiologos.kamilalisp.runtime.math.cmp.*;
 import palaiologos.kamilalisp.runtime.math.hyperbolic.*;
+import palaiologos.kamilalisp.runtime.math.num.Det;
 import palaiologos.kamilalisp.runtime.math.num.PLUDecomposition;
 import palaiologos.kamilalisp.runtime.math.prime.IsPrime;
 import palaiologos.kamilalisp.runtime.math.prime.NextPrime;
@@ -254,6 +255,7 @@ public class FunctionRegistry {
         env.setPrimitive("num:LU", "⎕↙↗", new Atom(new LUDecomposition()));
         env.setPrimitive("num:PLU", "⎕⍉↙↗", new Atom(new PLUDecomposition()));
         env.setPrimitive("num:trace", "⎕∑", new Atom(new Trace()));
+        env.setPrimitive("num:det", "⎕∆", new Atom(new Det()));
         
         env.setPrimitive("cas:matrix:trace", new Atom(new MatrixTrace()));
 

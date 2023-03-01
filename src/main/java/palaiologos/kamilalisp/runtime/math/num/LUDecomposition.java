@@ -11,52 +11,60 @@ import java.util.List;
 
 public class LUDecomposition extends PrimitiveFunction implements Lambda {
     private static void realLU(MathContext mc, BigDecimal[][] A, BigDecimal[][] lower, BigDecimal[][] upper) {
-        for (int i = 0; i < A.length; i++) {
-            for (int k = i; k < A.length; k++) {
-                BigDecimal sum = BigDecimal.ZERO;
-                for (int j = 0; j < i; j++)
-                    sum = sum.add(lower[i][j].multiply(upper[j][k]));
-
-                upper[i][k] = A[i][k].subtract(sum);
-            }
-
-            // Lower Triangular
-            for (int k = i; k < A.length; k++) {
-                if (i == k)
-                    lower[i][i] = BigDecimal.ONE;
-                else {
+        try {
+            for (int i = 0; i < A.length; i++) {
+                for (int k = i; k < A.length; k++) {
                     BigDecimal sum = BigDecimal.ZERO;
                     for (int j = 0; j < i; j++)
-                        sum = sum.add(lower[k][j].multiply(upper[j][i]));
+                        sum = sum.add(lower[i][j].multiply(upper[j][k]));
 
-                    lower[k][i] = (A[k][i].subtract(sum)).divide(upper[i][i], mc);
+                    upper[i][k] = A[i][k].subtract(sum);
+                }
+
+                // Lower Triangular
+                for (int k = i; k < A.length; k++) {
+                    if (i == k)
+                        lower[i][i] = BigDecimal.ONE;
+                    else {
+                        BigDecimal sum = BigDecimal.ZERO;
+                        for (int j = 0; j < i; j++)
+                            sum = sum.add(lower[k][j].multiply(upper[j][i]));
+
+                        lower[k][i] = (A[k][i].subtract(sum)).divide(upper[i][i], mc);
+                    }
                 }
             }
+        } catch (ArithmeticException e) {
+            throw new ArithmeticException("Singular matrix.");
         }
     }
 
     private static void complexLU(MathContext mc, BigComplex[][] A, BigComplex[][] lower, BigComplex[][] upper) {
-        for (int i = 0; i < A.length; i++) {
-            for (int k = i; k < A.length; k++) {
-                BigComplex sum = BigComplex.ZERO;
-                for (int j = 0; j < i; j++)
-                    sum = sum.add(lower[i][j].multiply(upper[j][k]));
-
-                upper[i][k] = A[i][k].subtract(sum);
-            }
-
-            // Lower Triangular
-            for (int k = i; k < A.length; k++) {
-                if (i == k)
-                    lower[i][i] = BigComplex.ONE;
-                else {
+        try {
+            for (int i = 0; i < A.length; i++) {
+                for (int k = i; k < A.length; k++) {
                     BigComplex sum = BigComplex.ZERO;
                     for (int j = 0; j < i; j++)
-                        sum = sum.add(lower[k][j].multiply(upper[j][i]));
+                        sum = sum.add(lower[i][j].multiply(upper[j][k]));
 
-                    lower[k][i] = (A[k][i].subtract(sum)).divide(upper[i][i], mc);
+                    upper[i][k] = A[i][k].subtract(sum);
+                }
+
+                // Lower Triangular
+                for (int k = i; k < A.length; k++) {
+                    if (i == k)
+                        lower[i][i] = BigComplex.ONE;
+                    else {
+                        BigComplex sum = BigComplex.ZERO;
+                        for (int j = 0; j < i; j++)
+                            sum = sum.add(lower[k][j].multiply(upper[j][i]));
+
+                        lower[k][i] = (A[k][i].subtract(sum)).divide(upper[i][i], mc);
+                    }
                 }
             }
+        } catch (ArithmeticException e) {
+            throw new ArithmeticException("Singular matrix.");
         }
     }
 

@@ -1,6 +1,6 @@
 package palaiologos.kamilalisp.atom;
 
-import palaiologos.kamilalisp.runtime.Dfn;
+import palaiologos.kamilalisp.runtime.meta.Dfn;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
