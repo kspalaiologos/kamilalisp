@@ -8,6 +8,7 @@ import palaiologos.kamilalisp.atom.Type;
 import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Stream;
@@ -100,12 +101,42 @@ public class DefaultFortranFormulaGrammarVisitor extends FortranFormulaBaseVisit
 
     @Override
     public Atom visitMultiplication(FortranFormulaParser.MultiplicationContext ctx) {
-        return new Atom(List.of(new Atom("*", true), visit(ctx.expr(0)), visit(ctx.expr(1))));
+        Atom expr1 = visit(ctx.expr(0));
+        Atom expr2 = visit(ctx.expr(1));
+        boolean p1 = expr1.getType() == Type.LIST && !expr1.getList().isEmpty() && expr1.getList().get(0).getType() == Type.IDENTIFIER && expr1.getList().get(0).getIdentifier().equals("*");
+        boolean p2 = expr2.getType() == Type.LIST && !expr2.getList().isEmpty() && expr2.getList().get(0).getType() == Type.IDENTIFIER && expr2.getList().get(0).getIdentifier().equals("*");
+        if(p1 || p2) {
+            ArrayList<Atom> result = new ArrayList<>();
+            result.add(new Atom("*", true));
+            if(p1)
+                result.addAll(expr1.getList().subList(1, expr1.getList().size()));
+            else result.add(expr1);
+            if(p2)
+                result.addAll(expr2.getList().subList(1, expr2.getList().size()));
+            else result.add(expr2);
+            return new Atom(result);
+        } else
+            return new Atom(List.of(new Atom("*", true), expr1, expr2));
     }
 
     @Override
     public Atom visitAddition(FortranFormulaParser.AdditionContext ctx) {
-        return new Atom(List.of(new Atom("+", true), visit(ctx.expr(0)), visit(ctx.expr(1))));
+        Atom expr1 = visit(ctx.expr(0));
+        Atom expr2 = visit(ctx.expr(1));
+        boolean p1 = expr1.getType() == Type.LIST && !expr1.getList().isEmpty() && expr1.getList().get(0).getType() == Type.IDENTIFIER && expr1.getList().get(0).getIdentifier().equals("+");
+        boolean p2 = expr2.getType() == Type.LIST && !expr2.getList().isEmpty() && expr2.getList().get(0).getType() == Type.IDENTIFIER && expr2.getList().get(0).getIdentifier().equals("+");
+        if(p1 || p2) {
+            ArrayList<Atom> result = new ArrayList<>();
+            result.add(new Atom("+", true));
+            if(p1)
+                result.addAll(expr1.getList().subList(1, expr1.getList().size()));
+            else result.add(expr1);
+            if(p2)
+                result.addAll(expr2.getList().subList(1, expr2.getList().size()));
+            else result.add(expr2);
+            return new Atom(result);
+        } else
+            return new Atom(List.of(new Atom("+", true), expr1, expr2));
     }
 
     @Override
@@ -115,7 +146,17 @@ public class DefaultFortranFormulaGrammarVisitor extends FortranFormulaBaseVisit
 
     @Override
     public Atom visitSubtraction(FortranFormulaParser.SubtractionContext ctx) {
-        return new Atom(List.of(new Atom("-", true), visit(ctx.expr(0)), visit(ctx.expr(1))));
+        // (- (- a b) (- c d)) = (a - b) - (c - d) = a - b - (c - d) = (- a b (- c d))
+        Atom expr1 = visit(ctx.expr(0));
+        Atom expr2 = visit(ctx.expr(1));
+        boolean p1 = expr1.getType() == Type.LIST && !expr1.getList().isEmpty() && expr1.getList().get(0).getType() == Type.IDENTIFIER && expr1.getList().get(0).getIdentifier().equals("+");
+        if(p1) {
+            ArrayList<Atom> result = new ArrayList<>(expr1.getList());
+            result.add(expr2);
+            return new Atom(result);
+        } else {
+            return new Atom(List.of(new Atom("-", true), expr1, expr2));
+        }
     }
 
     @Override
