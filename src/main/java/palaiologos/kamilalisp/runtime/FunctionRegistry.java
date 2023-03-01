@@ -254,6 +254,7 @@ public class FunctionRegistry {
         env.setPrimitive("num:PLU", "⎕⍉↙↗", new Atom(new PLUDecomposition()));
         env.setPrimitive("num:trace", "⎕∑", new Atom(new Trace()));
         env.setPrimitive("num:det", "⎕∆", new Atom(new Det()));
+        env.setPrimitive("num:permanent", "⎕∆⍴", new Atom(new Permanent()));
         env.setPrimitive("num:I", "⎕I", new Atom(new I()));
         env.setPrimitive("num:invert", "⎕¯¹", new Atom(new Inv()));
         

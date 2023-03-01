@@ -124,6 +124,7 @@ public class Flt64Base {
         env.setPrimitive("flt64:LU", new Atom(new Flt64LU()));
         env.setPrimitive("flt64:PLU", new Atom(new Flt64PLU()));
         env.setPrimitive("flt64:det", new Atom(new Flt64Det()));
+        env.setPrimitive("flt64:permanent", new Atom(new Flt64Permanent()));
         env.setPrimitive("flt64:invert", new Atom(new Flt64Inv()));
         env.setPrimitive("flt64:trace", new Atom(new Flt64Trace()));
         env.setPrimitive("flt64:e", toAtom(Math.E));
