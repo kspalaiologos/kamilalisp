@@ -407,6 +407,7 @@ public class TerminalPanel extends TilingWMComponent {
         try {
             text = area.getText(r.byteOffset, area.getDocument().getLength() - r.byteOffset);
             synchronized (lines) {
+                lineIndex = 0;
                 lines.add(text.substring(0, text.length() - 1));
             }
             r.byteOffset = 0;
