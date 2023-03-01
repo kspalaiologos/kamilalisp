@@ -118,6 +118,7 @@ public class FunctionRegistry {
         env.setPrimitive("cycle", "⍉↩", new Atom(new Cycle()));
         env.setPrimitive("take", "↑", new Atom(new Take()));
         env.setPrimitive("drop", "↓", new Atom(new Drop()));
+        env.setPrimitive("in?", new Atom(new In()));
         env.setPrimitive("unique-mask", "⊙¨", new Atom(new UniqueMask()));
         env.setPrimitive("unique", "⊙", new Atom(new Unique()));
         env.setPrimitive("intersection", "⋂", new Atom(new Intersection()));
