@@ -101,7 +101,7 @@ public class Main {
                             cc = "(" + code + "\n)";
                         }
                         data = Parser.parse(lineNumberOffset, cc);
-                    } catch (ParseCancellationException e) {
+                    } catch (RuntimeException e) {
                         System.out.println("Syntax error: " + e.getMessage());
                         continue;
                     }
