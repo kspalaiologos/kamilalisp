@@ -206,7 +206,7 @@
                         <option>-keep class org.fife.** { *; }</option>
                         <option>-keep class com.formdev.** { *; }</option>
                         <option>-keep class com.slf4j.** { *; }</option>
-                        <option>-keep class com.eclipse.** { *; }</option>
+                        <option>-keep class org.eclipse.** { *; }</option>
                         <option>-optimizationpasses 9</option>
                         <option>-allowaccessmodification</option>
                         <option>-flattenpackagehierarchy ''</option>
