@@ -17,10 +17,10 @@ public class Atom implements Comparable<Atom> {
     public static Atom TRUE = new Atom(true);
     public static Atom FALSE = new Atom(false);
     @Nonnull
-    private Object data;
-    private Type type;
+    Object data;
+    Type type;
 
-    Atom() {
+    protected Atom() {
         this.data = List.of();
         this.type = Type.LIST;
     }

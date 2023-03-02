@@ -100,11 +100,10 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
                 for (int i = 0; i < code.size() - 1; i++)
                     Evaluation.evaluate(descendantEnv, code.get(i));
                 Atom a = Evaluation.evaluate(descendantEnv, code.get(code.size() - 1));
-                if (a.getType() == Type.LIST && !a.getList().isEmpty() && a.getList().get(0).getType() == Type.CALLABLE && a.getList().get(0).getCallable() instanceof Self.SelfThunk selfThunk) {
-                    if (selfThunk.index() == StackFrame.currentLambdaIdx()) {
-                        args = selfThunk.args();
+                if (a.getType() == Type.LIST && !a.getList().isEmpty() && a.getList().get(0) instanceof SelfThunk selfThunk) {
+                    if (selfThunk.c == this) {
+                        args = selfThunk.args;
                     } else {
-                        a = selfThunk.apply(descendantEnv, List.of());
                         StackFrame.popLambda();
                         return a;
                     }

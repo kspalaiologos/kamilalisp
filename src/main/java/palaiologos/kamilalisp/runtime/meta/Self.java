@@ -1,10 +1,14 @@
 package palaiologos.kamilalisp.runtime.meta;
 
+import ch.obermuhlner.math.big.BigComplex;
 import palaiologos.kamilalisp.atom.*;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import static palaiologos.kamilalisp.atom.StackFrame.isDeBruijnAllowed;
+import static palaiologos.kamilalisp.atom.StackFrame.lambdaDeBruijn;
 
 public class Self extends PrimitiveFunction implements Lambda {
     private final int l;
@@ -30,7 +34,7 @@ public class Self extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if (isDeBruijnAllowed(index))
-            return new Atom(new SelfThunk(index, args));
+            return new SelfThunk(lambdaDeBruijn(index), args, env);
         else
             throw new RuntimeException("&" + index + " is not allowed here");
     }
@@ -38,33 +42,5 @@ public class Self extends PrimitiveFunction implements Lambda {
     @Override
     protected String name() {
         return "&" + index + "/syn";
-    }
-
-    record SelfThunk(int index, List<Atom> args) implements ReactiveFunction, SpecialForm {
-        @Override
-        public String stringify() {
-            return "&" + index + "/f-syn";
-        }
-
-        @Override
-        public String frameString() {
-            return "&" + index + "/f-syn";
-        }
-
-        @Override
-        public Atom apply(Environment env, List<Atom> _args) {
-            Lambda l = StackFrame.lambdaDeBruijn(index);
-            return Evaluation.evaluate(env, l, args);
-        }
-
-        @Override
-        public int line() {
-            return 0;
-        }
-
-        @Override
-        public int column() {
-            return 0;
-        }
     }
 }

@@ -16,6 +16,9 @@
   compute eigenvalues, eigenvectors, solve systems of equations,
   discrete sums.
 
+bugs:
+- fix cmpx not working in IDE (need to redirect streams)
+
 book:
 - huffman coding, elias gamma, histograms, fft, ski calculus, matrix algos, Chinese Remainder Theorem?
 
