@@ -46,6 +46,9 @@ public record HashMapUserData(HashPMap<Atom, Atom> value) implements Userdata {
     }
 
     @Override
+    public String toString() { return value.toString(); }
+
+    @Override
     public String typeName() {
         return "hashmap";
     }

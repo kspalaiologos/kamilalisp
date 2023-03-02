@@ -105,6 +105,20 @@
             <version>3.0</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>11.0.14</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-servlet -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>11.0.14</version>
+        </dependency>
+
         <!-- Testing dependencies. -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
