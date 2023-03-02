@@ -137,8 +137,8 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
                 assertArity(args, 1);
                 String path = args.get(0).getString();
                 Callable callback = args.get(1).getCallable();
-                ContextHandler shopContext = new ContextHandler("/shop");
-                shopContext.setHandler(new AbstractHandler() {
+                ContextHandler context = new ContextHandler("/" + path);
+                context.setHandler(new AbstractHandler() {
                     @Override
                     public void handle(String s, Request request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
                         HashMap<Atom, Atom> env = new HashMap<>();
@@ -459,7 +459,7 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
                         }
                     }
                 });
-                contextCollection.addHandler(shopContext);
+                contextCollection.addHandler(context);
                 return Atom.NULL;
             }
 
