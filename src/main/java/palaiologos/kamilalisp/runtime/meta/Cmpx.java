@@ -33,11 +33,7 @@ public class Cmpx extends PrimitiveFunction implements SpecialForm {
         return "cmpx";
     }
 
-    @Override
-    public Atom apply(Environment env, List<Atom> args) {
-        if (args.isEmpty())
-            throw new RuntimeException("cmpx requires at least one argument");
-
+    public static String doCmpx(Environment env, List<Atom> args) {
         long gcBefore = getGC();
 
         List<Integer> initialTimings = args.stream().map(x -> {
@@ -90,16 +86,26 @@ public class Cmpx extends PrimitiveFunction implements SpecialForm {
 
         long gcAfter = getGC();
 
+        StringBuilder sb = new StringBuilder();
+
         for (int i = 0; i < args.size(); i++) {
-            System.out.println("Expression " + i + ":");
-            System.out.println("\t" + args.get(i));
-            System.out.println("avg: " + means.get(i) + "ms, med: " + medians.get(i) + "ms");
-            System.out.println("dev: " + stdDevs.get(i) + "ms, %ch: " + (isSpecial(percentageChange.get(i)) ? "--" : percentageChange.get(i)) + "%");
-            System.out.println();
+            sb.append("Expression ").append(i).append(":\n");
+            sb.append("\t").append(args.get(i)).append("\n");
+            sb.append("avg: ").append(means.get(i)).append("ms, med: ").append(medians.get(i)).append("ms\n");
+            sb.append("dev: ").append(stdDevs.get(i)).append("ms, %ch: ").append(isSpecial(percentageChange.get(i)) ? "--" : percentageChange.get(i)).append("%\n\n");
         }
 
-        System.out.println("GC time: " + (gcAfter - gcBefore) + "ms");
+        sb.append("GC time: ").append(gcAfter - gcBefore).append("ms\n");
 
+        return sb.toString();
+    }
+
+    @Override
+    public Atom apply(Environment env, List<Atom> args) {
+        if (args.isEmpty())
+            throw new RuntimeException("cmpx requires at least one argument");
+
+        System.out.println(doCmpx(env, args));
         return Atom.NULL;
     }
 }
