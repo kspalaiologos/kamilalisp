@@ -37,9 +37,9 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
     }
 
     private static class HTTPServerUserdata implements Userdata {
-        private Server s;
-        private ContextHandlerCollection contextCollection;
-        private Environment e;
+        private final Server s;
+        private final ContextHandlerCollection contextCollection;
+        private final Environment e;
 
         public HTTPServerUserdata(Server s, Environment e) {
             this.s = s;
