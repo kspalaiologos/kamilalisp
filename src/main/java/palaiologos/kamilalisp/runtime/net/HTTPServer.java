@@ -8,9 +8,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.SessionIdManager;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.session.DefaultSessionCache;
+import org.eclipse.jetty.server.session.DefaultSessionIdManager;
+import org.eclipse.jetty.server.session.SessionHandler;
 import org.pcollections.HashTreePMap;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.runtime.IO.streams.StreamWrapper;
@@ -18,6 +22,7 @@ import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.InetSocketAddress;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +32,7 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
     public Atom apply(Environment env, List<Atom> args) {
         assertArity(args, 1);
         int port = args.get(0).getInteger().intValueExact();
-        Server s = new Server(port);
+        Server s = new Server(InetSocketAddress.createUnresolved("127.0.0.1", port));
         return new Atom(new HTTPServerUserdata(s, env));
     }
 
@@ -43,9 +48,11 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
 
         public HTTPServerUserdata(Server s, Environment e) {
             this.s = s;
-            contextCollection = new ContextHandlerCollection();
-            s.setHandler(contextCollection);
             this.e = e;
+            contextCollection = new ContextHandlerCollection();
+            SessionHandler sh = new SessionHandler();
+            sh.setHandler(contextCollection);
+            s.setHandler(sh);
         }
 
         @Override
@@ -134,10 +141,11 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
         private class ServerAddHandler extends PrimitiveFunction implements Lambda {
             @Override
             public Atom apply(Environment env, List<Atom> args) {
-                assertArity(args, 1);
+                assertArity(args, 2);
                 String path = args.get(0).getString();
                 Callable callback = args.get(1).getCallable();
                 ContextHandler context = new ContextHandler("/" + path);
+                context.setServer(s);
                 context.setHandler(new AbstractHandler() {
                     @Override
                     public void handle(String s, Request request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {

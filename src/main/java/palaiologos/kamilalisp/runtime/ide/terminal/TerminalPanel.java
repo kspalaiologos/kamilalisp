@@ -600,6 +600,7 @@ public class TerminalPanel extends TilingWMComponent {
                         myPort = Integer.parseInt(reader.readLine());
                         myHost = "localhost";
                         reader.close();
+                        Runtime.getRuntime().addShutdownHook(new Thread(localProcess::destroy));
                     } catch(IOException e) {
                         e.printStackTrace();
                     }
@@ -677,7 +678,7 @@ public class TerminalPanel extends TilingWMComponent {
                     }
                 } catch (Throwable t) {
                     if(localProcess != null && localProcess.isAlive())
-                        localProcess.destroy();
+                        localProcess.destroyForcibly();
                     SwingUtilities.invokeLater(() -> quit());
                 }
             }
