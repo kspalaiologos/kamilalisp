@@ -1,5 +1,6 @@
 package palaiologos.kamilalisp.runtime;
 
+import com.sun.net.httpserver.HttpServer;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.runtime.IO.*;
@@ -426,6 +427,7 @@ public class FunctionRegistry {
         env.setPrimitive("net:client-ssl", new Atom(new NetClientSSL()));
         env.setPrimitive("net:server", new Atom(new NetServer()));
         env.setPrimitive("net:server-ssl", new Atom(new NetServerSSL()));
+        env.setPrimitive("net:http-server", new Atom(new HTTPServer()));
 
         env.setPrimitive("hashmap:from-list", "⍔⌿", new Atom(new HashMapFromList()));
         env.setPrimitive("hashmap:as-list", "⍔⍀", new Atom(new HashMapAsList()));
