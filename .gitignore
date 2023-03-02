@@ -75,3 +75,5 @@ doc/*.fdb_latexmk
 target/
 
 .idea/workspace.xml
+
+dependency-reduced-pom.xml
