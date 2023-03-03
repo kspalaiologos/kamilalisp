@@ -31,7 +31,7 @@ public class MatrixLUDecomposition extends PrimitiveFunction implements Lambda {
                 List<Atom> sum = new ArrayList<>();
                 sum.add(plus);
                 for (int j = 0; j < i; j++) {
-                    if ((lower[i][j].isNumeric() && lower[i][j].getComplex().equals(BigComplex.ONE))
+                    if ((lower[i][j].isNumeric() && lower[i][j].getComplex().equals(BigComplex.ZERO))
                             || (upper[j][k].isNumeric() && upper[j][k].getComplex().equals(BigComplex.ZERO))) {
                         continue;
                     }
