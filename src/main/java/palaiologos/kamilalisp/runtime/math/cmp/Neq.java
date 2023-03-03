@@ -30,6 +30,8 @@ public class Neq extends PrimitiveFunction implements Lambda {
             return new Atom(b.getList().stream().map(x -> cmp2(e, a, x)).toList());
         } else if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
             return new Atom(Streams.zip(a.getList().stream(), b.getList().stream(), (x, y) -> cmp2(e, x, y)).toList());
+        } else if(a.getType() == Type.IDENTIFIER && b.getType() == Type.IDENTIFIER) {
+            return new Atom(!a.getIdentifier().equals(b.getIdentifier()));
         } else {
             throw new UnsupportedOperationException(name + " not defined for: " + a.getType() + " and " + b.getType());
         }
