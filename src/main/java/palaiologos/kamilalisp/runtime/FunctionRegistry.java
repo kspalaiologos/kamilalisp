@@ -31,6 +31,7 @@ import palaiologos.kamilalisp.runtime.math.prime.PrimeFactors;
 import palaiologos.kamilalisp.runtime.math.prime.PrimeNo;
 import palaiologos.kamilalisp.runtime.math.trig.*;
 import palaiologos.kamilalisp.runtime.cas.MatrixTrace;
+import palaiologos.kamilalisp.runtime.cas.MatrixLUDecomposition;
 import palaiologos.kamilalisp.runtime.meta.*;
 import palaiologos.kamilalisp.runtime.net.*;
 import palaiologos.kamilalisp.runtime.parallel.Daemon;
@@ -261,6 +262,7 @@ public class FunctionRegistry {
         env.setPrimitive("num:invert", "⎕¯¹", new Atom(new Inv()));
         
         env.setPrimitive("cas:matrix:trace", new Atom(new MatrixTrace()));
+        env.setPrimitive("cas:matrix:LU", new Atom(new MatrixLUDecomposition()));
 
         env.setPrimitive("bit:and", "⌶∧", new Atom(new BitAnd()));
         env.setPrimitive("bit:or", "⌶∨", new Atom(new BitOr()));
