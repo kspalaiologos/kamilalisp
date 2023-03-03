@@ -287,6 +287,7 @@ public class FunctionRegistry {
         env.setPrimitive("cas:polynomial", "⊕ƒ⊗", new Atom(new Polynomial()));
         env.setPrimitive("cas:factor", "ƒ∵", new Atom(new Factor()));
         env.setPrimitive("cas:nabla", "∇∧", new Atom(new Nabla()));
+        env.setPrimitive("cas:simp", "ƒ⊙", new Atom(new Simp()));
         env.setPrimitive("cas:fn:vars", "ƒ⍴", new Atom(new MfnVariables()));
 
         new Flt64Base().registerFlt64(env);

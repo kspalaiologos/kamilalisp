@@ -17,7 +17,7 @@ public class MatrixLUDecomposition extends PrimitiveFunction implements Lambda {
     private static final Atom times = new Atom("*", true);
     private static final Atom slash = new Atom("/", true);
 
-    private static void casLU(Atom[][] A, Atom[][] lower, Atom[][] upper, LinkedHashSet<String> vars) {
+    private static void casLU(Environment env, Atom[][] A, Atom[][] lower, Atom[][] upper, LinkedHashSet<String> vars) {
         for (int i = 0; i < A.length; i++) {
             for (int j = 0; j < A.length; j++) {
                 if (A[i][j].isUserdata(MathExpression.class)) {
@@ -82,6 +82,32 @@ public class MatrixLUDecomposition extends PrimitiveFunction implements Lambda {
                 }
             }
         }
+        for(int i = 0; i < A.length; i++) {
+            for(int j = 0; j < A.length; j++) {
+                MathExpression mel = new MathExpression(env, vars, lower[i][j]);
+                MathExpression meu = new MathExpression(env, vars, upper[i][j]);
+                if (!lower[i][j].isNumeric())
+                    mel = mel.simplify(env);
+                if (!upper[i][j].isNumeric())
+                    meu = meu.simplify(env);
+                lower[i][j] = new Atom(mel);
+                upper[i][j] = new Atom(meu);
+            }
+        }
+        // This is a good moment to determine if det(L) == 0 || det(U) == 0
+        // If the diagonal product of L = 0 or the diagonal product of U = 0,
+        // matrix is singular. We should error in this case.
+        // => check if there is a literal zero on the leading diagonal of L or U.
+        for(int i = 0; i < A.length; i++) {
+            Atom l = lower[i][i].getUserdata(MathExpression.class).getData();
+            Atom u = upper[i][i].getUserdata(MathExpression.class).getData();
+            if (l.isNumeric() && l.getComplex().equals(BigComplex.ZERO)) {
+                throw new RuntimeException("Matrix is singular.");
+            }
+            if (u.isNumeric() && u.getComplex().equals(BigComplex.ZERO)) {
+                throw new RuntimeException("Matrix is singular.");
+            }
+        }
     }
 
     @Override
@@ -96,7 +122,7 @@ public class MatrixLUDecomposition extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("Expected a square matrix.");
         }
 
-        Atom[][] A = l1.stream().map(x -> x.stream().toArray(Atom[]::new)).toArray(Atom[][]::new);
+        Atom[][] A = l1.stream().map(x -> x.toArray(Atom[]::new)).toArray(Atom[][]::new);
         Atom[][] L = new Atom[A.length][A.length];
         Atom[][] U = new Atom[A.length][A.length];
         for (int i = 0; i < A.length; i++) {
@@ -107,19 +133,12 @@ public class MatrixLUDecomposition extends PrimitiveFunction implements Lambda {
         }
 
         LinkedHashSet<String> vars = new LinkedHashSet<>();
-        casLU(A, L, U, vars);
-
+        casLU(env, A, L, U, vars);
         Atom MathL = new Atom(Arrays.stream(L)
-                .map(x -> new Atom(
-                Arrays.stream(x)
-                        .map(a -> new Atom(new MathExpression(env, vars, a)))
-                        .toList()))
+                .map(x -> new Atom(Arrays.asList(x)))
                 .toList());
         Atom MathU = new Atom(Arrays.stream(U)
-                .map(x -> new Atom(
-                Arrays.stream(x)
-                        .map(a -> new Atom(new MathExpression(env, vars, a)))
-                        .toList()))
+                .map(x -> new Atom(Arrays.asList(x)))
                 .toList());
         return new Atom(List.of(MathL, MathU));
     }

@@ -1,7 +1,12 @@
 package palaiologos.kamilalisp.runtime.cas;
 
 import com.google.common.base.Objects;
+import org.pcollections.HashPMap;
 import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.runtime.cas.meta.EvaluationResult;
+import palaiologos.kamilalisp.runtime.cas.meta.FortranParser;
+import palaiologos.kamilalisp.runtime.cas.meta.FriCAS;
+import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
 import java.util.*;
 
@@ -226,6 +231,40 @@ public class MathExpression implements Userdata {
             }
         } else {
             throw new RuntimeException("Invalid expression. Unexpected component of type " + tree.getType());
+        }
+    }
+
+    public MathExpression simplify(Environment env) {
+        String instruction =
+                "simplify(" + getExpression() + ")\n";
+        EvaluationResult r = (EvaluationResult) FriCAS.withFriCas(x -> {
+            x.apply(")clear all\n");
+            x.apply(")set output algebra off\n");
+            x.apply(")set output tex off\n");
+            x.apply(")set output fortran on\n");
+            x.apply("digits(" + env.get("fr") + ")\n");
+            return x.apply(instruction);
+        });
+        if (!r.isSuccessful()) {
+            if (StackFrame.isDebug())
+                throw new RuntimeException("Failed to simplify, command=" + instruction + ", result=" + r.getResult());
+            throw new RuntimeException("Failed to simplify.");
+        } else {
+            HashPMap<Atom, Atom> a;
+            try {
+                a = FortranParser.parse(r.getResult()).getUserdata(HashMapUserData.class).value();
+            } catch (Exception e) {
+                if (StackFrame.isDebug())
+                    throw new RuntimeException("Failed to simplify (parse), command=" + instruction + ", result=" + r.getResult() + ", why=" + e.getMessage());
+                throw new RuntimeException("Failed to simplify.");
+            }
+
+            if(a.size() != 1)
+                throw new RuntimeException("Failed to simplify, CAS arity error.");
+            Atom entry = a.entrySet().stream().findFirst().get().getValue();
+            LinkedHashSet<String> args2 = new LinkedHashSet<>();
+            unknownsFrom(entry, args2);
+            return new MathExpression(env, args, entry);
         }
     }
 
