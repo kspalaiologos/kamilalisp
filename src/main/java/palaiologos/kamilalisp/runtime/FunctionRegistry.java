@@ -157,6 +157,7 @@ public class FunctionRegistry {
         env.setPrimitive("meta:to-glyphs", new Atom(new ToGlyphs()));
         env.setPrimitive("meta:to-ascii", new Atom(new ToASCII()));
         env.setPrimitive("meta:type-name", new Atom(new TypeName()));
+        env.setPrimitive("meta:atom", new Atom(new MetaAtom()));
 
         env.setPrimitive("str:format", "⍫∊", new Atom(new Format()));
         env.setPrimitive("str:lines", new Atom(new Lines()));
