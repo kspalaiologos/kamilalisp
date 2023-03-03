@@ -1,5 +1,6 @@
 package palaiologos.kamilalisp.runtime.cas;
 
+import ch.obermuhlner.math.big.BigComplex;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.runtime.array.Rank;
 
@@ -30,8 +31,8 @@ public class MatrixLUDecomposition extends PrimitiveFunction implements Lambda {
                 List<Atom> sum = new ArrayList<>();
                 sum.add(plus);
                 for (int j = 0; j < i; j++) {
-                    if ((lower[i][j].isNumeric() && lower[i][j].getReal().compareTo(BigDecimal.ZERO) == 0)
-                            || (upper[j][k].isNumeric() && upper[j][k].getReal().compareTo(BigDecimal.ZERO) == 0)) {
+                    if ((lower[i][j].isNumeric() && lower[i][j].getComplex().equals(BigComplex.ONE))
+                            || (upper[j][k].isNumeric() && upper[j][k].getComplex().equals(BigComplex.ZERO))) {
                         continue;
                     }
                     sum.add(new Atom(List.of(times, lower[i][j], upper[j][k])));
@@ -53,26 +54,26 @@ public class MatrixLUDecomposition extends PrimitiveFunction implements Lambda {
                     List<Atom> sum = new ArrayList<>();
                     sum.add(plus);
                     for (int j = 0; j < i; j++) {
-                        if ((lower[k][i].isNumeric() && lower[k][i].getReal().compareTo(BigDecimal.ZERO) == 0)
-                                || (upper[j][i].isNumeric() && upper[j][i].getReal().compareTo(BigDecimal.ZERO) == 0)) {
+                        if ((lower[k][i].isNumeric() && lower[k][i].getComplex().equals(BigComplex.ZERO))
+                                || (upper[j][i].isNumeric() && upper[j][i].getComplex().equals(BigComplex.ZERO))) {
                             continue;
                         }
                         sum.add(new Atom(List.of(times, lower[k][i], upper[j][i])));
                     }
                     if (sum.size() == 1) {
-                        if (upper[i][i].isNumeric() && upper[i][i].getReal().compareTo(BigDecimal.ONE) == 0) {
+                        if (upper[i][i].isNumeric() && upper[i][i].getComplex().equals(BigComplex.ONE)) {
                             lower[k][i] = A[k][i];
                         } else {
                             lower[k][i] = new Atom(List.of(slash, A[k][i], upper[i][i]));
                         }
                     } else if(sum.size() == 2) { 
-                        if (upper[i][i].isNumeric() && upper[i][i].getReal().compareTo(BigDecimal.ONE) == 0) {
+                        if (upper[i][i].isNumeric() && upper[i][i].getComplex().equals(BigComplex.ONE)) {
                             lower[k][i] = new Atom(List.of(minus, A[k][i], sum.get(1)));
                         } else {
                             lower[k][i] = new Atom(List.of(slash, new Atom(List.of(minus, A[k][i], sum.get(1))), upper[i][i]));
                         }
                     } else {
-                        if (upper[i][i].isNumeric() && upper[i][i].getReal().compareTo(BigDecimal.ONE) == 0) {
+                        if (upper[i][i].isNumeric() && upper[i][i].getComplex().equals(BigComplex.ONE)) {
                             lower[k][i] = new Atom(List.of(minus, A[k][i], new Atom(sum)));
                         } else {
                             lower[k][i] = new Atom(List.of(slash, new Atom(List.of(minus, A[k][i], new Atom(sum))), upper[i][i]));
