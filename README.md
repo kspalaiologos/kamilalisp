@@ -15,16 +15,29 @@ A functional, flexible and concise Lisp inspired by Haskell and APL, among other
 
 Useful links:
 
-- A public read-only channel to track the development of KamilaLisp: `#kamilalisp:coven.palaiologos.rocks`
+- A public channel to track the development of KamilaLisp: `#kamilalisp:coven.palaiologos.rocks`
 
 ## Setup
 
-You need **Java17 JDK or newer** installed to build KamilaLisp yourself. Alternatively, you could download a JAR file from the Github Actions artifacts tab.
+You need **Java17 JDK or newer** installed to build KamilaLisp yourself.
 
 ```
 git clone https://github.com/kspalaiologos/kamilalisp
 cd kamilalisp
 mvn package
+```
+
+Alternatively, you could download a pre-compiled JAR file for use with **Java 17 or newer**:
+
+```
+export VERSION=v0.2k
+mkdir kamilalisp && cd kamilalisp
+# Download the KamilaLisp JAR
+curl -L -O https://github.com/kspalaiologos/kamilalisp/releases/download/$VERSION/kamilalisp-0.2.jar
+# Verify the signature
+curl -L -O https://github.com/kspalaiologos/kamilalisp/releases/download/$VERSION/kamilalisp-0.2.jar.asc
+curl https://palaiologos.rocks/pub.pgp | gpg --import
+gpg --verify kamilalisp-0.2.jar.asc kamilalisp-0.2.jar
 ```
 
 ## Features
