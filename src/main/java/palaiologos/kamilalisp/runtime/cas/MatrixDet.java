@@ -50,7 +50,10 @@ public class MatrixDet extends PrimitiveFunction implements Lambda {
             detData.add(L[i][i].getUserdata(MathExpression.class).getData());
             detData.add(U[i][i].getUserdata(MathExpression.class).getData());
         }
-        return new Atom(new MathExpression(env, vars, new Atom(detData)).simplify(env));
+        LinkedHashSet<String> hs = new LinkedHashSet<>();
+        Atom dd = new Atom(detData);
+        MathExpression.unknownsFrom(dd, hs);
+        return new Atom(new MathExpression(env, hs, dd).simplify(env));
     }
 
     @Override
