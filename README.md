@@ -33,11 +33,10 @@ Alternatively, you could download a pre-compiled JAR file for use with **Java 17
 export VERSION=v0.2k
 mkdir kamilalisp && cd kamilalisp
 # Download the KamilaLisp JAR
-wget https://github.com/kspalaiologos/kamilalisp/releases/download/$VERSION/kamilalisp-0.2.jar 2>/dev/null
+curl -L -O https://github.com/kspalaiologos/kamilalisp/releases/download/$VERSION/kamilalisp-0.2.jar
 # Verify the signature
-wget https://github.com/kspalaiologos/kamilalisp/releases/download/$VERSION/kamilalisp-0.2.jar.asc 2>/dev/null
-wget https://palaiologos.rocks/pub.pgp 2>/dev/null
-gpg --import pub.pgp
+curl -L -O https://github.com/kspalaiologos/kamilalisp/releases/download/$VERSION/kamilalisp-0.2.jar.asc
+curl https://palaiologos.rocks/pub.pgp | gpg --import
 gpg --verify kamilalisp-0.2.jar.asc kamilalisp-0.2.jar
 ```
 
