@@ -3,7 +3,6 @@ package palaiologos.kamilalisp.runtime.math.num;
 import ch.obermuhlner.math.big.BigComplex;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.runtime.array.Rank;
-import palaiologos.kamilalisp.runtime.flt64.Flt64Base;
 
 import java.math.BigDecimal;
 import java.math.MathContext;

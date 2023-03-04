@@ -9,10 +9,10 @@
  */
 package org.fife.ui.rsyntaxtextarea.folding;
 
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
 
 /**

@@ -8,13 +8,10 @@
  */
 package org.fife.ui.rtextarea;
 
-import java.awt.Container;
-import java.awt.Rectangle;
-import java.awt.Shape;
-
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.View;
+import java.awt.*;
 
 
 /**

@@ -6,7 +6,6 @@ import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 public class Flt64Base {
     public static final double EPSILON = Math.ulp(1.0d);

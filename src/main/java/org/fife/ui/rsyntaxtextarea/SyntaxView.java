@@ -9,12 +9,12 @@
  */
 package org.fife.ui.rsyntaxtextarea;
 
-import java.awt.*;
-import javax.swing.event.*;
-import javax.swing.text.*;
-
 import org.fife.ui.rsyntaxtextarea.folding.Fold;
 import org.fife.ui.rsyntaxtextarea.folding.FoldManager;
+
+import javax.swing.event.DocumentEvent;
+import javax.swing.text.*;
+import java.awt.*;
 
 
 /**

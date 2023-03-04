@@ -8,13 +8,12 @@
  */
 package org.fife.ui.rsyntaxtextarea;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.fife.ui.rtextarea.SmartHighlightPainter;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
-
-import org.fife.ui.rtextarea.SmartHighlightPainter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**

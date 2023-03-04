@@ -9,37 +9,24 @@
  */
 package org.fife.ui.rsyntaxtextarea;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Rectangle;
+import org.fife.ui.rsyntaxtextarea.parser.Parser;
+import org.fife.ui.rsyntaxtextarea.parser.ParserNotice;
+import org.fife.ui.rsyntaxtextarea.parser.TaskTagParser.TaskNotice;
+import org.fife.ui.rtextarea.RTextArea;
+
+import javax.swing.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.plaf.ColorUIResource;
+import javax.swing.text.BadLocationException;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-import javax.swing.plaf.ColorUIResource;
-import javax.swing.text.BadLocationException;
-
-import org.fife.ui.rsyntaxtextarea.parser.Parser;
-import org.fife.ui.rsyntaxtextarea.parser.ParserNotice;
-import org.fife.ui.rsyntaxtextarea.parser.TaskTagParser.TaskNotice;
-import org.fife.ui.rtextarea.RTextArea;
+import java.util.*;
 
 
 /**

@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime.flt64;
 
-import ch.obermuhlner.math.big.BigComplex;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;

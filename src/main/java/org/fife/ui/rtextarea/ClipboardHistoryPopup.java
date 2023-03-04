@@ -8,40 +8,14 @@
  */
 package org.fife.ui.rtextarea;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import org.fife.ui.rsyntaxtextarea.focusabletip.TipUtil;
+
+import javax.swing.*;
+import javax.swing.text.Caret;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.List;
 import java.util.ResourceBundle;
-
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JWindow;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.text.Caret;
-
-import org.fife.ui.rsyntaxtextarea.focusabletip.TipUtil;
 
 
 /**

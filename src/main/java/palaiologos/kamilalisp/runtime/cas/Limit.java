@@ -11,7 +11,6 @@ import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Limit extends PrimitiveFunction implements SpecialForm {
     // cas:lim x -> 0 (cas:fn x \+ x (** x 2))

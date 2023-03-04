@@ -8,13 +8,11 @@
  */
 package org.fife.ui.rsyntaxtextarea;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Toolkit;
+import org.fife.ui.rtextarea.RTextArea;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.fife.ui.rtextarea.RTextArea;
 
 
 /**

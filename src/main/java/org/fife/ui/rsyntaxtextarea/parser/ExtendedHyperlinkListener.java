@@ -8,11 +8,10 @@
  */
 package org.fife.ui.rsyntaxtextarea.parser;
 
-import java.util.EventListener;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
 import javax.swing.event.HyperlinkEvent;
-
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import java.util.EventListener;
 
 
 /**

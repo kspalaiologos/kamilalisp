@@ -7,7 +7,6 @@ import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Polynomial extends PrimitiveFunction implements Lambda {
     // cas:polynomial '(3 5 2 6)

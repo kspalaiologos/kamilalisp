@@ -8,9 +8,9 @@
  */
 package org.fife.ui.rsyntaxtextarea;
 
-import java.util.Set;
-
 import org.fife.ui.rsyntaxtextarea.modes.PlainTextTokenMaker;
+
+import java.util.Set;
 
 
 /**

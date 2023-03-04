@@ -8,14 +8,14 @@
  */
 package org.fife.ui.rtextarea;
 
-import java.awt.*;
-import java.awt.event.*;
-
 import javax.swing.*;
-import javax.swing.text.*;
 import javax.swing.border.Border;
 import javax.swing.plaf.*;
-import javax.swing.plaf.basic.*;
+import javax.swing.plaf.basic.BasicBorders;
+import javax.swing.plaf.basic.BasicTextAreaUI;
+import javax.swing.text.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 
 
 /**

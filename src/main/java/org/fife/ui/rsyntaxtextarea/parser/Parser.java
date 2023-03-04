@@ -8,9 +8,9 @@
  */
 package org.fife.ui.rsyntaxtextarea.parser;
 
-import java.net.URL;
-
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
+
+import java.net.URL;
 
 
 /**

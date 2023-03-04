@@ -8,15 +8,14 @@
  */
 package org.fife.ui.rsyntaxtextarea.folding;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-
-import javax.swing.text.BadLocationException;
-
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenTypes;
+
+import javax.swing.text.BadLocationException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 
 /**

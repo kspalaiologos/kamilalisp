@@ -1,6 +1,9 @@
 package palaiologos.kamilalisp.runtime.math.num;
 
-import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.atom.Atom;
+import palaiologos.kamilalisp.atom.Environment;
+import palaiologos.kamilalisp.atom.Lambda;
+import palaiologos.kamilalisp.atom.PrimitiveFunction;
 import palaiologos.kamilalisp.runtime.array.Rank;
 import palaiologos.kamilalisp.runtime.math.Slash;
 import palaiologos.kamilalisp.runtime.math.Star;

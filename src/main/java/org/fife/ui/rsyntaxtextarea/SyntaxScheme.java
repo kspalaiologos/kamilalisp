@@ -9,21 +9,18 @@
  */
 package org.fife.ui.rsyntaxtextarea;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-
-import javax.swing.text.StyleContext;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
+
+import javax.swing.text.StyleContext;
+import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
 
 
 /**

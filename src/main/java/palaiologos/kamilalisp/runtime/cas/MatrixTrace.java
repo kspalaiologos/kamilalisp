@@ -5,14 +5,12 @@ import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 import palaiologos.kamilalisp.runtime.array.Rank;
-import palaiologos.kamilalisp.error.TypeError;
 
 import java.math.BigInteger;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import java.util.LinkedHashSet;
-import palaiologos.kamilalisp.runtime.cas.MathExpression;
 
 public class MatrixTrace extends PrimitiveFunction implements Lambda {
 

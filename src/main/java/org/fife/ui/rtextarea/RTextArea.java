@@ -8,6 +8,16 @@
  */
 package org.fife.ui.rtextarea;
 
+import org.fife.print.RPrintUtilities;
+import org.fife.ui.rsyntaxtextarea.DocumentRange;
+import org.fife.ui.rtextarea.Macro.MacroRecord;
+
+import javax.swing.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.plaf.TextUI;
+import javax.swing.text.*;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
@@ -22,23 +32,6 @@ import java.io.Reader;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
-
-import javax.swing.*;
-import javax.swing.event.CaretEvent;
-import javax.swing.plaf.TextUI;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Caret;
-import javax.swing.text.DefaultEditorKit;
-import javax.swing.text.Document;
-import javax.swing.text.Element;
-import javax.swing.text.Segment;
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
-
-import org.fife.print.RPrintUtilities;
-import org.fife.ui.rsyntaxtextarea.DocumentRange;
-import org.fife.ui.rtextarea.Macro.MacroRecord;
 
 
 /**

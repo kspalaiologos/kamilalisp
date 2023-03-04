@@ -10,16 +10,11 @@
  */
 package org.fife.ui.rsyntaxtextarea;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.fife.ui.rtextarea.SmartHighlightPainter;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
-
-import org.fife.ui.rtextarea.SmartHighlightPainter;
+import java.util.*;
 
 
 /**

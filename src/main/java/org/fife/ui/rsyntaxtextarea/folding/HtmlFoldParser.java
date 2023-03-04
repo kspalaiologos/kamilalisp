@@ -8,16 +8,11 @@
  */
 package org.fife.ui.rsyntaxtextarea.folding;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Stack;
-
-import javax.swing.text.BadLocationException;
-
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Token;
+
+import javax.swing.text.BadLocationException;
+import java.util.*;
 
 
 /**

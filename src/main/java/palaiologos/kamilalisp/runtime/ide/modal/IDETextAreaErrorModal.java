@@ -1,12 +1,9 @@
 package palaiologos.kamilalisp.runtime.ide.modal;
 
-import palaiologos.kamilalisp.runtime.ide.editor.EditorPanel;
-
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 import java.awt.*;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 

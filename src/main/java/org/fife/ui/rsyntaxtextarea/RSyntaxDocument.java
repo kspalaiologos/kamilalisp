@@ -9,19 +9,18 @@
  */
 package org.fife.ui.rsyntaxtextarea;
 
-import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.Iterator;
+import org.fife.ui.rtextarea.RDocument;
+import org.fife.util.DynamicIntArray;
 
-import javax.swing.Action;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.text.Segment;
-
-import org.fife.ui.rtextarea.RDocument;
-import org.fife.util.DynamicIntArray;
+import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.Iterator;
 
 
 /**

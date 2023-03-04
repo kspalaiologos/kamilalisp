@@ -8,28 +8,15 @@
  */
 package org.fife.ui.rtextarea;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.text.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.swing.Icon;
-import javax.swing.JPanel;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-import javax.swing.event.DocumentEvent;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.Element;
-import javax.swing.text.Position;
-import javax.swing.text.View;
 
 
 /**

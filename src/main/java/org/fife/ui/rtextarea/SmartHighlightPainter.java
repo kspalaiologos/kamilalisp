@@ -9,16 +9,11 @@
  */
 package org.fife.ui.rtextarea;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Paint;
-import java.awt.Rectangle;
-import java.awt.Shape;
-
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 import javax.swing.text.View;
+import java.awt.*;
 
 
 /**

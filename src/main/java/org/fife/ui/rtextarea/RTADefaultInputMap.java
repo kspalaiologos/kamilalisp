@@ -8,12 +8,10 @@
  */
 package org.fife.ui.rtextarea;
 
+import javax.swing.*;
+import javax.swing.text.DefaultEditorKit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-
-import javax.swing.InputMap;
-import javax.swing.KeyStroke;
-import javax.swing.text.DefaultEditorKit;
 
 
 /**

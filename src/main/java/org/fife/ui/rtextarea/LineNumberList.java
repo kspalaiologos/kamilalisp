@@ -8,19 +8,10 @@
  */
 package org.fife.ui.rtextarea;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Map;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.RSyntaxUtilities;
+import org.fife.ui.rsyntaxtextarea.folding.Fold;
+import org.fife.ui.rsyntaxtextarea.folding.FoldManager;
 
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -30,11 +21,11 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.View;
-
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.RSyntaxUtilities;
-import org.fife.ui.rsyntaxtextarea.folding.Fold;
-import org.fife.ui.rsyntaxtextarea.folding.FoldManager;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Map;
 
 
 /**

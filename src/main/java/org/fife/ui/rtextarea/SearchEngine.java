@@ -8,20 +8,19 @@
  */
 package org.fife.ui.rtextarea;
 
-import java.awt.Point;
+import org.fife.ui.rsyntaxtextarea.DocumentRange;
+import org.fife.ui.rsyntaxtextarea.RSyntaxUtilities;
+
+import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Caret;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
-import javax.swing.JTextArea;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Caret;
-
-import org.fife.ui.rsyntaxtextarea.DocumentRange;
-import org.fife.ui.rsyntaxtextarea.RSyntaxUtilities;
 
 
 /**

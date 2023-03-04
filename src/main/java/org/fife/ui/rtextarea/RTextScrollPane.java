@@ -9,14 +9,10 @@
  */
 package org.fife.ui.rtextarea;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Font;
+import javax.swing.*;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.Stack;
-
-import javax.swing.JScrollPane;
 
 
 /**

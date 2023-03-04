@@ -1,7 +1,6 @@
 package palaiologos.kamilalisp.repl;
 
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatAtomOneDarkIJTheme;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;

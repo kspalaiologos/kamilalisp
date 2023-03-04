@@ -8,7 +8,7 @@
  */
 package org.fife.ui.rtextarea;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 
 /**

@@ -250,6 +250,11 @@
                 <configuration>
                     <excludes>
                         <exclude>palaiologos/kamilalisp/repl/*.class</exclude>
+                        <exclude>palaiologos/kamilalisp/runtime/ide/*.class</exclude>
+                        <exclude>palaiologos/kamilalisp/runtime/remote/*.class</exclude>
+                        <exclude>palaiologos/kamilalisp/runtime/sh/*.class</exclude>
+                        <exclude>palaiologos/kamilalisp/runtime/image/*.class</exclude>
+                        <exclude>palaiologos/kamilalisp/runtime/net/*.class</exclude>
                         <exclude>org/**</exclude>
                     </excludes>
                 </configuration>

@@ -8,15 +8,15 @@
  */
 package org.fife.ui.rsyntaxtextarea.templates;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Caret;
-import javax.swing.text.Element;
-
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.RSyntaxUtilities;
+
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Caret;
+import javax.swing.text.Element;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 
 /**

@@ -9,14 +9,12 @@
  */
 package org.fife.ui.rtextarea;
 
-import java.awt.event.ActionEvent;
-import java.util.ResourceBundle;
-
-import javax.swing.Icon;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.TextAction;
+import java.awt.event.ActionEvent;
+import java.util.ResourceBundle;
 
 
 /**

@@ -8,9 +8,9 @@
  */
 package org.fife.ui.rsyntaxtextarea.folding;
 
-import java.util.List;
-
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+
+import java.util.List;
 
 
 /**

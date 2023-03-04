@@ -1,7 +1,5 @@
 package palaiologos.kamilalisp.runtime.ide;
 
-import palaiologos.kamilalisp.runtime.ide.terminal.TerminalPanel;
-
 import javax.swing.*;
 import java.awt.*;
 

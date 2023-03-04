@@ -1,10 +1,7 @@
 package palaiologos.kamilalisp.runtime.meta;
 
-import ch.obermuhlner.math.big.BigComplex;
 import palaiologos.kamilalisp.atom.*;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 
 import static palaiologos.kamilalisp.atom.StackFrame.isDeBruijnAllowed;

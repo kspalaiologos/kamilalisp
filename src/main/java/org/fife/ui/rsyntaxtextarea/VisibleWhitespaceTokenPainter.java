@@ -9,10 +9,8 @@
  */
 package org.fife.ui.rsyntaxtextarea;
 
-import java.awt.Color;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
 import javax.swing.text.TabExpander;
+import java.awt.*;
 
 
 /**

@@ -8,24 +8,15 @@
  */
 package org.fife.ui.rsyntaxtextarea.focusabletip;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
-import java.awt.SystemColor;
-
-import javax.swing.BorderFactory;
-import javax.swing.JEditorPane;
-import javax.swing.UIManager;
-import javax.swing.border.Border;
-import javax.swing.plaf.ColorUIResource;
-import javax.swing.text.html.HTMLDocument;
-
 import org.fife.ui.rsyntaxtextarea.HtmlUtil;
 import org.fife.ui.rsyntaxtextarea.RSyntaxUtilities;
 import org.fife.ui.rtextarea.RTextArea;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.plaf.ColorUIResource;
+import javax.swing.text.html.HTMLDocument;
+import java.awt.*;
 
 
 /**

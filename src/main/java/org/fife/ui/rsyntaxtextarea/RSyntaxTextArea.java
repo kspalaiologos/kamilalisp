@@ -4,32 +4,19 @@
  */
 package org.fife.ui.rsyntaxtextarea;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Window;
-import java.awt.datatransfer.Clipboard;
-import java.awt.event.*;
-import java.awt.font.FontRenderContext;
-import java.io.File;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import org.fife.ui.rsyntaxtextarea.focusabletip.FocusableTip;
+import org.fife.ui.rsyntaxtextarea.folding.DefaultFoldManager;
+import org.fife.ui.rsyntaxtextarea.folding.Fold;
+import org.fife.ui.rsyntaxtextarea.folding.FoldManager;
+import org.fife.ui.rsyntaxtextarea.parser.Parser;
+import org.fife.ui.rsyntaxtextarea.parser.ParserNotice;
+import org.fife.ui.rsyntaxtextarea.parser.ToolTipInfo;
+import org.fife.ui.rtextarea.ClipboardHistory;
+import org.fife.ui.rtextarea.RTextArea;
+import org.fife.ui.rtextarea.RTextAreaUI;
+import org.fife.ui.rtextarea.RecordableTextAction;
 
+import javax.swing.Timer;
 import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -39,15 +26,20 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.Highlighter;
-
-import org.fife.ui.rsyntaxtextarea.focusabletip.FocusableTip;
-import org.fife.ui.rsyntaxtextarea.folding.DefaultFoldManager;
-import org.fife.ui.rsyntaxtextarea.folding.Fold;
-import org.fife.ui.rsyntaxtextarea.folding.FoldManager;
-import org.fife.ui.rsyntaxtextarea.parser.Parser;
-import org.fife.ui.rsyntaxtextarea.parser.ParserNotice;
-import org.fife.ui.rsyntaxtextarea.parser.ToolTipInfo;
-import org.fife.ui.rtextarea.*;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.awt.font.FontRenderContext;
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.*;
 
 
 /**

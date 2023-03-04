@@ -9,9 +9,23 @@
  */
 package org.fife.ui.rsyntaxtextarea;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.Rectangle;
+import org.fife.ui.rsyntaxtextarea.parser.ParseResult;
+import org.fife.ui.rsyntaxtextarea.parser.Parser;
+import org.fife.ui.rsyntaxtextarea.parser.ParserNotice;
+import org.fife.ui.rsyntaxtextarea.parser.ToolTipInfo;
+import org.fife.ui.rtextarea.RDocument;
+import org.fife.ui.rtextarea.RTextAreaHighlighter.HighlightInfo;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.Position;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -22,24 +36,6 @@ import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.Timer;
-import javax.swing.ToolTipManager;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.Element;
-import javax.swing.text.Position;
-
-import org.fife.ui.rsyntaxtextarea.parser.ParseResult;
-import org.fife.ui.rsyntaxtextarea.parser.Parser;
-import org.fife.ui.rsyntaxtextarea.parser.ParserNotice;
-import org.fife.ui.rsyntaxtextarea.parser.ToolTipInfo;
-import org.fife.ui.rtextarea.RDocument;
-import org.fife.ui.rtextarea.RTextAreaHighlighter.HighlightInfo;
 
 
 

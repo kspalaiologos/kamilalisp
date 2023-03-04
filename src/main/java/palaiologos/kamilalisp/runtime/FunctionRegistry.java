@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime;
 
-import com.sun.net.httpserver.HttpServer;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.runtime.IO.*;
@@ -30,8 +29,6 @@ import palaiologos.kamilalisp.runtime.math.prime.NextPrime;
 import palaiologos.kamilalisp.runtime.math.prime.PrimeFactors;
 import palaiologos.kamilalisp.runtime.math.prime.PrimeNo;
 import palaiologos.kamilalisp.runtime.math.trig.*;
-import palaiologos.kamilalisp.runtime.cas.MatrixTrace;
-import palaiologos.kamilalisp.runtime.cas.MatrixLUDecomposition;
 import palaiologos.kamilalisp.runtime.meta.*;
 import palaiologos.kamilalisp.runtime.net.*;
 import palaiologos.kamilalisp.runtime.parallel.Daemon;

@@ -9,8 +9,7 @@
  */
 package org.fife.ui.rtextarea;
 
-import java.awt.Graphics;
-import java.awt.Rectangle;
+import java.awt.*;
 
 
 /**

@@ -8,9 +8,8 @@
  */
 package org.fife.ui.rsyntaxtextarea.parser;
 
-import java.net.URL;
-
 import javax.swing.event.HyperlinkListener;
+import java.net.URL;
 
 
 /**

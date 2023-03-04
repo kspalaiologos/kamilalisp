@@ -9,33 +9,15 @@
  */
 package org.fife.ui.rsyntaxtextarea;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.Rectangle;
-import java.awt.Shape;
-
-import javax.swing.event.DocumentEvent;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.BoxView;
-import javax.swing.text.Document;
-import javax.swing.text.Element;
-import javax.swing.text.PlainDocument;
-import javax.swing.text.Position;
-import javax.swing.text.Position.Bias;
-import javax.swing.text.Segment;
-import javax.swing.text.TabExpander;
-import javax.swing.text.View;
-import javax.swing.text.ViewFactory;
-
 import org.fife.ui.rsyntaxtextarea.TokenUtils.TokenSubList;
 import org.fife.ui.rsyntaxtextarea.folding.Fold;
 import org.fife.ui.rsyntaxtextarea.folding.FoldManager;
 import org.fife.ui.rtextarea.Gutter;
+
+import javax.swing.event.DocumentEvent;
+import javax.swing.text.*;
+import javax.swing.text.Position.Bias;
+import java.awt.*;
 
 
 /**

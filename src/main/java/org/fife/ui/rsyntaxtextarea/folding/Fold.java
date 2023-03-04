@@ -8,13 +8,13 @@
  */
 package org.fife.ui.rsyntaxtextarea.folding;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.text.Position;
-
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**

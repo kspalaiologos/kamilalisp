@@ -8,31 +8,17 @@
  */
 package org.fife.ui.rsyntaxtextarea.focusabletip;
 
-import java.awt.Component;
-import java.awt.ComponentOrientation;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Window;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.net.URL;
-import java.util.ResourceBundle;
+import org.fife.ui.rsyntaxtextarea.PopupWindowDecorator;
 
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
+import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.MouseInputAdapter;
-
-import org.fife.ui.rsyntaxtextarea.PopupWindowDecorator;
+import java.awt.*;
+import java.awt.event.*;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 
 /**

@@ -5,7 +5,6 @@ import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream;
 import org.tukaani.xz.LZMA2Options;
 import palaiologos.kamilalisp.runtime.ide.IDE;
 
-import javax.swing.*;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;

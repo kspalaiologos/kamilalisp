@@ -7,7 +7,6 @@ import palaiologos.kamilalisp.runtime.cas.meta.FortranParser;
 import palaiologos.kamilalisp.runtime.cas.meta.FriCAS;
 import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;

@@ -2,8 +2,8 @@ package palaiologos.kamilalisp.runtime.ide.project;
 
 import palaiologos.kamilalisp.atom.Parser;
 import palaiologos.kamilalisp.runtime.ide.IDE;
-import palaiologos.kamilalisp.runtime.ide.modal.*;
 import palaiologos.kamilalisp.runtime.ide.TilingWMComponent;
+import palaiologos.kamilalisp.runtime.ide.modal.*;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
@@ -13,7 +13,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.function.Consumer;
 

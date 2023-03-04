@@ -4,7 +4,6 @@ import palaiologos.kamilalisp.atom.*;
 
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Fn extends PrimitiveFunction implements SpecialForm {
     @Override

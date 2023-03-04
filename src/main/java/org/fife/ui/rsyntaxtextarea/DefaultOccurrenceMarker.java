@@ -9,10 +9,10 @@
  */
 package org.fife.ui.rsyntaxtextarea;
 
+import org.fife.ui.rtextarea.SmartHighlightPainter;
+
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
-
-import org.fife.ui.rtextarea.SmartHighlightPainter;
 
 
 /**

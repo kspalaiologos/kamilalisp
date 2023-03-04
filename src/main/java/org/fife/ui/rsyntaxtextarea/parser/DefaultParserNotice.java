@@ -8,7 +8,7 @@
  */
 package org.fife.ui.rsyntaxtextarea.parser;
 
-import java.awt.Color;
+import java.awt.*;
 
 
 /**

@@ -9,7 +9,7 @@
  */
 package org.fife.ui.rsyntaxtextarea;
 
-import javax.swing.JWindow;
+import javax.swing.*;
 
 
 /**

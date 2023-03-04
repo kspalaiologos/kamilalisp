@@ -10,16 +10,13 @@
  */
 package org.fife.ui.rsyntaxtextarea;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.Shape;
+import org.fife.ui.rtextarea.ChangeableHighlightPainter;
+
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 import javax.swing.text.View;
-
-import org.fife.ui.rtextarea.ChangeableHighlightPainter;
+import java.awt.*;
 
 
 /**

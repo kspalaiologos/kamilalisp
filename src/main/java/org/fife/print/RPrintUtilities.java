@@ -9,20 +9,10 @@
  */
 package org.fife.print;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
+import javax.swing.text.*;
+import java.awt.*;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
-
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.Element;
-import javax.swing.text.JTextComponent;
-import javax.swing.text.Segment;
-import javax.swing.text.TabExpander;
-import javax.swing.text.Utilities;
 
 
 

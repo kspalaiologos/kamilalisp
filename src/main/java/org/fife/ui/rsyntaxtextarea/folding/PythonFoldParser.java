@@ -4,7 +4,10 @@
  */
 package org.fife.ui.rsyntaxtextarea.folding;
 
-import org.fife.ui.rsyntaxtextarea.*;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.Token;
+import org.fife.ui.rsyntaxtextarea.TokenTypes;
+import org.fife.ui.rsyntaxtextarea.TokenUtils;
 
 import javax.swing.text.BadLocationException;
 import java.util.ArrayList;

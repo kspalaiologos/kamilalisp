@@ -8,26 +8,6 @@
  */
 package org.fife.ui.rsyntaxtextarea;
 
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.text.CharacterIterator;
-import java.util.ResourceBundle;
-import java.util.Stack;
-
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Caret;
-import javax.swing.text.Document;
-import javax.swing.text.Element;
-import javax.swing.text.Segment;
-import javax.swing.text.TextAction;
-
 import org.fife.ui.rsyntaxtextarea.folding.Fold;
 import org.fife.ui.rsyntaxtextarea.folding.FoldCollapser;
 import org.fife.ui.rsyntaxtextarea.folding.FoldManager;
@@ -36,6 +16,14 @@ import org.fife.ui.rtextarea.IconRowHeader;
 import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.RTextAreaEditorKit;
 import org.fife.ui.rtextarea.RecordableTextAction;
+
+import javax.swing.*;
+import javax.swing.text.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.text.CharacterIterator;
+import java.util.ResourceBundle;
+import java.util.Stack;
 
 
 /**

@@ -9,19 +9,10 @@
  */
 package org.fife.ui.rsyntaxtextarea.focusabletip;
 
-import java.awt.Color;
-import java.awt.ComponentOrientation;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Window;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
+import java.awt.*;
+import java.awt.event.MouseEvent;
 
 
 /**

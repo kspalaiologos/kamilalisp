@@ -2,8 +2,6 @@ package palaiologos.kamilalisp.runtime.remote.io;
 
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.repl.Main;
-import palaiologos.kamilalisp.runtime.meta.Import;
-import palaiologos.kamilalisp.runtime.remote.IDEPacket;
 import palaiologos.kamilalisp.runtime.remote.StringPacket;
 
 import java.io.ObjectInputStream;

@@ -8,24 +8,14 @@
  */
 package org.fife.ui.rtextarea;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.util.ArrayList;
-import java.util.List;
+import org.fife.ui.rsyntaxtextarea.DocumentRange;
 
 import javax.swing.plaf.TextUI;
 import javax.swing.plaf.basic.BasicTextUI.BasicHighlighter;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.Highlighter;
-import javax.swing.text.JTextComponent;
-import javax.swing.text.LayeredHighlighter;
-import javax.swing.text.Position;
-import javax.swing.text.View;
-
-import org.fife.ui.rsyntaxtextarea.DocumentRange;
+import javax.swing.text.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**

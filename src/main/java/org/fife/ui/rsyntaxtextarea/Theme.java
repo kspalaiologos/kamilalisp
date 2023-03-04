@@ -8,18 +8,16 @@
  */
 package org.fife.ui.rsyntaxtextarea;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.SystemColor;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.lang.reflect.Field;
+import org.fife.io.UnicodeWriter;
+import org.fife.ui.rtextarea.Gutter;
+import org.fife.ui.rtextarea.RTextArea;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.*;
+import org.xml.sax.helpers.DefaultHandler;
 
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.text.StyleContext;
 import javax.xml.parsers.DocumentBuilder;
@@ -31,19 +29,9 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.fife.io.UnicodeWriter;
-import org.fife.ui.rtextarea.Gutter;
-import org.fife.ui.rtextarea.RTextArea;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
+import java.awt.*;
+import java.io.*;
+import java.lang.reflect.Field;
 
 
 /**

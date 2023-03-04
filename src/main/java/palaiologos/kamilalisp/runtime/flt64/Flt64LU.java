@@ -1,11 +1,11 @@
 package palaiologos.kamilalisp.runtime.flt64;
 
-import ch.obermuhlner.math.big.BigComplex;
-import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.atom.Atom;
+import palaiologos.kamilalisp.atom.Environment;
+import palaiologos.kamilalisp.atom.Lambda;
+import palaiologos.kamilalisp.atom.PrimitiveFunction;
 import palaiologos.kamilalisp.runtime.array.Rank;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.Arrays;
 import java.util.List;
 

@@ -9,32 +9,22 @@
  */
 package org.fife.ui.rtextarea;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.ComponentOrientation;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.ComponentAdapter;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Objects;
+import org.fife.ui.rsyntaxtextarea.ActiveLineRangeEvent;
+import org.fife.ui.rsyntaxtextarea.ActiveLineRangeListener;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.folding.FoldManager;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
-
-import org.fife.ui.rsyntaxtextarea.ActiveLineRangeEvent;
-import org.fife.ui.rsyntaxtextarea.ActiveLineRangeListener;
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.folding.FoldManager;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Objects;
 
 
 /**
