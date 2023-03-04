@@ -171,6 +171,7 @@ public class FunctionRegistry {
         env.setPrimitive("str:unescape", new Atom(new Unescape()));
         env.setPrimitive("str:contains", "⍫⊂←", new Atom(new Contains()));
         env.setPrimitive("str:levenshtein", "⍫≉", new Atom(new Levenshtein()));
+        env.setPrimitive("str:wrap", new Atom(new Wrap()));
 
         env.setPrimitive("parallel:task", new Atom(new Task()));
         env.setPrimitive("parallel:daemon", new Atom(new Daemon()));
