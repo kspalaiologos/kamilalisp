@@ -20,7 +20,7 @@ public class MatrixLUDecomposition extends PrimitiveFunction implements Lambda {
     private static final Atom times = new Atom("*", true);
     private static final Atom slash = new Atom("/", true);
 
-    private static void casLU(Environment env, Atom[][] A, Atom[][] lower, Atom[][] upper, LinkedHashSet<String> vars) {
+    static void casLU(Environment env, Atom[][] A, Atom[][] lower, Atom[][] upper, LinkedHashSet<String> vars, boolean vigillant) {
         for (int i = 0; i < A.length; i++) {
             for (int j = 0; j < A.length; j++) {
                 if (A[i][j].isUserdata(MathExpression.class)) {
@@ -136,7 +136,7 @@ public class MatrixLUDecomposition extends PrimitiveFunction implements Lambda {
         }
 
         LinkedHashSet<String> vars = new LinkedHashSet<>();
-        casLU(env, A, L, U, vars);
+        casLU(env, A, L, U, vars, true);
         Atom MathL = new Atom(Arrays.stream(L)
                 .map(x -> new Atom(Arrays.asList(x)))
                 .toList());

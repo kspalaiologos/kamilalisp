@@ -261,6 +261,7 @@ public class FunctionRegistry {
         
         env.setPrimitive("cas:matrix:trace", new Atom(new MatrixTrace()));
         env.setPrimitive("cas:matrix:LU", new Atom(new MatrixLUDecomposition()));
+        env.setPrimitive("cas:matrix:det", new Atom(new MatrixDet()));
 
         env.setPrimitive("bit:and", "⌶∧", new Atom(new BitAnd()));
         env.setPrimitive("bit:or", "⌶∨", new Atom(new BitOr()));
