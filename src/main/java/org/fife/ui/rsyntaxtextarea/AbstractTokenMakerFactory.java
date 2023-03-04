@@ -69,8 +69,8 @@ public abstract class AbstractTokenMakerFactory extends TokenMakerFactory {
 	 * and call one of the <code>putMapping</code> overloads to register
 	 * {@link TokenMaker}s for syntax constants.
 	 *
-	 * @see #putMapping(String, String)
-	 * @see #putMapping(String, String, ClassLoader)
+	 * @see #putMapping(String, Class)
+	 * @see #putMapping(String, Class, ClassLoader)
 	 */
 	protected abstract void initTokenMakerMap();
 
@@ -87,9 +87,9 @@ public abstract class AbstractTokenMakerFactory extends TokenMakerFactory {
 	 *
 	 * @param key The key.
 	 * @param className The <code>TokenMaker</code> class name.
-	 * @see #putMapping(String, String, ClassLoader)
+	 * @see #putMapping(String, Class, ClassLoader)
 	 */
-	public void putMapping(String key, String className) {
+	public void putMapping(String key, Class<? extends TokenMaker> className) {
 		putMapping(key, className, null);
 	}
 
@@ -101,9 +101,9 @@ public abstract class AbstractTokenMakerFactory extends TokenMakerFactory {
 	 * @param key The key.
 	 * @param className The <code>TokenMaker</code> class name.
 	 * @param cl The class loader to use when loading the class.
-	 * @see #putMapping(String, String)
+	 * @see #putMapping(String, Class)
 	 */
-	public void putMapping(String key, String className, ClassLoader cl) {
+	public void putMapping(String key, Class<? extends TokenMaker> className, ClassLoader cl) {
 		tokenMakerMap.put(key, new TokenMakerCreator(className, cl));
 	}
 
@@ -113,16 +113,16 @@ public abstract class AbstractTokenMakerFactory extends TokenMakerFactory {
 	 */
 	private static class TokenMakerCreator {
 
-		private String className;
+		private Class<? extends TokenMaker> className;
 		private ClassLoader cl;
 
-		public TokenMakerCreator(String className, ClassLoader cl) {
+		public TokenMakerCreator(Class<? extends TokenMaker> className, ClassLoader cl) {
 			this.className = className;
 			this.cl = cl!=null ? cl : getClass().getClassLoader();
 		}
 
 		public TokenMaker create() throws Exception {
-			return (TokenMaker)Class.forName(className, true, cl).newInstance();
+			return className.getDeclaredConstructor().newInstance();
 		}
 
 	}

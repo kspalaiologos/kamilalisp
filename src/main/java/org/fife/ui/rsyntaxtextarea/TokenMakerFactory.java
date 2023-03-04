@@ -44,25 +44,7 @@ public abstract class TokenMakerFactory {
 	 */
 	public static synchronized TokenMakerFactory getDefaultInstance() {
 		if (DEFAULT_INSTANCE==null) {
-			String clazz;
-			try {
-				clazz= System.getProperty(PROPERTY_DEFAULT_TOKEN_MAKER_FACTORY);
-			} catch (java.security.AccessControlException ace) {
-				clazz = null; // We're in an applet; take default.
-			}
-			if (clazz==null) {
-				clazz = "org.fife.ui.rsyntaxtextarea.DefaultTokenMakerFactory";
-			}
-			try {
-				DEFAULT_INSTANCE = (TokenMakerFactory)Class.forName(clazz).
-					getDeclaredConstructor().newInstance();
-			} catch (RuntimeException re) { // FindBugs
-				throw re;
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new InternalError("Cannot find TokenMakerFactory: " +
-											clazz);
-			}
+			DEFAULT_INSTANCE = new DefaultTokenMakerFactory();
 		}
 		return DEFAULT_INSTANCE;
 	}

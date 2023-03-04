@@ -9,6 +9,8 @@
 package org.fife.ui.rsyntaxtextarea;
 
 
+import org.fife.ui.rsyntaxtextarea.modes.PlainTextTokenMaker;
+
 /**
  * The default implementation of <code>TokenMakerFactory</code>.  This factory
  * can create {@link TokenMaker}s for all languages known to
@@ -23,11 +25,7 @@ class DefaultTokenMakerFactory extends AbstractTokenMakerFactory
 
 	@Override
 	protected void initTokenMakerMap() {
-
-		String pkg = "org.fife.ui.rsyntaxtextarea.modes.";
-
-		putMapping(SYNTAX_STYLE_NONE,			pkg + "PlainTextTokenMaker");
-
+		putMapping(SYNTAX_STYLE_NONE, PlainTextTokenMaker.class);
 	}
 
 

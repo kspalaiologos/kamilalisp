@@ -7,10 +7,12 @@ import org.jline.reader.impl.DefaultParser;
 
 public class JLineParser extends DefaultParser {
     public JLineParser() {
+        // XXX: None of this would be needed if it weren't for the fact that
+        // JLine processes escapes *everywhere*, not just in strings. Clap clap.
         super();
         setEofOnUnclosedBracket(DefaultParser.Bracket.ROUND, DefaultParser.Bracket.SQUARE);
-        setEscapeChars(new char[]{}); // XXX: Should be \\, but JLine processes escapes *everywhere*, not just in strings. Clap clap.
-        setQuoteChars(new char[]{'\"'});
+        setEscapeChars(new char[]{});
+        setQuoteChars(new char[]{});
         eofOnUnclosedQuote(true);
     }
 
@@ -37,10 +39,10 @@ public class JLineParser extends DefaultParser {
     }
 
     @Override
-    public ParsedLine parse(String line, int cursor) throws SyntaxError {
+    public ParsedLine parse(String line, int cursor, ParseContext p) throws SyntaxError {
         // Replace '\"' with ' '. Count the amount of "s. If it's odd, throw eoferror.
         if(!isTerminated(line))
             throw new EOFError(0, 0, "EOF");
-        return super.parse(line, cursor);
+        return super.parse(line, cursor, p);
     }
 }

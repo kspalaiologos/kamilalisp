@@ -50,10 +50,17 @@
             <version>31.1-jre</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.jline/jline -->
+        <!-- https://mvnrepository.com/artifact/org.jline/jline-reader -->
         <dependency>
             <groupId>org.jline</groupId>
-            <artifactId>jline</artifactId>
+            <artifactId>jline-reader</artifactId>
+            <version>3.22.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.jline/jline-terminal -->
+        <dependency>
+            <groupId>org.jline</groupId>
+            <artifactId>jline-terminal</artifactId>
             <version>3.22.0</version>
         </dependency>
 
@@ -201,9 +208,13 @@
                     <options>
                         <option>-libraryjars &lt;java.home&gt;/jmods</option>
                         <option>-keep class org.jline.** { *; }</option>
-                        <option>-keep class org.tukaani.xz.** { *; }</option>
+                        <option>-keep class org.tukaani.xz.MemoryLimitException { *; }</option>
+                        <option>-keep class org.tukaani.xz.SingleXZInputStream { *; }</option>
+                        <option>-keep class org.tukaani.xz.XZ { *; }</option>
+                        <option>-keep class org.tukaani.xz.XZInputStream { *; }</option>
+                        <option>-keep class org.tukaani.xz.XZOutputStream { *; }</option>
+                        <option>-keep class org.tukaani.xz.LZMA2Options { *; }</option>
                         <option>-keep class org.armedbear.lisp.** { *; }</option>
-                        <option>-keep class org.fife.** { *; }</option>
                         <option>-keep class com.formdev.** { *; }</option>
                         <option>-keep class org.slf4j.** { *; }</option>
                         <option>-keep class org.eclipse.** { *; }</option>
@@ -214,7 +225,7 @@
                         <option>-dontnote</option>
                         <option>-forceprocessing</option>
                         <option>-keep class palaiologos.kamilalisp.error.** { *; }</option>
-                        <option>-keep class palaiologos.kamilalisp.runtime.ide.** { *; }</option>
+                        <option>-keep class palaiologos.kamilalisp.runtime.remote.** { *; }</option>
                         <option>-keepclasseswithmembers public class * { public static void main(java.lang.String[]); }</option>
                         <option>-keepclassmembers enum  * { public static **[] values(); public static ** valueOf(java.lang.String); }</option>
                         <option>-keepclasseswithmembers,includedescriptorclasses,allowshrinking class * { native &lt;methods&gt;; }</option>
