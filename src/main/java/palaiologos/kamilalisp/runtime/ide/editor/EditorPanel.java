@@ -5,6 +5,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import palaiologos.kamilalisp.atom.Pair;
 import palaiologos.kamilalisp.atom.Parser;
 import palaiologos.kamilalisp.runtime.ide.IDE;
+import palaiologos.kamilalisp.runtime.ide.IDETheme;
 import palaiologos.kamilalisp.runtime.ide.RSTAFactory;
 import palaiologos.kamilalisp.runtime.ide.TilingWMComponent;
 import palaiologos.kamilalisp.runtime.ide.modal.IDEErrorModal;
@@ -31,9 +32,7 @@ import java.io.StringWriter;
 import java.util.Objects;
 
 public class EditorPanel extends TilingWMComponent {
-    private final TerminalPanel owner;
     private final RSyntaxTextArea area;
-    private final RTextScrollPane scrollPane;
     private String objectName = null;
     private final JLabel name;
 
@@ -41,41 +40,40 @@ public class EditorPanel extends TilingWMComponent {
         JLabel separator = new JLabel(" | ");
         separator.setFont(IDE.apl333Font);
         separator.setOpaque(true);
-        separator.setBackground(Color.decode("#10141C"));
-        separator.setForeground(Color.decode("#FFFFFF"));
+        separator.setBackground(IDETheme.background);
+        separator.setForeground(IDETheme.textColor);
         return separator;
     }
 
     public EditorPanel(IDE parent, TerminalPanel owner) {
         super(parent);
-        this.owner = owner;
         area = RSTAFactory.build(this);
-        scrollPane = new RTextScrollPane(area);
+        RTextScrollPane scrollPane = new RTextScrollPane(area);
         scrollPane.setBorder(null);
-        scrollPane.getGutter().setBorderColor(Color.decode("#1E222A"));
+        scrollPane.getGutter().setBorderColor(IDETheme.borderColor);
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        topPanel.setBackground(Color.decode("#10141C"));
+        topPanel.setBackground(IDETheme.background);
         topPanel.setBorder(null);
         name = new JLabel("Untitled");
-        name.setForeground(Color.decode("#FFFFFF"));
-        name.setBackground(Color.decode("#10141C"));
+        name.setForeground(IDETheme.textColor);
+        name.setBackground(IDETheme.background);
         name.setOpaque(true);
         name.setBorder(new EmptyBorder(5, 5, 5, 5));
         JButton fix = new JButton();
         fix.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/ui/hammer.png"))));
-        fix.setBackground(Color.decode("#10141C"));
+        fix.setBackground(IDETheme.background);
         fix.setBorder(null);
         JButton open = new JButton();
         open.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/ui/folder-open.png"))));
-        open.setBackground(Color.decode("#10141C"));
+        open.setBackground(IDETheme.background);
         open.setBorder(null);
         JButton neu = new JButton();
         neu.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/ui/file.png"))));
-        neu.setBackground(Color.decode("#10141C"));
+        neu.setBackground(IDETheme.background);
         neu.setBorder(null);
         JButton close = new JButton();
         close.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/ui/circle-xmark.png"))));
-        close.setBackground(Color.decode("#10141C"));
+        close.setBackground(IDETheme.background);
         close.setBorder(null);
         topPanel.add(name);
         topPanel.add(neu);
@@ -99,7 +97,7 @@ public class EditorPanel extends TilingWMComponent {
                 frame.setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
                 JPanel contentPane = new JPanel();
                 contentPane.setBorder(null);
-                contentPane.setBackground(Color.decode("#10141C"));
+                contentPane.setBackground(IDETheme.background);
                 frame.setContentPane(contentPane);
                 GroupLayout layout = new GroupLayout(contentPane);
                 contentPane.setLayout(layout);
@@ -252,7 +250,7 @@ public class EditorPanel extends TilingWMComponent {
                     frame.setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
                     JPanel contentPane = new JPanel();
                     contentPane.setBorder(null);
-                    contentPane.setBackground(Color.decode("#10141C"));
+                    contentPane.setBackground(IDETheme.background);
                     frame.setContentPane(contentPane);
                     GroupLayout layout = new GroupLayout(contentPane);
                     contentPane.setLayout(layout);

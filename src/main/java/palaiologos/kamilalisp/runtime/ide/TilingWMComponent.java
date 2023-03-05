@@ -9,7 +9,7 @@ public abstract class TilingWMComponent extends JPanel {
     public TilingWMComponent(IDE parent) {
         super();
         this.parent = parent;
-        setBackground(Color.decode("#10141C"));
+        setBackground(IDETheme.background);
         setBorder(null);
         setLayout(new BorderLayout());
     }

@@ -7,8 +7,8 @@ import java.awt.*;
 public class IDEExtras extends JPanel {
     public IDEExtras() {
         setLayout(new FlowLayout(FlowLayout.LEFT));
-        setBorder(new MatteBorder(2, 0, 0, 0, Color.decode("#1E222A")));
-        setBackground(Color.decode("#10141C"));
+        setBorder(new MatteBorder(2, 0, 0, 0, IDETheme.borderColor));
+        setBackground(IDETheme.background);
 
         JLabel networkStats = new JLabel();
         JLabel totalNetworkStats = new JLabel();
@@ -21,10 +21,10 @@ public class IDEExtras extends JPanel {
         totalNetworkStats.setFont(IDE.apl333Font);
         networkStats.setOpaque(true);
         totalNetworkStats.setOpaque(true);
-        networkStats.setBackground(Color.decode("#10141C"));
-        totalNetworkStats.setBackground(Color.decode("#10141C"));
-        networkStats.setForeground(Color.decode("#FFFFFF"));
-        totalNetworkStats.setForeground(Color.decode("#FFFFFF"));
+        networkStats.setBackground(IDETheme.background);
+        totalNetworkStats.setBackground(IDETheme.background);
+        networkStats.setForeground(IDETheme.textColor);
+        totalNetworkStats.setForeground(IDETheme.textColor);
 
         memBar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -77,8 +77,8 @@ public class IDEExtras extends JPanel {
         JLabel separator = new JLabel(" | ");
         separator.setFont(IDE.apl333Font);
         separator.setOpaque(true);
-        separator.setBackground(Color.decode("#10141C"));
-        separator.setForeground(Color.decode("#FFFFFF"));
+        separator.setBackground(IDETheme.background);
+        separator.setForeground(IDETheme.textColor);
         return separator;
     }
 }

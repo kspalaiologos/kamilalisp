@@ -42,7 +42,7 @@ public class IDE {
         frame.setSize(800, 600);
         frame.setIconImage(new ImageIcon(Objects.requireNonNull(IDE.class.getResource("/icon.png"))).getImage());
         frame.setLocationRelativeTo(null);
-        frame.setBackground(Color.decode("#10141C"));
+        frame.setBackground(IDETheme.background);
         frame.setLayout(new BorderLayout());
         statusBar = new IDEStatusBar(this);
         frame.add(statusBar, BorderLayout.NORTH);

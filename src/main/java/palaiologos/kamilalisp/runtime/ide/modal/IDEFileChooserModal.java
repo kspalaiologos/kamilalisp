@@ -1,6 +1,7 @@
 package palaiologos.kamilalisp.runtime.ide.modal;
 
 import palaiologos.kamilalisp.runtime.ide.IDE;
+import palaiologos.kamilalisp.runtime.ide.IDETheme;
 
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
@@ -14,7 +15,7 @@ public class IDEFileChooserModal extends IDEModal {
     public IDEFileChooserModal(JDesktopPane parentComponent, IDE parentFrame, JFileChooser chooser, Consumer<ActionEvent> onConfirm) {
         super(parentComponent);
         setContentPane(chooser);
-        chooser.setBorder(BorderFactory.createLineBorder(Color.decode("#23262D"), 5));
+        chooser.setBorder(BorderFactory.createLineBorder(IDETheme.windowColor, 5));
         setEnabled(parentFrame.project, false);
         setTitle("Choose");
 

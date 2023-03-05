@@ -2,6 +2,7 @@ package palaiologos.kamilalisp.runtime.ide.project;
 
 import palaiologos.kamilalisp.atom.Parser;
 import palaiologos.kamilalisp.runtime.ide.IDE;
+import palaiologos.kamilalisp.runtime.ide.IDETheme;
 import palaiologos.kamilalisp.runtime.ide.TilingWMComponent;
 import palaiologos.kamilalisp.runtime.ide.modal.*;
 
@@ -31,8 +32,8 @@ public class ProjectPanel extends TilingWMComponent {
         JLabel separator = new JLabel(" | ");
         separator.setFont(IDE.apl333Font);
         separator.setOpaque(true);
-        separator.setBackground(Color.decode("#10141C"));
-        separator.setForeground(Color.decode("#FFFFFF"));
+        separator.setBackground(IDETheme.background);
+        separator.setForeground(IDETheme.textColor);
         return separator;
     }
 
@@ -40,8 +41,8 @@ public class ProjectPanel extends TilingWMComponent {
         JLabel label = new JLabel(caption);
         label.setFont(IDE.apl333Font);
         label.setOpaque(true);
-        label.setBackground(Color.decode("#10141C"));
-        label.setForeground(Color.decode("#FFFFFF"));
+        label.setBackground(IDETheme.background);
+        label.setForeground(IDETheme.textColor);
         return label;
     }
 
@@ -51,26 +52,26 @@ public class ProjectPanel extends TilingWMComponent {
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         topPanel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.decode("#1E222A")));
-        topPanel.setBackground(Color.decode("#10141C"));
+        topPanel.setBackground(IDETheme.background);
         JLabel projectLabel = makeLabel("Project");
         topPanel.add(projectLabel);
         JLabel projectNamespace = makeLabel("");
         topPanel.add(projectNamespace);
         neu = new JButton();
         neu.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/ui/file.png"))));
-        neu.setBackground(Color.decode("#10141C"));
+        neu.setBackground(IDETheme.background);
         neu.setBorder(null);
         open = new JButton();
         open.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/ui/folder-open.png"))));
-        open.setBackground(Color.decode("#10141C"));
+        open.setBackground(IDETheme.background);
         open.setBorder(null);
         save = new JButton();
         save.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/ui/floppy-disk.png"))));
-        save.setBackground(Color.decode("#10141C"));
+        save.setBackground(IDETheme.background);
         save.setBorder(null);
         export = new JButton();
         export.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/ui/hammer.png"))));
-        export.setBackground(Color.decode("#10141C"));
+        export.setBackground(IDETheme.background);
         export.setBorder(null);
         topPanel.add(neu);
         topPanel.add(makeSeparator());
@@ -80,7 +81,7 @@ public class ProjectPanel extends TilingWMComponent {
         topPanel.add(makeSeparator());
         topPanel.add(export);
         projectTree = new JList<>(projectTreeModel);
-        projectTree.setBackground(Color.decode("#10141C"));
+        projectTree.setBackground(IDETheme.background);
         projectTree.setFont(IDE.aplFont);
         setLayout(new BorderLayout());
         add(topPanel, BorderLayout.NORTH);
@@ -99,7 +100,7 @@ public class ProjectPanel extends TilingWMComponent {
                 frame.setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
                 JPanel contentPane = new JPanel();
                 contentPane.setBorder(null);
-                contentPane.setBackground(Color.decode("#10141C"));
+                contentPane.setBackground(IDETheme.background);
                 frame.setContentPane(contentPane);
                 GroupLayout layout = new GroupLayout(contentPane);
                 contentPane.setLayout(layout);

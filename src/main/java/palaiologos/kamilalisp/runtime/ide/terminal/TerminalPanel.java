@@ -5,10 +5,7 @@ import palaiologos.kamilalisp.atom.Pair;
 import palaiologos.kamilalisp.error.TypeError;
 import palaiologos.kamilalisp.repl.JLineParser;
 import palaiologos.kamilalisp.repl.Main;
-import palaiologos.kamilalisp.runtime.ide.IDE;
-import palaiologos.kamilalisp.runtime.ide.NetCounter;
-import palaiologos.kamilalisp.runtime.ide.RSTAFactory;
-import palaiologos.kamilalisp.runtime.ide.TilingWMComponent;
+import palaiologos.kamilalisp.runtime.ide.*;
 import palaiologos.kamilalisp.runtime.ide.editor.EditorPanel;
 import palaiologos.kamilalisp.runtime.remote.IDEPacket;
 import palaiologos.kamilalisp.runtime.remote.Packet;
@@ -62,10 +59,10 @@ public class TerminalPanel extends TilingWMComponent {
         add(sp, BorderLayout.CENTER);
         gutter = new RSyntaxTextArea(1, 4);
         gutter.setSyntaxEditingStyle("text/plain", this);
-        gutter.setBackground(Color.decode("#10141C"));
-        gutter.setForeground(Color.decode("#E6E6E6"));
+        gutter.setBackground(IDETheme.background);
+        gutter.setForeground(IDETheme.foregroundColor);
         gutter.setEditable(false);
-        gutter.setCurrentLineHighlightColor(Color.decode("#10141C"));
+        gutter.setCurrentLineHighlightColor(IDETheme.background);
         gutter.setFont(IDE.aplFont);
         gutter.setText("");
         gutter.setBorder(null);
@@ -139,7 +136,7 @@ public class TerminalPanel extends TilingWMComponent {
         jspGutter.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         jspGutter.setBorder(null);
         jspGutter.getVerticalScrollBar().setModel(sp.getVerticalScrollBar().getModel());
-        jspGutter.setBorder(new MatteBorder(0, 0, 0, 1, Color.decode("#1E222A")));
+        jspGutter.setBorder(new MatteBorder(0, 0, 0, 1, IDETheme.borderColor));
         add(jspGutter, BorderLayout.WEST);
 
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), "line-back");

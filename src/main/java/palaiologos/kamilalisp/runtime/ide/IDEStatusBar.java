@@ -25,8 +25,8 @@ public class IDEStatusBar extends JPanel {
     public IDEStatusBar(IDE parent) {
         super(new FlowLayout());
         this.parent = parent;
-        setBorder(new MatteBorder(0, 0, 1, 0, Color.decode("#1E222A")));
-        setBackground(Color.decode("#10141C"));
+        setBorder(new MatteBorder(0, 0, 1, 0, IDETheme.borderColor));
+        setBackground(IDETheme.background);
         setLayout(new BorderLayout());
         noWorkspaces = 0;
         selectedWorkspace = -1;
@@ -44,10 +44,10 @@ public class IDEStatusBar extends JPanel {
                 }
             }
         });
-        workspacePanel.setBackground(Color.decode("#10141C"));
+        workspacePanel.setBackground(IDETheme.background);
         workspaceScrollPane = new JScrollPane(workspacePanel);
         workspaceScrollPane.setBorder(null);
-        workspaceScrollPane.setBackground(Color.decode("#10141C"));
+        workspaceScrollPane.setBackground(IDETheme.background);
         workspaceScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         workspaceScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         workspaceScrollPane.setColumnHeaderView(workspaceScrollPane.getHorizontalScrollBar());
@@ -68,7 +68,7 @@ public class IDEStatusBar extends JPanel {
         JLabel lab = new JLabel();
         lab.setFont(IDE.apl333Font);
         lab.setOpaque(true);
-        lab.setForeground(Color.decode("#FFFFFF"));
+        lab.setForeground(IDETheme.textColor);
         lab.setBorder(new EmptyBorder(5, 5, 5, 5));
         lab.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
@@ -78,7 +78,7 @@ public class IDEStatusBar extends JPanel {
         workspaceLabels.add(lab);
         workspacePanel.add(lab);
         JDesktopPane pane = new JDesktopPane();
-        pane.setBackground(Color.decode("#10141C"));
+        pane.setBackground(IDETheme.background);
         pane.setBorder(null);
         pane.setOpaque(true);
         JInternalFrame frame = new JInternalFrame(name, true, false, true, false);
@@ -174,12 +174,12 @@ public class IDEStatusBar extends JPanel {
         if (selectedWorkspace != -1) {
             JLabel currentLabel = workspaceLabels.get(selectedWorkspace);
             currentLabel.setText("∘ " + selectedWorkspace + workspaceNames.get(selectedWorkspace));
-            currentLabel.setBackground(Color.decode("#10141C"));
+            currentLabel.setBackground(IDETheme.background);
         }
         selectedWorkspace = index;
         JLabel newLabel = workspaceLabels.get(selectedWorkspace);
         newLabel.setText("∙ " + selectedWorkspace + workspaceNames.get(selectedWorkspace));
-        newLabel.setBackground(Color.decode("#1E222A"));
+        newLabel.setBackground(IDETheme.borderColor);
         workspaceScrollPane.getViewport().scrollRectToVisible(newLabel.getBounds());
         parent.splitPane.setRightComponent(workspaceComponents.get(selectedWorkspace));
         parent.splitPane.revalidate();

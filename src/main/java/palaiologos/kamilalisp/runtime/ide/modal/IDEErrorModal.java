@@ -1,5 +1,7 @@
 package palaiologos.kamilalisp.runtime.ide.modal;
 
+import palaiologos.kamilalisp.runtime.ide.IDETheme;
+
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
@@ -17,7 +19,7 @@ public class IDEErrorModal extends IDEModal {
         setIconifiable(false);
         JPanel contentPane = new JPanel();
         contentPane.setBorder(null);
-        contentPane.setBackground(Color.decode("#10141C"));
+        contentPane.setBackground(IDETheme.background);
         setContentPane(contentPane);
         GroupLayout layout = new GroupLayout(contentPane);
         contentPane.setLayout(layout);
