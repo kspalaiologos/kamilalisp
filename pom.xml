@@ -207,7 +207,8 @@
                 <configuration>
                     <options>
                         <option>-libraryjars &lt;java.home&gt;/jmods</option>
-                        <option>-keep class org.jline.** { *; }</option>
+                        <option>-keep class org.jline.terminal.** { *; }</option>
+                        <option>-keep class org.jline.utils.** { *; }</option>
                         <option>-keep class org.tukaani.xz.MemoryLimitException { *; }</option>
                         <option>-keep class org.tukaani.xz.SingleXZInputStream { *; }</option>
                         <option>-keep class org.tukaani.xz.XZ { *; }</option>
