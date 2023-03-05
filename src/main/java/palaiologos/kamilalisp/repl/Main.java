@@ -1,6 +1,6 @@
 package palaiologos.kamilalisp.repl;
 
-import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatAtomOneDarkIJTheme;
+import palaiologos.kamilalisp.runtime.ide.DarkTheme;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -131,7 +131,8 @@ public class Main {
             terminalTTY();
         if (args.length >= 1) {
             if(args[0].equalsIgnoreCase("--ide")) {
-                FlatAtomOneDarkIJTheme.setup();
+                DarkTheme.installLafInfo();
+                DarkTheme.setup();
                 Enumeration<Object> keys = UIManager.getDefaults().keys();
                 var fr = new javax.swing.plaf.FontUIResource(IDE.apl333Font);
                 while (keys.hasMoreElements()) {
