@@ -11,8 +11,15 @@ public class SelfThunk extends Atom {
     public Callable c;
     public Environment env;
 
+    public SelfThunk(Callable c, List<Atom> args, Environment env) {
+        super();
+        this.args = args;
+        this.c = c;
+        this.env = env;
+    }
+
     private void force() {
-        if(c == null)
+        if (c == null)
             return;
         Atom obj = Evaluation.evaluate(env, c, args);
         this.type = obj.getType();
@@ -20,13 +27,6 @@ public class SelfThunk extends Atom {
         c = null;
         args = null;
         env = null;
-    }
-
-    public SelfThunk(Callable c, List<Atom> args, Environment env) {
-        super();
-        this.args = args;
-        this.c = c;
-        this.env = env;
     }
 
     @Override

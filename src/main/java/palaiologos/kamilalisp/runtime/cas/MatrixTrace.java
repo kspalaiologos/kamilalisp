@@ -32,15 +32,15 @@ public class MatrixTrace extends PrimitiveFunction implements Lambda {
 
         return new Atom(new MathExpression(env, vars,
                 new Atom(Stream.concat(Stream.of(plus), IntStream.range(0, diagonalLen)
-                        .mapToObj(i -> m.get(i).get(i))
-                        .map(x -> {
-                            if (x.isUserdata(MathExpression.class)) {
-                                vars.addAll(x.getUserdata(MathExpression.class).getArgs());
-                                return x.getUserdata(MathExpression.class).getData();
-                            } else {
-                                return x;
-                            }
-                        }))
+                                .mapToObj(i -> m.get(i).get(i))
+                                .map(x -> {
+                                    if (x.isUserdata(MathExpression.class)) {
+                                        vars.addAll(x.getUserdata(MathExpression.class).getArgs());
+                                        return x.getUserdata(MathExpression.class).getData();
+                                    } else {
+                                        return x;
+                                    }
+                                }))
                         .toList())));
     }
 

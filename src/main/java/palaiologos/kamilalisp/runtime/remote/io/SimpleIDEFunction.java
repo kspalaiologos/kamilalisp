@@ -14,9 +14,9 @@ import java.net.Socket;
 import java.util.List;
 
 public abstract class SimpleIDEFunction extends PrimitiveFunction {
+    private final Socket socket;
     public ObjectInputStream in;
     public ObjectOutputStream out;
-    private final Socket socket;
 
     public SimpleIDEFunction(ObjectInputStream in, ObjectOutputStream out, Socket socket) {
         this.in = in;

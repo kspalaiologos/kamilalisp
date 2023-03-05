@@ -10,14 +10,14 @@ import java.util.List;
 
 public class Flt64Det extends PrimitiveFunction implements Lambda {
     public static double det(double[][] A) {
-        if(A.length == 0)
+        if (A.length == 0)
             throw new RuntimeException("Empty matrix.");
-        else if(A.length == 1)
+        else if (A.length == 1)
             return A[0][0];
-        else if(A.length == 2) {
+        else if (A.length == 2) {
             // 2x2 determinant.
             return A[0][0] * A[1][1] - A[0][1] * A[1][0];
-        } else if(A.length == 3) {
+        } else if (A.length == 3) {
             // 3x3 determinant.
             return
                     A[0][0] * A[1][1] * A[2][2] +
@@ -26,12 +26,12 @@ public class Flt64Det extends PrimitiveFunction implements Lambda {
                             A[0][2] * A[1][1] * A[2][0] -
                             A[0][1] * A[1][0] * A[2][2] -
                             A[0][0] * A[1][2] * A[2][1]
-            ;
+                    ;
         } else {
             double[][][] lup;
             try {
                 lup = Flt64PLU.lu(A);
-            } catch(ArithmeticException e) {
+            } catch (ArithmeticException e) {
                 return 0;
             }
 

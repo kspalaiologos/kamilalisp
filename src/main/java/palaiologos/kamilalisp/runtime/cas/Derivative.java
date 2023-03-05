@@ -76,7 +76,7 @@ public class Derivative extends PrimitiveFunction implements Lambda {
                         throw new RuntimeException("Failed to compute the derivative, unknown error.");
                 }
                 LinkedHashSet<String> args2 = new LinkedHashSet<>();
-                for(String s : expr.getArgs())
+                for (String s : expr.getArgs())
                     if (hasVariable(entry, s))
                         args2.add(s);
                 return new Atom(new MathExpression(env, args2, entry));

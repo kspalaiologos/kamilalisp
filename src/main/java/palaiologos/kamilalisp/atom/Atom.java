@@ -26,7 +26,7 @@ public class Atom implements Comparable<Atom> {
     }
 
     public Atom(@Nonnull String data, boolean isSymbol) {
-        if(isSymbol) {
+        if (isSymbol) {
             this.type = Type.IDENTIFIER;
             this.data = data.intern();
         } else {
@@ -282,22 +282,22 @@ public class Atom implements Comparable<Atom> {
                     StringBuilder b = new StringBuilder();
                     b.append("[");
                     for (int i = 0; i < getList().size(); i++) {
-                        if(i != 0)
+                        if (i != 0)
                             b.append(" ");
                         b.append(getList().get(i).toDisplayString());
-                        if(i != getList().size() - 1)
+                        if (i != getList().size() - 1)
                             b.append("\n");
                     }
                     b.append("]");
                     return b.toString();
-                } else if(getList().stream().allMatch(x -> x.type.equals(Type.STRING))) {
+                } else if (getList().stream().allMatch(x -> x.type.equals(Type.STRING))) {
                     StringBuilder b = new StringBuilder();
                     b.append("[");
                     for (int i = 0; i < getList().size(); i++) {
-                        if(i != 0)
+                        if (i != 0)
                             b.append(" ");
                         b.append(getList().get(i).toString());
-                        if(i != getList().size() - 1)
+                        if (i != getList().size() - 1)
                             b.append("\n");
                     }
                     b.append("]");

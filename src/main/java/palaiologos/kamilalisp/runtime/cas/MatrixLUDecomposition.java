@@ -69,7 +69,7 @@ public class MatrixLUDecomposition extends PrimitiveFunction implements Lambda {
                         } else {
                             lower[k][i] = new Atom(List.of(slash, A[k][i], upper[i][i]));
                         }
-                    } else if(sum.size() == 2) { 
+                    } else if (sum.size() == 2) {
                         if (upper[i][i].isNumeric() && upper[i][i].getComplex().equals(BigComplex.ONE)) {
                             lower[k][i] = new Atom(List.of(minus, A[k][i], sum.get(1)));
                         } else {
@@ -85,8 +85,8 @@ public class MatrixLUDecomposition extends PrimitiveFunction implements Lambda {
                 }
             }
         }
-        for(int i = 0; i < A.length; i++) {
-            for(int j = 0; j < A.length; j++) {
+        for (int i = 0; i < A.length; i++) {
+            for (int j = 0; j < A.length; j++) {
                 MathExpression mel = new MathExpression(env, vars, lower[i][j]);
                 MathExpression meu = new MathExpression(env, vars, upper[i][j]);
                 if (!lower[i][j].isNumeric())
@@ -101,7 +101,7 @@ public class MatrixLUDecomposition extends PrimitiveFunction implements Lambda {
         // If the diagonal product of L = 0 or the diagonal product of U = 0,
         // matrix is singular. We should error in this case.
         // => check if there is a literal zero on the leading diagonal of L or U.
-        for(int i = 0; i < A.length; i++) {
+        for (int i = 0; i < A.length; i++) {
             Atom l = lower[i][i].getUserdata(MathExpression.class).getData();
             Atom u = upper[i][i].getUserdata(MathExpression.class).getData();
             if (l.isNumeric() && l.getComplex().equals(BigComplex.ZERO)) {

@@ -5,6 +5,12 @@ import palaiologos.kamilalisp.error.TypeError;
 import java.util.List;
 
 public abstract class PrimitiveFunction implements Callable {
+    protected static void assertArity(List<Atom> args, int n) {
+        if (args.size() != n) {
+            throw new TypeError(n + " arguments expected in application.");
+        }
+    }
+
     @Override
     public int line() {
         return 0;
@@ -13,12 +19,6 @@ public abstract class PrimitiveFunction implements Callable {
     @Override
     public int column() {
         return 0;
-    }
-
-    protected static void assertArity(List<Atom> args, int n) {
-        if (args.size() != n) {
-            throw new TypeError(n + " arguments expected in application.");
-        }
     }
 
     @Override

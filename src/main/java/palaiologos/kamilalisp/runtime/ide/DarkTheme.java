@@ -17,38 +17,36 @@
 package palaiologos.kamilalisp.runtime.ide;
 
 import com.formdev.flatlaf.IntelliJTheme;
-import com.formdev.flatlaf.util.LoggingFacade;
 
 import java.io.IOException;
 import java.util.Objects;
 
 public class DarkTheme
-	extends IntelliJTheme.ThemeLaf
-{
-	public static final String NAME = "Atom One Dark (Material)";
+        extends IntelliJTheme.ThemeLaf {
+    public static final String NAME = "Atom One Dark (Material)";
 
-	public static boolean setup() {
-		return setup( new DarkTheme() );
-	}
+    public DarkTheme() {
+        super(loadTheme());
+    }
 
-	static IntelliJTheme loadTheme() {
-		try {
-			return new IntelliJTheme(Objects.requireNonNull(DarkTheme.class.getResourceAsStream("/theme.json")));
-		} catch( IOException ex ) {
-			throw new RuntimeException(ex);
-		}
-	}
+    public static boolean setup() {
+        return setup(new DarkTheme());
+    }
 
-	public static void installLafInfo() {
-		installLafInfo( NAME, DarkTheme.class );
-	}
+    static IntelliJTheme loadTheme() {
+        try {
+            return new IntelliJTheme(Objects.requireNonNull(DarkTheme.class.getResourceAsStream("/theme.json")));
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 
-	public DarkTheme() {
-		super( loadTheme() );
-	}
+    public static void installLafInfo() {
+        installLafInfo(NAME, DarkTheme.class);
+    }
 
-	@Override
-	public String getName() {
-		return NAME;
-	}
+    @Override
+    public String getName() {
+        return NAME;
+    }
 }

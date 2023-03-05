@@ -13,16 +13,6 @@ import palaiologos.kamilalisp.parsers.GrammarLexer;
 import java.util.regex.Pattern;
 
 class LispHighlight implements Highlighter {
-    private Environment refGlobEnv;
-
-    public LispHighlight(Environment env) {
-        refGlobEnv = env;
-    }
-
-    private boolean isKeyword(String s) {
-        return refGlobEnv.has(s);
-    }
-
     private static final AttributedStyle KW_STYLE = new AttributedStyle().foreground(AttributedStyle.MAGENTA);
     private static final AttributedStyle NUM_STYLE = new AttributedStyle().foreground(AttributedStyle.YELLOW);
     private static final AttributedStyle EMPTY_STYLE = new AttributedStyle();
@@ -30,7 +20,10 @@ class LispHighlight implements Highlighter {
     private static final AttributedStyle NIL_STYLE = new AttributedStyle().foreground(AttributedStyle.RED);
     private static final AttributedStyle STR_STYLE = new AttributedStyle().foreground(AttributedStyle.GREEN);
     private static final AttributedStyle DEF_STYLE = new AttributedStyle().foreground(AttributedStyle.BLUE);
-
+    private final Environment refGlobEnv;
+    public LispHighlight(Environment env) {
+        refGlobEnv = env;
+    }
 
     private static AttributedStyle getStyleForToken(Token t, boolean isKw, boolean isWs) {
         if (isKw)
@@ -44,6 +37,10 @@ class LispHighlight implements Highlighter {
             case GrammarLexer.STRING -> STR_STYLE;
             default -> DEF_STYLE;
         };
+    }
+
+    private boolean isKeyword(String s) {
+        return refGlobEnv.has(s);
     }
 
     @Override
@@ -73,7 +70,7 @@ class LispHighlight implements Highlighter {
             b.append(x.getText());
             written += x.getText().length();
         }
-        if(written != s.length()) {
+        if (written != s.length()) {
             b.style(EMPTY_STYLE);
             b.append(s.substring(written));
         }

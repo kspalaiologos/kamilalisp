@@ -9,6 +9,23 @@ import java.math.BigInteger;
 import java.util.List;
 
 public class Process extends PrimitiveFunction implements Lambda {
+    @Override
+    public Atom apply(Environment env, List<Atom> args) {
+        if (args.isEmpty())
+            throw new IllegalArgumentException("sh:process requires at least one argument");
+        try {
+            var process = Runtime.getRuntime().exec(args.stream().map(Atom::getString).toArray(String[]::new));
+            return new Atom(new ProcessUserdata(args.get(0).getString(), process));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    protected String name() {
+        return "sh:process";
+    }
+
     private static class ProcessUserdata implements Userdata {
         private final java.lang.Process process;
         private final String processName;
@@ -56,7 +73,7 @@ public class Process extends PrimitiveFunction implements Lambda {
 
         @Override
         public Atom field(Object key) {
-            if(!(key instanceof String))
+            if (!(key instanceof String))
                 throw new IllegalArgumentException("sh:process field name must be a string");
             return switch ((String) key) {
                 case "pid" -> new Atom(BigInteger.valueOf(process.pid()));
@@ -131,22 +148,5 @@ public class Process extends PrimitiveFunction implements Lambda {
                 return "sh:process.kill";
             }
         }
-    }
-
-    @Override
-    public Atom apply(Environment env, List<Atom> args) {
-        if(args.isEmpty())
-            throw new IllegalArgumentException("sh:process requires at least one argument");
-        try {
-            var process = Runtime.getRuntime().exec(args.stream().map(Atom::getString).toArray(String[]::new));
-            return new Atom(new ProcessUserdata(args.get(0).getString(), process));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    protected String name() {
-        return "sh:process";
     }
 }

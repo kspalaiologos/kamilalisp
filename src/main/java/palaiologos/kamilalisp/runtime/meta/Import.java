@@ -32,7 +32,7 @@ public class Import extends PrimitiveFunction implements Lambda {
             arg.assertTypes(Type.STRING);
             String fileName = arg.getString();
             String code;
-            if(!isProjectFile(fileName)) {
+            if (!isProjectFile(fileName)) {
                 code = Files.readString(new File(fileName).getAbsoluteFile().toPath());
             } else {
                 ProjectDataRegistry registry = new ProjectDataRegistry(null);

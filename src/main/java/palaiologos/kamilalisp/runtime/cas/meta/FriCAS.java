@@ -14,10 +14,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
 public class FriCAS {
+    private static final ReentrantLock lock = new ReentrantLock();
     public static InputStream nis = InputStream.nullInputStream();
     // Singleton API
     private static volatile AtomicReference<FriCAS> instance = null;
-    private static final ReentrantLock lock = new ReentrantLock();
     // Normal API.
     public LinkedBlockingQueue<Integer> cin = new LinkedBlockingQueue<>();
     public LinkedBlockingQueue<String> cout = new LinkedBlockingQueue<>();

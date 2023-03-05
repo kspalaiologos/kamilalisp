@@ -74,7 +74,7 @@ public class Permanent extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("Expected a square matrix.");
         }
 
-        if(l1.isEmpty())
+        if (l1.isEmpty())
             throw new RuntimeException("Expected a non-empty matrix.");
 
         if (l1.stream().allMatch(x -> x.stream().allMatch(y -> y.getType() == Type.INTEGER || y.getType() == Type.REAL))) {

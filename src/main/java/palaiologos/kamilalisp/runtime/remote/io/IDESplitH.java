@@ -18,9 +18,9 @@ public class IDESplitH extends IDEFunction implements Lambda {
     public Atom fapply(Environment env, List<Atom> args) {
         if (args.isEmpty())
             sendPacket();
-        else if(args.size() == 1)
+        else if (args.size() == 1)
             sendPacket(List.of(args.get(0).getIdentifier()));
-        else if(args.size() == 3)
+        else if (args.size() == 3)
             sendPacket(List.of(args.get(0).getIdentifier(), args.get(1).getString(), args.get(2).getInteger().intValueExact()));
         else
             throw new RuntimeException("ide:split-h: expected zero, one or three arguments");

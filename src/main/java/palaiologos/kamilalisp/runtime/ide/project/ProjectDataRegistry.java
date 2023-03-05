@@ -12,10 +12,10 @@ import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ProjectDataRegistry {
-    private String projectNamespace = "";
-    private HashMap<String, String> data = new HashMap<>();
     private final ReentrantLock lock = new ReentrantLock();
     private final IDE parent;
+    private String projectNamespace = "";
+    private HashMap<String, String> data = new HashMap<>();
 
     public ProjectDataRegistry(IDE parent) {
         this.parent = parent;
@@ -28,13 +28,13 @@ public class ProjectDataRegistry {
     }
 
     public void setKey(String key, String value) {
-        if(!key.startsWith(projectNamespace + ":") && !key.startsWith("public:" + projectNamespace + ":")
+        if (!key.startsWith(projectNamespace + ":") && !key.startsWith("public:" + projectNamespace + ":")
                 || projectNamespace.isEmpty())
             return;
         lock.lock();
         data.put(key, value);
         lock.unlock();
-        if(parent != null) {
+        if (parent != null) {
             parent.project.projectTreeModel.addElement(key);
             parent.project.projectTree.revalidate();
             parent.project.projectTree.repaint();
@@ -81,7 +81,7 @@ public class ProjectDataRegistry {
         lock.lock();
         byte[] magic = new byte[8];
         is.read(magic);
-        if(!new String(magic).equals("@KLP-BIN"))
+        if (!new String(magic).equals("@KLP-BIN"))
             throw new IOException("Invalid magic");
         XZCompressorInputStream gis = new XZCompressorInputStream(is);
         ObjectInputStream ois = new ObjectInputStream(gis);
@@ -95,7 +95,7 @@ public class ProjectDataRegistry {
         lock.lock();
         data.clear();
         lock.unlock();
-        if(parent != null) {
+        if (parent != null) {
             parent.project.projectTreeModel.clear();
             parent.project.projectTree.revalidate();
             parent.project.projectTree.repaint();

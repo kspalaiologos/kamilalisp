@@ -48,6 +48,7 @@ public class TerminalPanel extends TilingWMComponent {
     Thread t;
     int lineIndex = 0;
     Process localProcess;
+
     public TerminalPanel(IDE parent) {
         super(parent);
         area = RSTAFactory.build(this);
@@ -102,7 +103,7 @@ public class TerminalPanel extends TilingWMComponent {
                         // Check if quotes are balanced.
                         String text = area.getText(r.byteOffset, area.getDocument().getLength() - r.byteOffset);
                         // Ignore escapes.
-                        if(JLineParser.isTerminated(text)) {
+                        if (JLineParser.isTerminated(text)) {
                             readingInput.set(false);
                             insertFixGutter();
                             synchronized (readingInput) {
@@ -110,7 +111,6 @@ public class TerminalPanel extends TilingWMComponent {
                             }
                         } else {
                             insertFixGutter();
-                            return;
                         }
                     } else if (readingRawInput.get() && lastLineText.trim().isEmpty() && !(area.getDocument().getLength() == r.byteOffset)) {
                         readingRawInput.set(false);
@@ -421,7 +421,15 @@ public class TerminalPanel extends TilingWMComponent {
         t = new Thread(new Runnable() {
             private ObjectInputStream ois;
             private ObjectOutputStream oos;
-            private final Map<String, Consumer<IDEPacket>> ideFunctions = Map.ofEntries(
+            private final Map<String, Consumer<IDEPacket>> asyncIdeFunctions = Map.ofEntries(
+                    Map.entry("io:readln", new Consumer<IDEPacket>() {
+                        @Override
+                        public void accept(IDEPacket o) {
+                            String s = promptRaw();
+                            sendPacket(new IDEPacket("io:readln", List.of(s)));
+                        }
+                    })
+            );            private final Map<String, Consumer<IDEPacket>> ideFunctions = Map.ofEntries(
                     Map.entry("term:clear", new Consumer<IDEPacket>() {
                         @Override
                         public void accept(IDEPacket o) {
@@ -512,7 +520,7 @@ public class TerminalPanel extends TilingWMComponent {
                                 String kind = (String) o.data.get(0);
                                 if (kind.equals("editor")) {
                                     horizontalSplit(new EditorPanel(parent, TerminalPanel.this));
-                                } else if(kind.equals("remote")) {
+                                } else if (kind.equals("remote")) {
                                     TerminalPanel tp = new TerminalPanel(parent);
                                     horizontalSplit(tp);
                                     tp.start((String) o.data.get(1), (int) o.data.get(2));
@@ -531,7 +539,7 @@ public class TerminalPanel extends TilingWMComponent {
                                 String kind = (String) o.data.get(0);
                                 if (kind.equals("editor")) {
                                     verticalSplit(new EditorPanel(parent, TerminalPanel.this));
-                                } else if(kind.equals("remote")) {
+                                } else if (kind.equals("remote")) {
                                     TerminalPanel tp = new TerminalPanel(parent);
                                     verticalSplit(tp);
                                     tp.start((String) o.data.get(1), (int) o.data.get(2));
@@ -555,15 +563,6 @@ public class TerminalPanel extends TilingWMComponent {
                         }
                     })
             );
-            private final Map<String, Consumer<IDEPacket>> asyncIdeFunctions = Map.ofEntries(
-                    Map.entry("io:readln", new Consumer<IDEPacket>() {
-                        @Override
-                        public void accept(IDEPacket o) {
-                            String s = promptRaw();
-                            sendPacket(new IDEPacket("io:readln", List.of(s)));
-                        }
-                    })
-            );
 
             private void sendPacket(Packet p) {
                 try {
@@ -579,7 +578,7 @@ public class TerminalPanel extends TilingWMComponent {
                 // TODO: Do.
                 String myHost = host;
                 int myPort = port;
-                if(myHost == null) {
+                if (myHost == null) {
                     try {
                         String javaHome = System.getProperty("java.home");
                         String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
@@ -598,7 +597,7 @@ public class TerminalPanel extends TilingWMComponent {
                         myHost = "localhost";
                         reader.close();
                         Runtime.getRuntime().addShutdownHook(new Thread(localProcess::destroy));
-                    } catch(IOException e) {
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 } else {
@@ -674,11 +673,13 @@ public class TerminalPanel extends TilingWMComponent {
                         }
                     }
                 } catch (Throwable t) {
-                    if(localProcess != null && localProcess.isAlive())
+                    if (localProcess != null && localProcess.isAlive())
                         localProcess.destroyForcibly();
                     SwingUtilities.invokeLater(() -> quit());
                 }
             }
+
+
         });
         t.start();
     }

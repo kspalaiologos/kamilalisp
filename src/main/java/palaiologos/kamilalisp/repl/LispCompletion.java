@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 class LispCompletion implements Completer {
-    private Environment refGlobEnv;
+    private final Environment refGlobEnv;
 
     public LispCompletion(Environment env) {
         refGlobEnv = env;

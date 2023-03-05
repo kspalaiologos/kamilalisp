@@ -258,7 +258,7 @@ public class FunctionRegistry {
         env.setPrimitive("num:permanent", "⎕∆⍴", new Atom(new Permanent()));
         env.setPrimitive("num:I", "⎕I", new Atom(new I()));
         env.setPrimitive("num:invert", "⎕¯¹", new Atom(new Inv()));
-        
+
         env.setPrimitive("cas:matrix:trace", new Atom(new MatrixTrace()));
         env.setPrimitive("cas:matrix:LU", new Atom(new MatrixLUDecomposition()));
         env.setPrimitive("cas:matrix:det", new Atom(new MatrixDet()));

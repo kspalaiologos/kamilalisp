@@ -19,11 +19,11 @@ public class PLUDecomposition extends PrimitiveFunction implements Lambda {
 
     static BigDecimal[][] matrixMul(BigDecimal[][] A, BigDecimal[][] B) {
         BigDecimal[][] result = new BigDecimal[A.length][B[0].length];
-        for(int i = 0; i < A.length; i++) {
+        for (int i = 0; i < A.length; i++) {
             Arrays.fill(result[i], BigDecimal.ZERO);
         }
         BigDecimal[] aux = new BigDecimal[B.length];
-        for(int i = 0; i < B.length; i++) {
+        for (int i = 0; i < B.length; i++) {
             Arrays.fill(aux, BigDecimal.ZERO);
         }
 
@@ -104,11 +104,11 @@ public class PLUDecomposition extends PrimitiveFunction implements Lambda {
 
     static BigComplex[][] matrixMul(BigComplex[][] A, BigComplex[][] B) {
         BigComplex[][] result = new BigComplex[A.length][B[0].length];
-        for(int i = 0; i < A.length; i++) {
+        for (int i = 0; i < A.length; i++) {
             Arrays.fill(result[i], BigComplex.ZERO);
         }
         BigComplex[] aux = new BigComplex[B.length];
-        for(int i = 0; i < B.length; i++) {
+        for (int i = 0; i < B.length; i++) {
             Arrays.fill(aux, BigComplex.ZERO);
         }
 
@@ -196,13 +196,13 @@ public class PLUDecomposition extends PrimitiveFunction implements Lambda {
 
         MathContext wp = new MathContext(env.getMathContext().getPrecision() + 20);
 
-        if(l1.stream().allMatch(x -> x.stream().allMatch(y -> y.getType() == Type.INTEGER || y.getType() == Type.REAL))) {
+        if (l1.stream().allMatch(x -> x.stream().allMatch(y -> y.getType() == Type.INTEGER || y.getType() == Type.REAL))) {
             // Real case
             BigDecimal[][] A = l1.stream().map(x -> x.stream().map(Atom::getReal).toArray(BigDecimal[]::new)).toArray(BigDecimal[][]::new);
             BigDecimal[][][] data = lu(wp, A);
-            for(int i = 0; i < data.length; i++) {
-                for(int j = 0; j < data[i].length; j++) {
-                    for(int k = 0; k < data[i][j].length; k++) {
+            for (int i = 0; i < data.length; i++) {
+                for (int j = 0; j < data[i].length; j++) {
+                    for (int k = 0; k < data[i][j].length; k++) {
                         data[i][j][k] = data[i][j][k].setScale(env.getMathContext().getPrecision() - 10, RoundingMode.HALF_UP);
                         data[i][j][k] = data[i][j][k].stripTrailingZeros();
                     }
@@ -217,9 +217,9 @@ public class PLUDecomposition extends PrimitiveFunction implements Lambda {
             // Complex case.
             BigComplex[][] A = l1.stream().map(x -> x.stream().map(Atom::getComplex).toArray(BigComplex[]::new)).toArray(BigComplex[][]::new);
             BigComplex[][][] data = lu(wp, A);
-            for(int i = 0; i < data.length; i++) {
-                for(int j = 0; j < data[i].length; j++) {
-                    for(int k = 0; k < data[i][j].length; k++) {
+            for (int i = 0; i < data.length; i++) {
+                for (int j = 0; j < data[i].length; j++) {
+                    for (int k = 0; k < data[i][j].length; k++) {
                         BigDecimal re = data[i][j][k].re.setScale(env.getMathContext().getPrecision() - 10, RoundingMode.HALF_UP).stripTrailingZeros();
                         BigDecimal im = data[i][j][k].im.setScale(env.getMathContext().getPrecision() - 10, RoundingMode.HALF_UP).stripTrailingZeros();
                         data[i][j][k] = BigComplex.valueOf(re, im);

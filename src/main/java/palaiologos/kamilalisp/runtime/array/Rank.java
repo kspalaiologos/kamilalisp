@@ -7,9 +7,9 @@ import java.util.List;
 
 public class Rank extends PrimitiveFunction implements Lambda {
     public static boolean isScalar(Atom w) {
-        if(w.getType() != Type.LIST)
+        if (w.getType() != Type.LIST)
             return true;
-        if(w.getList().isEmpty())
+        if (w.getList().isEmpty())
             return false;
         return w.getList().get(0).getType() == Type.CALLABLE && w.getList().get(0).getCallable() instanceof ReactiveFunction && w.getList().size() == 1;
     }

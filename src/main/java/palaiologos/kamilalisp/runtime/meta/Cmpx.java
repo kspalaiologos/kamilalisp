@@ -28,11 +28,6 @@ public class Cmpx extends PrimitiveFunction implements SpecialForm {
         return Double.isNaN(d) || Double.isInfinite(d);
     }
 
-    @Override
-    public String name() {
-        return "cmpx";
-    }
-
     public static String doCmpx(Environment env, List<Atom> args) {
         long gcBefore = getGC();
 
@@ -98,6 +93,11 @@ public class Cmpx extends PrimitiveFunction implements SpecialForm {
         sb.append("GC time: ").append(gcAfter - gcBefore).append("ms\n");
 
         return sb.toString();
+    }
+
+    @Override
+    public String name() {
+        return "cmpx";
     }
 
     @Override

@@ -5,7 +5,6 @@ import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
 import org.fife.ui.rsyntaxtextarea.Token;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class RSTAFactory {
     public static RSyntaxTextArea build(JComponent parent) {

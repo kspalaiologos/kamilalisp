@@ -40,7 +40,7 @@ public class Parser {
             lex.addErrorListener(new ThrowingErrorListener(0));
             var tokens = lex.getAllTokens();
             return tokens.get(0).getType() == GrammarLexer.NAME && tokens.size() == 1;
-        } catch(Throwable e) {
+        } catch (Throwable e) {
             return false;
         }
     }

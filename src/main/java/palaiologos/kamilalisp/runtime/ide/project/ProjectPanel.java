@@ -28,24 +28,6 @@ public class ProjectPanel extends TilingWMComponent {
     public boolean unsavedChanges = false;
     public JButton neu, open, save, export;
 
-    private static JLabel makeSeparator() {
-        JLabel separator = new JLabel(" | ");
-        separator.setFont(IDE.apl333Font);
-        separator.setOpaque(true);
-        separator.setBackground(IDETheme.background);
-        separator.setForeground(IDETheme.textColor);
-        return separator;
-    }
-
-    private static JLabel makeLabel(String caption) {
-        JLabel label = new JLabel(caption);
-        label.setFont(IDE.apl333Font);
-        label.setOpaque(true);
-        label.setBackground(IDETheme.background);
-        label.setForeground(IDETheme.textColor);
-        return label;
-    }
-
     public ProjectPanel(IDE parent) {
         super(parent);
         dataRegistry = new ProjectDataRegistry(parent);
@@ -90,7 +72,8 @@ public class ProjectPanel extends TilingWMComponent {
         neu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                tryReset(() -> { });
+                tryReset(() -> {
+                });
                 IDEModal frame = new IDEModal(parent.statusBar.getCurrentDesktopPane());
                 frame.setTitle("New project");
                 frame.setMaximizable(false);
@@ -165,7 +148,8 @@ public class ProjectPanel extends TilingWMComponent {
         open.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                tryReset(() -> {});
+                tryReset(() -> {
+                });
                 JFileChooser jfc = new JFileChooser();
                 jfc.setDialogType(JFileChooser.OPEN_DIALOG);
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("KamilaLisp project files", "kpr");
@@ -173,20 +157,22 @@ public class ProjectPanel extends TilingWMComponent {
                 IDEFileChooserModal modal = new IDEFileChooserModal(parent.statusBar.getCurrentDesktopPane(), parent, jfc, (evt) -> {
                     if (JFileChooser.APPROVE_SELECTION.equals(evt.getActionCommand())) {
                         File src = jfc.getSelectedFile().getAbsoluteFile();
-                        if(!src.exists()) {
+                        if (!src.exists()) {
                             IDEErrorModal error = new IDEErrorModal(parent.statusBar.getCurrentDesktopPane(), "File does not exist.");
-                            error.display(() -> { });
+                            error.display(() -> {
+                            });
                         } else {
                             Throwable t = null;
                             try {
                                 FileInputStream fis = new FileInputStream(src);
                                 parent.project.dataRegistry.readFrom(fis);
-                            } catch(IOException | ClassNotFoundException e1) {
+                            } catch (IOException | ClassNotFoundException e1) {
                                 t = e1;
                             }
-                            if(t != null) {
+                            if (t != null) {
                                 IDETextAreaErrorModal error = new IDETextAreaErrorModal(parent.statusBar.getCurrentDesktopPane(), "Error while reading file.", t);
-                                error.display(() -> { });
+                                error.display(() -> {
+                                });
                             }
                         }
                     }
@@ -198,7 +184,8 @@ public class ProjectPanel extends TilingWMComponent {
         save.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                tryReset(() -> {});
+                tryReset(() -> {
+                });
                 JFileChooser jfc = new JFileChooser();
                 jfc.setDialogType(JFileChooser.SAVE_DIALOG);
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("KamilaLisp project files", "kpr");
@@ -209,12 +196,13 @@ public class ProjectPanel extends TilingWMComponent {
                         try {
                             FileOutputStream fos = new FileOutputStream(src);
                             parent.project.dataRegistry.writeTo(fos);
-                        } catch(IOException e1) {
+                        } catch (IOException e1) {
                             t = e1;
                         }
-                        if(t != null) {
+                        if (t != null) {
                             IDETextAreaErrorModal error = new IDETextAreaErrorModal(parent.statusBar.getCurrentDesktopPane(), "Error while writing file.", t);
-                            error.display(() -> { });
+                            error.display(() -> {
+                            });
                         }
                     }
 
@@ -222,10 +210,12 @@ public class ProjectPanel extends TilingWMComponent {
                     public void accept(ActionEvent evt) {
                         if (JFileChooser.APPROVE_SELECTION.equals(evt.getActionCommand())) {
                             File src = jfc.getSelectedFile().getAbsoluteFile();
-                            if(src.exists()) {
+                            if (src.exists()) {
                                 IDEOkCancelModal frame = new IDEOkCancelModal(parent.statusBar.getCurrentDesktopPane(), "Overwrite", "File exists. Overwrite?", "Overwrite", "Cancel", () -> {
                                     write(src);
-                                }, () -> { }, () -> { });
+                                }, () -> {
+                                }, () -> {
+                                });
                                 frame.display();
                             } else {
                                 write(src);
@@ -240,7 +230,8 @@ public class ProjectPanel extends TilingWMComponent {
         export.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                tryReset(() -> {});
+                tryReset(() -> {
+                });
                 JFileChooser jfc = new JFileChooser();
                 jfc.setDialogType(JFileChooser.SAVE_DIALOG);
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("KamilaLisp project files", "kpr");
@@ -251,12 +242,13 @@ public class ProjectPanel extends TilingWMComponent {
                         try {
                             FileOutputStream fos = new FileOutputStream(src);
                             parent.project.dataRegistry.serialiseTo(fos);
-                        } catch(IOException e1) {
+                        } catch (IOException e1) {
                             t = e1;
                         }
-                        if(t != null) {
+                        if (t != null) {
                             IDETextAreaErrorModal error = new IDETextAreaErrorModal(parent.statusBar.getCurrentDesktopPane(), "Error while exporting file.", t);
-                            error.display(() -> { });
+                            error.display(() -> {
+                            });
                         }
                     }
 
@@ -264,10 +256,12 @@ public class ProjectPanel extends TilingWMComponent {
                     public void accept(ActionEvent evt) {
                         if (JFileChooser.APPROVE_SELECTION.equals(evt.getActionCommand())) {
                             File src = jfc.getSelectedFile().getAbsoluteFile();
-                            if(src.exists()) {
+                            if (src.exists()) {
                                 IDEOkCancelModal frame = new IDEOkCancelModal(parent.statusBar.getCurrentDesktopPane(), "Overwrite", "File exists. Overwrite?", "Overwrite", "Cancel", () -> {
                                     write(src);
-                                }, () -> { }, () -> { });
+                                }, () -> {
+                                }, () -> {
+                                });
                                 frame.display();
                             } else {
                                 write(src);
@@ -280,22 +274,22 @@ public class ProjectPanel extends TilingWMComponent {
         });
     }
 
-    private void tryReset(Runnable callback) {
-        // Check if the symbol name ends with " *". If it does, it means that the symbol has been modified.
-        // If it has, ask the user if they want to fix the changes.
-        if (unsavedChanges) {
-            IDEOkCancelModal frame = new IDEOkCancelModal(parent.statusBar.getCurrentDesktopPane(), "Fix", "Do you want to save the changes before proceeding?", "Save", "Quit", () -> {
-                for(ActionListener a : save.getActionListeners())
-                    a.actionPerformed(null);
-                callback.run();
-            }, () -> { }, () -> {
-                ProjectPanel.setEnabled(ProjectPanel.this, true);
-            });
-            frame.display();
-            ProjectPanel.setEnabled(ProjectPanel.this, false);
-        } else {
-            callback.run();
-        }
+    private static JLabel makeSeparator() {
+        JLabel separator = new JLabel(" | ");
+        separator.setFont(IDE.apl333Font);
+        separator.setOpaque(true);
+        separator.setBackground(IDETheme.background);
+        separator.setForeground(IDETheme.textColor);
+        return separator;
+    }
+
+    private static JLabel makeLabel(String caption) {
+        JLabel label = new JLabel(caption);
+        label.setFont(IDE.apl333Font);
+        label.setOpaque(true);
+        label.setBackground(IDETheme.background);
+        label.setForeground(IDETheme.textColor);
+        return label;
     }
 
     private static void setEnabled(Component component, boolean enabled) {
@@ -304,6 +298,25 @@ public class ProjectPanel extends TilingWMComponent {
             for (Component child : ((Container) component).getComponents()) {
                 setEnabled(child, enabled);
             }
+        }
+    }
+
+    private void tryReset(Runnable callback) {
+        // Check if the symbol name ends with " *". If it does, it means that the symbol has been modified.
+        // If it has, ask the user if they want to fix the changes.
+        if (unsavedChanges) {
+            IDEOkCancelModal frame = new IDEOkCancelModal(parent.statusBar.getCurrentDesktopPane(), "Fix", "Do you want to save the changes before proceeding?", "Save", "Quit", () -> {
+                for (ActionListener a : save.getActionListeners())
+                    a.actionPerformed(null);
+                callback.run();
+            }, () -> {
+            }, () -> {
+                ProjectPanel.setEnabled(ProjectPanel.this, true);
+            });
+            frame.display();
+            ProjectPanel.setEnabled(ProjectPanel.this, false);
+        } else {
+            callback.run();
         }
     }
 }

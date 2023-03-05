@@ -54,12 +54,11 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
 
         @Override
         public Atom field(Object key) {
-            if(!(key instanceof String)) {
+            if (!(key instanceof String k)) {
                 throw new RuntimeException("HTTPServerUserdata: key must be a string");
             }
 
-            String k = (String) key;
-            switch(k) {
+            switch (k) {
                 case "start":
                     return new Atom(new ServerStart());
                 case "stop":
@@ -176,7 +175,7 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
                         // Headers:
                         HashMap<Atom, Atom> headers = new HashMap<>();
                         Enumeration<String> headerNames = request.getHeaderNames();
-                        while(headerNames.hasMoreElements()) {
+                        while (headerNames.hasMoreElements()) {
                             String headerName = headerNames.nextElement();
                             headers.put(new Atom(headerName), new Atom(request.getHeader(headerName)));
                         }
@@ -184,7 +183,7 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
                         // Parameters:
                         HashMap<Atom, Atom> parameters = new HashMap<>();
                         Enumeration<String> parameterNames = request.getParameterNames();
-                        while(parameterNames.hasMoreElements()) {
+                        while (parameterNames.hasMoreElements()) {
                             String parameterName = parameterNames.nextElement();
                             parameters.put(new Atom(parameterName), new Atom(request.getParameter(parameterName)));
                         }
@@ -192,8 +191,8 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
                         // Cookies:
                         HashMap<Atom, Atom> cookies = new HashMap<>();
                         Cookie[] requestCookies = request.getCookies();
-                        if(requestCookies != null) {
-                            for(Cookie cookie : requestCookies) {
+                        if (requestCookies != null) {
+                            for (Cookie cookie : requestCookies) {
                                 HashMap<Atom, Atom> cookieData = new HashMap<>();
                                 cookieData.put(new Atom("comment"), new Atom(cookie.getComment()));
                                 cookieData.put(new Atom("domain"), new Atom(cookie.getDomain()));
@@ -211,7 +210,7 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
                         HashMap<Atom, Atom> sessionData = new HashMap<>();
                         HttpSession session = request.getSession();
                         Enumeration<String> sessionAttributeNames = session.getAttributeNames();
-                        while(sessionAttributeNames.hasMoreElements()) {
+                        while (sessionAttributeNames.hasMoreElements()) {
                             String sessionAttributeName = sessionAttributeNames.nextElement();
                             sessionData.put(new Atom(sessionAttributeName), (Atom) (session.getAttribute(sessionAttributeName)));
                         }
@@ -231,7 +230,7 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
                     }
 
                     static class ResponseUserdata implements Userdata {
-                        HttpServletResponse response;
+                        final HttpServletResponse response;
 
                         public ResponseUserdata(HttpServletResponse response) {
                             this.response = response;
@@ -239,7 +238,7 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
 
                         @Override
                         public Atom field(Object key) {
-                            if(!(key instanceof String)) {
+                            if (!(key instanceof String)) {
                                 throw new IllegalArgumentException("Key must be a string.");
                             }
 
@@ -267,11 +266,11 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
 
                                             @Override
                                             public Atom specialField(Object key) {
-                                                if(!(key instanceof String)) {
+                                                if (!(key instanceof String)) {
                                                     throw new IllegalArgumentException("Key must be a string.");
                                                 }
 
-                                                return switch((String) key) {
+                                                return switch ((String) key) {
                                                     case "print" -> new Atom(new StreamPrint());
                                                     case "println" -> new Atom(new StreamPrintln());
                                                     default -> {
@@ -283,8 +282,8 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
                                             class StreamPrint extends PrimitiveFunction implements Lambda {
                                                 @Override
                                                 public Atom apply(Environment env, List<Atom> args) {
-                                                    for(Atom arg : args) {
-                                                        if(arg.getType() == Type.STRING) {
+                                                    for (Atom arg : args) {
+                                                        if (arg.getType() == Type.STRING) {
                                                             try {
                                                                 os.print(arg.getString());
                                                             } catch (IOException e) {
@@ -310,8 +309,8 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
                                             class StreamPrintln extends PrimitiveFunction implements Lambda {
                                                 @Override
                                                 public Atom apply(Environment env, List<Atom> args) {
-                                                    for(Atom arg : args) {
-                                                        if(arg.getType() == Type.STRING) {
+                                                    for (Atom arg : args) {
+                                                        if (arg.getType() == Type.STRING) {
                                                             try {
                                                                 os.println(arg.getString());
                                                             } catch (IOException e) {
@@ -377,11 +376,11 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
                         class ResponseSetStatus extends PrimitiveFunction implements Lambda {
                             @Override
                             public Atom apply(Environment env, List<Atom> args) {
-                                if(args.size() != 1) {
+                                if (args.size() != 1) {
                                     throw new IllegalArgumentException("set-status takes exactly one argument.");
                                 }
                                 Atom arg = args.get(0);
-                                if(arg.getType() != Type.INTEGER) {
+                                if (arg.getType() != Type.INTEGER) {
                                     throw new IllegalArgumentException("set-status takes an integer argument.");
                                 }
                                 response.setStatus(arg.getInteger().intValueExact());
@@ -397,15 +396,15 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
                         class ResponseSetHeader extends PrimitiveFunction implements Lambda {
                             @Override
                             public Atom apply(Environment env, List<Atom> args) {
-                                if(args.size() != 2) {
+                                if (args.size() != 2) {
                                     throw new IllegalArgumentException("set-header takes exactly two arguments.");
                                 }
                                 Atom arg1 = args.get(0);
                                 Atom arg2 = args.get(1);
-                                if(arg1.getType() != Type.STRING) {
+                                if (arg1.getType() != Type.STRING) {
                                     throw new IllegalArgumentException("set-header takes a string as first argument.");
                                 }
-                                if(arg2.getType() != Type.STRING) {
+                                if (arg2.getType() != Type.STRING) {
                                     throw new IllegalArgumentException("set-header takes a string as second argument.");
                                 }
                                 response.setHeader(arg1.getString(), arg2.getString());
@@ -421,15 +420,15 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
                         class ResponseSetCookie extends PrimitiveFunction implements Lambda {
                             @Override
                             public Atom apply(Environment env, List<Atom> args) {
-                                if(args.size() != 1) {
+                                if (args.size() != 1) {
                                     throw new IllegalArgumentException("set-cookie takes exactly one argument.");
                                 }
                                 Atom arg = args.get(0);
-                                if(arg.getType() != Type.USERDATA) {
+                                if (arg.getType() != Type.USERDATA) {
                                     throw new IllegalArgumentException("set-cookie takes a cookie as argument.");
                                 }
                                 Userdata ud = arg.getUserdata();
-                                if(!ud.typeName().equals("net:http-server:cookie")) {
+                                if (!ud.typeName().equals("net:http-server:cookie")) {
                                     throw new IllegalArgumentException("set-cookie takes a cookie as argument.");
                                 }
                                 Cookie cookie = (Cookie) ud;
@@ -446,11 +445,11 @@ public class HTTPServer extends PrimitiveFunction implements Lambda {
                         class ResponseSetContentType extends PrimitiveFunction implements Lambda {
                             @Override
                             public Atom apply(Environment env, List<Atom> args) {
-                                if(args.size() != 1) {
+                                if (args.size() != 1) {
                                     throw new IllegalArgumentException("set-content-type takes exactly one argument.");
                                 }
                                 Atom arg = args.get(0);
-                                if(arg.getType() != Type.STRING) {
+                                if (arg.getType() != Type.STRING) {
                                     throw new IllegalArgumentException("set-content-type takes a string as argument.");
                                 }
                                 response.setContentType(arg.getString());

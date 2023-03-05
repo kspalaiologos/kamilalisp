@@ -41,7 +41,7 @@ public class JLineParser extends DefaultParser {
     @Override
     public ParsedLine parse(String line, int cursor, ParseContext p) throws SyntaxError {
         // Replace '\"' with ' '. Count the amount of "s. If it's odd, throw eoferror.
-        if(!isTerminated(line))
+        if (!isTerminated(line))
             throw new EOFError(0, 0, "EOF");
         return super.parse(line, cursor, p);
     }

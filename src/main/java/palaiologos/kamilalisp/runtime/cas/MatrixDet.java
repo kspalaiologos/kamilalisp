@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime.cas;
 
-import ch.obermuhlner.math.big.BigComplex;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
@@ -9,7 +8,6 @@ import palaiologos.kamilalisp.runtime.array.Rank;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 

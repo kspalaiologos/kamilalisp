@@ -58,7 +58,7 @@ public class Nabla extends PrimitiveFunction implements Lambda {
                         throw new RuntimeException("Failed to compute the derivative, unknown error.");
                 }
                 LinkedHashSet<String> args2 = new LinkedHashSet<>();
-                for(String s : expr.getArgs())
+                for (String s : expr.getArgs())
                     if (hasVariable(entry, s))
                         args2.add(s);
                 return new MathExpression(env, args2, entry);
@@ -72,10 +72,10 @@ public class Nabla extends PrimitiveFunction implements Lambda {
     public Atom apply(Environment env, List<Atom> args) {
         Set<String> exprArgs;
         MathExpression expr;
-        if(args.size() == 1) {
+        if (args.size() == 1) {
             expr = args.get(0).getUserdata(MathExpression.class);
             exprArgs = expr.getArgs();
-        } else if(args.size() == 2) {
+        } else if (args.size() == 2) {
             exprArgs = args.get(0).getList().stream().map(Atom::getIdentifier).collect(LinkedHashSet::new, LinkedHashSet::add, LinkedHashSet::addAll);
             expr = args.get(1).getUserdata(MathExpression.class);
         } else {

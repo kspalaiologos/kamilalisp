@@ -33,17 +33,8 @@ import java.util.Objects;
 
 public class EditorPanel extends TilingWMComponent {
     private final RSyntaxTextArea area;
-    private String objectName = null;
     private final JLabel name;
-
-    private static JLabel makeSeparator() {
-        JLabel separator = new JLabel(" | ");
-        separator.setFont(IDE.apl333Font);
-        separator.setOpaque(true);
-        separator.setBackground(IDETheme.background);
-        separator.setForeground(IDETheme.textColor);
-        return separator;
-    }
+    private String objectName = null;
 
     public EditorPanel(IDE parent, TerminalPanel owner) {
         super(parent);
@@ -176,21 +167,21 @@ public class EditorPanel extends TilingWMComponent {
         area.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                if(!name.getText().endsWith(" *")) {
+                if (!name.getText().endsWith(" *")) {
                     name.setText(name.getText() + " *");
                 }
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                if(!name.getText().endsWith(" *")) {
+                if (!name.getText().endsWith(" *")) {
                     name.setText(name.getText() + " *");
                 }
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                if(!name.getText().endsWith(" *")) {
+                if (!name.getText().endsWith(" *")) {
                     name.setText(name.getText() + " *");
                 }
             }
@@ -212,7 +203,7 @@ public class EditorPanel extends TilingWMComponent {
                     IDEPacket packet = (IDEPacket) recv.get();
                     if (packet.kind.equals("fix:ok")) {
                         EditorPanel.setEnabled(EditorPanel.this, true);
-                        if(name.getText().endsWith(" *")) {
+                        if (name.getText().endsWith(" *")) {
                             name.setText(name.getText().substring(0, name.getText().length() - 2));
                         }
                         parent.project.dataRegistry.setKey(objectName, area.getText());
@@ -317,22 +308,13 @@ public class EditorPanel extends TilingWMComponent {
         });
     }
 
-    private void tryReset(Runnable callback) {
-        // Check if the symbol name ends with " *". If it does, it means that the symbol has been modified.
-        // If it has, ask the user if they want to fix the changes.
-        if (name.getText().endsWith(" *")) {
-            IDEOkCancelModal frame = new IDEOkCancelModal(parent.statusBar.getCurrentDesktopPane(), "Fix", "Do you want to save the changes before proceeding?", "Save", "Quit", () -> {
-                getActionMap().get("fix").actionPerformed(null);
-                callback.run();
-            }, () -> { }, () -> {
-                EditorPanel.setEnabled(EditorPanel.this, true);
-                area.requestFocusInWindow();
-            });
-            frame.display();
-            EditorPanel.setEnabled(EditorPanel.this, false);
-        } else {
-            callback.run();
-        }
+    private static JLabel makeSeparator() {
+        JLabel separator = new JLabel(" | ");
+        separator.setFont(IDE.apl333Font);
+        separator.setOpaque(true);
+        separator.setBackground(IDETheme.background);
+        separator.setForeground(IDETheme.textColor);
+        return separator;
     }
 
     private static void setEnabled(Component component, boolean enabled) {
@@ -341,6 +323,25 @@ public class EditorPanel extends TilingWMComponent {
             for (Component child : ((Container) component).getComponents()) {
                 setEnabled(child, enabled);
             }
+        }
+    }
+
+    private void tryReset(Runnable callback) {
+        // Check if the symbol name ends with " *". If it does, it means that the symbol has been modified.
+        // If it has, ask the user if they want to fix the changes.
+        if (name.getText().endsWith(" *")) {
+            IDEOkCancelModal frame = new IDEOkCancelModal(parent.statusBar.getCurrentDesktopPane(), "Fix", "Do you want to save the changes before proceeding?", "Save", "Quit", () -> {
+                getActionMap().get("fix").actionPerformed(null);
+                callback.run();
+            }, () -> {
+            }, () -> {
+                EditorPanel.setEnabled(EditorPanel.this, true);
+                area.requestFocusInWindow();
+            });
+            frame.display();
+            EditorPanel.setEnabled(EditorPanel.this, false);
+        } else {
+            callback.run();
         }
     }
 }

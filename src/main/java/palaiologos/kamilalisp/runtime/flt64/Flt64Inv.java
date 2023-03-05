@@ -25,8 +25,8 @@ public class Flt64Inv extends PrimitiveFunction implements Lambda {
         double[][] A = l1.stream().map(x -> x.stream().mapToDouble(Flt64Base::toFlt64).toArray()).toArray(double[][]::new);
 
         double invdet = 1 / Flt64Det.det(A);
-        for(int i = 0; i < A.length; i++) {
-            for(int j = 0; j < A.length; j++) {
+        for (int i = 0; i < A.length; i++) {
+            for (int j = 0; j < A.length; j++) {
                 A[i][j] *= invdet;
             }
         }

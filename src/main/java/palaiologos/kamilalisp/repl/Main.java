@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.repl;
 
-import palaiologos.kamilalisp.runtime.ide.DarkTheme;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -12,6 +11,7 @@ import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.AttributedStringBuilder;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.InterruptionError;
+import palaiologos.kamilalisp.runtime.ide.DarkTheme;
 import palaiologos.kamilalisp.runtime.ide.IDE;
 import palaiologos.kamilalisp.runtime.remote.Server;
 
@@ -73,7 +73,7 @@ public class Main {
         int lineNumberOffset = 0;
         try {
             while (true) {
-                if(env.has("prompt")) {
+                if (env.has("prompt")) {
                     Callable prompt = env.get("prompt").getCallable();
                     Atom a = Evaluation.safeEvaluate(env, prompt, List.of(), (s) -> {
                         System.err.println(s);
@@ -127,25 +127,25 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
-        if(args.length == 0)
+        if (args.length == 0)
             terminalTTY();
         if (args.length >= 1) {
-            if(args[0].equalsIgnoreCase("--ide")) {
+            if (args[0].equalsIgnoreCase("--ide")) {
                 DarkTheme.installLafInfo();
                 DarkTheme.setup();
                 Enumeration<Object> keys = UIManager.getDefaults().keys();
                 var fr = new javax.swing.plaf.FontUIResource(IDE.apl333Font);
                 while (keys.hasMoreElements()) {
                     Object key = keys.nextElement();
-                    Object value = UIManager.get (key);
+                    Object value = UIManager.get(key);
                     if (value instanceof javax.swing.plaf.FontUIResource)
                         UIManager.put(key, fr);
                 }
                 IDE ide = new IDE();
                 // TODO: Run scripts.
-            } else if(args[0].equalsIgnoreCase("--remote")) {
+            } else if (args[0].equalsIgnoreCase("--remote")) {
                 int port = 0;
-                if(args.length >= 2)
+                if (args.length >= 2)
                     port = Integer.parseInt(args[1]);
                 Server.run(port);
             } else

@@ -15,9 +15,9 @@ public class I extends PrimitiveFunction implements Lambda {
         assertArity(args, 1);
         int size = args.get(0).getInteger().intValueExact();
         List<Atom> result = new ArrayList<>();
-        for(int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
             List<Atom> row = new ArrayList<>();
-            for(int j = 0; j < size; j++)
+            for (int j = 0; j < size; j++)
                 row.add(new Atom(BigInteger.valueOf(i == j ? 1 : 0)));
             result.add(new Atom(row));
         }

@@ -5,7 +5,6 @@ import palaiologos.kamilalisp.runtime.ide.IDETheme;
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
-import java.awt.*;
 
 public class IDEErrorModal extends IDEModal {
     private final JButton confirmButton;

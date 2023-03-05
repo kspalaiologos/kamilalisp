@@ -63,10 +63,8 @@ public class StreamWrapper {
                         }
                     }
                     case "close" -> new Atom(new InputStreamClose());
-                    case "transfer-to" ->
-                        new Atom(new InputStreamTransferTo());
-                    case "pipe-to" ->
-                        new Atom(new InputStreamPipeTo());
+                    case "transfer-to" -> new Atom(new InputStreamTransferTo());
+                    case "pipe-to" -> new Atom(new InputStreamPipeTo());
                     default -> specialField(key);
                 };
             } else {
@@ -108,7 +106,8 @@ public class StreamWrapper {
             public Atom apply(Environment env, List<Atom> args) {
                 try {
                     stream.close();
-                } catch (IOException e) { }
+                } catch (IOException e) {
+                }
                 return Atom.NULL;
             }
 
@@ -142,7 +141,10 @@ public class StreamWrapper {
                 assertArity(args, 1);
                 StreamWrapper.OutputStreamUserdata arg = (StreamWrapper.OutputStreamUserdata) args.get(0).getUserdata();
                 new Thread(() -> {
-                    try { stream.transferTo(arg.getStream()); } catch (IOException e) { }
+                    try {
+                        stream.transferTo(arg.getStream());
+                    } catch (IOException e) {
+                    }
                 }).start();
                 return Atom.NULL;
             }

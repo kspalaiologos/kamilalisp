@@ -40,6 +40,7 @@ public class MathExpression implements Userdata {
     private static final Map<String, String> primitiveTranslations = Map.ofEntries(
             Map.entry("ln", "log")
     );
+    public static LinkedHashSet<String> emptyArguments = new LinkedHashSet<>();
     final LinkedHashSet<String> args;
     final Atom data;
     final Environment e;
@@ -56,8 +57,6 @@ public class MathExpression implements Userdata {
 
         stringifyExpression(e, data);
     }
-
-    public static LinkedHashSet<String> emptyArguments = new LinkedHashSet<>();
 
     public static MathExpression constantExpression(Environment env, Atom a) {
         if (a.getType() == Type.USERDATA && a.isUserdata(MathExpression.class))
@@ -84,7 +83,7 @@ public class MathExpression implements Userdata {
     public LinkedHashSet<String> getArgs() {
         return args;
     }
-    
+
     public Atom getData() {
         return data;
     }
@@ -98,7 +97,7 @@ public class MathExpression implements Userdata {
                 return expandIdentifiers(e, e.get(id.substring(1)));
             }
             return tree;
-        } else if(tree.getType() == Type.LIST) {
+        } else if (tree.getType() == Type.LIST) {
             return new Atom(tree.getList().stream().map(x -> expandIdentifiers(e, x)).toList());
         } else {
             return tree;
@@ -211,15 +210,15 @@ public class MathExpression implements Userdata {
                         if (primitiveTranslations.containsKey(id))
                             id = primitiveTranslations.get(id);
                         return id + "(" + tree.getList().stream().skip(1).map(x -> stringifyExpression(e, x)).reduce((x, y) -> x + "," + y).get() + ")";
-                    } else if(e.has(id)) {
-                        if(e.get(id).getType() != Type.USERDATA || !(e.get(id).getUserdata() instanceof MathExpression))
+                    } else if (e.has(id)) {
+                        if (e.get(id).getType() != Type.USERDATA || !(e.get(id).getUserdata() instanceof MathExpression))
                             throw new RuntimeException("Invalid function: " + id);
                         MathExpression f = e.get(id).getUserdata(MathExpression.class);
-                        if(f.args.size() != tree.getList().size() - 1)
+                        if (f.args.size() != tree.getList().size() - 1)
                             throw new RuntimeException("Invalid arity for function: " + id);
                         int i = 0;
                         Atom expr = f.data;
-                        for(String arg : f.args) {
+                        for (String arg : f.args) {
                             expr = substituteRecursively(expr, arg, expandIdentifiers(e, tree.getList().get(i + 1)));
                             i++;
                         }
@@ -259,7 +258,7 @@ public class MathExpression implements Userdata {
                 throw new RuntimeException("Failed to simplify.");
             }
 
-            if(a.size() != 1)
+            if (a.size() != 1)
                 throw new RuntimeException("Failed to simplify, CAS arity error.");
             Atom entry = a.entrySet().stream().findFirst().get().getValue();
             LinkedHashSet<String> args2 = new LinkedHashSet<>();

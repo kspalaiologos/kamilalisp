@@ -42,7 +42,7 @@ public class Environment {
     }
 
     public void overwritePrimitive(String key, Atom value) {
-        if(!data.containsKey(key))
+        if (!data.containsKey(key))
             throw new RuntimeException("Cannot overwrite non-existent primitive " + key + ".");
         data.put(key, value);
     }
@@ -71,7 +71,7 @@ public class Environment {
 
     private void recursiveKeys(Environment env, Set<String> keys) {
         keys.addAll(env.data.keySet());
-        if(env.parent != null)
+        if (env.parent != null)
             recursiveKeys(env.parent, keys);
     }
 
@@ -99,9 +99,9 @@ public class Environment {
     }
 
     public synchronized void remove(String key) {
-        if(has(key))
+        if (has(key))
             data.remove(key);
-        else if(parent != null)
+        else if (parent != null)
             parent.remove(key);
     }
 }

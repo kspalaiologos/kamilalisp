@@ -5,7 +5,6 @@ import palaiologos.kamilalisp.runtime.ide.IDETheme;
 import javax.swing.*;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
-import java.awt.*;
 
 public class IDEOkCancelModal extends IDEModal {
     public IDEOkCancelModal(JDesktopPane parentComponent, String title, String msg, String btn1, String btn2, Runnable btn1Action, Runnable btn2Action, Runnable closed) {
