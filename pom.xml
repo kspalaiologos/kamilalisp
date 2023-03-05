@@ -211,7 +211,7 @@
                         <option>-keep class org.tukaani.xz.LZMA2Options { *; }</option>
                         <option>-keep class org.armedbear.lisp.** { *; }</option>
                         <option>-keep class com.formdev.** { *; }</option>
-                        <option>-keep class org.slf4j.** { *; }</option>
+                        <option>-keep class org.slf4j.nop.** { *; }</option>
                         <option>-keep class org.eclipse.** { *; }</option>
                         <option>-optimizationpasses 9</option>
                         <option>-allowaccessmodification</option>
