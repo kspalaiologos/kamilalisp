@@ -1133,9 +1133,9 @@ Consider a list of $n$ sets of natural numbers smaller than $n$, where the $i$-t
 
 The data makes it apparent that the domain of $f_0$ is $\{0,1,2\}$, the domain of $f_1$ is $\{1\}$ and the domain of $f_2$ is $\{1,2\}$. The problem is to assign a unique natural number smaller than $n$ to each of the functions, so that it is contained in the function's domain. In this example, the number $0$ is assigned to $f_0$, $1$ is assigned to $f_1$ and $2$ is assigned to $f_2$. This problem is reminescent of one-dimensional wave function collapse\footnote{Two-dimensional wave function collapse can be used \textit{inter alia} for texture generation and sudoku solving}.
 
-The standard procedure in approaching wave function collapse problems is to start with picking the \textit{least entropic} function, i.e. the function with the smallest domain. Then, fix random of the possibilities and repeat the process until there is only one possibility left for each function. Of course, this approach may not always yield a valid solution. Three common ways to deal with this are backtracking, resetting the search space and starting from scratch or ignoring the existence of this problem altogether. The book will demonstrate the implementations of these approaches, starting with the simplest one.
+The standard procedure in approaching wave function collapse problems is to start with picking the \textit{least entropic} function, i.e. the function with the smallest domain. Then, fix random of the possibilities and repeat the process until there is only one possibility left for each function. Of course, this approach may not always yield a valid solution. Three common ways to deal with this are backtracking, resetting the search space and starting from scratch or ignoring the existence of this problem altogether. The book will demonstrate implementations of these approaches, starting with the simplest one.
 
-Sort the function according to their entropy in increasing order:
+Sort the functions according to their entropy in increasing order:
 
 \begin{Verbatim}
     --> def p \grade-up \:tally domains
