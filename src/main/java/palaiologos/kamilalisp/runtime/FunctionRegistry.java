@@ -67,8 +67,6 @@ public class FunctionRegistry {
         env.setPrimitive("filter", "⍭", new Atom(new Filter()));
         env.setPrimitive("filter-idx", "⍭¨", new Atom(new FilterIdx()));
         env.setPrimitive("map-idx", "⍠¨", new Atom(new MapIdx()));
-        env.setPrimitive("parallel:map-idx", "⍠∵", new Atom(new ParallelMapIdx()));
-        env.setPrimitive("parallel:filter", "⍭∵", new Atom(new ParallelFilter()));
         env.setPrimitive("any", "∨?", new Atom(new Any()));
         env.setPrimitive("all", "∧?", new Atom(new All()));
         env.setPrimitive("none", "∅?", new Atom(new None()));
@@ -173,6 +171,8 @@ public class FunctionRegistry {
         env.setPrimitive("parallel:task", new Atom(new Task()));
         env.setPrimitive("parallel:daemon", new Atom(new Daemon()));
         env.setPrimitive("parallel:actor", new Atom(new ActorCreate()));
+        env.setPrimitive("parallel:map-idx", "⍠∵", new Atom(new ParallelMapIdx()));
+        env.setPrimitive("parallel:filter", "⍭∵", new Atom(new ParallelFilter()));
 
         env.setPrimitive("io:writeln", "↑⍫", new Atom(new Writeln()));
         env.setPrimitive("io:readln", "↓⍫", new Atom(new Readln()));

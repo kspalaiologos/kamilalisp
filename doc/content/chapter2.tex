@@ -9,11 +9,11 @@ Lists are one of the most important data structures used in functional programmi
 
 As mentioned before, every list besides the empty list contains a \textit{head} (the first element, \verb|car|) and a \textit{tail} (the last element, \verb|cdr|). The tail of a list is always another list, even if it is empty. The empty list literal is introduced in the code as \verb|'nil| or \verb|'()|. 
 
-Using \verb|car| and \verb|cdr| it is possible to define a basic, non-tail recursive function that yields the length of a 
+Using \verb|car| and \verb|cdr| it is possible to define a basic, non-tail recursive function that yields the length of a list.
 
 \begin{Verbatim}
-    --> defun length l (if (same l 'nil) 0 (+ 1 (length (cdr l))))
-    (λ l . (if (same l 'nil) 0 (+ 1 (length (cdr l)))))
+    --> defun length l (if (empty? l) 0 (+ 1 (length (cdr l))))
+    (λ l . (if (empty? l) 0 (+ 1 (length (cdr l)))))
 \end{Verbatim}
 
 A generalised version of this function that handles scalar values, variadic application and strings is available as \verb|tally|\footnote{\textit{tally} - to count or calculate something}:
@@ -570,8 +570,8 @@ The \verb|mean| function can be rewritten as follows\footnote{In a very similar 
 Folds, in a way, transcend the concept of tail recursion. A tail-recursive \verb|foldl| function can be implemented in the following way:
 
 \begin{Verbatim}
-    --> defun my-foldl (f z l) (if (same l '()) z (&0 f (f z (car l)) (cdr l)))
-    (λ f z l . (if (same l 'nil) z (&0 f (f z (car l)) (cdr l))))
+    --> defun my-foldl (f z l) (if (empty? l) z (&0 f (f z (car l)) (cdr l)))
+    (λ f z l . (if (empty? l) z (&0 f (f z (car l)) (cdr l))))
     --> my-foldl - 0 (range 1 100)
     -4950
 \end{Verbatim}
@@ -1086,6 +1086,166 @@ The \verb|partition| function is a bit more sophisticated - the lists are broken
 
 \section{Sorting and permutations}
 
+A random permutation of a list of size $n$ can be generated using \verb|range| and \verb|shuffle|. The permutation can now be applied to a list of arbitrary elements as follows:
+
+\begin{Verbatim}
+    --> def perm \shuffle (range 0 10)
+    (1 2 8 6 4 3 0 5 9 7)
+    --> def l '(a b c d e f g h i j)
+    (a b c d e f g h i j)
+    --> ?l$[#0 perm]
+    (b c i g e d a f j h)
+\end{Verbatim}
+
+A matrix of all permutations of a list of size $n$ is given by \verb|pmat|:
+
+\begin{Verbatim}
+    --> pmat 3
+    [(0 1 2)
+     (1 0 2)
+     (1 2 0)
+     (0 2 1)
+     (2 0 1)
+     (2 1 0)]
+\end{Verbatim}
+
+Permutations that sort an array in ascending or descending order based on a comparator function or a partial order between some types of atoms can be computed using \verb|grade-up| or \verb|grade-down|:
+
+\begin{Verbatim}
+    --> ?perm
+    (1 2 8 6 4 3 0 5 9 7)
+    --> grade-up perm
+    (6 0 1 5 4 7 3 9 2 8)
+    --> ?perm$[grade-up perm]
+    (0 1 2 3 4 5 6 7 8 9)
+\end{Verbatim}
+
+A common family of problems that can be elegantly solved using sorting permutations involve taking, dropping or removing first or last $n$ elements of a list based on some criterion, e.g. the amount of unique prime factors a number has.
+
+Consider a list of $n$ sets of natural numbers smaller than $n$, where the $i$-th set is the domain of some function $f_i$, for example:
+
+\begin{Verbatim}
+    --> ?domains
+    [(0 1 2)
+     (1)
+     (1 2)]
+\end{Verbatim}
+
+The data makes it apparent that the domain of $f_0$ is $\{0,1,2\}$, the domain of $f_1$ is $\{1\}$ and the domain of $f_2$ is $\{1,2\}$. The problem is to assign a unique natural number smaller than $n$ to each of the functions, so that it is contained in the function's domain. In this example, the number $0$ is assigned to $f_0$, $1$ is assigned to $f_1$ and $2$ is assigned to $f_2$. This problem is reminescent of one-dimensional wave function collapse\footnote{Two-dimensional wave function collapse can be used \textit{inter alia} for texture generation and sudoku solving}.
+
+The standard procedure in approaching wave function collapse problems is to start with picking the \textit{least entropic} function, i.e. the function with the smallest domain. Then, fix random of the possibilities and repeat the process until there is only one possibility left for each function. Of course, this approach may not always yield a valid solution. Three common ways to deal with this are backtracking, resetting the search space and starting from scratch or ignoring the existence of this problem altogether. The book will demonstrate the implementations of these approaches, starting with the simplest one.
+
+Sort the function according to their entropy in increasing order:
+
+\begin{Verbatim}
+    --> def p \grade-up \:tally domains
+    (1 2 0)
+    --> def sorted-domains domains$[#0 p]
+    [(1)
+     (1 2)
+     (0 1 2)]
+\end{Verbatim}
+
+Recursively fix the first function's domain to the first element of its domain and repeat the process for the remaining functions, removing fixed element from the list of possibilities:
+
+\begin{Verbatim}
+    --> defun fix x (match x
+    ...   (nil
+    ...      'nil)
+    ...   (('x '...xs)
+    ...      (cons (car x) (fix (:filter $(/= (car x)) xs)))))
+\end{Verbatim}
+
+Obtain the solution:
+
+\begin{Verbatim}
+    --> fix sorted-domains
+    (1 2 0)
+\end{Verbatim}
+
+The solution is different from the model solution from before. This is because the solution was generated under the least-entropy criterion permutation, which needs to be undone to obtain the real result. Using \verb|grade-up| on a permutation obtained by \verb|grade-up| will \textit{unsort} the vector:
+
+\begin{Verbatim}
+    --> ?(fix sorted-domains)$[grade-up p]
+    (0 1 2)
+\end{Verbatim}
+
+The solution can now be recasted to be a stand-alone function now:
+
+\begin{Verbatim}
+    --> defun dom1 x (let-seq
+    ...   (def p \grade-up \:tally x)
+    ...   (defun fix x (match x
+    ...     (nil
+    ...       'nil)
+    ...     (('x '...xs)
+    ...       (cons (car x) (fix (:filter $(/= (car x)) xs))))))
+    ...   (fix x$[#0 p])$[grade-up p])
+\end{Verbatim}
+
+Of course this solution does not address the problem mentioned before. The following crafted example will demonstrate the problem:
+
+\begin{Verbatim}
+    --> def domains '((1) (3 2) (4 3) (3 4 1))
+\end{Verbatim}
+
+The solution at first is obvious: \verb|'(1 2 4 3)| or \verb|'(1 2 3 4)|, however the simple algorithm fails, because it will attempt to fix a $3$ for $f_1$, meaning that there are no remaining possibilities in the last slot and \verb|car| fails:
+
+\begin{Verbatim}
+    --> dom1 domains
+    ArrayIndexOutOfBoundsException thrown in thread 0X75437611:
+            null
+        at entity dom1  8:1
+        at (λ x . (let-seq (def p (grade-up (:tally x))) ...))  1:12
+        at entity let-seq  1:15
+        at let-seq primitive function
+        at entity (sic) $[]/syn.  8:4
+        at $[]/syn
+        at entity fix  8:5
+        at (λ x . (match x ...))  3:15
+        [...]
+        at entity match  3:18
+        at match primitive function
+        at entity cons  7:9
+        at entity car  7:15
+        at car primitive function
+\end{Verbatim}
+
+To implement the second mitigation method (fix \textit{random} element from the domain of the first function and repeat the process for the remaining functions, reset on error), the naive version can be trivially modified:
+
+\begin{Verbatim}
+    --> defun dom2 x (let-seq
+    ...   (def p \grade-up \:tally x)
+    ...   (defun fix x (match x
+    ...     (nil
+    ...       'nil)
+    ...     (('x '...xs)
+    ...       (let-seq
+    ...         (def e x$[random \tally x])
+    ...         (cons e (fix (:filter $(/= e) xs)))))))
+    ...   (try-catch (fix x$[#0 p])$[grade-up p] (&0 x)))
+\end{Verbatim}
+
+This function is obviously non-deterministic and will randomly return one of the correct solutions:
+
+\begin{Verbatim}
+    --> dom2 domains
+    (1 2 4 3)
+    --> dom2 domains
+    (1 2 3 4)
+    --> dom2 domains
+    (1 2 3 4)
+    --> dom2 domains
+    (1 2 4 3)
+    --> dom2 domains
+    (1 2 4 3)
+\end{Verbatim}
+
+Technically speaking, this function does not have to terminate. The third and final solution is to use backtracking.
+
 \section{Pattern matching}
 
 \section{Using glyphs}
+
+% \begin{Verbatim}
+% \end{Verbatim}
