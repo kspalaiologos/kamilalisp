@@ -1250,10 +1250,13 @@ Technically speaking, this function does not have to terminate. The third and fi
     ...     (nil
     ...       'nil)
     ...     (('x '...xs)
-    ...       ((lambda x (
-    ...         try-catch
-    ...           (cons (car x) (fix (:filter $(/= (car x)) xs)))
-    ...           (if (empty? \cdr x) (raise error) (&0 \cdr x)))) x))))
+    ...       (let-seq
+    ...         (defun step x \cons x (fix (:filter $(/= x) xs)))
+    ...         (defun ckpoint x (
+    ...           try-catch
+    ...             (step \car x)
+    ...             (if (empty? \cdr x) (raise error) (&0 \cdr x))))
+    ...         (if (empty? \cdr x) (step \car x) (ckpoint x))))))
     ...   (fix x$[#0 p])$[grade-up p])
 \end{Verbatim}
 
