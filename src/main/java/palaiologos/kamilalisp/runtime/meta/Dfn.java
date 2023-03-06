@@ -85,32 +85,34 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
         public Atom apply(Environment throwaway, List<Atom> args) {
             Environment descendantEnv = new Environment(env);
             StackFrame.pushLambda(this);
-            while (true) {
-                if (!wantsVararg) {
-                    assertArity(args, bindings.size());
-                    for (int i = 0; i < bindings.size(); i++)
-                        descendantEnv.set(bindings.get(i), args.get(i));
-                } else {
-                    if (args.size() < bindings.size() - 1)
-                        throw new TypeError("Expected at least " + (bindings.size() - 1) + " arguments to `" + frameString() + "'.");
-                    for (int i = 0; i < bindings.size() - 1; i++)
-                        descendantEnv.set(bindings.get(i), args.get(i));
-                    descendantEnv.set(bindings.get(bindings.size() - 1), new Atom(args.subList(bindings.size() - 1, args.size())));
-                }
-                for (int i = 0; i < code.size() - 1; i++)
-                    Evaluation.evaluate(descendantEnv, code.get(i));
-                Atom a = Evaluation.evaluate(descendantEnv, code.get(code.size() - 1));
-                if (a.getType() == Type.LIST && !a.getList().isEmpty() && a.getList().get(0) instanceof SelfThunk selfThunk) {
-                    if (selfThunk.c == this) {
-                        args = selfThunk.args;
+            try {
+                while (true) {
+                    if (!wantsVararg) {
+                        assertArity(args, bindings.size());
+                        for (int i = 0; i < bindings.size(); i++)
+                            descendantEnv.set(bindings.get(i), args.get(i));
                     } else {
-                        StackFrame.popLambda();
+                        if (args.size() < bindings.size() - 1)
+                            throw new TypeError("Expected at least " + (bindings.size() - 1) + " arguments to `" + frameString() + "'.");
+                        for (int i = 0; i < bindings.size() - 1; i++)
+                            descendantEnv.set(bindings.get(i), args.get(i));
+                        descendantEnv.set(bindings.get(bindings.size() - 1), new Atom(args.subList(bindings.size() - 1, args.size())));
+                    }
+                    for (int i = 0; i < code.size() - 1; i++)
+                        Evaluation.evaluate(descendantEnv, code.get(i));
+                    Atom a = Evaluation.evaluate(descendantEnv, code.get(code.size() - 1));
+                    if (a instanceof SelfThunk selfThunk) {
+                        if (selfThunk.c == this) {
+                            args = selfThunk.args;
+                        } else {
+                            return a;
+                        }
+                    } else {
                         return a;
                     }
-                } else {
-                    StackFrame.popLambda();
-                    return a;
                 }
+            } finally {
+                StackFrame.popLambda();
             }
         }
 

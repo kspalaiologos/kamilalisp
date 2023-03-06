@@ -19,12 +19,11 @@ public class SelfThunk extends Atom {
     }
 
     private void force() {
-        if (c == null)
+        if (args == null)
             return;
         Atom obj = Evaluation.evaluate(env, c, args);
         this.type = obj.getType();
         this.data = obj.data;
-        c = null;
         args = null;
         env = null;
     }
