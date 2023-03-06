@@ -1163,7 +1163,7 @@ Obtain the solution:
     (1 2 0)
 \end{Verbatim}
 
-The solution is different from the model solution from before. This is because the solution was generated under the least-entropy criterion permutation, which needs to be undone to obtain the real result. Using \verb|grade-up| on a permutation obtained by \verb|grade-up| will \textit{unsort} the vector:
+The solution is different from the model solution from before. This is because the solution was generated under the least-entropy criterion permutation, which needs to be undone to obtain the real result. Using \verb|grade-up| on a permutation obtained by using \verb|grade-up| will \textit{unsort} the vector:
 
 \begin{Verbatim}
     --> ?(fix sorted-domains)$[grade-up p]
@@ -1183,13 +1183,13 @@ The solution can now be recasted to be a stand-alone function now:
     ...   (fix x$[#0 p])$[grade-up p])
 \end{Verbatim}
 
-Of course this solution does not address the problem mentioned before. The following crafted example will demonstrate the problem:
+Of course this solution does not address the problem mentioned before. The following crafted example demonstrates the issue:
 
 \begin{Verbatim}
     --> def domains '((1) (3 2) (4 3) (3 4 1))
 \end{Verbatim}
 
-The solution at first is obvious: \verb|'(1 2 4 3)| or \verb|'(1 2 3 4)|, however the simple algorithm fails, because it will attempt to fix a $3$ for $f_1$, meaning that there are no remaining possibilities in the last slot and \verb|car| fails:
+The solution is clearly either \verb|'(1 2 4 3)| or \verb|'(1 2 3 4)|. The simple algorithm fails, because it will attempt to fix a $3$ for $f_1$, meaning that there are no remaining possibilities in the last slot and \verb|car| throws an exception:
 
 \begin{Verbatim}
     --> dom1 domains
