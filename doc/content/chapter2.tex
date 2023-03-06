@@ -1170,7 +1170,7 @@ The solution is different from the model solution from before. This is because t
     (0 1 2)
 \end{Verbatim}
 
-The solution can now be recasted to be a stand-alone function now:
+The solution can be recasted to be a stand-alone function now:
 
 \begin{Verbatim}
     --> defun dom1 x (let-seq
@@ -1241,7 +1241,30 @@ This function is obviously non-deterministic and will randomly return one of the
     (1 2 4 3)
 \end{Verbatim}
 
-Technically speaking, this function does not have to terminate. The third and final solution is to use backtracking.
+Technically speaking, this function does not have to terminate. The third and final solution is to use backtracking. To make the implementation more efficient, assume two cases. If the currently considered function's domain is empty, backtrack to the previous checkpoint. A checkpoint is placed only when there is more than one possibility left for the function. When the checkpoint catches an exception, it will try the next possibility. If there are no more possibilities, the exception is propagated to the previous checkpoint, and so on. While this technique guarantees a solution in finite time if only there exists one, in practice it tends to be slower than the previous solution. The code follows:
+
+\begin{Verbatim}
+    --> defun dom3 x (let-seq
+    ...   (def p \grade-up \:tally x)
+    ...   (defun fix x (match x
+    ...     (nil
+    ...       'nil)
+    ...     (('x '...xs)
+    ...       ((lambda x (
+    ...         try-catch
+    ...           (cons (car x) (fix (:filter $(/= (car x)) xs)))
+    ...           (if (empty? \cdr x) (raise error) (&0 \cdr x)))) x))))
+    ...   (fix x$[#0 p])$[grade-up p])
+\end{Verbatim}
+
+The result is only one of the two correct solutions:
+
+\begin{Verbatim}
+    --> dom3 domains
+    (1 2 4 3)
+    --> dom3 domains
+    (1 2 4 3)
+\end{Verbatim}
 
 \section{Pattern matching}
 
