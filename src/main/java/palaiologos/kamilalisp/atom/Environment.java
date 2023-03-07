@@ -89,6 +89,10 @@ public class Environment {
         return data.containsKey(key) || (parent != null && parent.has(key));
     }
 
+    public boolean hasLocal(String key) {
+        return data.containsKey(key);
+    }
+
     public boolean isToplevel() {
         return parent == null || parent.parent == null;
     }

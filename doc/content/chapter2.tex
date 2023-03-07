@@ -1084,6 +1084,38 @@ The \verb|partition| function is a bit more sophisticated - the lists are broken
      [6 7 8]]
 \end{Verbatim}
 
+\section{Pattern matching}
+
+Most functional languages, such as Haskell or OCaml, have pattern matching and destructuring facilities. KamilaLisp is no exception - pattern matching is performed using the \verb|match| function. The function takes as many arguments as necessary, each of them being a list of two elements - the pattern and the expression to be evaluated.
+
+The patterns follow a special syntax. The following patterns are supported:
+
+\begin{itemize}
+    \item Binding patterns - \verb|'a| binds the value of \verb|a| in the expression to the value being currently matched.
+    \item Literal patterns - \verb|"example"| or \verb|(1 2 3)| will abort trying to match the current pattern if the value being matched is not equal to the literal.
+    \item Pack patterns - \verb|'...a| will bind the value of \verb|a| to the rest of the list being matched - e.g. \verb|('x '...xs)| will match a list, where \verb|x| will be defined as the head of the currently matched value and \verb|xs| will be defined as its tail.
+\end{itemize}
+
+Pattern matching allows for a few elegant implementations of common functions. Consider the following implementation of the \verb|length| function:
+
+\begin{Verbatim}
+    --> defun length x (match x (('x '...xs) (+ 1 \length xs)) (nil 0))
+    (λ x . (match x (('x '...xs) (+ 1 (length xs))) (nil 0)))
+    --> length '(a b c d)
+    4
+\end{Verbatim}
+
+The binding patterns can be used to implement a \verb|eq| function, which tests for equality of two atoms.
+
+\begin{Verbatim}
+    --> defun eq (x y) (match (tie x y) (('x 'x) 1) (('x 'y) 0))
+    (λ x y . (match (tie x y) (('x 'x) 1) (('x 'y) 0)))
+    --> eq 1 1
+    1
+    --> eq 1 2
+    0
+\end{Verbatim}
+
 \section{Sorting and permutations}
 
 A random permutation of a list of size $n$ can be generated using \verb|range| and \verb|shuffle|. The permutation can now be applied to a list of arbitrary elements as follows:
@@ -1268,8 +1300,6 @@ The result is only one of the two correct solutions:
     --> dom3 domains
     (1 2 4 3)
 \end{Verbatim}
-
-\section{Pattern matching}
 
 \section{Using glyphs}
 

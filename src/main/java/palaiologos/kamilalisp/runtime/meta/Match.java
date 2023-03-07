@@ -25,8 +25,12 @@ public class Match extends PrimitiveFunction implements SpecialForm {
         // Check if pat is a quoted variable.
         if (isIdInPattern(pat)) {
             String id = getIdFromPattern(pat);
-            env.set(id, a);
-            return true;
+            if(env.hasLocal(id)) {
+                return env.get(id).equals(a);
+            } else {
+                env.set(id, a);
+                return true;
+            }
         }
 
         // Check if pat is a list.
@@ -106,7 +110,7 @@ public class Match extends PrimitiveFunction implements SpecialForm {
                 throw new TypeError("Clause must be a list.");
             }
             List<Atom> clauseList = clause.getList();
-            Atom pattern = null, condition = null, result = null;
+            Atom pattern, condition = null, result;
 
             if (clauseList.size() == 2) {
                 pattern = clauseList.get(0);
