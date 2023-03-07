@@ -1105,7 +1105,7 @@ Pattern matching allows for a few elegant implementations of common functions. C
     4
 \end{Verbatim}
 
-The binding patterns can be used to implement a \verb|eq| function, which tests for equality of two atoms.
+The binding patterns can be used to implement an \verb|eq| function, which tests for equality of two atoms.
 
 \begin{Verbatim}
     --> defun eq (x y) (match (tie x y) (('x 'x) 1) (('x 'y) 0))
@@ -1303,5 +1303,34 @@ The result is only one of the two correct solutions:
 
 \section{Using glyphs}
 
-% \begin{Verbatim}
-% \end{Verbatim}
+KamilaLisp in spirit of APL provides glyphs (or glyph combinations) for common operations. Using the functions \verb|meta:to-glyphs| and \verb|meta:to-ascii|, it is possible to transform code that uses glyphs into code that uses exclusively ASCII characters. The following example demonstrates the use of the aforementioned functions:
+
+\begin{Verbatim}
+    --> meta:to-glyphs "defun dom3 x (let-seq
+          (def p \\grade-up \\:tally x)
+          (defun fix x (match x
+            (nil
+              'nil)
+            (('x '...xs)
+              (let-seq
+                (defun step x \\cons x (fix (:filter $(/= x) xs)))
+                (def ckpoint (lambda x (
+                  try-catch
+                    (step \\car x)
+                    (if (empty? \\cdr x) (raise error) (&0 \\cdr x)))))
+                (if (empty? \\cdr x) (step \\car x) (ckpoint x))))))
+          (fix x$[#0 p])$[grade-up p])"
+
+    ⍥← dom3 x (○⊢¨
+      (○← p \⍋ \:⍴ x)
+      (⍥← fix x (→ x
+        (⍬ '⍬)
+        (('x '...xs)
+          (○⊢¨
+            (⍥← step x \⍟ x (fix (:⍭ $(≠ x) xs)))
+            (○← ckpoint (λ x (‼
+              (step \⍎ x)
+              (↕ (⍠⍉? \⍕ x) (↑‼ error) (&0 \⍕ x)))))
+            (↕ (⍠⍉? \⍕ x) (step \⍎ x) (ckpoint x))))))
+      (fix x$[#0 p])$[⍋ p])
+\end{Verbatim}

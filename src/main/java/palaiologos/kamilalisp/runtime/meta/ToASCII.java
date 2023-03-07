@@ -24,6 +24,10 @@ public class ToASCII extends PrimitiveFunction implements Lambda {
         for (Token token : tokens) {
             if (Environment.aliases.inverse().containsKey(token.getText()))
                 sb.append(Environment.aliases.inverse().get(token.getText()));
+            else if(token.getText().equals("⍬"))
+                sb.append("nil");
+            else if(token.getText().equals("∘"))
+                sb.append("@");
             else
                 sb.append(token.getText());
         }

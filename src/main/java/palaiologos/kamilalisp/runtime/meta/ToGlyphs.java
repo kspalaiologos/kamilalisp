@@ -24,6 +24,10 @@ public class ToGlyphs extends PrimitiveFunction implements Lambda {
         for (Token token : tokens) {
             if (Environment.aliases.containsKey(token.getText()))
                 sb.append(Environment.aliases.get(token.getText()));
+            else if(token.getText().equals("nil"))
+                sb.append("⍬");
+            else if(token.getText().equals("@"))
+                sb.append("∘");
             else
                 sb.append(token.getText());
         }
