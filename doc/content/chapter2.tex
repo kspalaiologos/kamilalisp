@@ -1116,6 +1116,17 @@ The binding patterns can be used to implement an \verb|eq| function, which tests
     0
 \end{Verbatim}
 
+The match statement also allows for the use of \textit{case guards}, as demonstrated below on the example of a function that checks whether a three-element list is sorted:
+
+\begin{Verbatim}
+    --> defun sorted (l) (match l (('x 'y 'z) (and (<= x y) (<= y z)) 1) ('_ 0))
+    (λ l . (match l (('x 'y 'z) (and (<= x y) (<= y z)) 1) ('_ 0)))
+    --> sorted '(6 5 4)
+    0
+    --> sorted '(1 2 3)
+    1
+\end{Verbatim}
+
 \section{Sorting and permutations}
 
 A random permutation of a list of size $n$ can be generated using \verb|range| and \verb|shuffle|. The permutation can now be applied to a list of arbitrary elements as follows:
@@ -1163,7 +1174,7 @@ Consider a list of $n$ sets of natural numbers smaller than $n$, where the $i$-t
      (1 2)]
 \end{Verbatim}
 
-The data makes it apparent that the domain of $f_0$ is $\{0,1,2\}$, the domain of $f_1$ is $\{1\}$ and the domain of $f_2$ is $\{1,2\}$. The problem is to assign a unique natural number smaller than $n$ to each of the functions, so that it is contained in the function's domain. In this example, the number $0$ is assigned to $f_0$, $1$ is assigned to $f_1$ and $2$ is assigned to $f_2$. This problem is reminescent of one-dimensional wave function collapse\footnote{Two-dimensional wave function collapse can be used \textit{inter alia} for texture generation and sudoku solving}.
+The data makes it apparent that the domain of $f_0$ is $\{0,1,2\}$, the domain of $f_1$ is $\{1\}$ and the domain of $f_2$ is $\{1,2\}$. The problem is to assign a unique natural number smaller than $n$ to each of the functions, so that it is contained in the function's domain. In this example, the number $0$ is assigned to $f_0$, $1$ is assigned to $f_1$ and $2$ is assigned to $f_2$. This problem is reminiscent of one-dimensional wave function collapse\footnote{Two-dimensional wave function collapse can be used \textit{inter alia} for texture generation and sudoku solving}.
 
 The standard procedure in approaching wave function collapse problems is to start with picking the \textit{least entropic} function, i.e. the function with the smallest domain. Then, fix random of the possibilities and repeat the process until there is only one possibility left for each function. Of course, this approach may not always yield a valid solution. Three common ways to deal with this are backtracking, resetting the search space and starting from scratch or ignoring the existence of this problem altogether. The book will demonstrate implementations of these approaches, starting with the simplest one.
 
@@ -1301,6 +1312,28 @@ The result is only one of the two correct solutions:
     (1 2 4 3)
 \end{Verbatim}
 
+Going back to the topic of sorting, if knowing the permutation that sorts a list is not necessary, it is more efficient to use the functions \verb|sort-asc| and \verb|sort-desc|. The basic usage of these functions is demonstrated as follows:
+
+\begin{Verbatim}
+    --> sort-asc '(3 2 1)
+    (1 2 3)
+    --> sort-desc '(2 3 1)
+    (3 2 1)
+    --> sort-asc '("julia" "leah" "anna" "kamila" "lisa")
+    ["anna"
+     "julia"
+     "kamila"
+     "leah"
+     "lisa"]
+\end{Verbatim}
+
+Of course, the functions \verb|sort-asc| and \verb|sort-desc| can process lists with a given comparator function that provides a total order between atoms of desired type, hence as an example, it is possible to sort a numeric list according to the absolute value:
+
+\begin{Verbatim}
+    --> sort-asc [- abs@#0 abs@#1] '(3 -2 1 6J-4 3J4 -19)
+    (1 -2 3 3J4 6J-4 -19)
+\end{Verbatim}
+
 \section{Using glyphs}
 
 KamilaLisp in spirit of APL provides glyphs (or glyph combinations) for common operations. Using the functions \verb|meta:to-glyphs| and \verb|meta:to-ascii|, it is possible to transform code that uses glyphs into code that uses exclusively ASCII characters. The following example demonstrates the use of the aforementioned functions:
@@ -1309,15 +1342,14 @@ KamilaLisp in spirit of APL provides glyphs (or glyph combinations) for common o
     --> meta:to-glyphs "defun dom3 x (let-seq
           (def p \\grade-up \\:tally x)
           (defun fix x (match x
-            (nil
-              'nil)
+            (nil 'nil)
             (('x '...xs)
               (let-seq
                 (defun step x \\cons x (fix (:filter $(/= x) xs)))
-                (def ckpoint (lambda x (
+                (defun ckpoint x (
                   try-catch
                     (step \\car x)
-                    (if (empty? \\cdr x) (raise error) (&0 \\cdr x)))))
+                    (if (empty? \\cdr x) (raise error) (&0 \\cdr x))))
                 (if (empty? \\cdr x) (step \\car x) (ckpoint x))))))
           (fix x$[#0 p])$[grade-up p])"
 
@@ -1328,9 +1360,9 @@ KamilaLisp in spirit of APL provides glyphs (or glyph combinations) for common o
         (('x '...xs)
           (○⊢¨
             (⍥← step x \⍟ x (fix (:⍭ $(≠ x) xs)))
-            (○← ckpoint (λ x (‼
+            (⍥← ckpoint x (‼
               (step \⍎ x)
-              (↕ (⍠⍉? \⍕ x) (↑‼ error) (&0 \⍕ x)))))
+              (↕ (⍠⍉? \⍕ x) (↑‼ error) (&0 \⍕ x))))
             (↕ (⍠⍉? \⍕ x) (step \⍎ x) (ckpoint x))))))
       (fix x$[#0 p])$[⍋ p])
 \end{Verbatim}
