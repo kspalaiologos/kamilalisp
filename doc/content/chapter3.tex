@@ -351,9 +351,9 @@ Verify the truth tables:
 
 \begin{Verbatim}
     --> defun tabulate f (discard \
-    ... :(lambda x \io:writeln \str:format
+    ...   :(lambda x \io:writeln \str:format
     ...     "{b2n \\car x} f {b2n \\cadr x} = {b2n \\(f (car x)) (cadr x)}")
-    ... (tie (tie T T) (tie T F) (tie F T) (tie F F)))
+    ...   (tie (tie T T) (tie T F) (tie F T) (tie F F)))
     --> tabulate bor
     1 f 1 = 1
     1 f 0 = 1
