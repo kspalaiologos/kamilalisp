@@ -3,6 +3,121 @@
 
 This chapter describes more intricate details regarding more complex data structures, their representations in functional programs and their applications in the context of real-world problems.
 
+\section{Combinator calculi}
+
+Combinatory logic is a notation to eliminate the need for quantified variables in mathematical logic. It is based on \textit{combinators}, which were introduced by Schönfinkel with the idea of providing an analogous way to build up functions, and to remove any mention of variables. A combinator is a higher-order function that uses only function application and earlier defined combinators to define a result from its arguments. Implementation of various combinators in KamilaLisp is generally very straightfoward, due to the language's functional nature.
+
+There are many different combinator calculi, but the SKI basis is used the most commonly. It is based on three combinators, \verb|S|, \verb|K| and \verb|I|, which are defined as follows:
+
+\begin{itemize}
+    \item \verb|S| is the \textit{substitution combinator}, which takes three arguments and applies the first to the second and third, then applies the result to the third argument. It is defined as \verb|(λ x y z . x z (y z))|.
+    \item \verb|K| is the \textit{constant combinator}, which takes two arguments and returns the first one. It is defined as \verb|(λ x y . x)|.
+    \item \verb|I| is the \textit{identity combinator}, which takes one argument and returns it. It is defined as \verb|(λ x . x)|.
+\end{itemize}
+
+These combinators can be used to define any other combinator, because the SKI basis is complete. It is important to note that the SK basis on its own would also be complete, since the I combinator can be written in the SK basis as follows:
+
+\begin{Verbatim}
+    SKK = (λ x y z . x z (y z)) (λ x y . x) (λ x y . x)
+        = (λ x y x) (λ x x)
+        = (λ x . x)
+        = I
+\end{Verbatim}
+
+These definitions can be easily translated into KamilaLisp:
+
+\begin{Verbatim}
+    --> def S (λ x (λ y (λ z ((x z) (y z)))))
+    (λ x . (λ y (λ z ((x z) (y z)))))
+    --> def K (λ x (λ y x))
+    (λ x . (λ y x))
+    --> def I (λ x x)
+    (λ x . x)
+\end{Verbatim}
+
+This allows for the further verification of the hypothesis that \verb|SKK = I|:
+
+\begin{Verbatim}
+    --> ((S K) K) 'a
+    a
+\end{Verbatim}
+
+There are infinitely many combinators that can be expressed in the SK basis, a few of which are given below:
+
+\begin{itemize}
+    \item \verb|A| (apply) - \verb|SK(SK)| - \verb|λ a b . a b|, known as \verb|$| in Haskell.
+    \item \verb|B| (bluebird) - \verb|S(KS)K| - \verb|λ a b c . a (b c)|, known as \verb|.| in Haskell.
+    \item \verb|C| (cardinal) - \verb|S(BBS)(KK)| - \verb|λ a b c . a c b|, known as \verb|flip| in Haskell.
+    \item \verb|T| (thrush) - \verb|CI| - \verb|λ a b . b a|, known as \verb|(&)| in Haskell.
+\end{itemize}
+
+Two particularly interesting combinators are the $\omega$, $\Omega$ and Y combinators. The $\omega$ combinator is defined as \verb|λ x . x x|, primarily useful for duplicating a function, for example:
+
+\begin{Verbatim}
+    ω (λ x . x + 1) = (λ x . x x) (λ x . x + 1)
+                    = (λ x . x + 1) (λ x . x + 1)
+                    = (λ x . (x + 1) + 1)
+                    = λ x . x + 2
+\end{Verbatim}
+
+The $\Omega$ combinator is defined as \verb|ω ω = (λ x . x x) (λ x . x x)|. Consider an attempt at evaluating this expression:
+
+\begin{Verbatim}
+    Ω = ω ω = (λ x . x x) (λ x . x x) = (λ x . x x) (λ x . x x) = ...
+\end{Verbatim}
+
+It is clearly impossible to ascribe a value to this expression, since the attempts at $\beta$-reduction will be unsuccessful, which makes the $\Omega$ combinator a curious and instructive introduction to the concept of the \textit{fixed point combinator}.
+
+In combinatory logic for computer science, a fixed-point combinator is a higher-order function that returns some fixed point of its argument function, if one exists. Intuitively, $\text{fix} f = f (\text{fix} f)$. The implementation of the fixed-point combinator that is of particular interest is the Y combinator. It is defined as follows:
+
+\begin{Verbatim}
+    Y = λ f . (λ x . f (x x)) (λ x . f (x x))
+\end{Verbatim}
+
+The most interesting thing about the Y combinator can be used to formally define recursive functions in a notation that does not support recursion. Of course, \verb|Y Y| can not be ascribed a value per \verb|Y f = f (Y f)| and hence \verb|Y Y = Y (Y Y)|.
+
+Consider the following definition of the Y combinator in KamilaLisp:
+
+\begin{Verbatim}
+    --> defun Y f ((λ x \x x) (λ x \f \λ y \(x x) y))
+    (λ f . ((λ x (x x)) (λ x (f (λ y ((x x) y))))))
+\end{Verbatim}
+
+This definition can be used to define a canonical example of a recursive function, the Ackermann function - earliest-discovered examples of a total computable function that is not primitive recursive:
+
+$$
+\begin{array}{lcl}
+    \operatorname {A} (0,n)&=&n+1\\
+    \operatorname {A} (m+1,0)&=&\operatorname {A} (m,1)\\
+    \operatorname {A} (m+1,n+1)&=&\operatorname {A} (m,\operatorname {A} (m+1,n))
+\end{array}
+$$
+
+The definition of the Ackermann function using the Y combinator in KamilaLisp is given by:
+
+\begin{Verbatim}
+    --> def A \Y (lambda f (lambda a
+    ...   (if (= (car a) 0) (+ (cadr a) 1)
+    ...     (if (= (cadr a) 0) (f \tie (- (car a) 1) 1)
+    ...       (f \tie (- (car a) 1) (f \tie (car a) (- (cadr a) 1)))))))
+\end{Verbatim}
+
+The invocation requires putting the arguments in a list and passing it to the function:
+
+\begin{Verbatim}
+    --> A '(3 3)
+    61
+\end{Verbatim}
+
+A simpler example would be the factorial function:
+
+\begin{Verbatim}
+    --> def fact \Y (lambda f (lambda x
+    ...   (if (= x 0) 1 (* x \f (- x 1)))))
+    --> fact 10
+    3628800
+\end{Verbatim}
+
 \section{Church and Scott-Morgensen encodings}
 
 In mathematics, Church encoding is a means of representing data and operators in the lambda calculus. The Church numerals are the representations of natural numbers under Church encoding. They can be easily defined in terms of iterated function composition:
@@ -76,13 +191,46 @@ Addition of Church numerals can be easily defined in terms of their composition 
     11
 \end{Verbatim}
 
-Multiplication of Chruch numbers follows the same rule, $f^{m\times n}\ x = f^m (f^n x)$. It is important to notice what role the function composition aspect of Church numerals plays in this definition: the function \verb|f| is applied to the result of the composition of \verb|n| copies of \verb|f|, which is then applied to \verb|x|.
+Multiplication of Chruch numbers follows the same rule, $f^{m\times n}\ x = f^m (f^n x)$. It is important to notice what role the function composition aspect of Church numerals plays in this definition: the function \verb|f| is applied to the result of the composition of \verb|n| copies of \verb|f|, which is then applied to \verb|x|. Notice how currying is used to avoid the need for explicit application of \verb|x|:
 
 \begin{Verbatim}
     --> defun mul (m n) (λ f (m (n f)))
     (λ m n . (λ f (m (n f))))
     --> nat \mul (church 5) (church 6)
     30
+\end{Verbatim}
+
+Exponentiation follows the same rule and can be very succinctly defined as follows due to currying:
+
+\begin{Verbatim}
+    --> defun cexp (m n) (n m)
+    (λ m n . (n m))
+    --> nat \cexp (church 5) (church 3)
+    125
+\end{Verbatim}
+
+Subtraction is considerably more difficult to define. The natural numbers form a commutative monoid $(\mathbb{N}, +, 0)$. A binary relation $~$ on this monoid is defined as $m~n$ if and only if $m = n + k$ for some $k \in \mathbb{N}$. $~$ is obviously reflexive and transitive, while $\mathbb{N}$ is also naturally ordered since $~$ is also antisymmetric, making it a partial order. Furthermore, for all pair of elements $a \in \mathbb{N}$ and $b \in \mathbb{N}$ there exists a unique smallest element $k$ such that $a ~ b + k$, hence $\mathbb{N}$ is a commutative monoid with monus, $a \dot - b$ of any two elements $a$ and $b$, which can be defined as this unique smallest element $k$ such that $a ~ b + k$. In $\mathbb{N}$ the monus operator is a saturating variant of standard subtraction between two integers such that $a \dot - b = \max(a - b, 0)$. 
+
+To implement saturating subtraction, a predecessor function needs to be defined such that $\text{pred}(0) = 0$ and $\text{pred}(n + 1) = n$ for all $n \in \mathbb{N}$, hence the predecessor function must return a function that applies its parameter $n - 1$ times. This is achieved by building a container around $f$ and $x$, which is initialized in a way that omits the application of the function the first time:
+
+\begin{Verbatim}
+    --> defun pred n (λ f (λ x (((n (λ g (λ h (h (g f))))) (λ u x)) (λ u u))))
+    (λ n . (λ f (λ x (((n (λ g (λ h (h (g f))))) (λ u x)) (λ u u)))))
+    --> nat (pred (church 5))
+    4
+\end{Verbatim}
+
+This definition of \verb|pred| can be simplified using the K and I combinators, however, it is required to define a new combinator \verb|F = λ a b c . c (b a)|, which can be written written in terms of B and T as \verb|B(B T)T|.
+
+\begin{Verbatim}
+    --> def F (λ a (λ b (λ c (c \b a))))
+    (λ a b c . (c (b a)))
+    --> defun pred x (λ f (λ a (((x (F f)) (K a)) I)))
+    (λ x . (λ f (λ a (((x (F f)) (K a)) I))))
+    --> nat (pred (church 5))
+    4
+    --> nat (pred (church 0))
+    0
 \end{Verbatim}
 
 \section{Elias \texorpdfstring{$\gamma$}{gamma} coding}
