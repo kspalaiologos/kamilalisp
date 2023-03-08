@@ -52,7 +52,7 @@ There are infinitely many combinators that can be expressed in the SK basis, a f
     \item \verb|R| (robin) - \verb|BBT| - \verb|λ a b c . b c a|.
 \end{itemize}
 
-Two particularly interesting combinators are the $\omega$, $\Omega$ and Y combinators. The $\omega$ combinator is defined as \verb|λ x . x x|, primarily useful for duplicating a function, for example:
+Three particularly interesting combinators are the $\omega$, $\Omega$ and Y combinators. The $\omega$ combinator is defined as \verb|λ x . x x|, primarily useful for duplicating a function, for example:
 
 \begin{Verbatim}
     ω (λ x . x + 1) = (λ x . x x) (λ x . x + 1)
@@ -366,7 +366,7 @@ Verify the truth tables:
     0 f 0 = 0
 \end{Verbatim}
 
-Of course, the \verb|band| and \verb|bor| can also be written in the SKI basis. It is apparent that \verb|band = R(KI)| and \verb|bor = TK|. Per the definitions of these combinators:
+Of course, the \verb|band| and \verb|bor| functions can also be written in the SKI basis. It is apparent that \verb|band = R(KI)| and \verb|bor = TK|. Per the definitions of these combinators:
 
 \begin{Verbatim}
     band = R(KI)
