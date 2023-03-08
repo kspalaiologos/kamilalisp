@@ -118,9 +118,53 @@ A simpler example would be the factorial function:
     3628800
 \end{Verbatim}
 
+An evaluator for SKI calculus can be written by merging together a few independent parts. Starting with a function that performs a single evaluation step on a properly parenthesised SKI expression:
+
+\begin{Verbatim}
+  (defun SKI-step x
+    (match x
+      (((S K) 'x) 'I)
+      (((S (K (S K))) K) '(S K))
+      (((S (K (S (S K)))) K) 'K)
+
+      ((((S 'x) 'y) 'z) (tie (tie x z) (tie y z)))
+      (((K 'x) 'y) x)
+      ((I 'x) x)
+      (('x 'y) (tie (SKI-step x) (SKI-step y)))
+      ('x x)))
+\end{Verbatim}
+
+The evaluation function minds various special cases including \verb|SKx=I| and \verb|S(K(SK))K=SK|, as they are impossible to derive using standard term-rewriting combinator calculi $\beta$-reduction (rudimentary $\eta$-expansion would be required\footnote{Barendregt's "The Lambda Calculus" provides an extension to the CL theory with a list of 5 $A_\beta$ axioms. Corollary 7.3.15 states that CL + $A_\beta$ is equivalent to $\lambda$, hence, in principle one can use only these laws to prove the special cases, however, implementing this is beyond the scope of this book.}). The next step is to define a function that properly parenthesises a SKI expression:
+
+\begin{Verbatim}
+  (defun SKI-lp x
+    (match (reverse x)
+      (('a) (SKI-lp a))
+      (('a '...as) (tie (SKI-lp (reverse as)) (SKI-lp a)))
+      ('a a)))
+\end{Verbatim}
+
+The final step is to combine these functions and converge the step function:
+
+\begin{Verbatim}
+  (defun SKI x (converge SKI-step (SKI-lp x)))
+\end{Verbatim}
+
+Validity of the code can be rudimentarily verified by evaluating an expression with known result:
+
+\begin{Verbatim}
+    --> SKI '(S I I K)
+    (K K)
+    --> ; SIIK=((SI)I)K=(IK)(IK)=KK
+\end{Verbatim}
+
 \section{Church and Scott-Morgensen encodings}
 
-In mathematics, Church encoding is a means of representing data and operators in the lambda calculus. The Church numerals are the representations of natural numbers under Church encoding. They can be easily defined in terms of iterated function composition:
+In mathematics, Church encoding is a means of representing data and operators in the lambda calculus.
+
+\subsection{Natural numbers}
+
+The Church numerals are the representations of natural numbers under Church encoding. They can be easily defined in terms of iterated function composition:
 
 $$
 \begin{array}{r|l}
@@ -242,6 +286,55 @@ It is sufficient to apply the \verb|pred| function to a Church numeral $m$, $n$ 
     2
     --> nat (sub (church 3) (church 5))
     0
+\end{Verbatim}
+
+\subsection{Boolean domain}
+
+Boolean numbers can also be encoded using Church encoding. It is perhaps not very surprising, since $\mathbb{B} = \{0, 1\}$, arguing for the following definitions of \verb|true| and \verb|false|:
+
+\begin{Verbatim}
+    --> defun bt f (λ x (f x))
+    (λ f . (λ x (f x)))
+    --> defun bf f (λ x x)
+    (λ f . (λ x x))
+\end{Verbatim}
+
+However, it is more convenient to define them as combinators, so that \verb|T t f = t| and \verb|F t f = f|, which can be done as follows:
+
+\begin{Verbatim}
+    --> def T (λ t (λ f t))
+    (λ t f . t)
+    --> def F (λ t (λ f f))
+    (λ t f . f)
+\end{Verbatim}
+
+This definition allows predicates (functions returning logical values) to directly act as \verb|if|-clauses. A function returning a Boolean, which is then applied to two parameters, returns either the first or the second parameter. Consequently, functions that convert between Church-encoded Booleans and standard natural numbers are given as follows:
+
+\begin{Verbatim}
+    --> defun b2n b ((b 1) 0)
+    (λ b . ((b 1) 0))
+    --> defun n2b n (if n T F)
+    (λ n . (if n T F))
+\end{Verbatim}
+
+It is important to point out that \verb|true| and \verb|false| are defined canonically using the SK basis as \verb|T = K| and \verb|F = SK|. This definition allows for a particularly elegant definition of negation, as the \verb|t| and \verb|f| arguments are simply swapped:
+
+\begin{Verbatim}
+    --> defun bnot b (b F T)
+    (λ b . (b F T))
+    --> b2n \bnot T
+    0
+    --> b2n \bnot F
+    1
+\end{Verbatim}
+
+To define negation in terms of the SKI basis it is sufficient to use the \verb|C| combinator, which is defined as \verb|C = λ a b c . a c b|, and written as \verb|S(BBS)(KK)|, which in turn is $\beta$-reduces using the definition of \verb|B| to \verb|S(S(K(S(KS)K))S)(KK)|. The validity of this reasoning is applied when applying this expression to \verb|K| and \verb|SK|:
+
+\begin{Verbatim}
+    --> SKI '(S(S(K(S(K S)K))S)(K K) (S K))
+    K
+    --> SKI '(S(S(K(S(K S)K))S)(K K) K)
+    (S K)
 \end{Verbatim}
 
 \section{Elias \texorpdfstring{$\gamma$}{gamma} coding}
