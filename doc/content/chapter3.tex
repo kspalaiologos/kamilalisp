@@ -209,7 +209,7 @@ Exponentiation follows the same rule and can be very succinctly defined as follo
     125
 \end{Verbatim}
 
-Subtraction is considerably more difficult to define. The natural numbers form a commutative monoid $(\mathbb{N}, +, 0)$. A binary relation $\sim$ on this monoid is defined as $m\sim n$ if and only if $m = n + k$ for some $k \in \mathbb{N}$. $\sim$ is obviously reflexive and transitive, while $\mathbb{N}$ is also naturally ordered since $\sim$ is also antisymmetric, making it a partial order. Furthermore, for all pair of elements $a \in \mathbb{N}$ and $b \in \mathbb{N}$ there exists a unique smallest element $k$ such that $a \sim b + k$, hence $\mathbb{N}$ is a commutative monoid with monus, $a\ \dot -\ b$ of any two elements $a$ and $b$, which can be defined as this unique smallest element $k$ such that $a \sim b + k$. In $\mathbb{N}$ the monus operator is a saturating variant of standard subtraction between two integers such that $a\ \dot -\ b = \max(a - b, 0)$. 
+Subtraction is considerably more difficult to define. The natural numbers form a commutative monoid $(\mathbb{N}, +, 0)$. A binary relation $\sim$ on this monoid is defined as $m\sim n$ if and only if $m = n + k$ for some $k \in \mathbb{N}$. $\sim$ is obviously reflexive and transitive, while $\mathbb{N}$ is also naturally ordered since $\sim$ is also antisymmetric, making it a partial order. Furthermore, for all pairs of elements $a \in \mathbb{N}$ and $b \in \mathbb{N}$ there exists a unique smallest element $k$ such that $a \sim b + k$, hence $\mathbb{N}$ is a commutative monoid with monus, $a\ \dot -\ b$ of any two elements $a$ and $b$, which can be defined as this unique smallest element $k$ such that $a \sim b + k$. In $\mathbb{N}$ the monus operator is a saturating variant of standard subtraction between two integers such that $a\ \dot -\ b = \max(a - b, 0)$. 
 
 To implement saturating subtraction, a predecessor function needs to be defined such that $\text{pred}(0) = 0$ and $\text{pred}(n + 1) = n$ for all $n \in \mathbb{N}$, hence the predecessor function must return a function that applies its parameter $n - 1$ times. This is achieved by building a container around $f$ and $x$, which is initialized in a way that omits the application of the function the first time:
 
@@ -220,7 +220,7 @@ To implement saturating subtraction, a predecessor function needs to be defined 
     4
 \end{Verbatim}
 
-This definition of \verb|pred| can be simplified using the K and I combinators, however, it is required to define a new combinator \verb|F = λ a b c . c (b a)|, which can be written written in terms of B and T as \verb|B(B T)T|.
+This definition of \verb|pred| can be simplified using the K and I combinators, however it is required to define a new combinator \verb|F = λ a b c . c (b a)|, which can be written written in terms of B and T as \verb|B(B T)T|.
 
 \begin{Verbatim}
     --> def F (λ a (λ b (λ c (c \b a))))
@@ -230,6 +230,17 @@ This definition of \verb|pred| can be simplified using the K and I combinators, 
     --> nat (pred (church 5))
     4
     --> nat (pred (church 0))
+    0
+\end{Verbatim}
+
+It is sufficient to apply the \verb|pred| function to a Church numeral $m$, $n$ times to obtain the Church numeral $m - n$. Once again, this can be done by using currying and the fact that a Church numeral is essentially iterated application of a function:
+
+\begin{Verbatim}
+    --> defun sub (m n) ((n pred) m)
+    (λ m n . ((n pred) m))
+    --> nat (sub (church 5) (church 3))
+    2
+    --> nat (sub (church 3) (church 5))
     0
 \end{Verbatim}
 
