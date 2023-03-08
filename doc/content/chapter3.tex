@@ -5,9 +5,7 @@ This chapter describes more intricate details regarding more complex data struct
 
 \section{Church and Scott-Morgensen encodings}
 
-In mathematics, Church encoding is a means of representing data and operators in the lambda calculus.
-
-The Church numerals are the representations of natural numbers under Church encoding. They can be easily defined in terms of iterated function composition:
+In mathematics, Church encoding is a means of representing data and operators in the lambda calculus. The Church numerals are the representations of natural numbers under Church encoding. They can be easily defined in terms of iterated function composition:
 
 $$
 \begin{array}{r|l}
@@ -40,9 +38,7 @@ To verify the correctness of this definition and further experiments with Church
     3
 \end{Verbatim}
 
-This function utilises the fact that Church encoding is in fact identical to iterated function composition, hence the natural successor function \verb|$(+ 1)| can be applied to it with a starting value of \verb|0|.
-
-To obtain the Church numeral for any natural number, define the following \textit{successor} function:
+This function utilises the fact that Church encoding is in fact identical to iterated function composition, hence the natural successor function \verb|$(+ 1)| can be applied to it with a starting value of \verb|0|. To obtain the Church numeral for any natural number, define the following \textit{successor} function:
 
 \begin{Verbatim}
     --> defun succ x (λ f (λ a (f ((x f) a))))
@@ -65,7 +61,29 @@ Using these properties, it is possible to define a function that yields the Chur
     5
 \end{Verbatim}
 
-Before giving more examples of operations on Church numerals, it is important to point out that using the helper functions \verb|church| and \verb|nat| would completely defeat the purpose of Church encoding in the first place, hence they will be used only to verify concrete results, and not to define new functions.
+Before giving more examples of operations on Church numerals, it is important to point out that using the helper functions \verb|church| and \verb|nat| or built-in natural number arithmetic functions would completely defeat the purpose of Church encoding in the first place, hence they will be used only to verify concrete results, and not to define new functions.
+
+Addition of Church numerals can be easily defined in terms of their composition as $f^{m+n}\ x = f^m (f^n x) $, arguing for two definitions - one using the \verb|succ| function and the other using the identity verbatim:
+
+\begin{Verbatim}
+    --> defun add (x y) ((x succ) y)
+    (λ x y . ((x succ) y))
+    --> nat (add (church 3) (church 5))
+    8
+    --> defun add (m n) (λ f (λ x ((m f) ((n f) x))))
+    (λ m n . (λ f (λ x ((m f) ((n f) x)))))
+    --> nat (add (church 6) (church 5))
+    11
+\end{Verbatim}
+
+Multiplication of Chruch numbers follows the same rule, $f^{m\times n}\ x = f^m (f^n x)$. It is important to notice what role the function composition aspect of Church numerals plays in this definition: the function \verb|f| is applied to the result of the composition of \verb|n| copies of \verb|f|, which is then applied to \verb|x|.
+
+\begin{Verbatim}
+    --> defun mul (m n) (λ f (m (n f)))
+    (λ m n . (λ f (m (n f))))
+    --> nat \mul (church 5) (church 6)
+    30
+\end{Verbatim}
 
 \section{Elias \texorpdfstring{$\gamma$}{gamma} coding}
 
