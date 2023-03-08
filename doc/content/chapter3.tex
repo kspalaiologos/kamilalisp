@@ -1,7 +1,71 @@
 
 \chapter{Functional data structures}
 
-\section{Scott-Morgensen encoding}
+This chapter describes more intricate details regarding more complex data structures, their representations in functional programs and their applications in the context of real-world problems.
+
+\section{Church and Scott-Morgensen encodings}
+
+In mathematics, Church encoding is a means of representing data and operators in the lambda calculus.
+
+The Church numerals are the representations of natural numbers under Church encoding. They can be easily defined in terms of iterated function composition:
+
+$$
+\begin{array}{r|l}
+    {\text{Number}}&{\text{Function definition}}\\
+    \hline
+    0&0\ f\ x=x\\
+    1&1\ f\ x=f\ x\\
+    2&2\ f\ x=f\ (f\ x)\\
+    3&3\ f\ x=f\ (f\ (f\ x))\\
+    \vdots&\vdots \\
+    n&n\ f\ x=f^{n}\ x
+\end{array}
+$$
+
+This concept can be trivially translated into KamilaLisp. For example, the Church numerals for 0 and 3 are given by:
+
+\begin{Verbatim}
+    --> defun c0 f #0
+    (λ f . #0)
+    --> defun c3 f (λ x (f (f (f x))))
+    (λ f . (λ x (f (f (f x)))))
+\end{Verbatim}
+
+To verify the correctness of this definition and further experiments with Church numerals, the following function is defined to convert an arbitrary Church-encoded numeral into a natural number:
+
+\begin{Verbatim}
+    --> defun nat f ((f $(+ 1)) 0)
+    (λ f . ((f $(+ 1)) 0))
+    --> nat c3
+    3
+\end{Verbatim}
+
+This function utilises the fact that Church encoding is in fact identical to iterated function composition, hence the natural successor function \verb|$(+ 1)| can be applied to it with a starting value of \verb|0|.
+
+To obtain the Church numeral for any natural number, define the following \textit{successor} function:
+
+\begin{Verbatim}
+    --> defun succ x (λ f (λ a (f ((x f) a))))
+    (λ x . (λ f (λ a (f ((x f) a)))))
+\end{Verbatim}
+
+Using these, it is possible to verify that \verb|succ(succ(0)) = 2|:
+
+\begin{Verbatim}
+    --> nat (succ (succ c0))
+    2
+\end{Verbatim}
+
+Using these properties, it is possible to define a function that yields the Church-encoded numeral for any given natural number:
+
+\begin{Verbatim}
+    --> defun church n (if n (succ (&0 (- n 1))) c0)
+    (λ n . (if n (succ (&0/syn (- n 1))) c0))
+    --> nat (church 5)
+    5
+\end{Verbatim}
+
+Before giving more examples of operations on Church numerals, it is important to point out that using the helper functions \verb|church| and \verb|nat| would completely defeat the purpose of Church encoding in the first place, hence they will be used only to verify concrete results, and not to define new functions.
 
 \section{Elias \texorpdfstring{$\gamma$}{gamma} coding}
 

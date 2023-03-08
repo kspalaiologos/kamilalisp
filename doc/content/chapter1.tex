@@ -527,7 +527,7 @@ The $\mu$-recursive \textit{minimization} operator is less demanding to implemen
 
 \section{Iteration}
 
-Given a function $f$, the $n$-fold application of $f$ to $x$ is usually denoted in mathematics as $f^n(x)$. For instance, $f^0(x) = x$, $f^1(x) = f(x)$, and $f^2(x) = f(f(x))$. More generally, a recursive relation can be defined as $f^k(x) = f(f^k-1(x))$ for $k \ge 1$. Given \textit{an iteration} of a function $f^n(x)$, the function $f$ is called the \textit{step function}, $n$ is called the order of iteration and $x$ is called the \textit{starting value}. In KamilaLisp, iteration is introduced using the \verb|while| higher order function which, in the presently most useful form to the mathematical definition, takes three arguments - the starting value, the order of iteration and the step function.
+Given a function $f$, the $n$-fold application of $f$ to $x$ is usually denoted in mathematics as $f^n(x)$. For instance, $f^0(x) = x$, $f^1(x) = f(x)$, and $f^2(x) = f(f(x))$. More generally, a recursive relation can be defined as $f^k(x) = f(f^{k-1}(x))$ for $k \ge 1$. Given \textit{an iteration} of a function $f^n(x)$, the function $f$ is called the \textit{step function}, $n$ is called the order of iteration and $x$ is called the \textit{starting value}. In KamilaLisp, iteration is introduced using the \verb|while| higher order function which, in the presently most useful form to the mathematical definition, takes three arguments - the starting value, the order of iteration and the step function.
 
 Consider the successor function \verb|defun s x (+ x 1)|. To provide a basic example, addition of two numbers \verb|+ a b| can be implemented as an iteration of order $b$ of the successor function \verb|s| with the initial value $a$:
 
