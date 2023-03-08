@@ -49,6 +49,7 @@ There are infinitely many combinators that can be expressed in the SK basis, a f
     \item \verb|B| (bluebird) - \verb|S(KS)K| - \verb|λ a b c . a (b c)|, known as \verb|.| in Haskell.
     \item \verb|C| (cardinal) - \verb|S(BBS)(KK)| - \verb|λ a b c . a c b|, known as \verb|flip| in Haskell.
     \item \verb|T| (thrush) - \verb|CI| - \verb|λ a b . b a|, known as \verb|(&)| in Haskell.
+    \item \verb|R| (robin) - \verb|BBT| - \verb|λ a b c . b c a|.
 \end{itemize}
 
 Two particularly interesting combinators are the $\omega$, $\Omega$ and Y combinators. The $\omega$ combinator is defined as \verb|λ x . x x|, primarily useful for duplicating a function, for example:
@@ -134,7 +135,7 @@ An evaluator for SKI calculus can be written by merging together a few independe
       ('x x)))
 \end{Verbatim}
 
-The evaluation function minds various special cases including \verb|SKx=I| and \verb|S(K(SK))K=SK|, as they are impossible to derive using standard term-rewriting combinator calculi $\beta$-reduction (rudimentary $\eta$-expansion would be required\footnote{Barendregt's "The Lambda Calculus" provides an extension to the CL theory with a list of 5 $A_\beta$ axioms. Corollary 7.3.15 states that CL + $A_\beta$ is equivalent to $\lambda$, hence, in principle one can use only these laws to prove the special cases, however, implementing this is beyond the scope of this book.}). The next step is to define a function that properly parenthesises a SKI expression:
+The evaluation function minds various special cases including \verb|SKx=I| and \verb|S(K(SK))K=SK|, as they are impossible to derive using standard term-rewriting combinator calculi $\beta$-reduction (rudimentary $\eta$-expansion would be required\footnote{Barendregt's "The Lambda Calculus" provides an extension to the CL theory with a list of 5 $A_\beta$ axioms. Corollary 7.3.15 states that CL + $A_\beta$ is equivalent to $\lambda$, hence in principle one can use only these laws to prove the special cases, however implementing this is beyond the scope of this book.}). The next step is to define a function that properly parenthesises a SKI expression:
 
 \begin{Verbatim}
   (defun SKI-lp x
@@ -335,6 +336,48 @@ To define negation in terms of the SKI basis it is sufficient to use the \verb|C
     K
     --> SKI '(S(S(K(S(K S)K))S)(K K) K)
     (S K)
+\end{Verbatim}
+
+The next two operations to implement for Boolean values is logical AND and OR conjunctions:
+
+\begin{Verbatim}
+    --> defun bor x (λ y ((x T) y))
+    (λ x . (λ y ((x T) y)))
+    --> defun band x (λ y ((x y) F))
+    (λ x . (λ y ((x y) F)))
+\end{Verbatim}
+
+Verify the truth tables:
+
+\begin{Verbatim}
+    --> defun tabulate f (discard \
+    ... :(lambda x \io:writeln \str:format
+    ...     "{b2n \\car x} f {b2n \\cadr x} = {b2n \\(f (car x)) (cadr x)}")
+    ... (tie (tie T T) (tie T F) (tie F T) (tie F F)))
+    --> tabulate bor
+    1 f 1 = 1
+    1 f 0 = 1
+    0 f 1 = 1
+    0 f 0 = 0
+    --> tabulate band
+    1 f 1 = 1
+    1 f 0 = 0
+    0 f 1 = 0
+    0 f 0 = 0
+\end{Verbatim}
+
+Of course, the \verb|band| and \verb|bor| can also be written in the SKI basis. It is apparent that \verb|band = R(KI)| and \verb|bor = TK|. Per the definitions of these combinators:
+
+\begin{Verbatim}
+    band = R(KI)
+         = (BBT)(KI)
+         = (BB(CI))(KI)
+         = (BB(S(BBS)(KK)I))(KI)
+         = ((S(KS)K)(S(KS)K)(S((S(KS)K)(S(KS)K)S)(KK)I))(KI)
+    bor  = TK
+         = (CI)K
+         = (S(BBS)(KK)I)K
+         = (S((S(KS)K)(S(KS)K)S)(KK)I)K
 \end{Verbatim}
 
 \section{Elias \texorpdfstring{$\gamma$}{gamma} coding}
