@@ -75,9 +75,7 @@ In combinatory logic for computer science, a fixed-point combinator is a higher-
     Y = λ f . (λ x . f (x x)) (λ x . f (x x))
 \end{Verbatim}
 
-The most interesting thing about the Y combinator can be used to formally define recursive functions in a notation that does not support recursion. Of course, \verb|Y Y| can not be ascribed a value per \verb|Y f = f (Y f)| and hence \verb|Y Y = Y (Y Y)|.
-
-Consider the following definition of the Y combinator in KamilaLisp:
+The most interesting thing about the Y combinator is that it can be used to formally define recursive functions in a notation that does not support recursion. Of course, \verb|Y Y| can not be ascribed a value per \verb|Y f = f (Y f)| and hence \verb|Y Y = Y (Y Y)|. Consider the following definition of the Y combinator in KamilaLisp:
 
 \begin{Verbatim}
     --> defun Y f ((λ x \x x) (λ x \f \λ y \(x x) y))
@@ -161,7 +159,7 @@ Validity of the code can be rudimentarily verified by evaluating an expression w
 
 \section{Church and Scott-Morgensen encodings}
 
-In mathematics, Church encoding is a means of representing data and operators in the lambda calculus.
+In mathematics, Church encoding is a method of representing data and operators in the lambda calculus.
 
 \subsection{Natural numbers}
 
@@ -380,7 +378,7 @@ Of course, the \verb|band| and \verb|bor| functions can also be written in the S
          = (S((S(KS)K)(S(KS)K)S)(KK)I)K
 \end{Verbatim}
 
-\section{Natural number division and comparisons}
+\subsection{Natural number division and comparisons}
 
 Elementary comparisons between Church-encoded natural numbers are rather straightforward. The following definitions of \verb|leq?| and \verb|zero?| are given as follows:
 
@@ -434,6 +432,43 @@ Curiously, division by zero overflows the stack:
     --> (div c3) c0
     StackOverflowError thrown in thread 0X7ef82753:
         null
+\end{Verbatim}
+
+The definition of modulus can be easily conjectured using already implemented truncating division:
+
+$$
+n\text{ mod }m = n - (n/m) \cdot m
+$$
+
+Transcribing this definition into KamilaLisp:
+
+\begin{Verbatim}
+    --> defun cmod n (λ m (sub n (mul ((div n) m) m)))
+    (λ n . (λ m (sub n (mul ((div n) m) m))))
+    --> nat \(cmod c6) (succ c3)
+    2
+\end{Verbatim}
+
+\subsection{Pairs}
+
+Church pairs are the Church encoding of the pair type. The pair is represented as a function that takes a function argument. When given its argument it will apply the argument to the two components of the pair. The definition of Church pairs in KamilaLisp is as follows:
+
+\begin{Verbatim}
+    --> defun pair (x y) (λ f ((f x) y))
+    (λ x y . (λ f ((f x) y)))
+    --> def fst (λ p (p K))
+    (λ p . (p K))
+    --> def snd (λ p (p (K I)))
+    (λ p . (p (K I)))
+\end{Verbatim}
+
+It is easy to verify the correctness of this approach:
+
+\begin{Verbatim}
+    --> fst (pair 'a 'b)
+    a
+    --> snd (pair 'a 'b)
+    b
 \end{Verbatim}
 
 \section{Elias \texorpdfstring{$\gamma$}{gamma} coding}
