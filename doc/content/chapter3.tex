@@ -157,7 +157,7 @@ Validity of the code can be rudimentarily verified by evaluating an expression w
     --> ; SIIK=((SI)I)K=(IK)(IK)=KK
 \end{Verbatim}
 
-\section{Church and Scott-Morgensen encodings}
+\section{Church encoding}
 
 In mathematics, Church encoding is a method of representing data and operators in the lambda calculus.
 
@@ -471,6 +471,69 @@ It is easy to verify the correctness of this approach:
     a
     --> snd (pair 'a 'b)
     b
+\end{Verbatim}
+
+Pairs are canonically used in implementing signed Church numerals, where each signed Church numeral is a pair of two Church-encoded natural numbers, the first representing the positive part and the second representing the negative part. Consequently, rational numbers can be encoded as a pair of a signed Church numeral and a Church-encoded natural number, where the earlier represents the numerator, while latter represents the denominator. Using similar logic, it is also possible to encode computable real numbers, i.e. numbers that can be approximated by some computable function  $f\ :\ \mathbb{N} \to \mathbb{Z}$ such that given any $n \in \mathbb{N}$, the following holds:
+
+$$ \frac{f(n) - 1}{n} \le a < \frac{f(n) + 1}{n} $$
+
+Complex numbers are naturally encoded as a pair of real numbers.
+
+\subsection{Lists}
+
+Exploring the Church encoding for lists is particularly beneficial for encoding other, more complex data structures. In practice, a string can be encoded as a list of code points, a graph can be encoded as a list of edges, and a tree can be encoded as a list of nodes. This adheres to the Church-Turing thesis, a consequence of which is that any data type or calculation may be encoded in lambda calculus.
+
+There are many ways to encode lists using the Church encoding. The most straightforward of them is to use pairs to build up a linked list. It is obvious that \verb|cons| can be defined as \verb|pair|, \verb|car| is \verb|fst|, \verb|cdr| is \verb|snd| and \verb|nil| is \verb|F|. \verb|cempty?| is thus defined as follows:
+
+\begin{Verbatim}
+    --> defun cempty? l ((l (λ h \λ t \λ d F)) T)
+    (λ l . (l (λ _ F) T))
+    --> b2n \cempty? F
+    1
+    --> b2n \cempty? (pair 'a (pair 'b F))
+    0
+\end{Verbatim}
+
+Given these functions, it is possible to give recursive implementations of common list-related abstractions over recursion (\verb|map|, \verb|foldl|, \verb|foldr|, \verb|filter|, etc.).
+
+The canonical way to represent a list in Church encoding is to define it as a right-fold with the \verb|cons| and \verb|nil| arguments, so that for example \verb|'(1 2 3)| becomes \verb|λ c n . c 1 (c 2 (c 3 n))|. \verb|nil| is particularly easy to define, as it merely returns the \verb|n| component of the argument pair:
+
+\begin{Verbatim}
+    --> def cnil (λ (c n) n)
+    (λ c n . n)
+\end{Verbatim}
+
+\verb|ccons| is a function of an element \verb|x| and a list \verb|xs|, so that it yields \verb|λ c n . c x (xs c n)| - creating a new "cons cell" and setting its \verb|nil| value to the list:
+
+\begin{Verbatim}
+    --> defun ccons (x xs) (λ (c n) (c x (xs c n)))
+    (λ x xs . (λ (c n) (c x (xs c n))))
+\end{Verbatim}
+
+Because this Church-encoded list is essentially a right-fold, it is easy to write functions that convert from Church-encoded lists to regular lists and vice versa:
+
+\begin{Verbatim}
+    --> defun to-list (l) (l cons 'nil)
+    (λ l . (l cons 'nil))
+    --> defun from-list (l) (foldr ccons cnil l)
+    (λ l . (foldr ccons cnil l))
+    --> to-list \ccons 'a \from-list '(b c)
+    (a b c)
+\end{Verbatim}
+
+As demonstrated in Chapter 2, right-folds are extremely powerful and can be used to implement \verb|append|, \verb|map|, \verb|filter| and many other list processing devices. Implementations of \verb|append| and \verb|all| are presented below:
+
+\begin{Verbatim}
+    --> defun cappend (xs ys) (lambda (c n) (xs c (ys c n)))
+    (λ xs ys . (lambda (c n) (xs c (ys c n))))
+    --> to-list \cappend (from-list '(a b)) (from-list '(c d))
+    (a b c d)
+    --> defun call (xs p) (xs (lambda (x xs) (and (p x) xs)) true)
+    (λ xs p . (xs (lambda (x xs) (and (p x) xs)) true))
+    --> call (from-list '(1 2 3 4 5)) (lambda x (< x 5))
+    0
+    --> call (from-list '(1 2 3 4)) (lambda x (< x 5))
+    1
 \end{Verbatim}
 
 \section{Elias \texorpdfstring{$\gamma$}{gamma} coding}
