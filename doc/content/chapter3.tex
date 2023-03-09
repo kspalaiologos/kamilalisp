@@ -416,8 +416,10 @@ $$
 This mathematical definition can be easily written in KamilaLisp:
 
 \begin{Verbatim}
-    --> defun div n (λ m (((((geq? n) m) (λ _ \succ ((div (sub n m)) m))) (λ _ c0)) 'nil))
-    (λ n . (λ m (((((geq? n) m) (λ _ (succ ((div (sub n m)) m)))) (λ _ c0)) 'nil)))
+    --> defun div n (λ m (((
+    ...   ((geq? n) m)
+    ...     (λ _ \succ ((div (sub n m)) m)))
+    ...     (λ _ c0)) 'nil))
     --> nat \(div c6) c3
     2
     --> nat \(div c6) (succ (succ c0))
