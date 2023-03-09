@@ -536,9 +536,42 @@ As demonstrated in Chapter 2, right-folds are extremely powerful and can be used
     1
 \end{Verbatim}
 
-\section{Elias \texorpdfstring{$\gamma$}{gamma} coding}
-
 \section{Sets}
+
+Sets in KamilaLisp don't differ fundamentally from lists. KamilaLisp sets are \textit{ordered}, meaning that operations on them such as union, intersection, taking the unique values, etc... - are all performed in a deterministic manner. As a consequence, sets already inherit many useful list functions, such as \verb|map|, \verb|filter| and all sorts of folds. Functions specific to sets are demonstrated below:
+
+\begin{Verbatim}
+    --> union '(1 2 3 5 6) '(2 3 5 7)
+    (1 2 3 5 6 7)
+    --> intersection '(1 2 3 5 6) '(2 3 5 7)
+    (2 3 5)
+    --> unique '(1 2 3 5 6)
+    (1 2 3 5 6)
+    --> without '(1 2 3 5 6) '(5 6)
+    (1 2 3)
+    --> powerset '(1 2 3)
+    [nil
+     (1)
+     (2)
+     (1 2)
+     (1 3)
+     (2 3)
+     (1 2 3)
+     (3)]
+\end{Verbatim}
+
+Set insertion is admittedly not a built-in function, but it can be easily implemented using \verb|cons| and \verb|in?|:
+
+\begin{Verbatim}
+    --> defun set-insert (el set) (if (in? el set) set (cons el set))
+    (λ el set . (if (in? el set) set (cons el set)))
+    --> set-insert 5 '(1 2 3 4)
+    (5 1 2 3 4)
+    --> set-insert 5 '(1 2 3 4 5)
+    (1 2 3 4 5)
+\end{Verbatim}
+
+
 
 \section{Queues}
 
