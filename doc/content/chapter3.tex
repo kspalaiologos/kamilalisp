@@ -265,7 +265,7 @@ To implement saturating subtraction, a predecessor function needs to be defined 
     4
 \end{Verbatim}
 
-This definition of \verb|pred| can be simplified using the K and I combinators, however it is required to define a new combinator \verb|F = λ a b c . c (b a)|, which can be written written in terms of B and T as \verb|B(B T)T|.
+This definition of \verb|pred| can be simplified using the K and I combinators, however it is required to define a new combinator \verb|F = λ a b c . c (b a)|, which can be written written in terms of B and T as \verb|B(B T)T|:
 
 \begin{Verbatim}
     --> def F (λ a (λ b (λ c (c \b a))))
@@ -321,8 +321,8 @@ This definition allows predicates (functions returning logical values) to direct
 It is important to point out that \verb|true| and \verb|false| are defined canonically using the SK basis as \verb|T = K| and \verb|F = SK|. This definition allows for a particularly elegant definition of negation, as the \verb|t| and \verb|f| arguments are simply swapped:
 
 \begin{Verbatim}
-    --> defun bnot b (b F T)
-    (λ b . (b F T))
+    --> defun bnot b ((b F) T)
+    (λ b . ((b F) T))
     --> b2n \bnot T
     0
     --> b2n \bnot F
@@ -378,6 +378,62 @@ Of course, the \verb|band| and \verb|bor| functions can also be written in the S
          = (CI)K
          = (S(BBS)(KK)I)K
          = (S((S(KS)K)(S(KS)K)S)(KK)I)K
+\end{Verbatim}
+
+\section{Natural number division and comparisons}
+
+Elementary comparisons between Church-encoded natural numbers are rather straightforward. The following definitions of \verb|leq?| and \verb|zero?| are given as follows:
+
+\begin{Verbatim}
+    --> defun zero? n ((n (λ x F)) T)
+    (λ n . ((n (λ x F)) T))
+    --> defun leq? n (λ m (zero? (sub n m)))
+    (λ n . (λ m (zero? (sub n m))))
+\end{Verbatim}
+
+The definition of \verb|zero?| uses the fact that a Church number greater than zero will iterate the function \verb|(λ x F)| at least once, while a zero (an identity function) will simply yield \verb|T|. The second function that utilises the monus operator uses \verb|sub| and \verb|zero?| to determine whether the first number is less than or equal to the second number. Defining equality involves computing the absolute difference between two numbers, given as $|a - b| = (x{ \dot -}y) + (y{ \dot -}x)$:
+
+\begin{Verbatim}
+    --> defun eq? n (λ m (zero? (add (sub n m) (sub m n))))
+    (λ n . (λ m (zero? (add (sub n m) (sub m n)))))
+\end{Verbatim}
+
+Other kinds of inequalities can be defined using these functions as follows:
+
+\begin{Verbatim}
+    --> defun gt? n (λ m (bnot ((leq? n) m)))
+    (λ n . (λ m (bnot ((leq? n) m))))
+    --> defun lt? n (λ m ((gt? m) n))
+    (λ n . (λ m ((gt? m) n)))
+    --> defun geq? n (λ m (bnot ((lt? n) m)))
+    (λ n . (λ m (bnot ((lt? n) m))))
+\end{Verbatim}
+
+Defining the division of Church-encoded natural numbers is considerably more involved than multiplication or exponentiation. To define division in $\mathbb{N}$, consider the numbers $a,b\in\mathbb{N}$ such that $b\ne 0$. It is apparent that in ${\displaystyle \exists_1 q, r \in \mathbb{N}: a = q b + r, r < b}$ where $q$ is the quotient and $r$ is the remainder. The following definition of division is based on this observation:
+
+$$
+n/m=\operatorname {if} \ n\geq m\ \operatorname {then} \ 1+(n-m)/m\ \operatorname {else} \ 0
+$$
+
+This mathematical definition can be easily written in KamilaLisp:
+
+\begin{Verbatim}
+    --> defun div n (λ m (((((geq? n) m) (λ _ \succ ((div (sub n m)) m))) (λ _ c0)) 'nil))
+    (λ n . (λ m (((((geq? n) m) (λ _ (succ ((div (sub n m)) m)))) (λ _ c0)) 'nil)))
+    --> nat \(div c6) c3
+    2
+    --> nat \(div c6) (succ (succ c0))
+    3
+    --> nat \(div c6) (succ c0)
+    6
+\end{Verbatim}
+
+Curiously, division by zero overflows the stack:
+
+\begin{Verbatim}
+    --> (div c3) c0
+    StackOverflowError thrown in thread 0X7ef82753:
+        null
 \end{Verbatim}
 
 \section{Elias \texorpdfstring{$\gamma$}{gamma} coding}
