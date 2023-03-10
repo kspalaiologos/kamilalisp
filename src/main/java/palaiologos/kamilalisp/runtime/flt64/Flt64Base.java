@@ -20,6 +20,8 @@ public class Flt64Base {
     }
 
     public static Atom toAtom(double d) {
+        if(Double.isNaN(d))
+            throw new ArithmeticException("NaN");
         return new Atom(BigDecimal.valueOf(d));
     }
 
@@ -108,6 +110,8 @@ public class Flt64Base {
         env.setPrimitive("flt64:Shi", new Atom(Flt64TrigonometricIntegral.fShi));
         env.setPrimitive("flt64:Chi", new Atom(Flt64TrigonometricIntegral.fChi));
         env.setPrimitive("flt64:Ei", new Atom(Flt64Ei.fEi));
+        env.setPrimitive("flt64:lambert-w0", new Atom(Flt64Lambert.lambert0));
+        env.setPrimitive("flt64:lambert-w-1", new Atom(Flt64Lambert.lambertn1));
         env.setPrimitive("flt64:spence", new Atom(Flt64Spence.spence));
         env.setPrimitive("flt64:dilog", new Atom(Flt64Spence.dilog));
         env.setPrimitive("flt64:frexp", new Atom(Flt64Spence.frexp));
