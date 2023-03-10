@@ -79,6 +79,7 @@ public class FunctionRegistry {
         env.setPrimitive("scanl1", "⍀.←", new Atom(new Scanl1()));
         env.setPrimitive("scanr", "⍀→", new Atom(new Scanr()));
         env.setPrimitive("scanr1", "⍀.→", new Atom(new Scanr1()));
+        env.setPrimitive("bsearch", "⊃∊", new Atom(new Bsearch()));
         env.setPrimitive("replicate", "∥", new Atom(new Replicate()));
         env.setPrimitive("defun", "⍥←", new Atom(new Defun()));
         env.setPrimitive("outer-product", "⌼", new Atom(new OuterProduct()));
