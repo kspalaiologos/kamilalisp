@@ -571,9 +571,96 @@ Set insertion is admittedly not a built-in function, but it can be easily implem
     (1 2 3 4 5)
 \end{Verbatim}
 
-
-
 \section{Queues}
+
+Queues are implemented in KamilaLisp using lists. This section will focus primarily on LIFO queues, FIFO queues and priority queues. KamilaLisp generally encourages ad-hoc implementations of queues, since the elementary operations on LIFO and FIFO queues can be trivially implemented using list processing functions. For example, \verb|pop-front| could be implemented as \verb|[tie car cdr]|, \verb|push-back| is just \verb|append| while \verb|push-front| is \verb|cons|.
+
+The implementation of a priority queue is a bit more involved. While insertion into a priority queue could be implemented by simply appending the new element to the queue and sorting it according to the priorities, this would be a rather inefficient solution. Instead, the following implementation of priority queue insertion is suggested:
+
+\begin{Verbatim}
+    --> (defun insert-pq (q el)
+    ...   \insert q el
+    ...     \count (lambda x \< (car x) (car el)) q)
+\end{Verbatim}
+
+This function takes a priority queue \verb|q| and an element \verb|el| and inserts \verb|el| into \verb|q| at the correct position. The \verb|insert| function is a generic function that takes a list, an element and a position and inserts the element at the given position. The \verb|count| function in this scenario counts elements with priority smaller than the priority of \verb|el|.
+
+One algorithm that particularly benefits from priority queues is \textit{Huffman coding}. Huffman coding is a lossless compression algorithm that uses a variable-length code to represent the most common symbols in a file. The algorithm is based on the observation that symbols that occur more frequently in a file can be represented with fewer bits than symbols that occur less frequently. The algorithm works by building a binary tree, where the leaves are the symbols in the file and the internal nodes are the sums of the frequencies of the symbols in the leaves below them. To implement Huffman coding, start by computing the frequencies of each symbol in a buffer \verb|buf| and sorting the symbols by the frequencies in descending order:
+
+\begin{Verbatim}
+    --> def freq-tab \:[tie tally@cadr car] \group buf
+    --> def freq-sorted freq-tab$[grade-up \car%[1] freq-tab]
+\end{Verbatim}
+
+The next step is to define a function that performs a single iteration of the tree building algorithm. The two least common symbols are combined into a single symbol, which is then inserted into the list of symbols in the correct position with combined frequencies:
+
+\begin{Verbatim}
+    --> (defun huffman-step pq
+    ...   \if (= 1 \tally pq) pq
+    ...     \insert-pq (cddr pq)
+    ...       \tie (+ (caar pq) (car@cadr pq))
+    ...         (tie (cadr@car pq) (cadr@cadr pq)))
+\end{Verbatim}
+
+The Huffman tree can be finally built by converging the step function:
+
+\begin{Verbatim}
+    --> def huffman-tree \car@cdar \converge huffman-step freq-sorted
+\end{Verbatim}
+
+To encode symbols in the buffer using the huffman tree, it needs first be labelled with the bit sequences that represent the symbols. This is accomplished in the following way:
+
+\begin{Verbatim}
+    --> (defun tag (t code) (
+    ...   if (= 0 \tally t)
+    ...     (tie t (reverse code))
+    ...     (append (tag (car t) (cons 0 code))
+    ...             (tag (cadr t) (cons 1 code)))))
+    --> (def huffman-tab \bipartition rank \tag huffman-tree 'nil)
+\end{Verbatim}
+
+Given the huffman table, it is now possible to encode the buffer. Because Huffman codes are variable-length, it is important that the encoded buffer is padded with zeros to the nearest multiple of 8 to form a full byte. This is accomplished by the following function:
+
+\begin{Verbatim}
+    --> (def encoding-ids
+          \flatten (car huffman-tab)$[index-of%[0 1] buf (cdr huffman-tab)])
+    --> def padded \take (bit:and (+ (tally encoding-ids) 7) -8) encoding-ids
+\end{Verbatim}
+
+Finally, instead of encoding all the auxiliary data into a buffer or file, for simplicity return the huffman table, encoded bits and the bit length verbatim:
+
+\begin{Verbatim}
+    --> (tie (tally encoding-ids) huffman-tab
+          \:$(- _ 128)@:$(decode 2)
+            \partition (cycle (tally padded) (take 8 '(1))) padded)
+\end{Verbatim}
+
+To reverse the encoding process, assume that \verb|buf| is now defined as the result above. First, the bit stream, bit length and huffman table are extracted from the buffer:
+
+\begin{Verbatim}
+    --> def bit-len (car buf)
+    --> def huffman-table (cadr buf)
+    --> (def bit-stream (take bit-len
+    ...   \flatten@:(lambda x \reverse@take 8 \reverse@encode 2 (+ 128 x))
+    ...     \car@cddr buf))
+\end{Verbatim}
+
+The step function that performs a single iteration of the decoding algorithm is defined as follows:
+
+\begin{Verbatim}
+    --> (defun unhuffman-step (stream dec) (let-seq
+    ...   (def match-idx \car@where@:starts-with (tie stream) (car huffman-table))
+    ...   (def match-len \tally (car huffman-table)$[#0 match-idx])
+    ...   (def new-dec (append dec \tie (cadr huffman-table)$[#0 match-idx]))
+    ...   (def new-stream (drop match-len stream))
+    ...   (if (= 0 \tally new-stream) new-dec \&0 new-stream new-dec)))
+\end{Verbatim}
+
+First, the function finds the Huffman table entry index which is the prefix of the bit stream (\verb|match-idx|). Then the length of the prefix is computed. The decoded symbol is then appended to the decoded buffer and the prefix is dropped from the bit stream. The function is then recursively applied to the remaining bit stream and the new decoded buffer. Finally, the function is applied as follows:
+
+\begin{Verbatim}
+    --> unhuffman-step bit-stream 'nil
+\end{Verbatim}
 
 \section{Hashmaps}
 
