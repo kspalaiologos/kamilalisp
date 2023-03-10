@@ -10,7 +10,7 @@ public class JLineParser extends DefaultParser {
         // XXX: None of this would be needed if it weren't for the fact that
         // JLine processes escapes *everywhere*, not just in strings. Clap clap.
         super();
-        setEofOnUnclosedBracket(DefaultParser.Bracket.ROUND, DefaultParser.Bracket.SQUARE);
+        setEofOnUnclosedBracket(null);
         setEscapeChars(new char[]{});
         setQuoteChars(new char[]{});
         eofOnUnclosedQuote(true);

@@ -49,7 +49,7 @@ public class Dfn extends PrimitiveFunction implements SpecialForm {
         return new CodeAtom(new DfnClass(bindings, wantsVararg, code, env, f_line, f_col)).setCol(col).setLine(line);
     }
 
-    public class DfnClass implements Lambda {
+    public static class DfnClass implements Lambda {
         List<String> bindings;
         boolean wantsVararg;
         List<Atom> code;
