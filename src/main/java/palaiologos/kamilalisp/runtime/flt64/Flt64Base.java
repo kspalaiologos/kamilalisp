@@ -140,6 +140,7 @@ public class Flt64Base {
         env.setPrimitive("flt64:golomb-lambda", toAtom(0.62432998854355087099));
         env.setPrimitive("flt64:khinchin-K0", toAtom(2.68545200106530644530));
         env.setPrimitive("flt64:mills-A", toAtom(1.30637788386308069046));
+        env.setPrimitive("flt64:ln2", toAtom(0.6931471805599453094172321214));
     }
 
     abstract static class Flt64Function extends PrimitiveFunction implements Lambda {
