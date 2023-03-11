@@ -11,7 +11,7 @@ public class HashMapMinus extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if (args.size() != 2)
-            throw new RuntimeException("hashmap:minus expects 3 arguments.");
+            throw new RuntimeException("hashmap:minus expects 2 arguments.");
         if (!args.get(0).isUserdata(HashMapUserData.class))
             throw new RuntimeException("hashmap:minus expects a hashmap as an argument.");
         HashMapUserData data = args.get(0).getUserdata(HashMapUserData.class);

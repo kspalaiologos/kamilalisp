@@ -116,7 +116,7 @@ public class FunctionRegistry {
         env.setPrimitive("cycle", "⍉↩", new Atom(new Cycle()));
         env.setPrimitive("take", "↑", new Atom(new Take()));
         env.setPrimitive("drop", "↓", new Atom(new Drop()));
-        env.setPrimitive("in?", new Atom(new In()));
+        env.setPrimitive("in?", "⍠∊?", new Atom(new In()));
         env.setPrimitive("unique-mask", "⊙¨", new Atom(new UniqueMask()));
         env.setPrimitive("unique", "⊙", new Atom(new Unique()));
         env.setPrimitive("intersection", "⋂", new Atom(new Intersection()));
@@ -150,28 +150,28 @@ public class FunctionRegistry {
         env.setPrimitive("prime:next", "⋔↑", new Atom(new NextPrime()));
         env.setPrimitive("prime:nth", "⋔→", new Atom(new PrimeNo()));
 
-        env.setPrimitive("meta:env-keys", new Atom(new EnvKeys()));
-        env.setPrimitive("meta:to-glyphs", new Atom(new ToGlyphs()));
-        env.setPrimitive("meta:to-ascii", new Atom(new ToASCII()));
-        env.setPrimitive("meta:type-name", new Atom(new TypeName()));
-        env.setPrimitive("meta:atom", new Atom(new MetaAtom()));
+        env.setPrimitive("meta:env-keys", "⊚⍠", new Atom(new EnvKeys()));
+        env.setPrimitive("meta:to-glyphs", "⊚∊", new Atom(new ToGlyphs()));
+        env.setPrimitive("meta:to-ascii", "⊚∉", new Atom(new ToASCII()));
+        env.setPrimitive("meta:type-name", "⊚?", new Atom(new TypeName()));
+        env.setPrimitive("meta:atom", "→⊚", new Atom(new MetaAtom()));
 
         env.setPrimitive("str:format", "⍫∊", new Atom(new Format()));
-        env.setPrimitive("str:lines", new Atom(new Lines()));
+        env.setPrimitive("str:lines", "⍫↩", new Atom(new Lines()));
         env.setPrimitive("str:implode", "⍫∨", new Atom(new Implode()));
         env.setPrimitive("str:lexer", "⍫∦", new Atom(new Lexer()));
         env.setPrimitive("str:implode-on", "⍫∨¨", new Atom(new ImplodeOn()));
         env.setPrimitive("str:explode", "⍫∧", new Atom(new Explode()));
         env.setPrimitive("to-string", "⍫←", new Atom(new ToString()));
-        env.setPrimitive("str:escape", new Atom(new Escape()));
-        env.setPrimitive("str:unescape", new Atom(new Unescape()));
+        env.setPrimitive("str:escape", "⍫⑊", new Atom(new Escape()));
+        env.setPrimitive("str:unescape", "⍫∼⑊", new Atom(new Unescape()));
         env.setPrimitive("str:contains", "⍫⊂←", new Atom(new Contains()));
         env.setPrimitive("str:levenshtein", "⍫≉", new Atom(new Levenshtein()));
-        env.setPrimitive("str:wrap", new Atom(new Wrap()));
+        env.setPrimitive("str:wrap", "⍫⑊↩", new Atom(new Wrap()));
 
-        env.setPrimitive("parallel:task", new Atom(new Task()));
-        env.setPrimitive("parallel:daemon", new Atom(new Daemon()));
-        env.setPrimitive("parallel:actor", new Atom(new ActorCreate()));
+        env.setPrimitive("parallel:task", "∥⎕", new Atom(new Task()));
+        env.setPrimitive("parallel:daemon", "∥⍌", new Atom(new Daemon()));
+        env.setPrimitive("parallel:actor", "∥⍓", new Atom(new ActorCreate()));
         env.setPrimitive("parallel:map-idx", "⍠∵", new Atom(new ParallelMapIdx()));
         env.setPrimitive("parallel:filter", "⍭∵", new Atom(new ParallelFilter()));
 
@@ -260,9 +260,9 @@ public class FunctionRegistry {
         env.setPrimitive("num:I", "⎕I", new Atom(new I()));
         env.setPrimitive("num:invert", "⎕¯¹", new Atom(new Inv()));
 
-        env.setPrimitive("cas:matrix:trace", new Atom(new MatrixTrace()));
-        env.setPrimitive("cas:matrix:LU", new Atom(new MatrixLUDecomposition()));
-        env.setPrimitive("cas:matrix:det", new Atom(new MatrixDet()));
+        env.setPrimitive("cas:matrix:trace", "⎕ƒ∑", new Atom(new MatrixTrace()));
+        env.setPrimitive("cas:matrix:LU", "⎕ƒ↙↗", new Atom(new MatrixLUDecomposition()));
+        env.setPrimitive("cas:matrix:det", "⎕ƒ∆", new Atom(new MatrixDet()));
 
         env.setPrimitive("bit:and", "⌶∧", new Atom(new BitAnd()));
         env.setPrimitive("bit:or", "⌶∨", new Atom(new BitOr()));
@@ -448,5 +448,6 @@ public class FunctionRegistry {
         env.setPrimitive("hashmap:merge", "⍔⋃", new Atom(new HashMapMerge()));
         env.setPrimitive("hashmap:without", "⍔⍪", new Atom(new HashMapWithout()));
         env.setPrimitive("hashmap:group", "⍔⌸", new Atom(new HashMapGroup()));
+        env.setPrimitive("hashmap:process", "⍔∵", new Atom(new HashMapProcess()));
     }
 }
