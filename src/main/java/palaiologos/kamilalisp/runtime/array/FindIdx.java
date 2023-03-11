@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class FindIdx extends PrimitiveFunction implements Lambda {
     private static Atom indexOf(Atom a, Atom b) {
@@ -20,24 +21,13 @@ public class FindIdx extends PrimitiveFunction implements Lambda {
         } else if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
             List<Atom> l1 = a.getList();
             List<Atom> l2 = b.getList();
-            List<Atom> indices = new ArrayList<>();
-            int index = Collections.indexOfSubList(l1, l2);
-            while (index >= 0) {
-                indices.add(new Atom(BigInteger.valueOf(index)));
-                l1 = l1.subList(index + 1, l1.size());
-                index = Collections.indexOfSubList(l1, l2);
-            }
-            return new Atom(indices);
+            return new Atom(IntStream.range(0, l1.size() - l2.size() + 1)
+                    .filter(i -> l1.subList(i, i + l2.size()).equals(l2))
+                    .mapToObj(x -> new Atom(BigInteger.valueOf(x))).toList());
         } else if (a.getType() == Type.LIST) {
             List<Atom> l1 = a.getList();
-            List<Atom> indices = new ArrayList<>();
-            int index = l1.indexOf(b);
-            while (index >= 0) {
-                indices.add(new Atom(BigInteger.valueOf(index)));
-                l1 = l1.subList(index + 1, l1.size());
-                index = l1.indexOf(b);
-            }
-            return new Atom(indices);
+            return new Atom(IntStream.range(0, l1.size()).filter(i -> l1.get(i).equals(b))
+                    .mapToObj(x -> new Atom(BigInteger.valueOf(x))).toList());
         } else {
             throw new RuntimeException("find-idx takes two strings, two lists or a list and an atom.");
         }
