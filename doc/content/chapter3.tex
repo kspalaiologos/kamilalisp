@@ -784,6 +784,56 @@ Finally, maps can be turned into a list of keys or a list of values using \verb|
      "Aprikose"]
 \end{Verbatim}
 
-\section{Trees}
+The joint key-value pairs from a dictionary can be processed using \verb|hashmap:process|:
+
+\begin{Verbatim}
+    --> hashmap:process %{1 => 1, 2 => 4, 3 => 9, 4 => 16} :[tie car $(* 2)@cadr]
+    {1=2, 2=8, 3=18, 4=32}
+\end{Verbatim}
+
+\section{Relations}
+
+Formally speaking, a (binary) relation $\sim$ over a set $X$ can be seen as a set of ordered pairs $(x, y)$ of members of $X$. The relation $\sim$ holds between $x$ and $y$ if $(x, y)$ is a member of $\sim$. In KamilaLisp, such relation can also be seen as a function $\sim : X \times X \rightarrow \mathbb{B}$, where $\sim(x, y) = 1$ if $(x, y)$ is a member of $\sim$ and $\sim(x, y) = 0$ otherwise. Generally speaking, it is impossible to ascribe properties to relations defined as a function on an infinite set (e.g. $\mathbb{R}$, like the built-in relations \verb|/=| or \verb|<|) without symbolic manipulation. When studying the properties of relations (reflexivity, transitivity, etc...) it is therefore vital to define a relation as a finite set of ordered pairs. It is also allowed for a binary relation to associate the elements of one set (the \textit{domain}) with the elements of another set (the \textit{codomain}). If this is the case, a binary relation over sets $X$ and $Y$ is an element of the power set $X\times Y$. Since the latter set is ordered by inclusion, each relation has a place in the lattice of subsets of $X\times Y$. A binary relation is called a homogeneous relation when $X = Y$. A binary relation is also called a heterogeneous relation when it is not necessary that $X = Y$.
+
+Union of relations is defined like the union of sets: if $\sim$ and $\sim'$ are relations over $X$, then $\sim \cup \sim' = \{(x,y):x\sim y \vee x \sim' y\}$. For example, the union of the relations \verb|<| and \verb|>| is the relation \verb|/=|. Intersection of relations follows the same pattern.
+
+If $\sim$ is a relation over $X$ and $Y$ and $\sim'$ is a relation over $Y$ and $Z$, then the composition of these relations - denoted $\sim \circ \sim'$ - is the relation over $X$ and $Z$ defined by $\displaystyle \sim \circ \sim' = \{(x,z):\exists_{y \in Y} x \sim y \wedge y \sim' z\}$. Consider two relations:
+
+\begin{Verbatim}
+    --> def ~1 '((1 2) (2 3) (3 4) (4 5) (5 6))
+    --> def ~2 '((2 4) (3 6) (4 8) (5 10) (6 12))
+\end{Verbatim}
+
+The following function can be used to compute the composition of two relations:
+
+\begin{Verbatim}
+    --> defun r-compose (r1 r2) (
+    ...   let* (r2x \:car r2)
+    ...     \flatten \:(lambda x
+    ...       \let* ((a b) x)
+    ...         \:$(cons a)@:cadr r2$[find-idx r2x b]) r1)
+    --> r-compose ~1 ~2
+    [(1 4)
+     (2 6)
+     (3 8)
+     (4 10)
+     (5 12)]
+\end{Verbatim}
+
+Both of the relations do not need to be injective:
+
+\begin{Verbatim}
+    --> def ~1 '((1 1) (2 4) (3 9))
+    --> def ~2 '((1 1) (1 -1) (4 2) (4 -2) (9 3) (9 -3))
+    --> r-compose ~1 ~2
+    [(1 1)
+     (1 -1)
+     (2 2)
+     (2 -2)
+     (3 3)
+     (3 -3)]
+\end{Verbatim}
 
 \section{Graphs}
+
+\section{Trees}
