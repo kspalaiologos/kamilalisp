@@ -853,14 +853,14 @@ The transitive closure of a binary relation $\sim$ on a set $X$ is the smallest 
     ...   (○← xd (⍴ \⍎ m))
     ...   (○← yd (⍴ m))
     ...   (↕¨
-    ...     ((< xd yd) (:(λ x (⍠ x \↑ (- yd xd) '(0))) m))
-    ...     ((> xd yd) (⍠ m (⍉↩ (- xd yd) (⌿.⍧ \↑ xd '(0)))))
+    ...     ((< xd yd) \:(λ x \⍠ x \↑ (- yd xd) '(0)) m)
+    ...     ((> xd yd) \⍠ m \⍉↩ (- xd yd) \⌿.⍧ \↑ xd '(0))
     ...     ((= xd yd) m)))
     --> ; Compute the transitive closure.
     --> ⍥← transitive-closure x (○⊢¨
-    ...   (○← x (sqm (⍸¯¹ x)))
-    ...   (⍥← ∨○∧ m ($(⌿.← ∨)%[1] \⌼ ∧ m \⎕⍉ m))
-    ...   (⍸ (→≡ [∨ ∨○∧ #0] x)))
+    ...   (○← x \sqm \⍸¯¹ x)
+    ...   (⍥← ∨○∧ m \$(⌿.← ∨)%[1] \⌼ ∧ m \⎕⍉ m)
+    ...   (⍸ \→≡ [∨ ∨○∧ #0] x))
 \end{Verbatim}
 
 \section{Graphs}
