@@ -863,6 +863,8 @@ The transitive closure of a binary relation $\sim$ on a set $X$ is the smallest 
     ...   (⍸ \→≡ [∨ ∨○∧ #0] x))
 \end{Verbatim}
 
+Implementing the reflexive closure - the smallest relation on $X$ that contains $\sim$ and is reflexive - is considerably simpler and accomplished by \verb|:[tie #0 #0]@unique@flatten|.
+
 \section{Graphs}
 
 \section{Trees}
