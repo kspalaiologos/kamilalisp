@@ -31,11 +31,11 @@ public class FindIdx extends PrimitiveFunction implements Lambda {
         } else if (a.getType() == Type.LIST) {
             List<Atom> l1 = a.getList();
             List<Atom> indices = new ArrayList<>();
-            int index = l1.indexOf(a);
+            int index = l1.indexOf(b);
             while (index >= 0) {
                 indices.add(new Atom(BigInteger.valueOf(index)));
                 l1 = l1.subList(index + 1, l1.size());
-                index = l1.indexOf(a);
+                index = l1.indexOf(b);
             }
             return new Atom(indices);
         } else {

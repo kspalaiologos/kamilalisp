@@ -53,11 +53,11 @@ public class Find extends PrimitiveFunction implements Lambda {
         } else if (a.getType() == Type.LIST) {
             List<Atom> l1 = a.getList();
             List<Integer> indices = new ArrayList<>();
-            int index = l1.indexOf(a);
+            int index = l1.indexOf(b);
             while (index >= 0) {
                 indices.add(index);
                 l1 = l1.subList(index + 1, l1.size());
-                index = l1.indexOf(a);
+                index = l1.indexOf(b);
             }
             List<Atom> result = iotaUnderbar(indices);
             // Pad to length of a.
