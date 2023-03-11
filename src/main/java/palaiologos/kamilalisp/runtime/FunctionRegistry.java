@@ -98,6 +98,7 @@ public class FunctionRegistry {
         env.setPrimitive("pmat", "⍉↩⍳", new Atom(new Pmat()));
         env.setPrimitive("flatten", "∊", new Atom(new Flatten()));
         env.setPrimitive("let", "○⊢", new Atom(new Let()));
+        env.setPrimitive("let*", "○⊢*", new Atom(new LetStar()));
         env.setPrimitive("cond", "↕¨", new Atom(new Cond()));
         env.setPrimitive("cmpx", new Atom(new Cmpx()));
         env.setPrimitive("import", "○←⍫", new Atom(new Import()));
