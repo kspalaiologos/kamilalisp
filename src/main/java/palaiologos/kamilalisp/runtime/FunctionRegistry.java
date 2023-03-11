@@ -128,6 +128,7 @@ public class FunctionRegistry {
         env.setPrimitive("take-while", "⍣↑", new Atom(new TakeWhile()));
         env.setPrimitive("drop-while", "⍣↓", new Atom(new DropWhile()));
         env.setPrimitive("find", "⍷", new Atom(new Find()));
+        env.setPrimitive("find-idx", "⍸⍷", new Atom(new FindIdx()));
         env.setPrimitive("where", "⍸", new Atom(new Where()));
         env.setPrimitive("powerset", "⍉⍉", new Atom(new Powerset()));
         env.setPrimitive("discard", "∅←", new Atom(new Discard()));

@@ -50,8 +50,23 @@ public class Find extends PrimitiveFunction implements Lambda {
                 result.add(Atom.FALSE);
             }
             return new Atom(result);
+        } else if (a.getType() == Type.LIST) {
+            List<Atom> l1 = a.getList();
+            List<Integer> indices = new ArrayList<>();
+            int index = l1.indexOf(a);
+            while (index >= 0) {
+                indices.add(index);
+                l1 = l1.subList(index + 1, l1.size());
+                index = l1.indexOf(a);
+            }
+            List<Atom> result = iotaUnderbar(indices);
+            // Pad to length of a.
+            for (int i = result.size(); i < l1.size(); i++) {
+                result.add(Atom.FALSE);
+            }
+            return new Atom(result);
         } else {
-            throw new RuntimeException("find takes two strings or two lists.");
+            throw new RuntimeException("find takes two strings, two lists, or a list and an atom.");
         }
     }
 
