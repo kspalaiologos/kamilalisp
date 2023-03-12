@@ -832,7 +832,38 @@ Both of the relations do not need to be injective:
 
 An identity relation (the identity element for relation composition) for $n \in \mathbb{N}$ up to $m$ is given as \verb|:[⌿.⍧ #0 #0]∘⍳ m|.
 
-If $\sim$ is a binary relation over sets $X$ and $Y$, then the converse of $\sim$ is the relation $\sim^T$ over $Y$ and $X$ defined by $\displaystyle \sim^T = \{(y,x):x\sim y\}$. Iff\footnote{If and only if.} a relation is symmetric it is also its own converse - for example, \verb|=| and \verb|/=| are their own converses. The relations \verb|<| and \verb|>| are mutually converses of each other. The converse of a relation can be trivially computed using \verb|:reverse|. In the monoid of binary endorelations on a set (with the binary operation on relations being the composition of relations), the converse relation does not satisfy the definition of an inverse from group theory. The converse relation does satisfy the (weaker) axioms of a semigroup with involution: $\left(L^T\right)^T=L$ and $(L\circ R)^T=R^T\circ L^T$ (distributive law). $R$ is a symmetric binary relation over $X$ and $Y$ iff $R^T = R$, thus $R = \{(a,b): a R b \Leftrightarrow b R a \}$, so $(a,b)\in R \Rightarrow (b,a)\in R$. This can be easily checked for using \verb|[same-elements #0 :reverse]|.
+If $\sim$ is a binary relation over sets $X$ and $Y$, then the converse of $\sim$ is the relation $\sim^T$ over $Y$ and $X$ defined by $\displaystyle \sim^T = \{(y,x):x\sim y\}$. Iff\footnote{If and only if.} a relation is symmetric it is also its own converse - for example, \verb|=| and \verb|/=| are their own converses. The relations \verb|<| and \verb|>| are mutually converses of each other. The converse of a relation can be trivially computed using \verb|:reverse|. In the monoid of binary endorelations on a set (with the binary operation on relations being the composition of relations), the converse relation does not satisfy the definition of an inverse from group theory. The converse relation does satisfy the (weaker) axioms of a semigroup with involution: $\left(L^T\right)^T=L$ and $(L\circ R)^T=R^T\circ L^T$ (distributive law). $R$ is a symmetric binary relation over $X$ and $Y$ iff $R^T = R$, thus $R = \{(a,b): a R b \Leftrightarrow b R a \}$, so $(a,b)\in R \Rightarrow (b,a)\in R$. This can be easily checked for using \verb|[same-elements #0 :reverse]|. Uniqueness properties (injectivity and functionality) are checked for using, respectively, \verb|[same-elements unique #0]@:car| and \verb|[same-elements unique #0]@:cadr|.
+
+Homogenous relations have the following properties of particular interest:
+
+\begin{itemize}
+    \item Reflexivity: $x \sim x$ for all $x \in X$ - \verb|def reflexive? all@:(lift =)|.
+    \item Irreflexivity: $x \sim x$ does not hold for any $x \in X$ - \verb|def irreflexive? none@:(lift =)|.
+    \item Symmetric: $x \sim y$ implies $y \sim x$ - \verb|def symmetric? [same-elements #0 :reverse]|.
+    \item Antisymmetric: $x \sim y$ and $y \sim x$ implies $x = y$ - in other words, unless $x = y$ then both $x \sim y$ and $y \sim x$ cannot hold - \verb|[not-same-elements #0 :reverse]@$(filter \lift /=)|.
+    \item Asymmetric: if $x \sim y$ then $y \sim x$ does not hold - in other words, the relation must be antisymmetric and irreflexive.
+    \item Transitive: if $x \sim y$ and $y \sim z$ then $x \sim z$ - \verb|def transitive? [all@:^in? tie@#0 \r-compose #0 #0]|.
+\end{itemize}
+
+The transitive closure of a binary relation $\sim$ on a set $X$ is the smallest relation on $X$ that contains $\sim$ and is transitive. "Smallest" is chiefly taken in its usual sense, of having the fewest related pairs. To begin solving this problem, start by turning the relation into a matrix using \verb|where-mask|. The next step is converging a function that finds a transitive closure using inner product with \verb|or| as the accumulation part and \verb|and| as the mapping part. The function \verb|transitive-closure| is defined as follows:
+
+\begin{Verbatim}
+    --> ; Pad a matrix with zeroes to make it square.
+    --> ⍥← sqm m (○⊢¨
+    ...   (○← xd (⍴ \⍎ m))
+    ...   (○← yd (⍴ m))
+    ...   (↕¨
+    ...     ((< xd yd) \:(λ x \⍠ x \↑ (- yd xd) '(0)) m)
+    ...     ((> xd yd) \⍠ m \⍉↩ (- xd yd) \⌿.⍧ \↑ xd '(0))
+    ...     ((= xd yd) m)))
+    --> ; Compute the transitive closure.
+    --> ⍥← transitive-closure x (○⊢¨
+    ...   (○← x \sqm \⍸¯¹ x)
+    ...   (⍥← ∨○∧ m \$(⌿.← ∨)%[1] \⌼ ∧ m \⎕⍉ m)
+    ...   (⍸ \→≡ [∨ ∨○∧ #0] x))
+\end{Verbatim}
+
+Implementing the reflexive closure - the smallest relation on $X$ that contains $\sim$ and is reflexive - is considerably simpler and accomplished by \verb|:[tie #0 #0]@unique@flatten|.
 
 \section{Graphs}
 

@@ -131,6 +131,7 @@ public class FunctionRegistry {
         env.setPrimitive("find", "⍷", new Atom(new Find()));
         env.setPrimitive("find-idx", "⍸⍷", new Atom(new FindIdx()));
         env.setPrimitive("where", "⍸", new Atom(new Where()));
+        env.setPrimitive("where-mask", "⍸¯¹", new Atom(new WhereMask()));
         env.setPrimitive("powerset", "⍉⍉", new Atom(new Powerset()));
         env.setPrimitive("discard", "∅←", new Atom(new Discard()));
         env.setPrimitive("empty?", "⍠⍉?", new Atom(new IsNil()));
