@@ -99,6 +99,12 @@
             <version>1.15</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-core</artifactId>
+            <version>1.5.1</version>
+        </dependency>
+
         <!-- GUI -->
         <dependency>
             <groupId>com.formdev</groupId>
