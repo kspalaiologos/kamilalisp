@@ -172,6 +172,52 @@ public class GraphWrapper implements Userdata {
         }
     }
 
+    public class MinusEdge extends PrimitiveFunction implements Lambda {
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            if(args.size() == 2) {
+                Atom source = args.get(0);
+                Atom target = args.get(1);
+                Graph<Atom, DefaultEdge> empty = emptyGraphFactory.get();
+                Graphs.addGraph(empty, graph);
+                empty.removeEdge(source, target);
+                return new Atom(new GraphWrapper(empty, emptyGraphFactory));
+            } else if(args.size() == 1) {
+                List<Atom> edge = args.get(0).getList();
+                Atom source = edge.get(0);
+                Atom target = edge.get(1);
+                Graph<Atom, DefaultEdge> empty = emptyGraphFactory.get();
+                Graphs.addGraph(empty, graph);
+                empty.removeEdge(source, target);
+                return new Atom(new GraphWrapper(empty, emptyGraphFactory));
+            } else {
+                throw new TypeError("Wrong number of arguments to graph.minus-edge");
+            }
+        }
+
+        @Override
+        protected String name() {
+            return "graph.minus-edge";
+        }
+    }
+
+    public class MinusVertex extends PrimitiveFunction implements Lambda {
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 1);
+            Atom vertex = args.get(0);
+            Graph<Atom, DefaultEdge> empty = emptyGraphFactory.get();
+            Graphs.addGraph(empty, graph);
+            empty.removeVertex(vertex);
+            return new Atom(new GraphWrapper(empty, emptyGraphFactory));
+        }
+
+        @Override
+        protected String name() {
+            return "graph.minus-vertex";
+        }
+    }
+
     private final Graph<Atom, DefaultEdge> graph;
     private final Supplier<Graph<Atom, DefaultEdge>> emptyGraphFactory;
 
@@ -222,6 +268,12 @@ public class GraphWrapper implements Userdata {
             }
             case "degree-of" -> {
                 return new Atom(new DegreeOf());
+            }
+            case "minus-edge" -> {
+                return new Atom(new MinusEdge());
+            }
+            case "minus-vertex" -> {
+                return new Atom(new MinusVertex());
             }
             default -> throw new IllegalArgumentException("Graph has no field " + key);
         }
