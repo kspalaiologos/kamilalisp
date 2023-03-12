@@ -16,6 +16,8 @@ import palaiologos.kamilalisp.runtime.dataformat.archive.*;
 import palaiologos.kamilalisp.runtime.dataformat.digest.*;
 import palaiologos.kamilalisp.runtime.datetime.*;
 import palaiologos.kamilalisp.runtime.flt64.Flt64Base;
+import palaiologos.kamilalisp.runtime.graph.BFS;
+import palaiologos.kamilalisp.runtime.graph.DFS;
 import palaiologos.kamilalisp.runtime.graph.Simple;
 import palaiologos.kamilalisp.runtime.graph.SimpleWeighted;
 import palaiologos.kamilalisp.runtime.hashmap.*;
@@ -61,10 +63,10 @@ public class FunctionRegistry {
         env.setPrimitive("range", "⍳", new Atom(new Range()));
         env.setPrimitive("foldl", "⌿←", new Atom(new Foldl()));
         env.setPrimitive("foldr", "⌿→", new Atom(new Foldr()));
-        env.setPrimitive("foldl1", "⌿.←", new Atom(new Foldl1()));
-        env.setPrimitive("foldr1", "⌿.→", new Atom(new Foldr1()));
+        env.setPrimitive("foldl1", "⌿⊙←", new Atom(new Foldl1()));
+        env.setPrimitive("foldr1", "⌿⊙→", new Atom(new Foldr1()));
         env.setPrimitive("lift", "⍏", new Atom(new Lift()));
-        env.setPrimitive("tie", "⌿.⍧", new Atom(new Tie()));
+        env.setPrimitive("tie", "⌿⊙⍧", new Atom(new Tie()));
         env.setPrimitive("if", "↕", new Atom(new If()));
         env.setPrimitive("filter", "⍭", new Atom(new Filter()));
         env.setPrimitive("filter-idx", "⍭¨", new Atom(new FilterIdx()));
@@ -78,9 +80,9 @@ public class FunctionRegistry {
         env.setPrimitive("sort-asc", "⊼", new Atom(new Sort()));
         env.setPrimitive("sort-desc", "⊻", new Atom(new SortDesc()));
         env.setPrimitive("scanl", "⍀←", new Atom(new Scanl()));
-        env.setPrimitive("scanl1", "⍀.←", new Atom(new Scanl1()));
+        env.setPrimitive("scanl1", "⍀⊙←", new Atom(new Scanl1()));
         env.setPrimitive("scanr", "⍀→", new Atom(new Scanr()));
-        env.setPrimitive("scanr1", "⍀.→", new Atom(new Scanr1()));
+        env.setPrimitive("scanr1", "⍀⊙→", new Atom(new Scanr1()));
         env.setPrimitive("bsearch", "⊃∊", new Atom(new Bsearch()));
         env.setPrimitive("replicate", "∥", new Atom(new Replicate()));
         env.setPrimitive("defun", "⍥←", new Atom(new Defun()));
@@ -457,5 +459,7 @@ public class FunctionRegistry {
 
         env.setPrimitive("graph:simple", new Atom(new Simple()));
         env.setPrimitive("graph:simple-weighted", new Atom(new SimpleWeighted()));
+        env.setPrimitive("graph:bfs", new Atom(new BFS()));
+        env.setPrimitive("graph:dfs", new Atom(new DFS()));
     }
 }

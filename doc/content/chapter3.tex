@@ -830,7 +830,7 @@ Both of the relations do not need to be injective:
      (3 -3)]
 \end{Verbatim}
 
-An identity relation (the identity element for relation composition) for $n \in \mathbb{N}$ up to $m$ is given as \verb|:[⌿.⍧ #0 #0]∘⍳ m|.
+An identity relation (the identity element for relation composition) for $n \in \mathbb{N}$ up to $m$ is given as \verb|:[⌿⊙⍧ #0 #0]∘⍳ m|.
 
 If $\sim$ is a binary relation over sets $X$ and $Y$, then the converse of $\sim$ is the relation $\sim^T$ over $Y$ and $X$ defined by $\displaystyle \sim^T = \{(y,x):x\sim y\}$. Iff\footnote{If and only if.} a relation is symmetric it is also its own converse - for example, \verb|=| and \verb|/=| are their own converses. The relations \verb|<| and \verb|>| are mutually converses of each other. The converse of a relation can be trivially computed using \verb|:reverse|. In the monoid of binary endorelations on a set (with the binary operation on relations being the composition of relations), the converse relation does not satisfy the definition of an inverse from group theory. The converse relation does satisfy the (weaker) axioms of a semigroup with involution: $\left(L^T\right)^T=L$ and $(L\circ R)^T=R^T\circ L^T$ (distributive law). $R$ is a symmetric binary relation over $X$ and $Y$ iff $R^T = R$, thus $R = \{(a,b): a R b \Leftrightarrow b R a \}$, so $(a,b)\in R \Rightarrow (b,a)\in R$. This can be easily checked for using \verb|[same-elements #0 :reverse]|. Uniqueness properties (injectivity and functionality) are checked for using, respectively, \verb|[same-elements unique #0]@:car| and \verb|[same-elements unique #0]@:cadr|.
 
@@ -854,12 +854,12 @@ The transitive closure of a binary relation $\sim$ on a set $X$ is the smallest 
     ...   (○← yd (⍴ m))
     ...   (↕¨
     ...     ((< xd yd) \:(λ x \⍠ x \↑ (- yd xd) '(0)) m)
-    ...     ((> xd yd) \⍠ m \⍉↩ (- xd yd) \⌿.⍧ \↑ xd '(0))
+    ...     ((> xd yd) \⍠ m \⍉↩ (- xd yd) \⌿⊙⍧ \↑ xd '(0))
     ...     ((= xd yd) m)))
     --> ; Compute the transitive closure.
     --> ⍥← transitive-closure x (○⊢¨
     ...   (○← x \sqm \⍸¯¹ x)
-    ...   (⍥← ∨○∧ m \$(⌿.← ∨)%[1] \⌼ ∧ m \⎕⍉ m)
+    ...   (⍥← ∨○∧ m \$(⌿⊙← ∨)%[1] \⌼ ∧ m \⎕⍉ m)
     ...   (⍸ \→≡ [∨ ∨○∧ #0] x))
 \end{Verbatim}
 
