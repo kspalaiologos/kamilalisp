@@ -2589,7 +2589,7 @@ public static synchronized final void handleInterrupt()
 
   // ### *compile-file-class-extension*
   public static final Symbol _COMPILE_FILE_CLASS_EXTENSION_ =
-   exportSpecial("*COMPILE-FILE-CLASS-EXTENSION*", PACKAGE_SYS, new SimpleString("cls"));
+   exportSpecial("*COMPILE-FILE-CLASS-EXTENSION*", PACKAGE_SYS, new SimpleString("class"));
 
   // ### *compile-file-zip*
   public static final Symbol _COMPILE_FILE_ZIP_ =
