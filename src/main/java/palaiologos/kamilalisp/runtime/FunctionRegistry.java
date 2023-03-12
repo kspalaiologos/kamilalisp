@@ -16,6 +16,7 @@ import palaiologos.kamilalisp.runtime.dataformat.archive.*;
 import palaiologos.kamilalisp.runtime.dataformat.digest.*;
 import palaiologos.kamilalisp.runtime.datetime.*;
 import palaiologos.kamilalisp.runtime.flt64.Flt64Base;
+import palaiologos.kamilalisp.runtime.graph.Simple;
 import palaiologos.kamilalisp.runtime.hashmap.*;
 import palaiologos.kamilalisp.runtime.image.LoadImage;
 import palaiologos.kamilalisp.runtime.image.WriteImage;
@@ -452,5 +453,7 @@ public class FunctionRegistry {
         env.setPrimitive("hashmap:without", "⍔⍪", new Atom(new HashMapWithout()));
         env.setPrimitive("hashmap:group", "⍔⌸", new Atom(new HashMapGroup()));
         env.setPrimitive("hashmap:process", "⍔∵", new Atom(new HashMapProcess()));
+
+        env.setPrimitive("graph:simple", new Atom(new Simple()));
     }
 }
