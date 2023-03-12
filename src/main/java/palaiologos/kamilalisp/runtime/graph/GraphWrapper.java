@@ -218,6 +218,82 @@ public class GraphWrapper implements Userdata {
         }
     }
 
+    public class AdjoinVertexSet extends PrimitiveFunction implements Lambda {
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 1);
+            List<Atom> vertices = args.get(0).getList();
+            Graph<Atom, DefaultEdge> empty = emptyGraphFactory.get();
+            Graphs.addGraph(empty, graph);
+            for(Atom vertex : vertices)
+                empty.addVertex(vertex);
+            return new Atom(new GraphWrapper(empty, emptyGraphFactory));
+        }
+
+        @Override
+        protected String name() {
+            return "graph.adjoin-vertex-set";
+        }
+    }
+
+    public class AdjoinEdgeSet extends PrimitiveFunction implements Lambda {
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 1);
+            List<Atom> edges = args.get(0).getList();
+            Graph<Atom, DefaultEdge> empty = emptyGraphFactory.get();
+            Graphs.addGraph(empty, graph);
+            for(Atom edge : edges) {
+                List<Atom> edgeList = edge.getList();
+                empty.addEdge(edgeList.get(0), edgeList.get(1));
+            }
+            return new Atom(new GraphWrapper(empty, emptyGraphFactory));
+        }
+
+        @Override
+        protected String name() {
+            return "graph.adjoin-edge-set";
+        }
+    }
+
+    public class MinusVertexSet extends PrimitiveFunction implements Lambda {
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 1);
+            List<Atom> vertices = args.get(0).getList();
+            Graph<Atom, DefaultEdge> empty = emptyGraphFactory.get();
+            Graphs.addGraph(empty, graph);
+            for(Atom vertex : vertices)
+                empty.removeVertex(vertex);
+            return new Atom(new GraphWrapper(empty, emptyGraphFactory));
+        }
+
+        @Override
+        protected String name() {
+            return "graph.minus-vertex-set";
+        }
+    }
+
+    public class MinusEdgeSet extends PrimitiveFunction implements Lambda {
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 1);
+            List<Atom> edges = args.get(0).getList();
+            Graph<Atom, DefaultEdge> empty = emptyGraphFactory.get();
+            Graphs.addGraph(empty, graph);
+            for(Atom edge : edges) {
+                List<Atom> edgeList = edge.getList();
+                empty.removeEdge(edgeList.get(0), edgeList.get(1));
+            }
+            return new Atom(new GraphWrapper(empty, emptyGraphFactory));
+        }
+
+        @Override
+        protected String name() {
+            return "graph.minus-edge-set";
+        }
+    }
+
     private final Graph<Atom, DefaultEdge> graph;
     private final Supplier<Graph<Atom, DefaultEdge>> emptyGraphFactory;
 
@@ -274,6 +350,18 @@ public class GraphWrapper implements Userdata {
             }
             case "minus-vertex" -> {
                 return new Atom(new MinusVertex());
+            }
+            case "adjoin-vertex-set" -> {
+                return new Atom(new AdjoinVertexSet());
+            }
+            case "adjoin-edge-set" -> {
+                return new Atom(new AdjoinEdgeSet());
+            }
+            case "minus-vertex-set" -> {
+                return new Atom(new MinusVertexSet());
+            }
+            case "minus-edge-set" -> {
+                return new Atom(new MinusEdgeSet());
             }
             default -> throw new IllegalArgumentException("Graph has no field " + key);
         }
