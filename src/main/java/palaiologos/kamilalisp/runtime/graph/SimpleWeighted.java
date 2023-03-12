@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SimpleWeighted extends PrimitiveFunction implements Lambda {
-    public class WeightOf extends PrimitiveFunction implements Lambda {
+    public static class WeightOf extends PrimitiveFunction implements Lambda {
         private final GraphWrapper w;
 
         public WeightOf(GraphWrapper w) {
@@ -41,7 +41,7 @@ public class SimpleWeighted extends PrimitiveFunction implements Lambda {
         }
     }
 
-    public class SetWeight extends PrimitiveFunction implements Lambda {
+    public static class SetWeight extends PrimitiveFunction implements Lambda {
         private final GraphWrapper w;
 
         public SetWeight(GraphWrapper w) {
@@ -76,7 +76,7 @@ public class SimpleWeighted extends PrimitiveFunction implements Lambda {
         }
     }
 
-    public class SetWeights extends PrimitiveFunction implements Lambda {
+    public static class SetWeights extends PrimitiveFunction implements Lambda {
         private final GraphWrapper w;
 
         public SetWeights(GraphWrapper w) {
