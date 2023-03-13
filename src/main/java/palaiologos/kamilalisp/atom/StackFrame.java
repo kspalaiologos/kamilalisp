@@ -35,7 +35,7 @@ public class StackFrame {
             throw new RuntimeException("Cannot push a callable with negative line or column marker.");
         }
 
-        stack.get().push(new StackFrameEntry(c.frameString(), c.line(), c.column()));
+        stack.get().push(new StackFrameEntry(c, c.line(), c.column()));
     }
 
     public static void push(CodeAtom c) {
@@ -43,7 +43,7 @@ public class StackFrame {
             throw new RuntimeException("Cannot push a code atom with negative line or column marker.");
         }
 
-        stack.get().push(new StackFrameEntry("entity " + c.shortString(), c.getLine(), c.getCol()));
+        stack.get().push(new StackFrameEntry(c, c.getLine(), c.getCol()));
     }
 
     public static void pop() {
@@ -57,9 +57,9 @@ public class StackFrame {
         sb.append(exceptionName).append(" thrown in thread 0X").append(Long.toHexString(Thread.currentThread().hashCode())).append(":\n        ").append(t.getMessage()).append("\n");
         for (StackFrameEntry e : stack.get()) {
             if (e.col == 0 || e.line == 0) {
-                sb.append("    at ").append(e.frameString).append("\n");
+                sb.append("    at ").append(e.frameString()).append("\n");
             } else {
-                sb.append("    at ").append(e.frameString).append("  ").append(e.line).append(":").append(e.col).append("\n");
+                sb.append("    at ").append(e.frameString()).append("  ").append(e.line).append(":").append(e.col).append("\n");
             }
         }
 
@@ -86,14 +86,23 @@ public class StackFrame {
     }
 
     static class StackFrameEntry {
-        String frameString;
+        Object frameSource;
         long line;
         long col;
 
-        StackFrameEntry(String frameString, long line, long col) {
-            this.frameString = frameString;
+        StackFrameEntry(Object frameSource, long line, long col) {
+            this.frameSource = frameSource;
             this.line = line;
             this.col = col;
+        }
+
+        public String frameString() {
+            if(frameSource instanceof CodeAtom)
+                return "entity " + ((CodeAtom) frameSource).shortString();
+            else if(frameSource instanceof Callable)
+                return ((Callable) frameSource).frameString();
+            else
+                throw new RuntimeException("Unknown frame source type: " + frameSource.getClass().getName());
         }
     }
 }
