@@ -462,5 +462,6 @@ public class FunctionRegistry {
         env.setPrimitive("graph:cfs", new Atom(new CFS()));
         env.setPrimitive("graph:mcs", new Atom(new MCS()));
         env.setPrimitive("graph:tos", new Atom(new TOS()));
+        env.setPrimitive("graph:rs", new Atom(new RS()));
     }
 }
