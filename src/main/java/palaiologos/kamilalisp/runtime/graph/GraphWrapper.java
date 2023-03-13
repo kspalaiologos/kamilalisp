@@ -2,6 +2,7 @@ package palaiologos.kamilalisp.runtime.graph;
 
 import org.jgrapht.Graph;
 import org.jgrapht.GraphMetrics;
+import org.jgrapht.GraphTests;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.AsUnmodifiableGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -333,6 +334,20 @@ public class GraphWrapper implements Userdata {
         }
     }
 
+    public class NeighboursOf extends PrimitiveFunction implements Lambda {
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 1);
+            Atom vertex = args.get(0);
+            return new Atom(Graphs.neighborListOf(graph, vertex));
+        }
+
+        @Override
+        protected String name() {
+            return "graph.neighbours-of";
+        }
+    }
+
     public Atom adjoin(Consumer<Graph<Atom, DefaultEdge>> process) {
         Graph<Atom, DefaultEdge> empty = emptyGraphFactory.get();
         Graphs.addGraph(empty, graph);
@@ -458,6 +473,69 @@ public class GraphWrapper implements Userdata {
             }
             case "incident-to" -> {
                 return new Atom(new IncidentTo());
+            }
+            case "neighbours-of" -> {
+                return new Atom(new NeighboursOf());
+            }
+            case "has-multiple-edges?" -> {
+                return GraphTests.hasMultipleEdges(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "has-self-loops?" -> {
+                return GraphTests.hasSelfLoops(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "has-ore-property?" -> {
+                return GraphTests.hasOreProperty(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "is-biconnected?" -> {
+                return GraphTests.isBiconnected(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "is-connected?" -> {
+                return GraphTests.isConnected(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "is-bipartite?" -> {
+                return GraphTests.isBipartite(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "is-chordal?" -> {
+                return GraphTests.isChordal(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "is-complete?" -> {
+                return GraphTests.isComplete(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "is-empty?" -> {
+                return GraphTests.isEmpty(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "is-eulerian?" -> {
+                return GraphTests.isEulerian(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "is-forest?" -> {
+                return GraphTests.isForest(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "is-k33-subdivision?" -> {
+                return GraphTests.isK33Subdivision(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "is-k5-subdivision?" -> {
+                return GraphTests.isK5Subdivision(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "is-kuratowski-subdivision?" -> {
+                return GraphTests.isKuratowskiSubdivision(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "is-overfull?" -> {
+                return GraphTests.isOverfull(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "is-perfect?" -> {
+                return GraphTests.isPerfect(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "is-planar?" -> {
+                return GraphTests.isPlanar(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "is-simple?" -> {
+                return GraphTests.isSimple(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "is-strongly-connected?" -> {
+                return GraphTests.isStronglyConnected(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "is-tree?" -> {
+                return GraphTests.isTree(graph) ? Atom.TRUE : Atom.FALSE;
             }
             default -> {
                 if(extraOperations.containsKey(key))

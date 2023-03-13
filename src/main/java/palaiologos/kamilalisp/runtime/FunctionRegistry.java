@@ -16,10 +16,7 @@ import palaiologos.kamilalisp.runtime.dataformat.archive.*;
 import palaiologos.kamilalisp.runtime.dataformat.digest.*;
 import palaiologos.kamilalisp.runtime.datetime.*;
 import palaiologos.kamilalisp.runtime.flt64.Flt64Base;
-import palaiologos.kamilalisp.runtime.graph.BFS;
-import palaiologos.kamilalisp.runtime.graph.DFS;
-import palaiologos.kamilalisp.runtime.graph.Simple;
-import palaiologos.kamilalisp.runtime.graph.SimpleWeighted;
+import palaiologos.kamilalisp.runtime.graph.*;
 import palaiologos.kamilalisp.runtime.hashmap.*;
 import palaiologos.kamilalisp.runtime.image.LoadImage;
 import palaiologos.kamilalisp.runtime.image.WriteImage;
@@ -462,5 +459,8 @@ public class FunctionRegistry {
         env.setPrimitive("graph:simple-weighted", new Atom(new SimpleWeighted()));
         env.setPrimitive("graph:bfs", new Atom(new BFS()));
         env.setPrimitive("graph:dfs", new Atom(new DFS()));
+        env.setPrimitive("graph:cfs", new Atom(new CFS()));
+        env.setPrimitive("graph:mcs", new Atom(new MCS()));
+        env.setPrimitive("graph:tos", new Atom(new TOS()));
     }
 }
