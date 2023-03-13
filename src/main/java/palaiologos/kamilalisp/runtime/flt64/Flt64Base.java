@@ -11,6 +11,8 @@ public class Flt64Base {
     public static final double EPSILON = Math.ulp(1.0d);
 
     static double toFlt64(Atom a) {
+        if(a instanceof Flt64AtomThunk)
+            return ((Flt64AtomThunk) a).val;
         return switch (a.getType()) {
             case INTEGER -> a.getInteger().doubleValue();
             case REAL -> a.getReal().doubleValue();
@@ -22,7 +24,7 @@ public class Flt64Base {
     public static Atom toAtom(double d) {
         if(Double.isNaN(d))
             throw new ArithmeticException("NaN");
-        return new Atom(BigDecimal.valueOf(d));
+        return new Flt64AtomThunk(d);
     }
 
     public void registerFlt64(Environment env) {
