@@ -1,6 +1,7 @@
 package palaiologos.kamilalisp.runtime.graph;
 
 import org.jgrapht.Graph;
+import org.jgrapht.GraphMetrics;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.AsUnmodifiableGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -12,6 +13,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -287,6 +289,50 @@ public class GraphWrapper implements Userdata {
         }
     }
 
+    public class VertexHasSuccessors extends PrimitiveFunction implements Lambda {
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 1);
+            Atom vertex = args.get(0);
+            return Graphs.vertexHasSuccessors(graph, vertex) ? Atom.TRUE : Atom.FALSE;
+        }
+
+        @Override
+        protected String name() {
+            return "graph.vertex-has-successors";
+        }
+    }
+
+    public class VertexHasPredecessors extends PrimitiveFunction implements Lambda {
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 1);
+            Atom vertex = args.get(0);
+            return Graphs.vertexHasPredecessors(graph, vertex) ? Atom.TRUE : Atom.FALSE;
+        }
+
+        @Override
+        protected String name() {
+            return "graph.vertex-has-predecessors";
+        }
+    }
+
+    public class IncidentTo extends PrimitiveFunction implements Lambda {
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 2);
+            Atom vertex = args.get(0);
+            Atom e1 = args.get(1).getList().get(0);
+            Atom e2 = args.get(1).getList().get(1);
+            return Graphs.testIncidence(graph, graph.getEdge(e1, e2), vertex) ? Atom.TRUE : Atom.FALSE;
+        }
+
+        @Override
+        protected String name() {
+            return "graph.incident-to";
+        }
+    }
+
     public Atom adjoin(Consumer<Graph<Atom, DefaultEdge>> process) {
         Graph<Atom, DefaultEdge> empty = emptyGraphFactory.get();
         Graphs.addGraph(empty, graph);
@@ -308,6 +354,30 @@ public class GraphWrapper implements Userdata {
         this.emptyGraphFactory = emptyGraphFactory;
         this.extraOperations = extraOperations;
         this.name = name;
+    }
+
+    private Optional<Double> diameter = Optional.empty();
+    private double getDiameter() {
+        if(diameter.isEmpty()) {
+            diameter = Optional.of(GraphMetrics.getDiameter(graph));
+        }
+        return diameter.get();
+    }
+
+    private Optional<Integer> girth = Optional.empty();
+    private int getGirth() {
+        if(girth.isEmpty()) {
+            girth = Optional.of(GraphMetrics.getGirth(graph));
+        }
+        return girth.get();
+    }
+
+    private Optional<Double> radius = Optional.empty();
+    private double getRadius() {
+        if(radius.isEmpty()) {
+            radius = Optional.of(GraphMetrics.getRadius(graph));
+        }
+        return radius.get();
     }
 
     @Override
@@ -370,6 +440,24 @@ public class GraphWrapper implements Userdata {
             }
             case "minus-edge-set" -> {
                 return new Atom(new MinusEdgeSet());
+            }
+            case "diameter" -> {
+                return new Atom(BigDecimal.valueOf(getDiameter()));
+            }
+            case "girth" -> {
+                return new Atom(BigInteger.valueOf(getGirth()));
+            }
+            case "radius" -> {
+                return new Atom(BigDecimal.valueOf(getRadius()));
+            }
+            case "vertex-has-successors" -> {
+                return new Atom(new VertexHasSuccessors());
+            }
+            case "vertex-has-predecessors" -> {
+                return new Atom(new VertexHasPredecessors());
+            }
+            case "incident-to" -> {
+                return new Atom(new IncidentTo());
             }
             default -> {
                 if(extraOperations.containsKey(key))
