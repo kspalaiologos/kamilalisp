@@ -30,7 +30,7 @@ public class Environment {
         return env;
     }
 
-    public synchronized void set(String key, Atom value) {
+    public void set(String key, Atom value) {
         data.put(key, value);
     }
 
@@ -102,7 +102,7 @@ public class Environment {
         return new MathContext(precision);
     }
 
-    public synchronized void remove(String key) {
+    public void remove(String key) {
         if (has(key))
             data.remove(key);
         else if (parent != null)
