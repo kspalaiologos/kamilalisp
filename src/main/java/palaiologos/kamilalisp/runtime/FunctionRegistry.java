@@ -464,5 +464,6 @@ public class FunctionRegistry {
         env.setPrimitive("graph:tos", new Atom(new TOS()));
         env.setPrimitive("graph:rs", new Atom(new RS()));
         env.setPrimitive("graph:stoer-wagner", new Atom(new StoerWagner()));
+        env.setPrimitive("graph:transitive-reduction", new Atom(new TransitiveReduction()));
     }
 }
