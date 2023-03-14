@@ -125,6 +125,9 @@ public class AlgorithmLib {
         env.setPrimitive("graph:largest-degree-first-colouring", new Atom(new LargestDegreeFirstColouring()));
         env.setPrimitive("graph:saturation-degree-colouring", new Atom(new SaturationDegreeColouring()));
         env.setPrimitive("graph:smallest-degree-last-colouring", new Atom(new SmallestDegreeLastColouring()));
+        env.setPrimitive("graph:bipartite", new Atom(new Bipartite()));
+        env.setPrimitive("graph:dense-edmonds-matching", new Atom(new DenseEdmondsMatching()));
+        env.setPrimitive("graph:sparse-edmonds-matching", new Atom(new SparseEdmondsMatching()));
 
         env.setPrimitive("regex:matches?", "⍫⊖∊?", new Atom(new RegexMatches()));
         env.setPrimitive("regex:replace", "⍫⊖⍆", new Atom(new RegexReplace()));
