@@ -62,12 +62,17 @@ KamilaLisp allows for actor programming, concurrent programming, imperative prog
 - Set operations.
 - Read/write support for JSON, CSV, XML, Base64, XZ, gzip, lz4, bzip2, tar and zip.
 - Date and time manipulations.
+- Integrated development environment - supports remote IDE sessions, compressed KamilaLisp code format, project management, multi-workspace and multi-session workflows, broadcasting/synchronising project data among multiple remote sessions.
 - Persistent hashmaps, reactive hashmap literals.
 - PNG, BMP, JPG and JPEG image I/O.
 - File I/O (read, write, append).
 - Basic matrix operations (LU decomposition, transpose, trace, matrix multiplication easily implemented as `$(foldl + 0)%[1] \outer-product * A \matrix:transpose A`.
 - Performance benchmarks to measure GC time, average, median and standard deviation between runs of various expressions.
 - Module system.
+- Streams
+- Process management (using `sh:process`) - manipulating input/output streams, etc...
+- HTTP server.
+- Symbolic matrix LU decomposition, symbolic determinants.
 - Pattern matching.
 - Memoization.
 - Imperative programming support.
@@ -88,9 +93,12 @@ KamilaLisp allows for actor programming, concurrent programming, imperative prog
 - Functional de Bruijn indices.
 - Possibility to write standalone non-interactive scripts.
 - Symbolic matrix operations.
-- Machine word operations (flt64:...) - Bessel functions, Hurwitz Zeta, Riemann Zeta, Upper/Lower Incomplete Gamma, Gamma, LogGamma, Pochhammer symbol, erf, erfc, Inverse erf, Inverse erfc, Digamma, Trigamma, Polygamma, Airy Ai, Bessel I, J, K and Y functions, Lerch Phi, Spence's function and Polylogarithm.
+- Machine word operations (flt64:...) - Bessel functions, Hurwitz Zeta, Riemann Zeta, Upper/Lower Incomplete Gamma, Gamma, LogGamma, Pochhammer symbol, erf, erfc, Inverse erf, Inverse erfc, Digamma, Trigamma, Polygamma, Airy Ai, Bessel I, J, K and Y functions, Lerch Phi, Spence's function, Lambert W and Polylogarithm.
 - Prompt styling.
 - Portable.
+- Graph data structure (e.g. directed, acyclic, weighted, etc...).
+- Graph colouring (Saturation degree, greedy, largest degree first, smallest degree last, chordal, refinement, Brown backtrack).
+- Graph clustering (Givman-Newman, k-Spanning tree, label propagation).
 
 ## Examples
 
