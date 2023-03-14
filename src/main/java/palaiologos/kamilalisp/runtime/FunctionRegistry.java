@@ -468,5 +468,7 @@ public class FunctionRegistry {
         env.setPrimitive("graph:transitive-reduction", new Atom(new TransitiveReduction()));
         env.setPrimitive("graph:transitive-closure", new Atom(new TransitiveClosure()));
         env.setPrimitive("graph:girvan-newman-clustering", new Atom(new GirvanNewmanClustering()));
+        env.setPrimitive("graph:k-spanning-clustering", new Atom(new KSpanningClustering()));
+        env.setPrimitive("graph:label-propagation-clustering", new Atom(new LabelPropagationClustering()));
     }
 }
