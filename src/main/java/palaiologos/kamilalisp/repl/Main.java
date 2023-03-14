@@ -24,7 +24,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 public class Main {
-    public static Environment defaultRegistry = Environment.defaultEnvironment();
+    public static Environment defaultRegistry;
 
     public static boolean isBuiltin(String name) {
         return defaultRegistry.keys().contains(name);
@@ -127,10 +127,13 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
-        if (args.length == 0)
+        if (args.length == 0) {
+            defaultRegistry = Environment.defaultEnvironment(false);
             terminalTTY();
+        }
         if (args.length >= 1) {
             if (args[0].equalsIgnoreCase("--ide")) {
+                defaultRegistry = Environment.defaultEnvironment(false);
                 DarkTheme.installLafInfo();
                 DarkTheme.setup();
                 Enumeration<Object> keys = UIManager.getDefaults().keys();
@@ -144,12 +147,24 @@ public class Main {
                 IDE ide = new IDE();
                 // TODO: Run scripts.
             } else if (args[0].equalsIgnoreCase("--remote")) {
+                defaultRegistry = Environment.defaultEnvironment(false);
                 int port = 0;
                 if (args.length >= 2)
                     port = Integer.parseInt(args[1]);
                 Server.run(port);
-            } else
+            } else if (args[0].equalsIgnoreCase("--remote-sandboxed")) {
+                defaultRegistry = Environment.defaultEnvironment(true);
+                int port = 0;
+                if (args.length >= 2)
+                    port = Integer.parseInt(args[1]);
+                Server.run(port);
+            } else {
+                if(args[0].equalsIgnoreCase("--sandboxed"))
+                    defaultRegistry = Environment.defaultEnvironment(true);
+                else
+                    defaultRegistry = Environment.defaultEnvironment(false);
                 evalScript(new Environment(defaultRegistry), args[0], args);
+            }
         }
     }
 }

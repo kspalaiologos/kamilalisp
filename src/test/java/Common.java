@@ -8,6 +8,8 @@ import java.util.List;
 
 class Common {
     public static Atom runCode(String s) {
+        if(Main.defaultRegistry == null)
+            Main.defaultRegistry = Environment.defaultEnvironment(false);
         List<Atom> data = Parser.parse(s);
         Environment env = new Environment(Main.defaultRegistry);
         for (int i = 0; i < data.size() - 1; i++)

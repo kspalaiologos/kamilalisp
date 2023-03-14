@@ -24,9 +24,9 @@ public class Environment {
         this.parent = parent;
     }
 
-    public static Environment defaultEnvironment() {
+    public static Environment defaultEnvironment(boolean sandboxed) {
         Environment env = new Environment();
-        FunctionRegistry.registerDefault(env);
+        FunctionRegistry.registerDefault(env, sandboxed);
         return env;
     }
 
