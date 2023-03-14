@@ -470,5 +470,13 @@ public class FunctionRegistry {
         env.setPrimitive("graph:girvan-newman-clustering", new Atom(new GirvanNewmanClustering()));
         env.setPrimitive("graph:k-spanning-clustering", new Atom(new KSpanningClustering()));
         env.setPrimitive("graph:label-propagation-clustering", new Atom(new LabelPropagationClustering()));
+        env.setPrimitive("graph:brown-backtrack-colouring", new Atom(new BrownBacktrackColouring()));
+        env.setPrimitive("graph:chordal-colouring", new Atom(new ChordalGraphColouring()));
+        env.setPrimitive("graph:refinement-colouring", new Atom(new RefinementColouring()));
+        env.setPrimitive("graph:greedy-colouring", new Atom(new GreedyColouring()));
+        env.setPrimitive("graph:random-greedy-colouring", new Atom(new RandomGreedyColouring()));
+        env.setPrimitive("graph:largest-degree-first-colouring", new Atom(new LargestDegreeFirstColouring()));
+        env.setPrimitive("graph:saturation-degree-colouring", new Atom(new SaturationDegreeColouring()));
+        env.setPrimitive("graph:smallest-degree-last-colouring", new Atom(new SmallestDegreeLastColouring()));
     }
 }
