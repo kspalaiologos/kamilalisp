@@ -126,8 +126,13 @@ public class AlgorithmLib {
         env.setPrimitive("graph:saturation-degree-colouring", new Atom(new SaturationDegreeColouring()));
         env.setPrimitive("graph:smallest-degree-last-colouring", new Atom(new SmallestDegreeLastColouring()));
         env.setPrimitive("graph:bipartite", new Atom(new Bipartite()));
-        env.setPrimitive("graph:dense-edmonds-matching", new Atom(new DenseEdmondsMatching()));
-        env.setPrimitive("graph:sparse-edmonds-matching", new Atom(new SparseEdmondsMatching()));
+        env.setPrimitive("graph:dense-edmonds-mc-matching", new Atom(new DenseEdmondsMatching()));
+        env.setPrimitive("graph:sparse-edmonds-mc-matching", new Atom(new SparseEdmondsMatching()));
+        env.setPrimitive("graph:greedy-mc-matching", new Atom(new GreedyMCMatching()));
+        env.setPrimitive("graph:greedy-w-matching", new Atom(new GreedyWMatching()));
+        env.setPrimitive("graph:hopcroft-karp-mc-bipartite-matching", new Atom(new HopcroftKarpMCBipartiteMatching()));
+        env.setPrimitive("graph:kuhn-munkres-mw-bipartite-perfect-matching", new Atom(new KuhnMunkresMWBipartitePerfectMatching()));
+        env.setPrimitive("graph:maximum-weight-bipartite-matching", new Atom(new MWBipartiteMatching()));
 
         env.setPrimitive("regex:matches?", "⍫⊖∊?", new Atom(new RegexMatches()));
         env.setPrimitive("regex:replace", "⍫⊖⍆", new Atom(new RegexReplace()));

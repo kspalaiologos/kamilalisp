@@ -19,6 +19,6 @@ public class SparseEdmondsMatching extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "graph:sparse-edmonds-matching";
+        return "graph:sparse-edmonds-mc-matching";
     }
 }
