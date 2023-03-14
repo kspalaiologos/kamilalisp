@@ -467,5 +467,6 @@ public class FunctionRegistry {
         env.setPrimitive("graph:stoer-wagner", new Atom(new StoerWagner()));
         env.setPrimitive("graph:transitive-reduction", new Atom(new TransitiveReduction()));
         env.setPrimitive("graph:transitive-closure", new Atom(new TransitiveClosure()));
+        env.setPrimitive("graph:girvan-newman-clustering", new Atom(new GirvanNewmanClustering()));
     }
 }
