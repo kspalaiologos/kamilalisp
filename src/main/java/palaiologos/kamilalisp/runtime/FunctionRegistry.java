@@ -457,6 +457,7 @@ public class FunctionRegistry {
 
         env.setPrimitive("graph:simple", new Atom(new Simple()));
         env.setPrimitive("graph:simple-weighted", new Atom(new SimpleWeighted()));
+        env.setPrimitive("graph:simple-directed", new Atom(new SimpleDirected()));
         env.setPrimitive("graph:bfs", new Atom(new BFS()));
         env.setPrimitive("graph:dfs", new Atom(new DFS()));
         env.setPrimitive("graph:cfs", new Atom(new CFS()));
@@ -465,5 +466,6 @@ public class FunctionRegistry {
         env.setPrimitive("graph:rs", new Atom(new RS()));
         env.setPrimitive("graph:stoer-wagner", new Atom(new StoerWagner()));
         env.setPrimitive("graph:transitive-reduction", new Atom(new TransitiveReduction()));
+        env.setPrimitive("graph:transitive-closure", new Atom(new TransitiveClosure()));
     }
 }

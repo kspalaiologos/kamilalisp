@@ -101,18 +101,22 @@ public class SimpleWeighted extends PrimitiveFunction implements Lambda {
         }
     }
 
+    public static GraphWrapper wrap(SimpleWeightedGraph<Atom, DefaultEdge> graph) {
+        return new GraphWrapper(graph, () -> new SimpleWeightedGraph<>(DefaultEdge.class), Map.ofEntries(
+                Map.entry("weight-of", e -> new Atom(new WeightOf(e))),
+                Map.entry("adjoin-weight", e -> new Atom(new SetWeight(e))),
+                Map.entry("adjoin-weights", e -> new Atom(new SetWeights(e)))
+        ), "simple-weighted-graph");
+    }
+
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         List<Atom> vertices = args.get(0).getList();
         List<Pair<Atom, Atom>> edges = args.get(1).getList().stream().map(x -> new Pair<>(x.getList().get(0), x.getList().get(1))).toList();
-        Graph<Atom, DefaultEdge> graph = new SimpleWeightedGraph<>(DefaultEdge.class);
+        SimpleWeightedGraph<Atom, DefaultEdge> graph = new SimpleWeightedGraph<>(DefaultEdge.class);
         vertices.forEach(graph::addVertex);
         edges.forEach(x -> graph.addEdge(x.fst(), x.snd()));
-        return new Atom(new GraphWrapper(graph, () -> new SimpleWeightedGraph<>(DefaultEdge.class), Map.ofEntries(
-                Map.entry("weight-of", e -> new Atom(new WeightOf(e))),
-                Map.entry("adjoin-weight", e -> new Atom(new SetWeight(e))),
-                Map.entry("adjoin-weights", e -> new Atom(new SetWeights(e)))
-        ), "simple-weighted-graph"));
+        return new Atom(wrap(graph));
     }
 
     @Override
