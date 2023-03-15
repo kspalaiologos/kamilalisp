@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 public class Atom implements Comparable<Atom> {
@@ -243,9 +244,22 @@ public class Atom implements Comparable<Atom> {
                     return "nil";
                 if (getList().get(0).type == Type.CALLABLE && getList().get(0).getCallable() instanceof ReactiveFunction)
                     return getList().get(0).toString();
-                else if (getList().get(0).type == Type.CALLABLE && getList().get(0).getCallable() instanceof Index)
-                    return getList().get(0).toString() + "[" + getList().stream().skip(1).map(Atom::toString).collect(Collectors.joining(" ")) + "]";
-                return "(" + getList().stream().map(Atom::toString).collect(Collectors.joining(" ")) + ")";
+                else if (getList().get(0).type == Type.CALLABLE && getList().get(0).getCallable() instanceof Index) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(getList().get(0).toString());
+                    sb.append("$[");
+                    for(int i = 1; i < getList().size(); i++) {
+                        sb.append(getList().get(i).toString());
+                        if(i != getList().size() - 1)
+                            sb.append(" ");
+                    }
+                    sb.append("]");
+                    return sb.toString();
+                }
+                StringJoiner joiner = new StringJoiner(" ");
+                for (Atom atom : getList())
+                    joiner.add(atom.toString());
+                return "(" + joiner + ")";
             case CALLABLE:
                 return getCallable().stringify();
             case IDENTIFIER:
@@ -276,9 +290,37 @@ public class Atom implements Comparable<Atom> {
                     return "nil";
                 if (getList().get(0).type == Type.CALLABLE && getList().get(0).getCallable() instanceof ReactiveFunction)
                     return getList().get(0).toString();
-                else if (getList().get(0).type == Type.CALLABLE && getList().get(0).getCallable() instanceof Index)
-                    return getList().get(0).toString() + "$[" + getList().stream().skip(1).map(Atom::toString).collect(Collectors.joining(" ")) + "]";
-                if (getList().stream().allMatch(x -> x.type.equals(Type.LIST)) && getList().stream().allMatch(x -> x.getList().stream().allMatch(y -> y.getType() != Type.LIST))) {
+                else if (getList().get(0).type == Type.CALLABLE && getList().get(0).getCallable() instanceof Index) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(getList().get(0).toDisplayString());
+                    sb.append("$[");
+                    for(int i = 1; i < getList().size(); i++) {
+                        sb.append(getList().get(i).toDisplayString());
+                        if(i != getList().size() - 1)
+                            sb.append(" ");
+                    }
+                    sb.append("]");
+                    return sb.toString();
+                }
+                boolean allList = true, allString = true;
+                for (Atom atom : getList()) {
+                    if (atom.type != Type.LIST)
+                        allList = false;
+                    if (atom.type != Type.STRING)
+                        allString = false;
+                }
+                boolean allDescScalar = true;
+                if(allList) {
+                    outer: for (Atom x : getList()) {
+                        for (Atom y : x.getList()) {
+                            if (y.getType() == Type.LIST) {
+                                allDescScalar = false;
+                                break outer;
+                            }
+                        }
+                    }
+                }
+                if (allList && allDescScalar) {
                     StringBuilder b = new StringBuilder();
                     b.append("[");
                     for (int i = 0; i < getList().size(); i++) {
@@ -290,7 +332,7 @@ public class Atom implements Comparable<Atom> {
                     }
                     b.append("]");
                     return b.toString();
-                } else if (getList().stream().allMatch(x -> x.type.equals(Type.STRING))) {
+                } else if (allString) {
                     StringBuilder b = new StringBuilder();
                     b.append("[");
                     for (int i = 0; i < getList().size(); i++) {
@@ -303,7 +345,10 @@ public class Atom implements Comparable<Atom> {
                     b.append("]");
                     return b.toString();
                 }
-                return "(" + getList().stream().map(Atom::toString).collect(Collectors.joining(" ")) + ")";
+                StringJoiner joiner = new StringJoiner(" ");
+                for (Atom atom : getList())
+                    joiner.add(atom.toDisplayString());
+                return "(" + joiner + ")";
             case CALLABLE:
                 return getCallable().stringify();
             case IDENTIFIER:
@@ -332,9 +377,30 @@ public class Atom implements Comparable<Atom> {
                     return "nil";
                 if (getList().get(0).type == Type.CALLABLE && getList().get(0).getCallable() instanceof ReactiveFunction)
                     return getList().get(0).shortString();
-                else if (getList().get(0).type == Type.CALLABLE && getList().get(0).getCallable() instanceof Index)
-                    return getList().get(0).shortString() + "[" + getList().stream().skip(1).map(Atom::shortString).collect(Collectors.joining(" ")) + "]";
-                return "(" + getList().stream().limit(2).map(Atom::toString).collect(Collectors.joining(" ")) + (getList().size() > 2 ? " ..." : "") + ")";
+                else if (getList().get(0).type == Type.CALLABLE && getList().get(0).getCallable() instanceof Index) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(getList().get(0).shortString());
+                    sb.append("$[");
+                    for(int i = 1; i < getList().size(); i++) {
+                        sb.append(getList().get(i).shortString());
+                        if(i != getList().size() - 1)
+                            sb.append(" ");
+                    }
+                    sb.append("]");
+                    return sb.toString();
+                }
+                StringJoiner joiner = new StringJoiner(" ");
+                long limit = 2;
+                for (Atom atom : getList()) {
+                    if (limit-- == 0) break;
+                    joiner.add(atom.shortString());
+                }
+                StringBuilder sb = new StringBuilder().append("(").append(joiner);
+                if(getList().size() > 2) {
+                    sb.append(" ...");
+                }
+                sb.append(")");
+                return sb.toString();
             case CALLABLE:
                 return "(sic) " + getCallable().frameString() + ".";
             case IDENTIFIER:
