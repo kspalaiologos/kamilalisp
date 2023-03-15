@@ -308,6 +308,8 @@ public class TerminalPanel extends TilingWMComponent {
         terminalIO.lock();
         try {
             SwingUtilities.invokeAndWait(() -> {
+                if(!area.getText().endsWith("\n"))
+                    area.append("\n");
                 // If last line is empty, then replace the last gutter marker to become -->.
                 // Otherwise just add a new one.
                 if (!area.getText().isEmpty() && area.getText().charAt(area.getText().length() - 1) == '\n') {
@@ -725,7 +727,7 @@ public class TerminalPanel extends TilingWMComponent {
             }
             if (r.start == -1)
                 return;
-            if (fb.getDocument().getText(0, offset).chars().filter(x -> x == '\n').count() >= r.start) {
+            if (offset >= r.byteOffset) {
                 fb.replace(offset, length, text, attrs);
             }
         }
