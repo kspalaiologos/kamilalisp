@@ -1,6 +1,6 @@
 package palaiologos.kamilalisp.runtime.ide.terminal;
 
-import palaiologos.kamilalisp.runtime.remote.Packet;
+import palaiologos.kamilalisp.runtime.remote.packet.Packet;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;

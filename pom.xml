@@ -215,18 +215,18 @@
                         <option>-keep class org.tukaani.xz.XZInputStream { *; }</option>
                         <option>-keep class org.tukaani.xz.XZOutputStream { *; }</option>
                         <option>-keep class org.tukaani.xz.LZMA2Options { *; }</option>
-                        <option>-keep class org.armedbear.lisp.** { *; }</option>
+                        <option>-keep class org.armedbear.lisp.** { }</option>
                         <option>-keep class com.formdev.** { *; }</option>
                         <option>-keep class org.slf4j.nop.** { *; }</option>
                         <option>-keep class org.eclipse.** { *; }</option>
                         <option>-optimizationpasses 9</option>
                         <option>-allowaccessmodification</option>
-                        <option>-flattenpackagehierarchy ''</option>
+                        <option>-repackageclasses ''</option>
                         <option>-dontwarn</option>
                         <option>-dontnote</option>
                         <option>-forceprocessing</option>
                         <option>-keep class palaiologos.kamilalisp.error.** { *; }</option>
-                        <option>-keep class palaiologos.kamilalisp.runtime.remote.** { *; }</option>
+                        <option>-keep class palaiologos.kamilalisp.runtime.remote.packet.** { *; }</option>
                         <option>-keepclasseswithmembers public class * { public static void main(java.lang.String[]); }</option>
                         <option>-keepclassmembers enum  * { public static **[] values(); public static ** valueOf(java.lang.String); }</option>
                         <option>-keepclasseswithmembers,includedescriptorclasses,allowshrinking class * { native &lt;methods&gt;; }</option>

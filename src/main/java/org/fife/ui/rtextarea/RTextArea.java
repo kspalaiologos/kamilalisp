@@ -155,7 +155,7 @@ public class RTextArea extends RTextAreaBase implements Printable {
 
 	private static IconGroup iconGroup;		// Info on icons for actions.
 
-	private transient RUndoManager undoManager;
+	public transient RUndoManager undoManager;
 
 	private transient LineHighlightManager lineHighlightManager;
 

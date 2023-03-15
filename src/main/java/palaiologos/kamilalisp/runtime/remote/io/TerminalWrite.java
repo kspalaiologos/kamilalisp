@@ -3,7 +3,7 @@ package palaiologos.kamilalisp.runtime.remote.io;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
-import palaiologos.kamilalisp.runtime.remote.StringPacket;
+import palaiologos.kamilalisp.runtime.remote.packet.StringPacket;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

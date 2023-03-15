@@ -13,8 +13,8 @@ import palaiologos.kamilalisp.runtime.ide.modal.IDEModal;
 import palaiologos.kamilalisp.runtime.ide.modal.IDEOkCancelModal;
 import palaiologos.kamilalisp.runtime.ide.modal.IDETextAreaErrorModal;
 import palaiologos.kamilalisp.runtime.ide.terminal.TerminalPanel;
-import palaiologos.kamilalisp.runtime.remote.FixPacket;
-import palaiologos.kamilalisp.runtime.remote.IDEPacket;
+import palaiologos.kamilalisp.runtime.remote.packet.FixPacket;
+import palaiologos.kamilalisp.runtime.remote.packet.IDEPacket;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

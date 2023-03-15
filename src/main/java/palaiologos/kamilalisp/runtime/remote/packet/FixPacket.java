@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime.remote;
+package palaiologos.kamilalisp.runtime.remote.packet;
 
 public class FixPacket implements Packet {
     public String name;

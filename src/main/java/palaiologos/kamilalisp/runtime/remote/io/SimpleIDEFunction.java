@@ -3,8 +3,8 @@ package palaiologos.kamilalisp.runtime.remote.io;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
-import palaiologos.kamilalisp.runtime.remote.IDEPacket;
-import palaiologos.kamilalisp.runtime.remote.Packet;
+import palaiologos.kamilalisp.runtime.remote.packet.IDEPacket;
+import palaiologos.kamilalisp.runtime.remote.packet.Packet;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

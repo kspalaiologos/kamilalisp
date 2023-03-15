@@ -7,6 +7,7 @@ import palaiologos.kamilalisp.atom.Evaluation;
 import palaiologos.kamilalisp.atom.Parser;
 import palaiologos.kamilalisp.error.InterruptionError;
 import palaiologos.kamilalisp.repl.Main;
+import palaiologos.kamilalisp.runtime.remote.packet.*;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

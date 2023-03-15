@@ -1,4 +1,4 @@
-package palaiologos.kamilalisp.runtime.remote;
+package palaiologos.kamilalisp.runtime.remote.packet;
 
 import java.io.Serializable;
 import java.util.List;

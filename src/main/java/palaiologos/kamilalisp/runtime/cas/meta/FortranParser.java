@@ -40,13 +40,4 @@ public class FortranParser {
         DefaultFortranFormulaGrammarVisitor visitor = new DefaultFortranFormulaGrammarVisitor();
         return visitor.visit(tree);
     }
-
-    public static void main(String[] args) {
-        String s = "T1(1)=leftHandLimit=0\n" +
-                "\n" +
-                "      T1(2)=rightHandLimit=\"failed\"\n" +
-                "\n" +
-                "      T1";
-        System.out.println(parse(s));
-    }
 }

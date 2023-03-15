@@ -7,10 +7,10 @@ import palaiologos.kamilalisp.repl.JLineParser;
 import palaiologos.kamilalisp.repl.Main;
 import palaiologos.kamilalisp.runtime.ide.*;
 import palaiologos.kamilalisp.runtime.ide.editor.EditorPanel;
-import palaiologos.kamilalisp.runtime.remote.IDEPacket;
-import palaiologos.kamilalisp.runtime.remote.Packet;
-import palaiologos.kamilalisp.runtime.remote.PromptPacket;
-import palaiologos.kamilalisp.runtime.remote.StringPacket;
+import palaiologos.kamilalisp.runtime.remote.packet.IDEPacket;
+import palaiologos.kamilalisp.runtime.remote.packet.Packet;
+import palaiologos.kamilalisp.runtime.remote.packet.PromptPacket;
+import palaiologos.kamilalisp.runtime.remote.packet.StringPacket;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -247,6 +247,7 @@ public class TerminalPanel extends TilingWMComponent {
                     throw new RuntimeException(e);
                 }
                 readingRawInput.set(true);
+                area.undoManager.discardAllEdits();
             });
         } catch (InterruptedException | InvocationTargetException e) {
             terminalIO.unlock();
@@ -324,6 +325,7 @@ public class TerminalPanel extends TilingWMComponent {
                     throw new RuntimeException(e);
                 }
                 readingInput.set(true);
+                area.undoManager.discardAllEdits();
             });
         } catch (InterruptedException | InvocationTargetException e) {
             terminalIO.unlock();
