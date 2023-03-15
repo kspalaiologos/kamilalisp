@@ -133,6 +133,7 @@ public class AlgorithmLib {
         env.setPrimitive("graph:hopcroft-karp-mc-bipartite-matching", new Atom(new HopcroftKarpMCBipartiteMatching()));
         env.setPrimitive("graph:kuhn-munkres-mw-bipartite-perfect-matching", new Atom(new KuhnMunkresMWBipartitePerfectMatching()));
         env.setPrimitive("graph:maximum-weight-bipartite-matching", new Atom(new MWBipartiteMatching()));
+        env.setPrimitive("graph:zhang-shasha-tree-edit-distance", new Atom(new ZhangShashaTreeEditDistance()));
 
         env.setPrimitive("regex:matches?", "⍫⊖∊?", new Atom(new RegexMatches()));
         env.setPrimitive("regex:replace", "⍫⊖⍆", new Atom(new RegexReplace()));
