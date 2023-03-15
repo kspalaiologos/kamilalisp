@@ -3,6 +3,7 @@ package palaiologos.kamilalisp.atom;
 import palaiologos.kamilalisp.error.TypeError;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -29,7 +30,10 @@ public class Evaluation {
                 Callable c = head.getCallable();
                 Atom result;
                 if (c instanceof Lambda) {
-                    result = evaluate(env, c, atom.getList().stream().skip(1).map(x -> evaluate(env, x)).toList());
+                    List<Atom> args = new ArrayList<>(atom.getList().size());
+                    for(int i = 1; i < atom.getList().size(); i++)
+                        args.add(evaluate(env, atom.getList().get(i)));
+                    result = evaluate(env, c, args);
                 } else if (c instanceof SpecialForm) {
                     result = evaluate(env, c, atom.getList().subList(1, atom.getList().size()));
                 } else {
@@ -76,7 +80,8 @@ public class Evaluation {
                     Callable c = head.getCallable();
                     Atom result;
                     if (c instanceof Lambda) {
-                        result = evaluate(env, c, atom.getList().stream().skip(1).map(x -> evaluate(env, x)).toList());
+                        result = evaluate(env, c, atom.getList().stream()
+                                .skip(1).map(x -> evaluate(env, x)).toList());
                     } else if (c instanceof SpecialForm) {
                         result = evaluate(env, c, atom.getList().subList(1, atom.getList().size()));
                     } else {
