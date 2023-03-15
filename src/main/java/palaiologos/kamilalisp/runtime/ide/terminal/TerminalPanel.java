@@ -169,8 +169,14 @@ public class TerminalPanel extends TilingWMComponent {
             public void actionPerformed(ActionEvent e) {
                 try {
                     if (readingInput.get()) {
-                        if (lines.size() + 1 != lineIndex)
+                        if (lineIndex == 0)
                             return;
+                        if (lineIndex == 1) {
+                            lineIndex--;
+                            // Remove everything from r.byteOffset to the end of the document.
+                            area.getDocument().remove(r.byteOffset, area.getDocument().getLength() - r.byteOffset);
+                            return;
+                        }
                         lineIndex--;
                         // Remove everything from r.byteOffset to the end of the document.
                         area.getDocument().remove(r.byteOffset, area.getDocument().getLength() - r.byteOffset);
