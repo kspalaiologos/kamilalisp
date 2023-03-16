@@ -2,6 +2,9 @@ package palaiologos.kamilalisp.runtime.lib;
 
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
+import palaiologos.kamilalisp.runtime.IO.Readln;
+import palaiologos.kamilalisp.runtime.IO.Write;
+import palaiologos.kamilalisp.runtime.IO.Writeln;
 import palaiologos.kamilalisp.runtime.array.*;
 import palaiologos.kamilalisp.runtime.array.carcdr.*;
 import palaiologos.kamilalisp.runtime.array.hof.*;
@@ -133,5 +136,9 @@ public class BaseLib {
         env.setPrimitive("str:contains", "⍫⊂←", new Atom(new Contains()));
         env.setPrimitive("str:levenshtein", "⍫≉", new Atom(new Levenshtein()));
         env.setPrimitive("str:wrap", "⍫⑊↩", new Atom(new Wrap()));
+
+        env.setPrimitive("io:writeln", "↑⍫", new Atom(new Writeln()));
+        env.setPrimitive("io:readln", "↓⍫", new Atom(new Readln()));
+        env.setPrimitive("io:write", "↗⍫", new Atom(new Write()));
     }
 }

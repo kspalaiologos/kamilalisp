@@ -3,9 +3,13 @@ package palaiologos.kamilalisp.atom;
 public interface Userdata {
     Atom field(Object key);
 
-    int compareTo(Userdata other);
+    default int compareTo(Userdata other) {
+        return hashCode() - other.hashCode();
+    }
 
-    boolean equals(Userdata other);
+    default boolean equals(Userdata other) {
+        return compareTo(other) == 0;
+    }
 
     String toString();
 
@@ -13,5 +17,7 @@ public interface Userdata {
 
     String typeName();
 
-    boolean coerceBoolean();
+    default boolean coerceBoolean() {
+        return true;
+    }
 }

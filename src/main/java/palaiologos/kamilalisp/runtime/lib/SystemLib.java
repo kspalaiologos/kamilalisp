@@ -11,6 +11,7 @@ import palaiologos.kamilalisp.runtime.meta.Cmpx;
 import palaiologos.kamilalisp.runtime.meta.Exit;
 import palaiologos.kamilalisp.runtime.meta.Import;
 import palaiologos.kamilalisp.runtime.net.*;
+import palaiologos.kamilalisp.runtime.net.httpserver.HTTPServer;
 import palaiologos.kamilalisp.runtime.sh.*;
 import palaiologos.kamilalisp.runtime.sh.Process;
 
@@ -19,9 +20,6 @@ public class SystemLib {
         env.setPrimitive("img:write", "≣⊣", new Atom(new WriteImage()));
         env.setPrimitive("img:read", "≣⊢", new Atom(new LoadImage()));
 
-        env.setPrimitive("io:writeln", "↑⍫", new Atom(new Writeln()));
-        env.setPrimitive("io:readln", "↓⍫", new Atom(new Readln()));
-        env.setPrimitive("io:write", "↗⍫", new Atom(new Write()));
         env.setPrimitive("io:get-file", "⍫⊢", new Atom(new GetFile()));
         env.setPrimitive("io:put-file", "⍫⊣", new Atom(new PutFile()));
         env.setPrimitive("io:append-file", "⍫⊣+", new Atom(new AppendFile()));
@@ -57,7 +55,7 @@ public class SystemLib {
         env.setPrimitive("net:client-ssl", new Atom(new NetClientSSL()));
         env.setPrimitive("net:server", new Atom(new NetServer()));
         env.setPrimitive("net:server-ssl", new Atom(new NetServerSSL()));
-        env.setPrimitive("net:http-server", new Atom(new HTTPServer()));
+        env.setPrimitive("net:http-server-builder", new Atom(new HTTPServer()));
 
         env.setPrimitive("cmpx", new Atom(new Cmpx()));
         env.setPrimitive("import", "○←⍫", new Atom(new Import()));
