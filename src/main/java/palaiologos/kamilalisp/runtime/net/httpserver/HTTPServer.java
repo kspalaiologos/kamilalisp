@@ -8,7 +8,7 @@ import java.util.List;
 public class HTTPServer extends PrimitiveFunction implements SpecialForm {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        Undertow.Builder wrapper = Undertow.builder();
+        return new Atom(new UndertowBuilderWrapperUserdata(Undertow.builder()));
     }
 
     @Override

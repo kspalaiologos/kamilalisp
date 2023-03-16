@@ -8,7 +8,6 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.*;
@@ -37,6 +36,10 @@ public class UndertowBuilderWrapperUserdata implements Userdata {
                 return new Atom(new AddHTTPListenerUserdata());
             case "add-https-listener":
                 return new Atom(new AddHTTPSListenerUserdata());
+            case "set-handler":
+                return new Atom(new SetHandler());
+            case "server":
+                return new Atom(new UndertowServerWrapperUserdata(builder.build()));
             default:
                 throw new IllegalArgumentException("unknown key: " + keyString);
         }
@@ -50,6 +53,21 @@ public class UndertowBuilderWrapperUserdata implements Userdata {
     @Override
     public String typeName() {
         return "net:http-server:builder";
+    }
+
+    public class SetHandler extends PrimitiveFunction implements Lambda {
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 1);
+            UndertowHttpHandlerWrapper handler = args.get(0).getUserdata(UndertowHttpHandlerWrapper.class);
+            builder.setHandler(handler.getHandler());
+            return Atom.NULL;
+        }
+
+        @Override
+        protected String name() {
+            return "net:http-server:builder.set-handler";
+        }
     }
 
     public class AddHTTPListenerUserdata extends PrimitiveFunction implements Lambda {
