@@ -4,20 +4,12 @@ import io.undertow.server.HttpHandler;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Userdata;
 
-public class UndertowHttpHandlerWrapper implements Userdata {
-    private final HttpHandler handler;
-
-    public UndertowHttpHandlerWrapper(HttpHandler handler) {
-        this.handler = handler;
-    }
-
-    public HttpHandler getHandler() {
-        return handler;
-    }
+public abstract class UndertowHttpHandlerWrapper implements Userdata {
+    public abstract HttpHandler getHandler();
 
     @Override
     public int hashCode() {
-        return handler.hashCode();
+        return getHandler().hashCode();
     }
 
     @Override

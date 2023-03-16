@@ -12,6 +12,8 @@ import palaiologos.kamilalisp.runtime.meta.Exit;
 import palaiologos.kamilalisp.runtime.meta.Import;
 import palaiologos.kamilalisp.runtime.net.*;
 import palaiologos.kamilalisp.runtime.net.httpserver.HTTPServer;
+import palaiologos.kamilalisp.runtime.net.httpserver.LiteralHandler;
+import palaiologos.kamilalisp.runtime.net.httpserver.PathHandler;
 import palaiologos.kamilalisp.runtime.sh.*;
 import palaiologos.kamilalisp.runtime.sh.Process;
 
@@ -56,6 +58,8 @@ public class SystemLib {
         env.setPrimitive("net:server", new Atom(new NetServer()));
         env.setPrimitive("net:server-ssl", new Atom(new NetServerSSL()));
         env.setPrimitive("net:http-server-builder", new Atom(new HTTPServer()));
+        env.setPrimitive("net:http-path-handler", new Atom(new PathHandler()));
+        env.setPrimitive("net:http-literal-handler", new Atom(new LiteralHandler()));
 
         env.setPrimitive("cmpx", new Atom(new Cmpx()));
         env.setPrimitive("import", "○←⍫", new Atom(new Import()));
