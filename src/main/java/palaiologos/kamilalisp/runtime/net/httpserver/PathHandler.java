@@ -18,7 +18,7 @@ public class PathHandler extends PrimitiveFunction implements SpecialForm {
     }
 
     public static class PathHandlerUserdata extends UndertowHttpHandlerWrapper {
-        private io.undertow.server.handlers.PathHandler handler;
+        private final io.undertow.server.handlers.PathHandler handler;
 
         public PathHandlerUserdata() {
             this.handler = Handlers.path();

@@ -45,6 +45,7 @@ public class LiteralHandler extends PrimitiveFunction implements SpecialForm {
     private static final Atom getCookies = new Atom("get-cookies");
     private static final Atom addCookie = new Atom("add-cookie");
     private static final Atom removeCookie = new Atom("remove-cookie");
+    private static final Atom dispatch = new Atom("dispatch");
 
     private Atom cookiesToAtom(Map<String, Cookie> in) {
         HashMap<Atom, Atom> cookies = new HashMap<>();
@@ -190,6 +191,24 @@ public class LiteralHandler extends PrimitiveFunction implements SpecialForm {
                     assertArity(args, 1);
                     String name = args.get(0).getString();
                     httpServerExchange.getResponseCookies().remove(name);
+                    return Atom.NULL;
+                }
+            }));
+            resp.put(dispatch, new Atom(new LiteralCallback() {
+                @Override
+                protected String name() {
+                    return "net:http-literal-handler.dispatch";
+                }
+
+                @Override
+                public Atom apply(Environment env, List<Atom> args) {
+                    assertArity(args, 1);
+                    UndertowHttpHandlerWrapper h = args.get(0).getUserdata(UndertowHttpHandlerWrapper.class);
+                    try {
+                        h.getHandler().handleRequest(httpServerExchange);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                     return Atom.NULL;
                 }
             }));

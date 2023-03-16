@@ -2,6 +2,7 @@ package palaiologos.kamilalisp.runtime.lib;
 
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
+import palaiologos.kamilalisp.atom.Evaluation;
 import palaiologos.kamilalisp.runtime.IO.*;
 import palaiologos.kamilalisp.runtime.IO.streams.*;
 import palaiologos.kamilalisp.runtime.dataformat.archive.*;
@@ -11,11 +12,11 @@ import palaiologos.kamilalisp.runtime.meta.Cmpx;
 import palaiologos.kamilalisp.runtime.meta.Exit;
 import palaiologos.kamilalisp.runtime.meta.Import;
 import palaiologos.kamilalisp.runtime.net.*;
-import palaiologos.kamilalisp.runtime.net.httpserver.HTTPServer;
-import palaiologos.kamilalisp.runtime.net.httpserver.LiteralHandler;
-import palaiologos.kamilalisp.runtime.net.httpserver.PathHandler;
+import palaiologos.kamilalisp.runtime.net.httpserver.*;
 import palaiologos.kamilalisp.runtime.sh.*;
 import palaiologos.kamilalisp.runtime.sh.Process;
+
+import java.util.List;
 
 public class SystemLib {
     public static void register(Environment env) {
@@ -60,6 +61,9 @@ public class SystemLib {
         env.setPrimitive("net:http-server-builder", new Atom(new HTTPServer()));
         env.setPrimitive("net:http-path-handler", new Atom(new PathHandler()));
         env.setPrimitive("net:http-literal-handler", new Atom(new LiteralHandler()));
+        env.setPrimitive("net:http-routing-handler", new Atom(new RoutingHandler()));
+        env.setPrimitive("net:http-redirect-handler", new Atom(new RedirectHandler()));
+        env.setPrimitive("net:http-resource-handler", new Atom(new ResourceHandler()));
 
         env.setPrimitive("cmpx", new Atom(new Cmpx()));
         env.setPrimitive("import", "○←⍫", new Atom(new Import()));
