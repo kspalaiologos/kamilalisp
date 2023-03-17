@@ -15,6 +15,7 @@ import palaiologos.kamilalisp.runtime.net.*;
 import palaiologos.kamilalisp.runtime.net.httpserver.*;
 import palaiologos.kamilalisp.runtime.sh.*;
 import palaiologos.kamilalisp.runtime.sh.Process;
+import palaiologos.kamilalisp.runtime.sql.SQLConnect;
 
 import java.util.List;
 
@@ -64,6 +65,8 @@ public class SystemLib {
         env.setPrimitive("net:http-routing-handler", new Atom(new RoutingHandler()));
         env.setPrimitive("net:http-redirect-handler", new Atom(new RedirectHandler()));
         env.setPrimitive("net:http-resource-handler", new Atom(new ResourceHandler()));
+
+        env.setPrimitive("sql:connect", new Atom(new SQLConnect()));
 
         env.setPrimitive("cmpx", new Atom(new Cmpx()));
         env.setPrimitive("import", "○←⍫", new Atom(new Import()));
