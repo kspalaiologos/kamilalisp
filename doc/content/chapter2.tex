@@ -653,8 +653,7 @@ A good way to simplify this code is to use the \textit{backslash partitioning}. 
 \begin{Verbatim}
     --> defun levi-civita x \
     ...    if ([not-same-elements unique #0] x)
-    ...        0
-    ...        \** -1 \foldl + 0 \[flatten@< #0 prefixes] x
+    ...        0 \** -1 \foldl + 0 \[flatten@< #0 prefixes] x
 \end{Verbatim}
 
 To verify the code, generate a 2x2 Levi Civita symbol matrix:

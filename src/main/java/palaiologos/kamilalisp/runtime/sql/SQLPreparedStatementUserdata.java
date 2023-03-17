@@ -38,20 +38,14 @@ public class SQLPreparedStatementUserdata implements Userdata {
     @Override
     public Atom field(Object key) {
         if(key instanceof String keyStr) {
-            switch (keyStr) {
-                case "set-timeout":
-                    return new Atom(new SetTimeout());
-                case "set-max-rows":
-                    return new Atom(new SetMaxRows());
-                case "execute":
-                    return new Atom(new Execute());
-                case "execute-query":
-                    return new Atom(new ExecuteQuery());
-                case "execute-update":
-                    return new Atom(new ExecuteUpdate());
-                default:
-                    throw new TypeError("sql:statement - unknown key: " + keyStr);
-            }
+            return switch (keyStr) {
+                case "set-timeout" -> new Atom(new SetTimeout());
+                case "set-max-rows" -> new Atom(new SetMaxRows());
+                case "execute" -> new Atom(new Execute());
+                case "execute-query" -> new Atom(new ExecuteQuery());
+                case "execute-update" -> new Atom(new ExecuteUpdate());
+                default -> throw new TypeError("sql:statement - unknown key: " + keyStr);
+            };
         } else if(key instanceof Integer keyInt) {
             // Set n-th parameter.
             return new Atom(new SetParameter(keyInt));

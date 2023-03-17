@@ -1,2 +1,2 @@
 #!/bin/bash
-lualatex -pdf --halt-on-error -shell-escape main
+lualatex --halt-on-error -shell-escape main
