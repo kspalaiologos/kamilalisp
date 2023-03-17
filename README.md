@@ -71,7 +71,8 @@ KamilaLisp allows for actor programming, concurrent programming, imperative prog
 - Module system.
 - Streams
 - Process management (using `sh:process`) - manipulating input/output streams, etc...
-- HTTP server.
+- HTTP server - supports resource handlers, path handlers, complex routing, cookies, ...
+- SQL database connection, auxiliary database drivers, statements, queries, prepared statements.
 - Symbolic matrix LU decomposition, symbolic determinants.
 - Pattern matching.
 - Memoization.
