@@ -2,6 +2,7 @@ package palaiologos.kamilalisp.runtime.lib;
 
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
+import palaiologos.kamilalisp.atom.Evaluation;
 import palaiologos.kamilalisp.runtime.IO.*;
 import palaiologos.kamilalisp.runtime.IO.streams.*;
 import palaiologos.kamilalisp.runtime.dataformat.archive.*;
@@ -11,17 +12,18 @@ import palaiologos.kamilalisp.runtime.meta.Cmpx;
 import palaiologos.kamilalisp.runtime.meta.Exit;
 import palaiologos.kamilalisp.runtime.meta.Import;
 import palaiologos.kamilalisp.runtime.net.*;
+import palaiologos.kamilalisp.runtime.net.httpserver.*;
 import palaiologos.kamilalisp.runtime.sh.*;
 import palaiologos.kamilalisp.runtime.sh.Process;
+import palaiologos.kamilalisp.runtime.sql.SQLConnect;
+
+import java.util.List;
 
 public class SystemLib {
     public static void register(Environment env) {
         env.setPrimitive("img:write", "≣⊣", new Atom(new WriteImage()));
         env.setPrimitive("img:read", "≣⊢", new Atom(new LoadImage()));
 
-        env.setPrimitive("io:writeln", "↑⍫", new Atom(new Writeln()));
-        env.setPrimitive("io:readln", "↓⍫", new Atom(new Readln()));
-        env.setPrimitive("io:write", "↗⍫", new Atom(new Write()));
         env.setPrimitive("io:get-file", "⍫⊢", new Atom(new GetFile()));
         env.setPrimitive("io:put-file", "⍫⊣", new Atom(new PutFile()));
         env.setPrimitive("io:append-file", "⍫⊣+", new Atom(new AppendFile()));
@@ -57,7 +59,14 @@ public class SystemLib {
         env.setPrimitive("net:client-ssl", new Atom(new NetClientSSL()));
         env.setPrimitive("net:server", new Atom(new NetServer()));
         env.setPrimitive("net:server-ssl", new Atom(new NetServerSSL()));
-        env.setPrimitive("net:http-server", new Atom(new HTTPServer()));
+        env.setPrimitive("net:http-server-builder", new Atom(new HTTPServer()));
+        env.setPrimitive("net:http-path-handler", new Atom(new PathHandler()));
+        env.setPrimitive("net:http-literal-handler", new Atom(new LiteralHandler()));
+        env.setPrimitive("net:http-routing-handler", new Atom(new RoutingHandler()));
+        env.setPrimitive("net:http-redirect-handler", new Atom(new RedirectHandler()));
+        env.setPrimitive("net:http-resource-handler", new Atom(new ResourceHandler()));
+
+        env.setPrimitive("sql:connect", new Atom(new SQLConnect()));
 
         env.setPrimitive("cmpx", new Atom(new Cmpx()));
         env.setPrimitive("import", "○←⍫", new Atom(new Import()));
