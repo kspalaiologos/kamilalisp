@@ -22,18 +22,13 @@ public class SQLConnectionUserdata implements Userdata {
     public Atom field(Object key) {
         if(!(key instanceof String keyStr))
             throw new RuntimeException("sql:connection - field name must be a string");
-        switch (keyStr) {
-            case "statement":
-                return new Atom(new SQLStatement());
-            case "prepare-statement":
-                return new Atom(new SQLPrepareStatement());
-            case "close":
-                return new Atom(new SQLClose());
-            case "commit":
-                return new Atom(new SQLCommit());
-            default:
-                throw new RuntimeException("sql:connection - no such field: " + keyStr);
-        }
+        return switch (keyStr) {
+            case "statement" -> new Atom(new SQLStatement());
+            case "prepare-statement" -> new Atom(new SQLPrepareStatement());
+            case "close" -> new Atom(new SQLClose());
+            case "commit" -> new Atom(new SQLCommit());
+            default -> throw new RuntimeException("sql:connection - no such field: " + keyStr);
+        };
     }
 
     @Override

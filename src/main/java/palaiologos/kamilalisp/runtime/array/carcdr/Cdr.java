@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Cdr extends PrimitiveFunction implements Lambda {
+    private static final int CDR_FLATTENING_THRESHOLD = 16;
+
     public static Cdr INSTANCE = new Cdr();
 
     @Override
@@ -89,7 +91,7 @@ public class Cdr extends PrimitiveFunction implements Lambda {
         List<Atom> cdr() {
             if (size() <= 1)
                 return List.of();
-            if (cdrOffset <= 16) {
+            if (cdrOffset <= CDR_FLATTENING_THRESHOLD) {
                 return new CdrListFacade(list, cdrOffset + 1);
             } else {
                 return new CdrListFacade(list.stream().skip(cdrOffset).toList(), 1);
