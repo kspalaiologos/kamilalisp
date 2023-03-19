@@ -508,6 +508,17 @@ defun sieve (n) (reverse@car@converge (
     ) (tie 'nil (range 2 n)))
 \end{Verbatim}
 
+\section{State management}
+
+In KamilaLisp data structures are immutable. It is however of particular interest to store the state of a computation so that it persists across multiple invocations. This is generally accomplished using the \verb|meta:state-manager| constructor. The state manager is a higher order function that applied to a function returns a new function that relays the arguments to the original function alongside the state and stores the result in the state manager's internal state. The following example implements a counter function that increments or decrements the state by one each time it is called:
+
+\begin{Verbatim}
+    --> def counter (meta:state-manager (lambda (self x) (cond
+          ((= x 'inc) ([tie #0 #0] \+ self 1))
+          ((= x 'dec) ([tie #0 #0] \- self 1))
+          (true (raise "Invalid argument")))))
+\end{Verbatim}
+
 \section{Folding and scanning}
 
 \textit{Folds} and \textit{scans} are higher-order functions that analyze a recursive data structure (usually a tree or list, however this section will focus only on folding lists) and through use of a given aggregation functor, combine the results of recursively processing its constituent parts, building up a return value. The difference between folds and scans is that the former return only the final result, while the latter return a list of intermediate results.

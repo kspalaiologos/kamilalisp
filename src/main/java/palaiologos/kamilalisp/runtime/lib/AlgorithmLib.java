@@ -31,6 +31,7 @@ public class AlgorithmLib {
         env.setPrimitive("meta:to-ascii", "⊚∉", new Atom(new ToASCII()));
         env.setPrimitive("meta:type-name", "⊚?", new Atom(new TypeName()));
         env.setPrimitive("meta:atom", "→⊚", new Atom(new MetaAtom()));
+        env.setPrimitive("meta:state-manager", new Atom(new StateManager()));
 
         env.setPrimitive("digest:md2", new Atom(new Md2Digest()));
         env.setPrimitive("digest:md5", new Atom(new Md5Digest()));
