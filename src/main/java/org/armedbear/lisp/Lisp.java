@@ -555,9 +555,6 @@ public static synchronized final void handleInterrupt()
             LispObject fun = env.lookupFunction(first);
             if (fun instanceof SpecialOperator)
               {
-                if (profiling)
-                  if (!sampling)
-                    fun.incrementCallCount();
                 // Don't eval args!
                 return fun.execute(((Cons)obj).cdr, env);
               }
