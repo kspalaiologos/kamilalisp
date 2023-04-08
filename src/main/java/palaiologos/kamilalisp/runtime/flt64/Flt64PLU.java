@@ -100,12 +100,12 @@ public class Flt64PLU extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("Expected a square matrix.");
         }
 
-        double[][] A = l1.stream().map(x -> x.stream().mapToDouble(Flt64Base::toFlt64).toArray()).toArray(double[][]::new);
+        double[][] A = l1.stream().map(x -> x.stream().mapToDouble(Flt64AtomThunk::toFloat).toArray()).toArray(double[][]::new);
         double[][][] data = lu(A);
         return new Atom(List.of(
-                new Atom(Arrays.stream(data[0]).map(x -> new Atom(Arrays.stream(x).mapToObj(Flt64Base::toAtom).toList())).toList()),
-                new Atom(Arrays.stream(data[1]).map(x -> new Atom(Arrays.stream(x).mapToObj(Flt64Base::toAtom).toList())).toList()),
-                new Atom(Arrays.stream(data[2]).map(x -> new Atom(Arrays.stream(x).mapToObj(Flt64Base::toAtom).toList())).toList())
+                new Atom(Arrays.stream(data[0]).map(x -> new Atom(Arrays.stream(x).mapToObj(Flt64AtomThunk::toAtom).toList())).toList()),
+                new Atom(Arrays.stream(data[1]).map(x -> new Atom(Arrays.stream(x).mapToObj(Flt64AtomThunk::toAtom).toList())).toList()),
+                new Atom(Arrays.stream(data[2]).map(x -> new Atom(Arrays.stream(x).mapToObj(Flt64AtomThunk::toAtom).toList())).toList())
         ));
     }
 

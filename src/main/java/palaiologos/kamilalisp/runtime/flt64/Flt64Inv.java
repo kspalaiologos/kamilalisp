@@ -22,7 +22,7 @@ public class Flt64Inv extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("Expected a square matrix.");
         }
 
-        double[][] A = l1.stream().map(x -> x.stream().mapToDouble(Flt64Base::toFlt64).toArray()).toArray(double[][]::new);
+        double[][] A = l1.stream().map(x -> x.stream().mapToDouble(Flt64AtomThunk::toFloat).toArray()).toArray(double[][]::new);
 
         double invdet = 1 / Flt64Det.det(A);
         for (int i = 0; i < A.length; i++) {
@@ -31,7 +31,7 @@ public class Flt64Inv extends PrimitiveFunction implements Lambda {
             }
         }
 
-        return new Atom(Arrays.stream(A).map(x -> new Atom(Arrays.stream(x).mapToObj(Flt64Base::toAtom).toList())).toList());
+        return new Atom(Arrays.stream(A).map(x -> new Atom(Arrays.stream(x).mapToObj(Flt64AtomThunk::toAtom).toList())).toList());
     }
 
     @Override

@@ -61,9 +61,9 @@ public class Flt64Det extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("Expected a square matrix.");
         }
 
-        double[][] A = l1.stream().map(x -> x.stream().mapToDouble(Flt64Base::toFlt64).toArray()).toArray(double[][]::new);
+        double[][] A = l1.stream().map(x -> x.stream().mapToDouble(Flt64AtomThunk::toFloat).toArray()).toArray(double[][]::new);
 
-        return Flt64Base.toAtom(det(A));
+        return Flt64AtomThunk.toAtom(det(A));
     }
 
     @Override

@@ -24,8 +24,8 @@ public class Flt64Trace extends PrimitiveFunction implements Lambda {
             return new Atom(BigInteger.ZERO);
         double result = 0;
         for (int i = 0; i < diagonalLen; i++)
-            result += Flt64Base.toFlt64(l1.get(i).get(i));
-        return Flt64Base.toAtom(result);
+            result += Flt64AtomThunk.toFloat(l1.get(i).get(i));
+        return Flt64AtomThunk.toAtom(result);
     }
 
     @Override

@@ -51,9 +51,9 @@ public class Flt64Permanent extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("Expected a square matrix.");
         }
 
-        double[][] A = l1.stream().map(x -> x.stream().mapToDouble(Flt64Base::toFlt64).toArray()).toArray(double[][]::new);
+        double[][] A = l1.stream().map(x -> x.stream().mapToDouble(Flt64AtomThunk::toFloat).toArray()).toArray(double[][]::new);
 
-        return Flt64Base.toAtom(perm(A));
+        return Flt64AtomThunk.toAtom(perm(A));
     }
 
     @Override
