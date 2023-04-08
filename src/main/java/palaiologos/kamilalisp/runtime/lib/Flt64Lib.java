@@ -585,6 +585,40 @@ public class Flt64Lib {
                 return Maja.besselYv(x, y);
             }
         }));
+        env.setPrimitive("flt64:e", new Atom(new Flt64PervasiveMonadicFunction("flt64:e") {
+            @Override
+            public double apply(double x) {
+                return Maja.E * x;
+            }
+
+            @Override
+            public double apply() {
+                return Maja.E;
+            }
+        }));
+        env.setPrimitive("flt64:pi", new Atom(new Flt64PervasiveMonadicFunction("flt64:pi") {
+            @Override
+            public double apply(double x) {
+                return Maja.PI * x;
+            }
+
+            @Override
+            public double apply() {
+                return Maja.PI;
+            }
+        }));
+        env.setPrimitive("flt64:ln2", Flt64AtomThunk.toAtom(Maja.LN2));
+        env.setPrimitive("flt64:ln10", Flt64AtomThunk.toAtom(Maja.LN10));
+        env.setPrimitive("flt64:log2e", Flt64AtomThunk.toAtom(Maja.LOG2E));
+        env.setPrimitive("flt64:epsilon", Flt64AtomThunk.toAtom(Maja.EPSILON));
+        env.setPrimitive("flt64:euler-gamma", Flt64AtomThunk.toAtom(Maja.EULER_GAMMA));
+        env.setPrimitive("flt64:golden-ratio", Flt64AtomThunk.toAtom(Maja.GOLDEN_RATIO));
+        env.setPrimitive("flt64:apery-constant", Flt64AtomThunk.toAtom(Maja.APERY_CONSTANT));
+        env.setPrimitive("flt64:mills-constant", Flt64AtomThunk.toAtom(Maja.MILLS_CONSTANT));
+        env.setPrimitive("flt64:catalan-constant", Flt64AtomThunk.toAtom(Maja.CATALAN_CONSTANT));
+        env.setPrimitive("flt64:glaisher-constant", Flt64AtomThunk.toAtom(Maja.GLAISHER_CONSTANT));
+        env.setPrimitive("flt64:khinchin-constant", Flt64AtomThunk.toAtom(Maja.KHINCHIN_CONSTANT));
+
         env.setPrimitive("flt64:LU", new Atom(new Flt64LU()));
         env.setPrimitive("flt64:PLU", new Atom(new Flt64PLU()));
         env.setPrimitive("flt64:det", new Atom(new Flt64Det()));
