@@ -135,10 +135,6 @@ public class Flt64Lib {
             @Override
             public double apply(double x) { return Maja.sinh(x); }
         }));
-        env.setPrimitive("flt64:sqrt", new Atom(new Flt64PervasiveMonadicFunction("flt64:sqrt") {
-            @Override
-            public double apply(double x) { return Maja.sqrt(x); }
-        }));
         env.setPrimitive("flt64:tan", new Atom(new Flt64PervasiveMonadicFunction("flt64:tan") {
             @Override
             public double apply(double x) { return Maja.tan(x); }
