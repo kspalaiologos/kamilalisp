@@ -21,4 +21,21 @@ public class Flt64AtomThunk extends AtomicThunk {
         setData(BigDecimal.valueOf(val));
         forced = true;
     }
+
+    public static double toFloat(Atom a) {
+        if(a instanceof Flt64AtomThunk)
+            return ((Flt64AtomThunk) a).val;
+        return switch (a.getType()) {
+            case INTEGER -> a.getInteger().doubleValue();
+            case REAL -> a.getReal().doubleValue();
+            case COMPLEX -> a.getComplex().re.doubleValue();
+            default -> throw new IllegalArgumentException("Cannot convert " + a.getType() + " to flt64");
+        };
+    }
+
+    public static Atom toAtom(double d) {
+        if(Double.isNaN(d))
+            throw new ArithmeticException("NaN");
+        return new Flt64AtomThunk(d);
+    }
 }

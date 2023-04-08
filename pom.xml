@@ -105,6 +105,13 @@
             <version>1.5.1</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/rocks.palaiologos/maja -->
+        <dependency>
+            <groupId>rocks.palaiologos</groupId>
+            <artifactId>maja</artifactId>
+            <version>0.1.7</version>
+        </dependency>
+
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
