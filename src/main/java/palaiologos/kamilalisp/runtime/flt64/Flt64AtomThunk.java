@@ -25,6 +25,8 @@ public class Flt64AtomThunk extends AtomicThunk {
     public static double toFloat(Atom a) {
         if(a instanceof Flt64AtomThunk)
             return ((Flt64AtomThunk) a).val;
+        else if(a instanceof Cmplx64AtomThunk)
+            return ((Cmplx64AtomThunk) a).val.re();
         return switch (a.getType()) {
             case INTEGER -> a.getInteger().doubleValue();
             case REAL -> a.getReal().doubleValue();
