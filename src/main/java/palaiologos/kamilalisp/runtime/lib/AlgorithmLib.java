@@ -138,6 +138,7 @@ public class AlgorithmLib {
         env.setPrimitive("graph:is-berge-graph", new Atom(new BergeGraphTest()));
         env.setPrimitive("graph:bron-kerbosch-clique-finder", new Atom(new BronKerboschCliqueFinder()));
         env.setPrimitive("graph:chordal-graph-maximum-clique-finder", new Atom(new ChordalGraphMaximumCliqueFinder()));
+        env.setPrimitive("graph:chinese-postman", new Atom(new ChinesePostman()));
 
         env.setPrimitive("regex:matches?", "⍫⊖∊?", new Atom(new RegexMatches()));
         env.setPrimitive("regex:replace", "⍫⊖⍆", new Atom(new RegexReplace()));
