@@ -15,6 +15,7 @@
 - cas: solve systems of equations, solve DEs, gradient, jacobian,
   compute eigenvalues, eigenvectors, solve systems of equations,
   discrete sums.
+- graphs: connectivity,
 
 bugs:
 - ???

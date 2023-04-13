@@ -135,6 +135,9 @@ public class AlgorithmLib {
         env.setPrimitive("graph:kuhn-munkres-mw-bipartite-perfect-matching", new Atom(new KuhnMunkresMWBipartitePerfectMatching()));
         env.setPrimitive("graph:maximum-weight-bipartite-matching", new Atom(new MWBipartiteMatching()));
         env.setPrimitive("graph:zhang-shasha-tree-edit-distance", new Atom(new ZhangShashaTreeEditDistance()));
+        env.setPrimitive("graph:is-berge-graph", new Atom(new BergeGraphTest()));
+        env.setPrimitive("graph:bron-kerbosch-clique-finder", new Atom(new BronKerboschCliqueFinder()));
+        env.setPrimitive("graph:chordal-graph-maximum-clique-finder", new Atom(new ChordalGraphMaximumCliqueFinder()));
 
         env.setPrimitive("regex:matches?", "⍫⊖∊?", new Atom(new RegexMatches()));
         env.setPrimitive("regex:replace", "⍫⊖⍆", new Atom(new RegexReplace()));
