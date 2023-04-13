@@ -13,7 +13,10 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: |
+        export JAVA_HOME=/usr/lib/jvm/jre-19/
+        export PATH="$JAVA_HOME/bin:$PATH"
+        mvn -B package --file pom.xml
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1
     - name: Upload a Build Artifact
