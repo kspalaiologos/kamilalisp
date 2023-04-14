@@ -111,7 +111,11 @@ public class AlgorithmLib {
         env.setPrimitive("graph:multi", new Atom(new Multi()));
         env.setPrimitive("graph:multi-weighted", new Atom(new MultiWeighted()));
         env.setPrimitive("graph:multi-directed", new Atom(new MultiDirected()));
-        env.setPrimitive("graph:multi-directed-weighted", new Atom(new MultiDirected()));
+        env.setPrimitive("graph:multi-directed-weighted", new Atom(new MultiDirectedWeighted()));
+        env.setPrimitive("graph:pseudo", new Atom(new Pseudo()));
+        env.setPrimitive("graph:pseudo-weighted", new Atom(new PseudoWeighted()));
+        env.setPrimitive("graph:pseudo-directed", new Atom(new PseudoDirected()));
+        env.setPrimitive("graph:pseudo-directed-weighted", new Atom(new PseudoDirectedWeighted()));
         env.setPrimitive("graph:bfs", new Atom(new BFS()));
         env.setPrimitive("graph:dfs", new Atom(new DFS()));
         env.setPrimitive("graph:cfs", new Atom(new CFS()));
