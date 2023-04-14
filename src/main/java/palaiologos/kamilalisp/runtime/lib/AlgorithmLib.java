@@ -152,6 +152,8 @@ public class AlgorithmLib {
         env.setPrimitive("graph:is-chordal-graph", new Atom(new ChordalityCheck()));
         env.setPrimitive("graph:boykov-kolgomorov-max-flow", new Atom(new BoykovKolgomorovMaxFlow()));
         env.setPrimitive("graph:dinic-max-flow", new Atom(new BoykovKolgomorovMaxFlow()));
+        env.setPrimitive("graph:binary-lifting-lca", new Atom(new BinaryLiftingLCA()));
+        env.setPrimitive("graph:tarjan-lca", new Atom(new TarjanLCA()));
 
         env.setPrimitive("regex:matches?", "⍫⊖∊?", new Atom(new RegexMatches()));
         env.setPrimitive("regex:replace", "⍫⊖⍆", new Atom(new RegexReplace()));
