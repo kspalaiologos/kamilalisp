@@ -140,6 +140,8 @@ public class AlgorithmLib {
         env.setPrimitive("graph:chordal-graph-maximum-clique-finder", new Atom(new ChordalGraphMaximumCliqueFinder()));
         env.setPrimitive("graph:chinese-postman", new Atom(new ChinesePostman()));
         env.setPrimitive("graph:is-chordal-graph", new Atom(new ChordalityCheck()));
+        env.setPrimitive("graph:boykov-kolgomorov-max-flow", new Atom(new BoykovKolgomorovMaxFlow()));
+        env.setPrimitive("graph:dinic-max-flow", new Atom(new BoykovKolgomorovMaxFlow()));
 
         env.setPrimitive("regex:matches?", "⍫⊖∊?", new Atom(new RegexMatches()));
         env.setPrimitive("regex:replace", "⍫⊖⍆", new Atom(new RegexReplace()));
