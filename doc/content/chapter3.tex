@@ -867,4 +867,76 @@ Implementing the reflexive closure - the smallest relation on $X$ that contains 
 
 \section{Graphs}
 
-\section{Trees}
+A graph is a data structure consisting of a set of objects (vertices) in which some pairs of the objects are related (linked). It is important to recognise how graphs are more general than trees - a tree is merely a connected undirected acyclic graph. The following elementary properties of graphs are considered:
+
+\begin{itemize}
+    \item A graph is either \textbf{directed} or \textbf{undirected}. This property specifies whether the links between vertices are ordered or not.
+    \item A graph may be declared to contain \textbf{self-loops}. This property specifies whether a vertex may be linked to itself.
+    \item A graph may be declared to contain \textbf{multiple edges}. This property specifies whether a vertex may be linked to another vertex more than once.
+    \item A graph may be \textbf{weighted}, in which case each link is assigned a weight (a real number represented as a machine word; i.e. not arbitrary precision).
+\end{itemize}
+
+Depending on the declared properties of the graph, certain graphs are assigned names:
+
+\begin{itemize}
+    \item An undirected, unweighted graph with no self-loops and no multiple edges is called a \textbf{simple graph}.
+    \item An undirected, unweighted graph with no self-loops and multiple edges is called a \textbf{multigraph}.
+    \item An undirected, unweighted graph with that allows for self-loops and multiple edges is called a \textbf{pseudograph}.
+\end{itemize}
+
+Directed and weighted variants of these graphs exist, but they do not have unique names. For instance, a directed and weighted graph that allows for multiple edges but no self-loops will be referred to as a \textbf{directed and weighted multigraph}.
+
+\subsection{Graph constructors}
+
+Constructing a graph is done using the following KamilaLisp functions, all of which have similar interfaces explained later on in the book:
+
+\begin{itemize}
+    \item \verb|graph:simple| - constructs a simple graph.
+    \item \verb|graph:simple-weighted| - constructs a weighted simple graph.
+    \item \verb|graph:simple-directed| - constructs a directed simple graph.
+    \item \verb|graph:simple-directed-weighted| - constructs a directed and weighted simple graph.
+    \item \verb|graph:multi| - constructs a multigraph.
+    \item \verb|graph:multi-weighted| - constructs a weighted multigraph.
+    \item \verb|graph:multi-directed| - constructs a directed multigraph.
+    \item \verb|graph:multi-directed-weighted| - constructs a directed and weighted multigraph.
+    \item \verb|graph:pseudo| - constructs a pseudograph.
+    \item \verb|graph:pseudo-weighted| - constructs a weighted pseudograph.
+    \item \verb|graph:pseudo-directed| - constructs a directed pseudograph.
+    \item \verb|graph:pseudo-directed-weighted| - constructs a directed and weighted pseudograph.
+\end{itemize}
+
+\par \noindent Constructing a graph requires specifying the edges and vertices:
+
+\begin{Verbatim}
+    --> def my-graph \graph:simple 
+    ...   '(kamila lena julia anna diana)
+    ...   '((diana anna) (kamila julia) (julia lena) (lena anna))
+
+    Graph(
+        Vertices=[kamila, lena, julia, anna, diana],
+        Edges=[(diana => anna), (kamila => julia), (julia => lena), (lena => anna)]
+    )
+\end{Verbatim}
+
+\subsection{Elementary graph operations}
+
+The following elementary operations are defined on all graphs, regardless of their type.
+\newline
+
+\par \noindent \verb|.has-vertex?| - checks whether a vertex is present in the graph.
+
+\begin{Verbatim}
+    --> my-graph.has-vertex? 'kamila
+    1
+    --> my-graph.has-vertex? 'jacob
+    0
+\end{Verbatim}
+
+\par \noindent \verb|.has-edge?| - checks whether an edge is present in the graph.
+
+\begin{Verbatim}
+    --> my-graph.has-edge? '(lena anna)
+    1
+    --> my-graph.has-edge? '(lena kamila)
+    0
+\end{Verbatim}

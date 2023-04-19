@@ -58,7 +58,7 @@ public class SimpleWeighted extends PrimitiveFunction implements Lambda {
                 return w.adjoin(g -> {
                     g.setEdgeWeight(g.getEdge(source, target), weight.getReal().doubleValue());
                 });
-            } else if(args.size() == 2) {
+            } else if(args.size() == 1) {
                 List<Atom> edge = args.get(0).getList();
                 Atom source = edge.get(0);
                 Atom target = edge.get(1);
