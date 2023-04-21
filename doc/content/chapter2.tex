@@ -662,9 +662,9 @@ A KamilaLisp implementation can be written as follows:
 A good way to simplify this code is to use the \textit{backslash partitioning}. In essence, a pair of parentheses can sometimes be replaced with a single backslash in place of the opening parenthesis. The interpreter will replace the backslash with an open parenthesis of the type corresponding to the outer parenthesis and automatically double the next closing parenthesis of the same type that it encounters. To demonstrate, consider this version of the original code:
 
 \begin{Verbatim}
-    --> defun levi-civita x \
+    --> defun levi-civita x (
     ...    if ([not-same-elements unique #0] x)
-    ...        0 \** -1 \foldl + 0 \[flatten@< #0 prefixes] x
+    ...        0 \** -1 \foldl + 0 \[flatten@< #0 prefixes] x)
 \end{Verbatim}
 
 To verify the code, generate a 2x2 Levi Civita symbol matrix:

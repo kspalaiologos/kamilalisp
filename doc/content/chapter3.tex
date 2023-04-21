@@ -921,9 +921,8 @@ Constructing a graph is done using the following KamilaLisp functions, all of wh
 \subsection{Elementary graph operations}
 
 The following elementary operations are defined on all graphs, regardless of their type.
-\newline
 
-\par \noindent \verb|.has-vertex?| - checks whether a vertex is present in the graph.
+\vspace{0.25cm} \par \noindent \verb|.has-vertex?| - checks whether a vertex is present in the graph.
 
 \begin{Verbatim}
     --> my-graph.has-vertex? 'kamila
@@ -940,3 +939,48 @@ The following elementary operations are defined on all graphs, regardless of the
     --> my-graph.has-edge? '(lena kamila)
     0
 \end{Verbatim}
+
+\par \noindent \verb|.edges-of| - returns all the edges associated with a vertex.
+
+\begin{Verbatim}
+    --> my-graph.edges-of 'anna
+    [(diana anna)
+     (lena anna)]
+\end{Verbatim}
+
+\par \noindent \verb|.incoming-edges-of| - returns the set of all edges incoming into the specified vertex. This operation is only useful for directed graphs. For undirected graphs, it is equivalent to \verb|.edges-of|.
+
+\vspace{0.25cm} \par \noindent \verb|.outgoing-edges-of| - returns the set of all edges outgoing from the specified vertex. This operation is only useful for directed graphs. For undirected graphs, it is equivalent to \verb|.edges-of|.
+
+\vspace{0.25cm} \par \noindent \verb|.adjoin-vertex| - adds a vertex to the graph.
+
+\begin{Verbatim}
+    --> def graph2 \my-graph.adjoin-vertex 'rose
+    Graph(
+        Vertices=[kamila, lena, julia, anna, diana, rose],
+        Edges=[(diana => anna), (kamila => julia), (julia => lena), (lena => anna)]
+    )
+\end{Verbatim}
+
+\par \noindent \verb|.adjoin-edge| - adds an edge to the graph.
+
+\begin{Verbatim}
+    --> def graph2 \graph2.adjoin-edge '(rose lena)
+    Graph(
+        Vertices=[kamila, lena, julia, anna, diana, rose],
+        Edges=[(diana => anna), (kamila => julia), (julia => lena),
+               (lena => anna), (rose => lena)]
+    )
+\end{Verbatim}
+
+\par \noindent \verb|.degree-of| - returns the degree of a vertex. The degree of a vertex is the number of edges incident to it.
+
+\begin{Verbatim}
+    --> graph2.degree-of 'lena
+    3
+\end{Verbatim}
+
+\par \noindent \verb|.minus-edge| and \verb|.minus-vertex| operate in a similar fashion to \verb|.adjoin-edge| and \verb|.adjoin-vertex|, but they remove the specified edge or vertex from the graph. If the specified edge or vertex is not present in the graph, the graph is returned unchanged.
+
+\vspace{0.25cm} \par \noindent \verb|.adjoin-edge-set|, \verb|.adjoin-vertex-set|, \verb|.minus-vertex-set|, \verb|.minus-edge-set| perform operations analogical to the ones described above, but work in batches by adjoining multiple edges or vertices, or removing multiple edges or vertices.
+
