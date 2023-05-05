@@ -1412,7 +1412,7 @@ String splitting can be done in a variaty of ways. The specialised function \ver
 A more general solution is to use \verb|regex:split|, which splits a string on every occurence of a regular expression.
 
 \begin{Verbatim}
-    regex:split ":" (sh:getenv "PATH")
+    --> regex:split ":" (sh:getenv "PATH")
     ["/usr/local/sbin"
      "/usr/local/bin"
      "/usr/sbin"
