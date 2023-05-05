@@ -31,7 +31,7 @@ mvn package
 Alternatively, you could download a pre-compiled JAR file for use with **Java 17 or newer**:
 
 ```
-export VERSION=v0.2m
+export VERSION=v0.2n
 mkdir kamilalisp && cd kamilalisp
 # Download the KamilaLisp JAR
 curl -L -O https://github.com/kspalaiologos/kamilalisp/releases/download/$VERSION/kamilalisp-0.2.jar
@@ -94,7 +94,7 @@ KamilaLisp allows for actor programming, concurrent programming, imperative prog
 - Functional de Bruijn indices.
 - Possibility to write standalone non-interactive scripts.
 - Symbolic matrix operations.
-- Machine word operations (flt64:...) - Bessel functions, Hurwitz Zeta, Riemann Zeta, Upper/Lower Incomplete Gamma, Gamma, LogGamma, Pochhammer symbol, erf, erfc, Inverse erf, Inverse erfc, Digamma, Trigamma, Polygamma, Airy Ai, Bessel I, J, K and Y functions, Lerch Phi, Spence's function, Lambert W and Polylogarithm.
+- Machine word operations (flt64:..., cmplx64:...) - Bessel functions, Hurwitz Zeta, Riemann Zeta, Upper/Lower Incomplete Gamma, Gamma, LogGamma, Pochhammer symbol, erf, erfc, Inverse erf, Inverse erfc, Digamma, Trigamma, Polygamma, Airy Ai, Bessel I, J, K and Y functions, Lerch Phi, Spence's function, Lambert W and Polylogarithm.
 - Prompt styling.
 - Portable.
 - Graph data structure (e.g. directed, acyclic, weighted, etc...).

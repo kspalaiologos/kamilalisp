@@ -3,6 +3,7 @@ package palaiologos.kamilalisp.runtime.lib;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.runtime.flt64.*;
+import rocks.palaiologos.maja.Complex;
 import rocks.palaiologos.maja.Maja;
 
 public class Flt64Lib {
@@ -621,5 +622,374 @@ public class Flt64Lib {
         env.setPrimitive("flt64:permanent", new Atom(new Flt64Permanent()));
         env.setPrimitive("flt64:invert", new Atom(new Flt64Inv()));
         env.setPrimitive("flt64:trace", new Atom(new Flt64Trace()));
+
+        // Complex numbers from the cmplx64 package.
+        env.setPrimitive("cmplx64:ceil", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:ceil") {
+            @Override
+            public Complex apply(Complex x) { return Maja.ceil(x); }
+        }));
+        env.setPrimitive("cmplx64:floor", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:floor") {
+            @Override
+            public Complex apply(Complex x) { return Maja.floor(x); }
+        }));
+        env.setPrimitive("cmplx64:round", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:round") {
+            @Override
+            public Complex apply(Complex x) { return Maja.round(x); }
+        }));
+        env.setPrimitive("cmplx64:sinc", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:sinc") {
+            @Override
+            public Complex apply(Complex x) { return Maja.sinc(x); }
+        }));
+        env.setPrimitive("cmplx64:fma", new Atom(new Cmplx64TriadicFunction("cmplx64:fma") {
+            @Override
+            public Complex apply(Complex x, Complex y, Complex z) { return Maja.fma(x, y, z); }
+        }));
+        env.setPrimitive("cmplx64:pochhammer", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:pochhammer") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.pochhammer(x, y); }
+        }));
+        env.setPrimitive("cmplx64:zeta", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:zeta") {
+            @Override
+            public Complex apply(Complex x) { return Maja.zeta(x); }
+        }));
+        env.setPrimitive("cmplx64:polygamma", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:polygamma") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.polygamma(x, y); }
+        }));
+        env.setPrimitive("cmplx64:gcd", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:gcd") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.gcd(x, y); }
+        }));
+        env.setPrimitive("cmplx64:lcm", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:lcm") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.lcm(x, y); }
+        }));
+        env.setPrimitive("cmplx64:rem", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:rem") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.rem(x, y); }
+        }));
+        env.setPrimitive("cmplx64:+", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:+") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.add(x, y); }
+        }));
+        env.setPrimitive("cmplx64:-", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:-") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.sub(x, y); }
+        }));
+        env.setPrimitive("cmplx64:*", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:*") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.mul(x, y); }
+        }));
+        env.setPrimitive("cmplx64:/", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:/") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.div(x, y); }
+        }));
+        env.setPrimitive("cmplx64:conj", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:conj") {
+            @Override
+            public Complex apply(Complex x) { return Maja.conj(x); }
+        }));
+        env.setPrimitive("cmplx64:abs", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:abs") {
+            @Override
+            public Complex apply(Complex x) { return new Complex(Maja.abs(x)); }
+        }));
+        env.setPrimitive("cmplx64:sqrt", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:sqrt") {
+            @Override
+            public Complex apply(Complex x) { return Maja.sqrt(x); }
+        }));
+        env.setPrimitive("cmplx64:exp", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:exp") {
+            @Override
+            public Complex apply(Complex x) { return Maja.exp(x); }
+        }));
+        env.setPrimitive("cmplx64:log", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:log") {
+            @Override
+            public Complex apply(Complex x) { return Maja.log(x); }
+        }));
+        env.setPrimitive("cmplx64:arg", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:arg") {
+            @Override
+            public Complex apply(Complex x) { return new Complex(Maja.arg(x)); }
+        }));
+        env.setPrimitive("cmplx64:=", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:=") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.eq(x, y) ? Complex.ONE : Complex.ZERO; }
+        }));
+        env.setPrimitive("cmplx64:/=", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:/=") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.ne(x, y) ? Complex.ONE : Complex.ZERO; }
+        }));
+        env.setPrimitive("cmplx64:cbrt", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:cbrt") {
+            @Override
+            public Complex apply(Complex x) { return Maja.cbrt(x); }
+        }));
+        env.setPrimitive("cmplx64:asin", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:asin") {
+            @Override
+            public Complex apply(Complex x) { return Maja.asin(x); }
+        }));
+        env.setPrimitive("cmplx64:acos", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:acos") {
+            @Override
+            public Complex apply(Complex x) { return Maja.acos(x); }
+        }));
+        env.setPrimitive("cmplx64:atan", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:atan") {
+            @Override
+            public Complex apply(Complex x) { return Maja.atan(x); }
+        }));
+        env.setPrimitive("cmplx64:asinh", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:asinh") {
+            @Override
+            public Complex apply(Complex x) { return Maja.asinh(x); }
+        }));
+        env.setPrimitive("cmplx64:acosh", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:acosh") {
+            @Override
+            public Complex apply(Complex x) { return Maja.acosh(x); }
+        }));
+        env.setPrimitive("cmplx64:atanh", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:atanh") {
+            @Override
+            public Complex apply(Complex x) { return Maja.atanh(x); }
+        }));
+        env.setPrimitive("cmplx64:sin", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:sin") {
+            @Override
+            public Complex apply(Complex x) { return Maja.sin(x); }
+        }));
+        env.setPrimitive("cmplx64:cos", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:cos") {
+            @Override
+            public Complex apply(Complex x) { return Maja.cos(x); }
+        }));
+        env.setPrimitive("cmplx64:tan", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:tan") {
+            @Override
+            public Complex apply(Complex x) { return Maja.tan(x); }
+        }));
+        env.setPrimitive("cmplx64:sinh", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:sinh") {
+            @Override
+            public Complex apply(Complex x) { return Maja.sinh(x); }
+        }));
+        env.setPrimitive("cmplx64:cosh", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:cosh") {
+            @Override
+            public Complex apply(Complex x) { return Maja.cosh(x); }
+        }));
+        env.setPrimitive("cmplx64:tanh", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:tanh") {
+            @Override
+            public Complex apply(Complex x) { return Maja.tanh(x); }
+        }));
+        env.setPrimitive("cmplx64:sec", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:sec") {
+            @Override
+            public Complex apply(Complex x) { return Maja.sec(x); }
+        }));
+        env.setPrimitive("cmplx64:csc", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:csc") {
+            @Override
+            public Complex apply(Complex x) { return Maja.csc(x); }
+        }));
+        env.setPrimitive("cmplx64:cot", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:cot") {
+            @Override
+            public Complex apply(Complex x) { return Maja.cot(x); }
+        }));
+        env.setPrimitive("cmplx64:sech", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:sech") {
+            @Override
+            public Complex apply(Complex x) { return Maja.sech(x); }
+        }));
+        env.setPrimitive("cmplx64:csch", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:csch") {
+            @Override
+            public Complex apply(Complex x) { return Maja.csch(x); }
+        }));
+        env.setPrimitive("cmplx64:coth", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:coth") {
+            @Override
+            public Complex apply(Complex x) { return Maja.coth(x); }
+        }));
+        env.setPrimitive("cmplx64:asec", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:asec") {
+            @Override
+            public Complex apply(Complex x) { return Maja.asec(x); }
+        }));
+        env.setPrimitive("cmplx64:acsc", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:acsc") {
+            @Override
+            public Complex apply(Complex x) { return Maja.acsc(x); }
+        }));
+        env.setPrimitive("cmplx64:acot", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:acot") {
+            @Override
+            public Complex apply(Complex x) { return Maja.acot(x); }
+        }));
+        env.setPrimitive("cmplx64:asech", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:asech") {
+            @Override
+            public Complex apply(Complex x) { return Maja.asech(x); }
+        }));
+        env.setPrimitive("cmplx64:acsch", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:acsch") {
+            @Override
+            public Complex apply(Complex x) { return Maja.acsch(x); }
+        }));
+        env.setPrimitive("cmplx64:acoth", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:acoth") {
+            @Override
+            public Complex apply(Complex x) { return Maja.acoth(x); }
+        }));
+        env.setPrimitive("cmplx64:pow", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:pow") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.pow(x, y); }
+        }));
+        env.setPrimitive("cmplx64:neg", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:neg") {
+            @Override
+            public Complex apply(Complex x) { return Maja.negate(x); }
+        }));
+        // gamma, beta, airy.
+        env.setPrimitive("cmplx64:gamma", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:gamma") {
+            @Override
+            public Complex apply(Complex x) { return Maja.gamma(x); }
+        }));
+        env.setPrimitive("cmplx64:beta", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:beta") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.beta(x, y); }
+        }));
+        env.setPrimitive("cmplx64:airy-ai", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:airy-ai") {
+            @Override
+            public Complex apply(Complex x) { return Maja.airyAi(x); }
+        }));
+        env.setPrimitive("cmplx64:airy-bi", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:airy-bi") {
+            @Override
+            public Complex apply(Complex x) { return Maja.airyBi(x); }
+        }));
+        env.setPrimitive("cmplx64:airy-aip", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:airy-aip") {
+            @Override
+            public Complex apply(Complex x) { return Maja.airyAip(x); }
+        }));
+        env.setPrimitive("cmplx64:airy-bip", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:airy-bip") {
+            @Override
+            public Complex apply(Complex x) { return Maja.airyBip(x); }
+        }));
+        env.setPrimitive("cmplx64:e1", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:e1") {
+            @Override
+            public Complex apply(Complex x) { return Maja.e1(x); }
+        }));
+        env.setPrimitive("cmplx64:ei", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:ei") {
+            @Override
+            public Complex apply(Complex x) { return Maja.Ei(x); }
+        }));
+        env.setPrimitive("cmplx64:ein", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:ein") {
+            @Override
+            public Complex apply(Complex x) { return Maja.Ein(x); }
+        }));
+        env.setPrimitive("cmplx64:loggamma", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:loggamma") {
+            @Override
+            public Complex apply(Complex x) { return Maja.loggamma(x); }
+        }));
+        env.setPrimitive("cmplx64:logbeta", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:logbeta") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.logbeta(x, y); }
+        }));
+        env.setPrimitive("cmplx64:ligamma", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:ligamma") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.liGamma(x, y); }
+        }));
+        env.setPrimitive("cmplx64:uigamma", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:uigamma") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.uiGamma(x, y); }
+        }));
+        env.setPrimitive("cmplx64:erf", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:erf") {
+            @Override
+            public Complex apply(Complex x) { return Maja.erf(x); }
+        }));
+        env.setPrimitive("cmplx64:erfc", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:erfc") {
+            @Override
+            public Complex apply(Complex x) { return Maja.erfc(x); }
+        }));
+        env.setPrimitive("cmplx64:erfi", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:erfi") {
+            @Override
+            public Complex apply(Complex x) { return Maja.erfi(x); }
+        }));
+        env.setPrimitive("cmplx64:dawson+", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:dawson+") {
+            @Override
+            public Complex apply(Complex x) { return Maja.dawsonPlus(x); }
+        }));
+        env.setPrimitive("cmplx64:dawson-", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:dawson-") {
+            @Override
+            public Complex apply(Complex x) { return Maja.dawsonMinus(x); }
+        }));
+        env.setPrimitive("cmplx64:fresnelS", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:fresnelS") {
+            @Override
+            public Complex apply(Complex x) { return Maja.fresnelS(x); }
+        }));
+        env.setPrimitive("cmplx64:fresnelC", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:fresnelC") {
+            @Override
+            public Complex apply(Complex x) { return Maja.fresnelC(x); }
+        }));
+        env.setPrimitive("cmplx64:digamma", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:digamma") {
+            @Override
+            public Complex apply(Complex x) { return Maja.digamma(x); }
+        }));
+        env.setPrimitive("cmplx64:trigamma", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:trigamma") {
+            @Override
+            public Complex apply(Complex x) { return Maja.trigamma(x); }
+        }));
+        env.setPrimitive("cmplx64:li", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:li") {
+            @Override
+            public Complex apply(Complex x) { return Maja.li(x); }
+        }));
+        env.setPrimitive("cmplx64:si", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:si") {
+            @Override
+            public Complex apply(Complex x) { return Maja.si(x); }
+        }));
+        env.setPrimitive("cmplx64:Ci", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:Ci") {
+            @Override
+            public Complex apply(Complex x) { return Maja.Ci(x); }
+        }));
+        env.setPrimitive("cmplx64:Si", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:Si") {
+            @Override
+            public Complex apply(Complex x) { return Maja.Si(x); }
+        }));
+        env.setPrimitive("cmplx64:Cin", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:Cin") {
+            @Override
+            public Complex apply(Complex x) { return Maja.Cin(x); }
+        }));
+        env.setPrimitive("cmplx64:Shi", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:Shi") {
+            @Override
+            public Complex apply(Complex x) { return Maja.Shi(x); }
+        }));
+        env.setPrimitive("cmplx64:Chi", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:Chi") {
+            @Override
+            public Complex apply(Complex x) { return Maja.Chi(x); }
+        }));
+        env.setPrimitive("cmplx64:En", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:En") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.en(x, y); }
+        }));
+        // hurwitz zeta,dilog, spence, polylog, lerchphi, lambertw, chop
+        env.setPrimitive("cmplx64:hurwitz-zeta", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:hurwitz-zeta") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.hurwitzZeta(x, y); }
+        }));
+        env.setPrimitive("cmplx64:dilog", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:dilog") {
+            @Override
+            public Complex apply(Complex x) { return Maja.dilog(x); }
+        }));
+        env.setPrimitive("cmplx64:spence", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:spence") {
+            @Override
+            public Complex apply(Complex x) { return Maja.spence(x); }
+        }));
+        env.setPrimitive("cmplx64:polylog", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:polylog") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.polylog(x, y); }
+        }));
+        env.setPrimitive("cmplx64:lerchphi", new Atom(new Cmplx64TriadicFunction("cmplx64:lerchphi") {
+            @Override
+            public Complex apply(Complex x, Complex y, Complex z) { return Maja.lerchPhi(x, y, z); }
+        }));
+        env.setPrimitive("cmplx64:lambertw", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:lambertw") {
+            @Override
+            public Complex apply(Complex x, Complex y) {
+                int order = (int) x.re();
+                if(x.im() != 0 || x.re() != Math.floor(x.re()) || order < 0)
+                    throw new IllegalArgumentException("lambertw: order must be a non-negative integer");
+                return Maja.lambertw(y, order);
+            }
+        }));
+        env.setPrimitive("cmplx64:legendre-F", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:legendre-F") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.legendreF(x, y); }
+        }));
+        env.setPrimitive("cmplx64:legendre-E", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:legendre-E") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.legendreE(x, y); }
+        }));
+        env.setPrimitive("cmplx64:legendre-D", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:legendre-D") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.legendreD(x, y); }
+        }));
+        env.setPrimitive("cmplx64:legendre-Pi", new Atom(new Cmplx64TriadicFunction("cmplx64:legendre-Pi") {
+            @Override
+            public Complex apply(Complex x, Complex y, Complex z) { return Maja.legendrePi(x, y, z); }
+        }));
     }
 }

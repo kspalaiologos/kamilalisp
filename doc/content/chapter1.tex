@@ -347,7 +347,7 @@ Of course, it is possible to compose arbitrarily many functions by using the \ve
 
 Another form of function composition notoriously used in the APL family of programming languages is the so-called \textit{fork} (the \mu-recursive composition operator). Generally speaking, it is sometimes of special interest to preprocess the arguments using different functions (\textit{reductees}), and then funnel the results into a single function (\textit{reductor}). For instance, the arithmetic mean is defined as the quotient (\textit{reductor}) of the sum and length of a list (\textit{reductees}), while a palindrome is defined as a string for which the equality (\textit{reductor}) between it and its reverse (\textit{reductees}) holds.
 
-To implement a sum function using a fork, it is necessary to define a function that sums the list beforehand using the \verb|tally| function which returns the length of a list. A non-zero value is considered truthy, hence the following definition of the \textit{sum} function:
+To implement a mean function using a fork, it is necessary to define a function that sums the list beforehand using the \verb|tally| function which returns the length of a list. A non-zero value is considered truthy, hence the following definition of the \textit{sum} function:
 
 \begin{Verbatim}
     --> defun sum (l) (if (tally l) (+ (car l) (sum (cdr l))) 0)
@@ -364,7 +364,7 @@ There are many alternative ways to implement it. One problem the reader may stum
     --> same '(1 2 3) '(1 2 4)
     0
     --> same '(1 2 3) '(1 2 3)
-    0
+    1
 \end{Verbatim}
 
 Hence arguing for a simpler implementation of the \textit{sum} function:
@@ -392,7 +392,7 @@ Naturally, it could also be bound to a name without applying the fork instantane
     3.2
 \end{Verbatim}
 
-The key merits of point-free programming are:
+The key merits of point-free programming (a paradigm in which function definitions do not identify the arguments or "points" on which they operate) are:
 
 \begin{itemize}
     \item The code is more concise.

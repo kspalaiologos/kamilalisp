@@ -1,17 +1,17 @@
-package palaiologos.kamilalisp.runtime.graph;
+package palaiologos.kamilalisp.runtime.graph.type;
 
-import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleGraph;
-import org.jgrapht.graph.SimpleWeightedGraph;
+import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.jgrapht.graph.WeightedMultigraph;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.TypeError;
+import palaiologos.kamilalisp.runtime.graph.GraphWrapper;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-public class SimpleWeighted extends PrimitiveFunction implements Lambda {
+public class MultiDirectedWeighted extends PrimitiveFunction implements Lambda {
     public static class WeightOf extends PrimitiveFunction implements Lambda {
         private final GraphWrapper w;
 
@@ -101,19 +101,19 @@ public class SimpleWeighted extends PrimitiveFunction implements Lambda {
         }
     }
 
-    public static GraphWrapper wrap(SimpleWeightedGraph<Atom, DefaultEdge> graph) {
-        return new GraphWrapper(graph, () -> new SimpleWeightedGraph<>(DefaultEdge.class), Map.ofEntries(
+    public static GraphWrapper wrap(DirectedWeightedMultigraph<Atom, DefaultEdge> graph) {
+        return new GraphWrapper(graph, () -> new DirectedWeightedMultigraph<>(DefaultEdge.class), Map.ofEntries(
                 Map.entry("weight-of", e -> new Atom(new WeightOf(e))),
                 Map.entry("adjoin-weight", e -> new Atom(new SetWeight(e))),
                 Map.entry("adjoin-weights", e -> new Atom(new SetWeights(e)))
-        ), "simple-weighted-graph");
+        ), "weighted-directed-multigraph");
     }
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         List<Atom> vertices = args.get(0).getList();
         List<Pair<Atom, Atom>> edges = args.get(1).getList().stream().map(x -> new Pair<>(x.getList().get(0), x.getList().get(1))).toList();
-        SimpleWeightedGraph<Atom, DefaultEdge> graph = new SimpleWeightedGraph<>(DefaultEdge.class);
+        DirectedWeightedMultigraph<Atom, DefaultEdge> graph = new DirectedWeightedMultigraph<>(DefaultEdge.class);
         vertices.forEach(graph::addVertex);
         edges.forEach(x -> graph.addEdge(x.fst(), x.snd()));
         return new Atom(wrap(graph));
@@ -121,6 +121,6 @@ public class SimpleWeighted extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "graph:simple-weighted";
+        return "graph:multi-directed-weighted";
     }
 }

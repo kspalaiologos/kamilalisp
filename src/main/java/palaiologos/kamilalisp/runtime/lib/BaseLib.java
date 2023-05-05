@@ -95,8 +95,8 @@ public class BaseLib {
         env.setPrimitive("in?", "⍠∊?", new Atom(new In()));
         env.setPrimitive("unique-mask", "⊙¨", new Atom(new UniqueMask()));
         env.setPrimitive("unique", "⊙", new Atom(new Unique()));
-        env.setPrimitive("intersection", "⋂", new Atom(new Intersection()));
-        env.setPrimitive("union", "⋃", new Atom(new Union()));
+        env.setPrimitive("intersection", "∩", new Atom(new Intersection()));
+        env.setPrimitive("union", "∪", new Atom(new Union()));
         env.setPrimitive("parse-number", "⊙⍫", new Atom(new ParseNumber()));
         env.setPrimitive("prefixes", "ᑈ", new Atom(new Prefixes()));
         env.setPrimitive("suffixes", "ᐵ", new Atom(new Suffixes()));
