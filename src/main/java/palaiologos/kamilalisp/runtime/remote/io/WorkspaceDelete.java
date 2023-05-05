@@ -17,7 +17,7 @@ public class WorkspaceDelete extends IDEFunction implements Lambda {
     @Override
     public Atom fapply(Environment env, List<Atom> args) {
         assertArity(args, 1);
-        sendPacket(List.of(args.get(0).toString()));
+        sendPacket(List.of(args.get(0).getString()));
         return Atom.NULL;
     }
 
