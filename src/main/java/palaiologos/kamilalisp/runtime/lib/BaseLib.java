@@ -130,6 +130,8 @@ public class BaseLib {
         env.setPrimitive("str:lexer", "⍫∦", new Atom(new Lexer()));
         env.setPrimitive("str:implode-on", "⍫∨¨", new Atom(new ImplodeOn()));
         env.setPrimitive("str:explode", "⍫∧", new Atom(new Explode()));
+        env.setPrimitive("str:upper", new Atom(new Upper()));
+        env.setPrimitive("str:lower", new Atom(new Lower()));
         env.setPrimitive("to-string", "⍫←", new Atom(new ToString()));
         env.setPrimitive("str:escape", "⍫⑊", new Atom(new Escape()));
         env.setPrimitive("str:unescape", "⍫∼⑊", new Atom(new Unescape()));
