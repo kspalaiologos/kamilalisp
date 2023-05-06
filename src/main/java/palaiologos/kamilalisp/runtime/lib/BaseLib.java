@@ -115,7 +115,8 @@ public class BaseLib {
         env.setPrimitive("insert-all", "⍠⊣∵", new Atom(new InsertAll()));
         env.setPrimitive("shuffle", "⍠⍰", new Atom(new Shuffle()));
         env.setPrimitive("bipartition", "⍡¨", new Atom(new Bipartition()));
-        env.setPrimitive("partition", "⍡", new Atom(new PartitionRange()));
+        env.setPrimitive("partition", "⍡", new Atom(new Partition()));
+        env.setPrimitive("partition-index", "⍡⍸", new Atom(new PartitionIndex()));
         env.setPrimitive("windows", "⌹‡⍡", new Atom(new Windows()));
         env.setPrimitive("transpose", "⎕⍉", new Atom(new Transpose()));
 

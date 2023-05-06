@@ -1390,6 +1390,8 @@ String formatting should already be familiar to the reader from the previous par
 \begin{Verbatim}
     --> str:format "Hello! Your dice roll is {random 6}."
     Hello! Your dice roll is 2.
+    --> str:format "Braces: {{}}."
+    Braces: {}.
 \end{Verbatim}
 
 String splitting can be done in a variaty of ways. The specialised function \verb|str:lines| splits a string into a vector of lines:
@@ -1420,5 +1422,39 @@ A more general solution is to use \verb|regex:split|, which splits a string on e
      "/sbin"
      "/bin"]
 \end{Verbatim}
+
+The two other uses of regular expressions in KamilaLisp entail matching and replacing. The \verb|regex:matches?| function determines whether the given string matches a regular expression:
+
+\begin{Verbatim}
+    --> regex:matches? "[A-Za-z]+" "AlphanumericString"
+    1
+\end{Verbatim}
+
+Finding matches in a string is done using \verb|regex:match-all|:
+
+\begin{Verbatim}
+    --> (regex:match-all "[A-Za-z]+"
+          "The quick brown fox jumps over the lazy dog."
+          (lambda (m) m.match))
+    ["The"
+     "quick"
+     "brown"
+     "fox"
+     "jumps"
+     "over"
+     "the"
+     "lazy"
+     "dog"]
+\end{Verbatim}
+
+The third argument to \verb|regex:match-all| is a function that is applied to each match. The function is passed a match object, which contains the following fields:
+
+\begin{itemize}
+    \item \verb|match| - the matched string.
+    \item \verb|offset| - offset of the match.
+    \item \verb|length| - the length of the match.
+    \item \verb|groups| - a vector of matched groups, each containing the \verb|match|, \verb|offset|, \verb|length| fields.
+\end{itemize}
+
 
 
