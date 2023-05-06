@@ -21,6 +21,6 @@ public class InsertAll extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "insert";
+        return "insert-all";
     }
 }

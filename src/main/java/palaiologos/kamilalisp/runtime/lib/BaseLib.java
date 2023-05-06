@@ -117,7 +117,7 @@ public class BaseLib {
         env.setPrimitive("bipartition", "⍡¨", new Atom(new Bipartition()));
         env.setPrimitive("partition", "⍡", new Atom(new Partition()));
         env.setPrimitive("partition-index", "⍡⍸", new Atom(new PartitionIndex()));
-        env.setPrimitive("slice", "↑-↓", new Atom(new PartitionIndex()));
+        env.setPrimitive("slice", "↑-↓", new Atom(new Slice()));
         env.setPrimitive("windows", "⌹‡⍡", new Atom(new Windows()));
         env.setPrimitive("transpose", "⎕⍉", new Atom(new Transpose()));
 
