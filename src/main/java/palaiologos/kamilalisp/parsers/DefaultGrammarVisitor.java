@@ -58,6 +58,8 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
     public Atom visitForm_rem(GrammarParser.Form_remContext ctx) {
         if (ctx.children.size() == 1) {
             return visit(ctx.children.get(0));
+        } else if (ctx.BIND() != null) {
+            return new CodeAtom(new Atop(visit(ctx.form_rem()), normalListFromSquare(ctx.sqlist()), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
         } else if (ctx.DOLLAR() != null) {
             // Indexing
             Atom head = new CodeAtom(new Index(visit(ctx.form_rem()), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
