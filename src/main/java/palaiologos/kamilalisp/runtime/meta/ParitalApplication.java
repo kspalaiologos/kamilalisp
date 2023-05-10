@@ -71,6 +71,7 @@ public class ParitalApplication implements SpecialForm, ReactiveFunction {
 
         @Override
         public Atom apply(Environment env, List<Atom> args) {
+            // TODO: This is already a lambda. Don't evaluate the args.
             List<Atom> evaluatedData = new ArrayList<>(data);
             int consumedArgs = 0;
             for (int i = 0; i < evaluatedData.size(); i++) {
