@@ -21,6 +21,7 @@ import palaiologos.kamilalisp.runtime.meta.*;
 import palaiologos.kamilalisp.runtime.parallel.Daemon;
 import palaiologos.kamilalisp.runtime.parallel.Task;
 import palaiologos.kamilalisp.runtime.parallel.actor.ActorCreate;
+import palaiologos.kamilalisp.runtime.regex.RegexMatchAll;
 import palaiologos.kamilalisp.runtime.regex.RegexMatches;
 import palaiologos.kamilalisp.runtime.regex.RegexReplace;
 import palaiologos.kamilalisp.runtime.regex.RegexSplit;
@@ -154,7 +155,7 @@ public class AlgorithmLib {
         env.setPrimitive("graph:dinic-max-flow", new Atom(new BoykovKolgomorovMaxFlow()));
         env.setPrimitive("graph:binary-lifting-lca", new Atom(new BinaryLiftingLCA()));
         env.setPrimitive("graph:tarjan-lca", new Atom(new TarjanLCA()));
-        env.setPrimitive("grpah:christofides-tsp", new Atom(new ChristofidesTSP()));
+        env.setPrimitive("graph:christofides-tsp", new Atom(new ChristofidesTSP()));
         env.setPrimitive("graph:greedy-heuristic-tsp", new Atom(new GreedyHeuristicTSP()));
         env.setPrimitive("graph:nearest-neighbour-tsp", new Atom(new NearestNeighbourTSP()));
         env.setPrimitive("graph:random-tsp", new Atom(new RandomTSP()));
@@ -162,6 +163,7 @@ public class AlgorithmLib {
         env.setPrimitive("graph:held-karp-tsp", new Atom(new HeldKarpTSP()));
 
         env.setPrimitive("regex:matches?", "⍫⊖∊?", new Atom(new RegexMatches()));
+        env.setPrimitive("regex:match-all", "⍫⊖∊∧", new Atom(new RegexMatchAll()));
         env.setPrimitive("regex:replace", "⍫⊖⍆", new Atom(new RegexReplace()));
         env.setPrimitive("regex:split", "⍫⊖⍭", new Atom(new RegexSplit()));
 

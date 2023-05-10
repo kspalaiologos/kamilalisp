@@ -1373,3 +1373,86 @@ KamilaLisp in spirit of APL provides glyphs (or glyph combinations) for common o
             (↕ (⍠⍉? \⍕ x) (step \⍎ x) (ckpoint x))))))
       (fix x$[#0 p])$[⍋ p])
 \end{Verbatim}
+
+\section{Strings and regular expressions}
+
+KamilaLisp offers a dozen of string processing functions. Changing the case of letters in a string is done using \verb|str:upper| and \verb|str:lower| as follows:
+
+\begin{Verbatim}
+    --> str:upper "Hello"
+    HELLO
+    --> str:lower "I am Kamila"
+    i am kamila
+\end{Verbatim}
+
+String formatting should already be familiar to the reader from the previous parts of the book:
+
+\begin{Verbatim}
+    --> str:format "Hello! Your dice roll is {random 6}."
+    Hello! Your dice roll is 2.
+    --> str:format "Braces: {{}}."
+    Braces: {}.
+\end{Verbatim}
+
+String splitting can be done in a variaty of ways. The specialised function \verb|str:lines| splits a string into a vector of lines:
+
+\begin{Verbatim}
+    --> str:lines (io:get-file "/etc/shells")
+    ["# /etc/shells: valid login shells"
+     "/bin/sh"
+     "/bin/bash"
+     "/usr/bin/bash"
+     "/bin/rbash"
+     "/usr/bin/rbash"
+     "/bin/dash"
+     "/usr/bin/dash"
+     "/bin/zsh"
+     "/usr/bin/zsh"
+     "/usr/bin/sh"]
+\end{Verbatim}
+
+A more general solution is to use \verb|regex:split|, which splits a string on every occurence of a regular expression.
+
+\begin{Verbatim}
+    --> regex:split ":" (sh:getenv "PATH")
+    ["/usr/local/sbin"
+     "/usr/local/bin"
+     "/usr/sbin"
+     "/usr/bin"
+     "/sbin"
+     "/bin"]
+\end{Verbatim}
+
+The two other uses of regular expressions in KamilaLisp entail matching and replacing. The \verb|regex:matches?| function determines whether the given string matches a regular expression:
+
+\begin{Verbatim}
+    --> regex:matches? "[A-Za-z]+" "AlphanumericString"
+    1
+\end{Verbatim}
+
+Finding matches in a string is done using \verb|regex:match-all|:
+
+\begin{Verbatim}
+    --> (regex:match-all "[A-Za-z]+"
+          "The quick brown fox jumps over the lazy dog."
+          (lambda (m) m.match))
+    ["The"
+     "quick"
+     "brown"
+     "fox"
+     "jumps"
+     "over"
+     "the"
+     "lazy"
+     "dog"]
+\end{Verbatim}
+
+The third argument to \verb|regex:match-all| is a function that is applied to each match. The function is passed a match object, which contains the following fields:
+
+\begin{itemize}
+    \item \verb|match| - the matched string.
+    \item \verb|offset| - offset of the match.
+    \item \verb|length| - the length of the match.
+    \item \verb|groups| - a vector of matched groups, each containing the \verb|match|, \verb|offset|, \verb|length| fields.
+\end{itemize}
+

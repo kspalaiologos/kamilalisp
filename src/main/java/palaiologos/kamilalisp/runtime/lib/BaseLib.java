@@ -115,7 +115,9 @@ public class BaseLib {
         env.setPrimitive("insert-all", "⍠⊣∵", new Atom(new InsertAll()));
         env.setPrimitive("shuffle", "⍠⍰", new Atom(new Shuffle()));
         env.setPrimitive("bipartition", "⍡¨", new Atom(new Bipartition()));
-        env.setPrimitive("partition", "⍡", new Atom(new PartitionRange()));
+        env.setPrimitive("partition", "⍡", new Atom(new Partition()));
+        env.setPrimitive("partition-index", "⍡⍸", new Atom(new PartitionIndex()));
+        env.setPrimitive("slice", "↑-↓", new Atom(new Slice()));
         env.setPrimitive("windows", "⌹‡⍡", new Atom(new Windows()));
         env.setPrimitive("transpose", "⎕⍉", new Atom(new Transpose()));
 
@@ -130,6 +132,8 @@ public class BaseLib {
         env.setPrimitive("str:lexer", "⍫∦", new Atom(new Lexer()));
         env.setPrimitive("str:implode-on", "⍫∨¨", new Atom(new ImplodeOn()));
         env.setPrimitive("str:explode", "⍫∧", new Atom(new Explode()));
+        env.setPrimitive("str:upper", new Atom(new Upper()));
+        env.setPrimitive("str:lower", new Atom(new Lower()));
         env.setPrimitive("to-string", "⍫←", new Atom(new ToString()));
         env.setPrimitive("str:escape", "⍫⑊", new Atom(new Escape()));
         env.setPrimitive("str:unescape", "⍫∼⑊", new Atom(new Unescape()));

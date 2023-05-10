@@ -51,6 +51,7 @@ public class SystemLib {
         env.setPrimitive("sh:access", new Atom(new Access()));
         env.setPrimitive("sh:absolute", new Atom(new Absolute()));
         env.setPrimitive("sh:process", new Atom(new Process()));
+        env.setPrimitive("sh:getenv", new Atom(new Getenv()));
         SysArch.registerProperties(env);
 
         env.setPrimitive("net:wget", new Atom(new Wget()));
