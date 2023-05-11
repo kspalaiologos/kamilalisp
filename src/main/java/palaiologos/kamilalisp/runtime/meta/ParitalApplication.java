@@ -33,7 +33,7 @@ public class ParitalApplication implements SpecialForm, ReactiveFunction {
         int varSlots = 0;
         for (int i = 0; i < data.size(); i++) {
             if (data.get(i).getType() != Type.IDENTIFIER || !data.get(i).getIdentifier().equals("_"))
-                data.set(i, new Atom(new Quote(Evaluation.evaluate(env, data.get(i)), l, c)));
+                data.set(i, Evaluation.evaluate(env, data.get(i)));
             else
                 varSlots++;
         }
@@ -75,7 +75,7 @@ public class ParitalApplication implements SpecialForm, ReactiveFunction {
             int consumedArgs = 0;
             for (int i = 0; i < evaluatedData.size(); i++) {
                 if (evaluatedData.get(i).getType() == Type.IDENTIFIER && evaluatedData.get(i).getIdentifier().equals("_"))
-                    evaluatedData.set(i, new Atom(new Quote(Evaluation.evaluate(env, args.get(consumedArgs++)), l, c)));
+                    evaluatedData.set(i, args.get(consumedArgs++));
                 if (consumedArgs == args.size() && consumedArgs < varSlots) {
                     // Not all arguments bound. Automatically curry the function.
                     return new Atom(new PartiallyAppliedThunk(varSlots - consumedArgs, evaluatedData));
@@ -83,9 +83,10 @@ public class ParitalApplication implements SpecialForm, ReactiveFunction {
             }
             // 2: Append the remaining args.
             if (consumedArgs != args.size())
-                for (Atom a : args.subList(consumedArgs, args.size()))
-                    evaluatedData.add(new Atom(new Quote(a, l, c)));
-            return Evaluation.evaluate(env, new Atom(evaluatedData));
+                evaluatedData.addAll(args.subList(consumedArgs, args.size()));
+            Atom head = evaluatedData.get(0);
+            List<Atom> tail = evaluatedData.subList(1, evaluatedData.size());
+            return Evaluation.evaluate(env, head.getCallable(), tail);
         }
 
         @Override
