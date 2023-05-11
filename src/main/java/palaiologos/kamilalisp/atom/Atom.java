@@ -8,10 +8,7 @@ import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Atom implements Comparable<Atom> {
@@ -21,6 +18,15 @@ public class Atom implements Comparable<Atom> {
     @Nonnull
     Object data;
     Type type;
+
+    private static final Atom[] charFlyweight = new Atom[0xFFFF];
+
+    public static Atom fromChar(char c) {
+        if(charFlyweight[c] != null) {
+            return charFlyweight[c];
+        }
+        return charFlyweight[c] = new Atom(String.valueOf(c), false);
+    }
 
     protected Atom() {
         this.data = List.of();
@@ -171,7 +177,7 @@ public class Atom implements Comparable<Atom> {
         if (type == Type.STRING) {
             ArrayList<Atom> result = new ArrayList<>();
             for(char c : ((String) data).toCharArray())
-                result.add(new Atom(String.valueOf(c), false));
+                result.add(fromChar(c));
             return result;
         }
 
