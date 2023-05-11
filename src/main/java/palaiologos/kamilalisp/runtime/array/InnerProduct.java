@@ -3,7 +3,9 @@ package palaiologos.kamilalisp.runtime.array;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.TypeError;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class InnerProduct extends PrimitiveFunction implements Lambda {
     private static Atom prod2(Environment env, Callable c1, Callable c2, List<Atom> a, List<Atom> b) {
@@ -19,15 +21,46 @@ public class InnerProduct extends PrimitiveFunction implements Lambda {
     }
 
     private static Atom prodN(Environment env, Callable c1, Callable c2, List<List<Atom>> a) {
-        int len = a.stream().map(List::size).min(Integer::compareTo).orElseThrow();
+        if(a.isEmpty()) {
+            throw new TypeError("Inner product requires at least two common elements.");
+        }
+
+        int len = Integer.MAX_VALUE;
+        for (List<Atom> l : a) {
+            if (l.size() < len) {
+                len = l.size();
+            }
+        }
+
         if (len < 2) {
             throw new TypeError("Inner product requires at least two common elements.");
         }
 
-        Atom result = a.stream().map(l -> l.get(0)).reduce((x, y) -> c2.apply(env, List.of(x, y))).orElseThrow();
+        boolean seen = false;
+        Atom acc = null;
+        for (List<Atom> atoms : a) {
+            Atom atom = atoms.get(0);
+            if (!seen) {
+                seen = true;
+                acc = atom;
+            } else {
+                acc = c2.apply(env, List.of(acc, atom));
+            }
+        }
+        Atom result = Optional.of(acc).orElseThrow();
         for (int i = 1; i < len; i++) {
-            int j = i;
-            result = c1.apply(env, List.of(result, a.stream().map(l -> l.get(j)).reduce((x, y) -> c2.apply(env, List.of(x, y))).orElseThrow()));
+            boolean seen1 = false;
+            Atom acc1 = null;
+            for (List<Atom> l : a) {
+                Atom atom = l.get(i);
+                if (!seen1) {
+                    seen1 = true;
+                    acc1 = atom;
+                } else {
+                    acc1 = c2.apply(env, List.of(acc1, atom));
+                }
+            }
+            result = c1.apply(env, List.of(result, (seen1 ? Optional.of(acc1) : Optional.<Atom>empty()).orElseThrow()));
         }
         return result;
     }
@@ -51,7 +84,11 @@ public class InnerProduct extends PrimitiveFunction implements Lambda {
             return prod2(env, f1, f2, a, b);
         } else {
             // Return inner product of three or more lists.
-            List<List<Atom>> a = args.subList(2, args.size()).stream().map(Atom::getList).toList();
+            ArrayList<List<Atom>> a = new ArrayList<>();
+            for (Atom atom : args.subList(2, args.size())) {
+                List<Atom> list = atom.getList();
+                a.add(list);
+            }
             return prodN(env, f1, f2, a);
         }
     }
@@ -61,7 +98,7 @@ public class InnerProduct extends PrimitiveFunction implements Lambda {
         return "inner-product";
     }
 
-    class InnerProductWrapper extends PrimitiveFunction implements Lambda {
+    static class InnerProductWrapper extends PrimitiveFunction implements Lambda {
         private final Callable c1;
         private final Callable c2;
 
@@ -83,7 +120,11 @@ public class InnerProduct extends PrimitiveFunction implements Lambda {
                 return prod2(env, c1, c2, a, b);
             } else {
                 // Return inner product of three or more lists.
-                List<List<Atom>> a = args.stream().map(Atom::getList).toList();
+                ArrayList<List<Atom>> a = new ArrayList<>();
+                for (Atom arg : args) {
+                    List<Atom> list = arg.getList();
+                    a.add(list);
+                }
                 return prodN(env, c1, c2, a);
             }
         }

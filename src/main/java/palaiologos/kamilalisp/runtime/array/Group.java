@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Group extends PrimitiveFunction implements Lambda {
     @Override
@@ -18,19 +19,24 @@ public class Group extends PrimitiveFunction implements Lambda {
         args.get(0).assertTypes(Type.LIST);
         data = args.get(0).getList();
 
-        HashMap<Atom, List<Atom>> counts = new HashMap<>();
+        HashMap<Atom, ArrayList<Atom>> counts = new HashMap<>();
         for (int i = 0; i < data.size(); i++) {
             Atom key = data.get(i);
             if (counts.containsKey(key)) {
                 counts.get(key).add(new Atom(BigInteger.valueOf(i)));
             } else {
-                List<Atom> list = new ArrayList<>();
+                ArrayList<Atom> list = new ArrayList<>();
                 list.add(new Atom(BigInteger.valueOf(i)));
                 counts.put(key, list);
             }
         }
 
-        return new Atom(counts.entrySet().stream().map(x -> new Atom(List.of(x.getKey(), new Atom(x.getValue())))).toList());
+        ArrayList<Atom> list = new ArrayList<>();
+        for (Map.Entry<Atom, ArrayList<Atom>> x : counts.entrySet()) {
+            Atom atom = new Atom(List.of(x.getKey(), new Atom(x.getValue())));
+            list.add(atom);
+        }
+        return new Atom(list);
     }
 
     @Override

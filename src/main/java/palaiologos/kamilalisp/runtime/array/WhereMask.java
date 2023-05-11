@@ -12,19 +12,37 @@ public class WhereMask extends PrimitiveFunction implements Lambda {
     public Atom apply(Environment env, List<Atom> args) {
         List<Atom> data = args.get(0).getList();
         if(data.stream().allMatch(x -> x.getType() == Type.INTEGER)) {
-            int[] indices = data.stream().mapToInt(x -> x.getInteger().intValueExact()).toArray();
-            int max = Arrays.stream(indices).max().orElse(0);
+            int[] indices = new int[data.size()];
+            for(int i = 0; i < indices.length; i++)
+                indices[i] = data.get(i).getInteger().intValueExact();
+            boolean seen = false;
+            int best = 0;
+            for (int index : indices) {
+                if (!seen || index > best) {
+                    seen = true;
+                    best = index;
+                }
+            }
+            int max = seen ? best : 0;
             int[] mask = new int[max + 1];
             for(int i : indices)
                 mask[i]++;
-            return new Atom(Arrays.stream(mask).mapToObj(x -> new Atom(BigInteger.valueOf(x))).toList());
+            List<Atom> list = new ArrayList<>();
+            for (int x : mask) {
+                Atom atom = new Atom(BigInteger.valueOf(x));
+                list.add(atom);
+            }
+            return new Atom(list);
         } else {
             // Determine the rank of result.
             int rank = data.get(0).getList().size();
             if(rank == 0)
                 throw new RuntimeException("Cannot apply where-mask to a list of scalars.");
-            if(data.stream().anyMatch(x -> x.getList().size() != rank))
-                throw new RuntimeException("Cannot apply where-mask to a list of lists of different rank.");
+            for (Atom datum : data) {
+                if (datum.getList().size() != rank) {
+                    throw new RuntimeException("Cannot apply where-mask to a list of lists of different rank.");
+                }
+            }
             // Compute the maximum of each dimension.
             int[] max = new int[rank];
             for(Atom a : data) {
@@ -38,8 +56,12 @@ public class WhereMask extends PrimitiveFunction implements Lambda {
             // Create empty matrix (nested list of atoms) of specified dimension.
             Atom mat = emptyMatrix(max, 0);
             // Fill the matrix.
-            for(Atom a : data)
-                atCell(mat, a.getList().stream().mapToInt(x -> x.getInteger().intValueExact()).toArray(), 0);
+            for(Atom a : data) {
+                int[] indices = new int[a.getList().size()];
+                for(int i = 0; i < indices.length; i++)
+                    indices[i] = a.getList().get(i).getInteger().intValueExact();
+                atCell(mat, indices, 0);
+            }
             return mat;
         }
     }

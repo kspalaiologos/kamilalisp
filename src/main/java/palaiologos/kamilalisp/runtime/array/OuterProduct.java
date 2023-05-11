@@ -5,6 +5,7 @@ import palaiologos.kamilalisp.error.TypeError;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -23,13 +24,28 @@ public class OuterProduct extends PrimitiveFunction implements Lambda {
 
     private static Atom op2(Callable fn, Environment env, Atom a, Atom b) {
         if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
-            return new Atom(op((x, y) -> fn.apply(env, List.of(x, y)), a.getList(), b.getList()).stream().map(x -> x.size() == 1 ? x.get(0) : new Atom(x)).toList());
+            List<Atom> list = new ArrayList<>();
+            for (List<Atom> atoms : op((x, y) -> fn.apply(env, List.of(x, y)), a.getList(), b.getList())) {
+                Atom atom = atoms.size() == 1 ? atoms.get(0) : new Atom(atoms);
+                list.add(atom);
+            }
+            return new Atom(list);
         } else if (a.getType() == Type.STRING && b.getType() == Type.STRING) {
-            return new Atom(op(
+            List<Atom> list = new ArrayList<>();
+            for (List<Atom> atoms : op(
                     (x, y) -> fn.apply(env, List.of(new Atom(String.valueOf(x)), new Atom(String.valueOf(y)))),
                     a.getString().chars().mapToObj(x -> (char) x).toList(),
                     b.getString().chars().mapToObj(x -> (char) x).toList()
-            ).stream().map(x -> new Atom(x.stream().map(Object::toString).collect(Collectors.joining()))).toList());
+            )) {
+                StringBuilder sb = new StringBuilder();
+                for (Atom atom1 : atoms) {
+                    String toString = atom1.toString();
+                    sb.append(toString);
+                }
+                Atom atom = new Atom(sb.toString());
+                list.add(atom);
+            }
+            return new Atom(list);
         } else if (a.getType() == Type.LIST && b.getType() != Type.LIST) {
             return new Atom(op((x, y) -> fn.apply(env, List.of(x, y)), a.getList(), List.of(b)).stream().map(x -> x.size() == 1 ? x.get(0) : new Atom(x)).toList());
         } else if (a.getType() != Type.LIST && b.getType() == Type.LIST) {
@@ -50,9 +66,29 @@ public class OuterProduct extends PrimitiveFunction implements Lambda {
                 throw new TypeError("outer-product called with too few arguments.");
             }
 
-            return args.stream().skip(1).reduce((x, y) -> op2(args.get(0).getCallable(), env, x, y)).get();
+            boolean seen = false;
+            Atom acc = null;
+            for (Atom atom : args.subList(1, args.size())) {
+                if (!seen) {
+                    seen = true;
+                    acc = atom;
+                } else {
+                    acc = op2(args.get(0).getCallable(), env, acc, atom);
+                }
+            }
+            return (seen ? Optional.of(acc) : Optional.<Atom>empty()).get();
         } else {
-            return args.stream().reduce((x, y) -> op2(Tie.INSTANCE, env, x, y)).get();
+            boolean seen = false;
+            Atom acc = null;
+            for (Atom arg : args) {
+                if (!seen) {
+                    seen = true;
+                    acc = arg;
+                } else {
+                    acc = op2(Tie.INSTANCE, env, acc, arg);
+                }
+            }
+            return (seen ? Optional.of(acc) : Optional.<Atom>empty()).get();
         }
     }
 

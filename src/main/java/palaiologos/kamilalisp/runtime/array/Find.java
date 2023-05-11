@@ -10,7 +10,10 @@ import java.util.stream.IntStream;
 
 public class Find extends PrimitiveFunction implements Lambda {
     private static List<Atom> iotaUnderbar(int[] indices) {
-        int max = Arrays.stream(indices).max().orElse(0);
+        int max = 0;
+        for (int index : indices)
+            if (index > max)
+                max = index;
         List<Atom> result = new ArrayList<>(max + 1);
         for(int i = 0; i <= max; i++)
             result.add(Atom.FALSE);
@@ -20,7 +23,10 @@ public class Find extends PrimitiveFunction implements Lambda {
     }
 
     private static List<Atom> iotaUnderbar(List<Integer> indices) {
-        int max = indices.stream().mapToInt(x -> x).max().orElse(0);
+        int max = 0;
+        for (Integer x : indices)
+            if (x > max)
+                max = x;
         List<Atom> result = new ArrayList<>(max + 1);
         for(int i = 0; i <= max; i++)
             result.add(Atom.FALSE);

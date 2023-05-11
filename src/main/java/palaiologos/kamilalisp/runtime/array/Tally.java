@@ -3,6 +3,7 @@ package palaiologos.kamilalisp.runtime.array;
 import palaiologos.kamilalisp.atom.*;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,11 @@ public class Tally extends PrimitiveFunction implements Lambda {
             return Atom.FALSE;
         if (args.size() == 1)
             return tally(args.get(0));
-        return new Atom(args.stream().map(Tally::tally).collect(Collectors.toList()));
+        List<Atom> list = new ArrayList<>();
+        for (Atom arg : args) {
+            Atom tally = tally(arg);
+            list.add(tally);
+        }
+        return new Atom(list);
     }
 }

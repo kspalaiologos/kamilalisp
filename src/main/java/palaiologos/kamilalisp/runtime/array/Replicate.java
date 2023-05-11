@@ -43,7 +43,7 @@ public class Replicate extends PrimitiveFunction implements Lambda {
             Atom a1 = s1.get(i);
             if (a1.getType() != Type.INTEGER || a1.getInteger().compareTo(BigInteger.ZERO) < 0)
                 throw new RuntimeException("replicate: invalid arguments.");
-            result.append(String.valueOf(s2.charAt(i)).repeat(Math.max(0, a1.getInteger().intValue())));
+            result.append(Atom.fromChar(s2.charAt(i)).getString().repeat(Math.max(0, a1.getInteger().intValue())));
         }
         return new Atom(result.toString());
     }

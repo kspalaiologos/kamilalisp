@@ -30,7 +30,12 @@ public class Shuffle extends PrimitiveFunction implements Lambda {
             throw new TypeError("Expected 1 or more arguments to `shuffle'.");
         if (args.size() == 1)
             return shuffle(args.get(0));
-        return new Atom(args.stream().map(Shuffle::shuffle).collect(Collectors.toList()));
+        List<Atom> list = new ArrayList<>();
+        for (Atom arg : args) {
+            Atom shuffle = shuffle(arg);
+            list.add(shuffle);
+        }
+        return new Atom(list);
     }
 
     @Override

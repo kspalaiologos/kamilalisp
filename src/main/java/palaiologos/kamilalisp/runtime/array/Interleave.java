@@ -14,7 +14,16 @@ public class Interleave extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if (!args.isEmpty()) {
-            int len = args.stream().map(Atom::getList).mapToInt(List::size).max().orElse(0);
+            boolean seen = false;
+            int len = 0;
+            for (Atom arg : args) {
+                List<Atom> list = arg.getList();
+                int size = list.size();
+                if (!seen || size > len) {
+                    seen = true;
+                    len = size;
+                }
+            }
             List<Atom> result = new ArrayList<>();
             for (int i = 0; i < len; i++)
                 for (Atom a : args)

@@ -17,8 +17,17 @@ public class Rank extends PrimitiveFunction implements Lambda {
     public static int computeRank(Atom w) {
         if (isScalar(w))
             return 0;
-        else if (w.getList().stream().allMatch(Rank::isScalar))
-            return 1;
+        else {
+            boolean b = true;
+            for (Atom atom : w.getList()) {
+                if (!isScalar(atom)) {
+                    b = false;
+                    break;
+                }
+            }
+            if (b)
+                return 1;
+        }
         boolean first = true;
         boolean uneven = false;
         int sub = 0;

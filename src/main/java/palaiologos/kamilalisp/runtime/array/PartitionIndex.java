@@ -10,7 +10,10 @@ public class PartitionIndex extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         assertArity(args, 2);
-        int[] pattern = args.get(0).getList().stream().mapToInt(x -> x.getInteger().intValueExact()).toArray();
+        int[] pattern = new int[args.get(0).getList().size()];
+        for (int i = 0; i < pattern.length; i++) {
+            pattern[i] = args.get(0).getList().get(i).getInteger().intValueExact();
+        }
         Arrays.sort(pattern);
         if(args.get(1).getType() == Type.LIST) {
             List<Atom> list = args.get(1).getList();

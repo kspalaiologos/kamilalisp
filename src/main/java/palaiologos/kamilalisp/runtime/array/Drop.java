@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import palaiologos.kamilalisp.atom.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Drop extends PrimitiveFunction implements Lambda {
@@ -45,7 +46,12 @@ public class Drop extends PrimitiveFunction implements Lambda {
                     return new Atom(str.substring(len));
             }
         } else if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
-            return new Atom(Streams.zip(a.getList().stream(), b.getList().stream(), Drop::drop).toList());
+            ArrayList<Atom> result = new ArrayList<>();
+            int len = Math.min(a.getList().size(), b.getList().size());
+            for (int i = 0; i < len; i++) {
+                result.add(drop(a.getList().get(i), b.getList().get(i)));
+            }
+            return new Atom(result);
         } else {
             throw new UnsupportedOperationException("drop not defined for: " + a.getType() + " and " + b.getType());
         }

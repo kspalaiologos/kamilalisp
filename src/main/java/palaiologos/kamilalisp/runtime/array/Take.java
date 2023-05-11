@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import palaiologos.kamilalisp.atom.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -22,12 +23,10 @@ public class Take extends PrimitiveFunction implements Lambda {
 
             if (len > list.size()) {
                 Atom prototype = Prototype.getPrototype(list);
-                List<Atom> l = Streams.concat(list.stream(),
-                        IntStream.generate(() -> 0)
-                                .limit(len - list.size())
-                                .mapToObj(x -> prototype)
-                ).toList();
-                return new Atom(doReverse ? Lists.reverse(l) : l);
+                List<Atom> result = new ArrayList<>(list);
+                for(int i = 0; i < len - list.size(); i++)
+                    result.add(prototype);
+                return new Atom(doReverse ? Lists.reverse(result) : result);
             } else {
                 List<Atom> l = list.subList(0, len);
                 return new Atom(doReverse ? Lists.reverse(l) : l);

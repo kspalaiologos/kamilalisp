@@ -36,7 +36,12 @@ public class Powerset extends PrimitiveFunction implements Lambda {
         if (args.size() != 1)
             throw new TypeError("Expected 1 argument to `powerset'.");
         List<Atom> list = args.get(0).getList();
-        return new Atom(powerSet(new HashSet<>(list)).stream().map(x -> new Atom(new ArrayList<>(x))).toList());
+        List<Atom> result = new ArrayList<>();
+        for (Set<Atom> x : powerSet(new HashSet<>(list))) {
+            Atom atom = new Atom(new ArrayList<>(x));
+            result.add(atom);
+        }
+        return new Atom(result);
     }
 
     @Override

@@ -46,7 +46,12 @@ public class Partition extends PrimitiveFunction implements Lambda {
                 }
             }
 
-            return new Atom(result.stream().map(Atom::new).toList());
+            List<Atom> list1 = new ArrayList<>();
+            for (List<Atom> atoms : result) {
+                Atom atom = new Atom(atoms);
+                list1.add(atom);
+            }
+            return new Atom(list1);
         } else if(args.get(1).getType() == Type.STRING) {
             String string = args.get(1).getString();
             List<String> result = new ArrayList<>();
@@ -75,7 +80,12 @@ public class Partition extends PrimitiveFunction implements Lambda {
                 }
             }
 
-            return new Atom(result.stream().map(Atom::new).toList());
+            List<Atom> list = new ArrayList<>();
+            for (String s : result) {
+                Atom atom = new Atom(s);
+                list.add(atom);
+            }
+            return new Atom(list);
         } else {
             throw new RuntimeException("Invalid type. Expected string or list.");
         }

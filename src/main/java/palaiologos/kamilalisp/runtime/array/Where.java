@@ -10,9 +10,16 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class Where extends PrimitiveFunction implements Lambda {
+    private static boolean all(List<Atom> l, Type t) {
+        for (Atom a : l)
+            if (a.getType() != t)
+                return false;
+        return true;
+    }
+
     private static Atom doWhere(List<Atom> inputList) {
         // Check if inputList is a scalar list.
-        if (inputList.stream().allMatch(x -> x.getType() == Type.INTEGER)) {
+        if (all(inputList, Type.INTEGER)) {
             List<Atom> indices = new ArrayList<>();
             for (int i = 0; i < inputList.size(); i++) {
                 if (inputList.get(i).getInteger().compareTo(BigInteger.ZERO) > 0) {
@@ -25,22 +32,27 @@ public class Where extends PrimitiveFunction implements Lambda {
             return new Atom(indices);
         } else {
             // OK, we have a list of lists.
-            List<Atom> wheres = inputList.stream().map(x -> doWhere(x.getList())).toList();
+            List<Atom> wheres = new ArrayList<>();
+            for (Atom atom : inputList) {
+                Atom doWhere = doWhere(atom.getList());
+                wheres.add(doWhere);
+            }
             // "wheres" is a list of lists of scalar/list values.
             List<Atom> newData = IntStream.range(0, wheres.size()).mapToObj(i -> {
                 BigInteger n = BigInteger.valueOf(i);
-                List<List<Atom>> data = wheres.get(i).getList().stream().map(x -> {
-                    if(x.getType() == Type.INTEGER) {
+                ArrayList<List<Atom>> data = new ArrayList<>();
+                for(Atom atom : wheres.get(i).getList()) {
+                    if(atom.getType() == Type.INTEGER) {
                         ArrayList<Atom> list = new ArrayList<>();
                         list.add(new Atom(n));
-                        list.add(x);
-                        return list;
+                        list.add(atom);
+                        data.add(list);
                     } else {
-                        List<Atom> list = x.getList();
+                        List<Atom> list = atom.getList();
                         list.add(0, new Atom(n));
-                        return list;
+                        data.add(list);
                     }
-                }).toList();
+                }
                 return data;
             }).flatMap(List::stream).map(Atom::new).toList();
             return new Atom(newData);
