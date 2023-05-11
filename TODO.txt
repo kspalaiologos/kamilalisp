@@ -16,7 +16,6 @@
   compute eigenvalues, eigenvectors, solve systems of equations,
   discrete sums.
 - the rest of the graph library + testing.
-- complex float64.
 
 bugs:
 - ???
