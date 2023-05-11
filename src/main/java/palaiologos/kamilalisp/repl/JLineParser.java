@@ -23,19 +23,19 @@ public class JLineParser extends DefaultParser {
         if (amount % 2 != 0)
             return false;
         // OK, quotes are balanced. Remove every instance of quotation in the input.
-        q = q.replaceAll("\"[^\"]*\"", "");
         // Count open and closed parens.
-        long open = q.chars().filter(ch -> ch == '(').count();
-        long closed = q.chars().filter(ch -> ch == ')').count();
-        if (open != closed)
-            return false;
-        open = q.chars().filter(ch -> ch == '{').count();
-        closed = q.chars().filter(ch -> ch == '}').count();
-        if (open != closed)
-            return false;
-        open = q.chars().filter(ch -> ch == '[').count();
-        closed = q.chars().filter(ch -> ch == ']').count();
-        return open == closed;
+        q = q.replaceAll("\"[^\"]*\"", "");
+        long openParen = 0, closeParen = 0, openBracket = 0, closeBracket = 0, openBrace = 0, closeBrace = 0;
+        for(int i = 0; i < q.length(); i++) {
+            char ch = q.charAt(i);
+            if (ch == '(') openParen++;
+            if (ch == ')') closeParen++;
+            if (ch == '[') openBracket++;
+            if (ch == ']') closeBracket++;
+            if (ch == '{') openBrace++;
+            if (ch == '}') closeBrace++;
+        }
+        return openParen == closeParen && openBrace == closeBrace && openBracket == closeBracket;
     }
 
     @Override

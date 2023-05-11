@@ -5,6 +5,7 @@ import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Cddr extends PrimitiveFunction implements Lambda {
@@ -18,7 +19,12 @@ public class Cddr extends PrimitiveFunction implements Lambda {
         if (args.size() == 1) {
             return Cdr.INSTANCE.apply(env, List.of(Cdr.INSTANCE.apply(env, args)));
         } else {
-            return new Atom(args.stream().map(a -> Cdr.INSTANCE.apply(env, List.of(Cdr.INSTANCE.apply(env, List.of(a))))).toList());
+            ArrayList<Atom> list = new ArrayList<>();
+            for (Atom a : args) {
+                Atom apply = Cdr.INSTANCE.apply(env, List.of(Cdr.INSTANCE.apply(env, List.of(a))));
+                list.add(apply);
+            }
+            return new Atom(list);
         }
     }
 }

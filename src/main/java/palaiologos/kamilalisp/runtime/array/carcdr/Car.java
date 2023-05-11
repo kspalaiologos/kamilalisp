@@ -2,6 +2,7 @@ package palaiologos.kamilalisp.runtime.array.carcdr;
 
 import palaiologos.kamilalisp.atom.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +28,12 @@ public class Car extends PrimitiveFunction implements Lambda {
         if (args.size() == 1) {
             return car(args.get(0));
         } else {
-            return new Atom(args.stream().map(Car::car).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>();
+            for (Atom arg : args) {
+                Atom car = car(arg);
+                list.add(car);
+            }
+            return new Atom(list);
         }
     }
 

@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -168,7 +169,10 @@ public class Atom implements Comparable<Atom> {
 
     public List<Atom> getList() {
         if (type == Type.STRING) {
-            return ((String) data).chars().mapToObj(c -> new Atom(String.valueOf((char) c), false)).collect(Collectors.toList());
+            ArrayList<Atom> result = new ArrayList<>();
+            for(char c : ((String) data).toCharArray())
+                result.add(new Atom(String.valueOf(c), false));
+            return result;
         }
 
         if (type != Type.LIST) {
@@ -247,7 +251,7 @@ public class Atom implements Comparable<Atom> {
                 else if (getList().get(0).type == Type.CALLABLE && getList().get(0).getCallable() instanceof Index) {
                     StringBuilder sb = new StringBuilder();
                     sb.append(getList().get(0).toString());
-                    sb.append("$[");
+                    sb.append("[");
                     for(int i = 1; i < getList().size(); i++) {
                         sb.append(getList().get(i).toString());
                         if(i != getList().size() - 1)
@@ -293,7 +297,7 @@ public class Atom implements Comparable<Atom> {
                 else if (getList().get(0).type == Type.CALLABLE && getList().get(0).getCallable() instanceof Index) {
                     StringBuilder sb = new StringBuilder();
                     sb.append(getList().get(0).toDisplayString());
-                    sb.append("$[");
+                    sb.append("[");
                     for(int i = 1; i < getList().size(); i++) {
                         sb.append(getList().get(i).toDisplayString());
                         if(i != getList().size() - 1)
@@ -380,7 +384,7 @@ public class Atom implements Comparable<Atom> {
                 else if (getList().get(0).type == Type.CALLABLE && getList().get(0).getCallable() instanceof Index) {
                     StringBuilder sb = new StringBuilder();
                     sb.append(getList().get(0).shortString());
-                    sb.append("$[");
+                    sb.append("[");
                     for(int i = 1; i < getList().size(); i++) {
                         sb.append(getList().get(i).shortString());
                         if(i != getList().size() - 1)
@@ -522,6 +526,7 @@ public class Atom implements Comparable<Atom> {
         if ((type == Type.REAL || type == Type.INTEGER) && (a.type == Type.REAL || a.type == Type.INTEGER)) {
             return getReal().compareTo(a.getReal());
         } else if (isNumeric() && a.isNumeric()) {
+            // XXX: Potential loss of precision?
             return getComplex().abs(MathContext.DECIMAL128).compareTo(a.getComplex().abs(MathContext.DECIMAL128));
         } else if (type == Type.STRING && a.type == Type.STRING) {
             return getString().compareTo(a.getString());

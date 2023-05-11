@@ -1,6 +1,7 @@
 package palaiologos.kamilalisp.parsers;
 
 import ch.obermuhlner.math.big.BigComplex;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.text.StringEscapeUtils;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.CodeAtom;
@@ -22,7 +23,14 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
 
     @Override
     public Atom visitFile_(GrammarParser.File_Context ctx) {
-        return new CodeAtom(ctx.children.stream().map(this::visit).filter(Objects::nonNull).collect(Collectors.toList())).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+        ArrayList<Atom> list = new ArrayList<>();
+        for (ParseTree child : ctx.children) {
+            Atom visit = visit(child);
+            if (visit != null) {
+                list.add(visit);
+            }
+        }
+        return new CodeAtom(list).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
     }
 
     @Override
@@ -30,15 +38,20 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
         if (ctx.form_rem().size() == 1) {
             return visit(ctx.form_rem().get(0));
         } else {
+            List<Atom> list = new ArrayList<>();
+            for (GrammarParser.Form_remContext formRemContext : ctx.form_rem()) {
+                Atom visit = visit(formRemContext);
+                list.add(visit);
+            }
             return new CodeAtom(new Compose(
-                    ctx.form_rem().stream().map(this::visit).collect(Collectors.toList()), ctx.start.getLine() + lineNumberOffset, ctx.start.getCharPositionInLine())
+                    list, ctx.start.getLine() + lineNumberOffset, ctx.start.getCharPositionInLine())
             ).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
         }
     }
 
-    private List<Atom> normalListFromSquare(GrammarParser.SqlistContext ctx) {
+    private ArrayList<Atom> normalListFromSquare(GrammarParser.SqlistContext ctx) {
         if (ctx.isEmpty()) {
-            return List.of();
+            return new ArrayList<>();
         }
         if (ctx.list_form(0).getText().equals("\\")) {
             throw new RuntimeException("List cannot start with a \\ partition.");
@@ -58,13 +71,14 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
     public Atom visitForm_rem(GrammarParser.Form_remContext ctx) {
         if (ctx.children.size() == 1) {
             return visit(ctx.children.get(0));
-        } else if (ctx.BIND() != null) {
+        } else if (ctx.SELF() != null) {
             return new CodeAtom(new Atop(visit(ctx.form_rem()), normalListFromSquare(ctx.sqlist()), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
         } else if (ctx.DOLLAR() != null) {
             // Indexing
             Atom head = new CodeAtom(new Index(visit(ctx.form_rem()), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
-            List<Atom> tail = normalListFromSquare(ctx.sqlist());
-            return new Atom(Stream.concat(Stream.of(head), tail.stream()).toList());
+            ArrayList<Atom> tail = normalListFromSquare(ctx.sqlist());
+            tail.add(0, head);
+            return new Atom(tail);
         } else if (ctx.PERCENT() != null) {
             // Depth
             return new CodeAtom(new Depth(visit(ctx.form_rem()), normalListFromSquare(ctx.sqlist()), ctx.start.getCharPositionInLine(), ctx.start.getLine() + lineNumberOffset)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
@@ -93,8 +107,8 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
         return visit(ctx.children.get(0));
     }
 
-    private List<Atom> listFromContent(List<GrammarParser.List_formContext> ctx) {
-        List<Atom> list = new ArrayList<>();
+    private ArrayList<Atom> listFromContent(List<GrammarParser.List_formContext> ctx) {
+        ArrayList<Atom> list = new ArrayList<>();
         for (int i = 0; i < ctx.size(); i++) {
             if (ctx.get(i).getText().equals("\\")) {
                 list.add(new CodeAtom(listFromContent(ctx.subList(i + 1, ctx.size()))).setCol(ctx.get(i).start.getCharPositionInLine()).setLine(ctx.get(i).start.getLine() + lineNumberOffset));
@@ -259,8 +273,8 @@ public class DefaultGrammarVisitor extends GrammarBaseVisitor<Atom> {
         String numberString = ctx.getText();
         if (numberString.contains("J")) {
             // Complex numbers.
-            List<BigDecimal> components = Arrays.stream(numberString.split("J")).map(BigDecimal::new).toList();
-            return new CodeAtom(BigComplex.valueOf(components.get(0), components.get(1))).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
+            String[] components = numberString.split("J");
+            return new CodeAtom(BigComplex.valueOf(new BigDecimal(components[0]), new BigDecimal(components[1]))).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);
         } else {
             // Real numbers.
             return new CodeAtom(new BigDecimal(numberString)).setCol(ctx.start.getCharPositionInLine()).setLine(ctx.start.getLine() + lineNumberOffset);

@@ -5,6 +5,7 @@ import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Caar extends PrimitiveFunction implements Lambda {
@@ -18,7 +19,12 @@ public class Caar extends PrimitiveFunction implements Lambda {
         if (args.size() == 1) {
             return Car.INSTANCE.apply(env, List.of(Car.INSTANCE.apply(env, args)));
         } else {
-            return new Atom(args.stream().map(a -> Car.INSTANCE.apply(env, List.of(Car.INSTANCE.apply(env, List.of(a))))).toList());
+            ArrayList<Atom> list = new ArrayList<>();
+            for (Atom a : args) {
+                Atom apply = Car.INSTANCE.apply(env, List.of(Car.INSTANCE.apply(env, List.of(a))));
+                list.add(apply);
+            }
+            return new Atom(list);
         }
     }
 }
