@@ -54,8 +54,19 @@ public class SacaUnbwt extends PrimitiveFunction implements Lambda {
         assertArity(args, 2);
         int idx = args.get(0).getInteger().intValueExact();
         if (args.get(1).getType() == Type.LIST) {
-            List<BigInteger> list = args.get(1).getList().stream().map(Atom::getInteger).toList();
-            if (list.stream().allMatch(x -> x.compareTo(BigInteger.valueOf(Byte.MIN_VALUE)) >= 0 && x.compareTo(BigInteger.valueOf(Byte.MAX_VALUE)) < 0)) {
+            ArrayList<BigInteger> list = new ArrayList<>();
+            for (Atom atom : args.get(1).getList()) {
+                BigInteger integer = atom.getInteger();
+                list.add(integer);
+            }
+            boolean b1 = true;
+            for (BigInteger x : list) {
+                if (x.compareTo(BigInteger.valueOf(Byte.MIN_VALUE)) < 0 || x.compareTo(BigInteger.valueOf(Byte.MAX_VALUE)) >= 0) {
+                    b1 = false;
+                    break;
+                }
+            }
+            if (b1) {
                 byte[] T = new byte[list.size()];
                 byte[] U = new byte[list.size()];
                 for (int i = 0; i < list.size(); i++) {

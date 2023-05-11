@@ -24,7 +24,7 @@ public class Lift extends PrimitiveFunction implements Lambda {
         return "lift";
     }
 
-    class LiftedFunction implements Lambda {
+    static class LiftedFunction implements Lambda {
         private final Callable primitive;
 
         LiftedFunction(Callable primitive) {

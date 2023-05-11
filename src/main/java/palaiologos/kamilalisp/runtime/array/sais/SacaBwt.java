@@ -12,7 +12,14 @@ public class SacaBwt extends PrimitiveFunction implements Lambda {
         assertArity(args, 1);
         if (args.get(0).getType() == Type.LIST) {
             List<BigInteger> list = args.get(0).getList().stream().map(Atom::getInteger).toList();
-            if (list.stream().allMatch(x -> x.compareTo(BigInteger.valueOf(Byte.MIN_VALUE)) >= 0 && x.compareTo(BigInteger.valueOf(Byte.MAX_VALUE)) < 0)) {
+            boolean b = true;
+            for (BigInteger x : list) {
+                if (x.compareTo(BigInteger.valueOf(Byte.MIN_VALUE)) < 0 || x.compareTo(BigInteger.valueOf(Byte.MAX_VALUE)) >= 0) {
+                    b = false;
+                    break;
+                }
+            }
+            if (b) {
                 byte[] data = new byte[list.size()];
                 for (int i = 0; i < list.size(); i++)
                     data[i] = list.get(i).byteValueExact();

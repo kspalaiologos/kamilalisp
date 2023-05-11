@@ -11,16 +11,26 @@ public class None extends PrimitiveFunction implements Lambda {
             Callable reductor = args.get(0).getCallable();
             if (args.get(1).getType() == Type.LIST) {
                 List<Atom> list = args.get(1).getList();
-                return new Atom(list.stream().noneMatch(x -> Evaluation.evaluate(env, reductor, List.of(x)).coerceBool()));
+                for (Atom x : list)
+                    if (Evaluation.evaluate(env, reductor, List.of(x)).coerceBool())
+                        return Atom.FALSE;
+                return Atom.TRUE;
             } else if (args.get(1).getType() == Type.STRING) {
                 String str = args.get(1).getString();
-                return new Atom(str.chars().noneMatch(x -> Evaluation.evaluate(env, reductor, List.of(new Atom(String.valueOf((char) x)))).coerceBool()));
+                int len = str.length();
+                for (int i = 0; i < len; i++)
+                    if (Evaluation.evaluate(env, reductor, List.of(Atom.fromChar(str.charAt(i)))).coerceBool())
+                        return Atom.FALSE;
+                return Atom.TRUE;
             } else {
                 throw new UnsupportedOperationException("none not defined for: " + args.get(1).getType());
             }
         } else if(args.size() == 1) {
             List<Atom> list = args.get(0).getList();
-            return new Atom(list.stream().noneMatch(Atom::coerceBool));
+            for (Atom atom : list)
+                if (atom.coerceBool())
+                    return Atom.FALSE;
+            return Atom.TRUE;
         } else {
             throw new UnsupportedOperationException("none not defined for: " + args.size() + " arguments");
         }

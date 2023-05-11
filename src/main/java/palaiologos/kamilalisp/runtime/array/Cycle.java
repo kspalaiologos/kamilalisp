@@ -4,6 +4,7 @@ import com.google.common.collect.Streams;
 import palaiologos.kamilalisp.atom.*;
 
 import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Cycle extends PrimitiveFunction implements Lambda {
@@ -15,7 +16,13 @@ public class Cycle extends PrimitiveFunction implements Lambda {
                 return Atom.NULL;
             return new Atom(new CycleListFacade(b.getList(), a.getInteger().intValueExact()));
         } else if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
-            return new Atom(Streams.zip(a.getList().stream(), b.getList().stream(), Cycle::cycle).toList());
+            // Zip a and b and call cycle.
+            ArrayList<Atom> result = new ArrayList<>();
+            int len = Math.min(a.getList().size(), b.getList().size());
+            for (int i = 0; i < len; i++) {
+                result.add(cycle(a.getList().get(i), b.getList().get(i)));
+            }
+            return new Atom(result);
         } else if (a.getType() == Type.INTEGER && b.getType() == Type.STRING) {
             if (a.getInteger().intValueExact() < 0)
                 throw new RuntimeException("cycle: negative length");

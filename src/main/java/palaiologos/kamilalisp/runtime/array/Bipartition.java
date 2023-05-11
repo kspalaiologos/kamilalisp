@@ -31,7 +31,7 @@ public class Bipartition extends PrimitiveFunction implements Lambda {
             StringBuilder right = new StringBuilder();
 
             for (int i = 0; i < string.length(); i++) {
-                if (Evaluation.evaluate(env, condition, List.of(new Atom(String.valueOf(string.charAt(i))))).coerceBool()) {
+                if (Evaluation.evaluate(env, condition, List.of(Atom.fromChar(string.charAt(i)))).coerceBool()) {
                     left.append(string.charAt(i));
                 } else {
                     right.append(string.charAt(i));
