@@ -8,6 +8,7 @@ import palaiologos.kamilalisp.runtime.cas.meta.FortranParser;
 import palaiologos.kamilalisp.runtime.cas.meta.FriCAS;
 import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -69,7 +70,7 @@ public class Limit extends PrimitiveFunction implements SpecialForm {
             if (a.size() == 0) {
                 return Atom.NULL;
             } else if (a.size() == 1) {
-                Atom entry = a.entrySet().stream().findFirst().get().getValue();
+                Atom entry = a.entrySet().iterator().next().getValue();
                 if (entry.getType() == Type.STRING) {
                     if (entry.getString().equals("failed"))
                         throw new RuntimeException("Failed to evaluate limit.");
@@ -80,7 +81,11 @@ public class Limit extends PrimitiveFunction implements SpecialForm {
             } else if (a.size() == 3) {
                 // Assert that: T1(1), T1(2) exist as keys, R=T1.
                 // In T-keys, equality of left and right limit.
-                List<String> keys = a.keySet().stream().map(Atom::getString).toList();
+                ArrayList<String> keys = new ArrayList<>();
+                for (Atom atom : a.keySet()) {
+                    String string = atom.getString();
+                    keys.add(string);
+                }
                 if (!keys.contains("T1(1)") || !keys.contains("T1(2)") || !keys.contains("R"))
                     throw new RuntimeException("Failed to evaluate limit, CAS error.");
                 if (!a.get(new Atom("R")).equals(new Atom("T1", true)))

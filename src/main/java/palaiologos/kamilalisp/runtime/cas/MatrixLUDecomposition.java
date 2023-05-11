@@ -120,12 +120,19 @@ public class MatrixLUDecomposition extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("Expected a matrix of rank 2.");
         }
 
-        List<List<Atom>> l1 = a1.getList().stream().map(Atom::getList).toList();
-        if (l1.stream().anyMatch(x -> x.size() != l1.get(0).size())) {
-            throw new RuntimeException("Expected a square matrix.");
+        List<Atom> a1l = a1.getList();
+        for (Atom atom : a1l) {
+            if (atom.getList().size() != a1l.get(0).getList().size()) {
+                throw new RuntimeException("Expected a square matrix.");
+            }
         }
 
-        Atom[][] A = l1.stream().map(x -> x.toArray(Atom[]::new)).toArray(Atom[][]::new);
+        List<Atom[]> list = new ArrayList<>();
+        for (Atom atom : a1l) {
+            Atom[] atoms = atom.getList().toArray(Atom[]::new);
+            list.add(atoms);
+        }
+        Atom[][] A = list.toArray(new Atom[0][]);
         Atom[][] L = new Atom[A.length][A.length];
         Atom[][] U = new Atom[A.length][A.length];
         for (int i = 0; i < A.length; i++) {
@@ -137,12 +144,18 @@ public class MatrixLUDecomposition extends PrimitiveFunction implements Lambda {
 
         LinkedHashSet<String> vars = new LinkedHashSet<>();
         casLU(env, A, L, U, vars, true);
-        Atom MathL = new Atom(Arrays.stream(L)
-                .map(x -> new Atom(Arrays.asList(x)))
-                .toList());
-        Atom MathU = new Atom(Arrays.stream(U)
-                .map(x -> new Atom(Arrays.asList(x)))
-                .toList());
+        List<Atom> result = new ArrayList<>();
+        for (Atom[] atoms : L) {
+            Atom atom = new Atom(Arrays.asList(atoms));
+            result.add(atom);
+        }
+        Atom MathL = new Atom(result);
+        List<Atom> list1 = new ArrayList<>();
+        for (Atom[] x : U) {
+            Atom atom = new Atom(Arrays.asList(x));
+            list1.add(atom);
+        }
+        Atom MathU = new Atom(list1);
         return new Atom(List.of(MathL, MathU));
     }
 

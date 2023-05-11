@@ -7,6 +7,7 @@ import palaiologos.kamilalisp.atom.PrimitiveFunction;
 import palaiologos.kamilalisp.runtime.array.Rank;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -21,7 +22,11 @@ public class MatrixTrace extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("Expected a matrix of rank 2.");
         }
 
-        List<List<Atom>> m = matrix.getList().stream().map(Atom::getList).toList();
+        List<List<Atom>> m = new ArrayList<>();
+        for (Atom atom : matrix.getList()) {
+            List<Atom> list = atom.getList();
+            m.add(list);
+        }
 
         int diagonalLen = Math.min(m.size(), m.get(0).size());
         if (diagonalLen == 0) {

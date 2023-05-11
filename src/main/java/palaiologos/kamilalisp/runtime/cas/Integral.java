@@ -42,30 +42,84 @@ public class Integral extends PrimitiveFunction implements SpecialForm {
 
     public static Atom processSolution(Environment env, MathExpression originalExpression, String differential, HashPMap<Atom, Atom> a) {
         // If all of them are identifiers:
-        if (a.entrySet().stream().noneMatch(x -> x.getKey().getString().contains("("))) {
-            Set<String> defined = a.keySet().stream().map(Atom::getString).filter(x -> x.startsWith("T")).collect(Collectors.toSet());
-            Atom result = a.entrySet().stream().filter(x -> x.getKey().getString().startsWith("R")).findFirst().get().getValue();
+        boolean allIdentifiers = true;
+        for (Map.Entry<Atom, Atom> atomAtomEntry : a.entrySet()) {
+            if (atomAtomEntry.getKey().getString().contains("(")) {
+                allIdentifiers = false;
+                break;
+            }
+        }
+        if (allIdentifiers) {
+            Set<String> defined = new HashSet<>();
+            for (Atom atom : a.keySet()) {
+                String string = atom.getString();
+                if (string.startsWith("T")) {
+                    defined.add(string);
+                }
+            }
+            Optional<Map.Entry<Atom, Atom>> found = Optional.empty();
+            for (Map.Entry<Atom, Atom> x : a.entrySet()) {
+                if (x.getKey().getString().startsWith("R")) {
+                    found = Optional.of(x);
+                    break;
+                }
+            }
+            Atom result = found.get().getValue();
             // Replace all occurences of identifiers in "defined" with their value in "a".
             return expressionFromList(env, originalExpression.getArgs(), differential, replaceIdentifiers(result, defined, a));
         } else {
             // Got a list somewhere.
-            Atom result = a.entrySet().stream().filter(x -> x.getKey().getString().startsWith("R")).findFirst().get().getValue();
-            Set<String> listEntries = a.entrySet().stream().filter(x -> x.getKey().getString().startsWith("T")).map(x -> x.getKey().getString()).collect(Collectors.toSet());
+            Optional<Map.Entry<Atom, Atom>> found = Optional.empty();
+            for (Map.Entry<Atom, Atom> atomAtomEntry : a.entrySet()) {
+                if (atomAtomEntry.getKey().getString().startsWith("R")) {
+                    found = Optional.of(atomAtomEntry);
+                    break;
+                }
+            }
+            Atom result = found.get().getValue();
+            LinkedHashSet<String> listEntries = new LinkedHashSet<>();
+            for (Map.Entry<Atom, Atom> atomAtomEntry : a.entrySet()) {
+                if (atomAtomEntry.getKey().getString().startsWith("T")) {
+                    String string = atomAtomEntry.getKey().getString();
+                    listEntries.add(string);
+                }
+            }
             if (listEntries.size() != a.size() - 1)
                 throw new RuntimeException("Invalid result.");
             // Check if listEntires are in form of Ln(a).
-            String firstEntry = listEntries.stream().findFirst().get();
+            String firstEntry = listEntries.iterator().next();
             int n = Integer.parseInt(firstEntry.substring(1, firstEntry.indexOf('(')));
-            if (listEntries.stream().anyMatch(x -> !x.matches("T" + n + "\\([0-9]+\\)")))
-                throw new RuntimeException("Invalid result.");
+            for (String listEntry : listEntries) {
+                if (!listEntry.matches("T" + n + "\\([0-9]+\\)")) {
+                    throw new RuntimeException("Invalid result.");
+                }
+            }
             // Verify that the indices are a permutation of naturals until n-1.
-            List<Integer> indices = listEntries.stream().map(x -> Integer.parseInt(x.substring(x.indexOf('(') + 1, x.indexOf(')')))).sorted().toList();
-            if (!Streams.zip(indices.stream().sorted(), IntStream.range(1, n - 1).boxed(), Integer::equals).allMatch(x -> x))
+            ArrayList<Integer> indices = new ArrayList<>();
+            for (String listEntry : listEntries) {
+                Integer parseInt = Integer.parseInt(listEntry.substring(listEntry.indexOf('(') + 1, listEntry.indexOf(')')));
+                indices.add(parseInt);
+            }
+            indices.sort(null);
+            if(indices.size() != n - 1)
                 throw new RuntimeException("Invalid result.");
+            for(int i = 1; i < n - 1; i++) {
+                if (indices.get(i - 1) != i) {
+                    throw new RuntimeException("Invalid result.");
+                }
+            }
             // Verify that the result is R...=Ln
             if (!result.getIdentifier().matches("T" + n))
                 throw new RuntimeException("Invalid result.");
-            return new Atom(a.entrySet().stream().filter(x -> x.getKey().getString().startsWith("T")).map(Map.Entry::getValue).map(solution -> expressionFromList(env, originalExpression.getArgs(), differential, solution)).toList());
+            ArrayList<Atom> list = new ArrayList<>();
+            for (Map.Entry<Atom, Atom> x : a.entrySet()) {
+                if (x.getKey().getString().startsWith("T")) {
+                    Atom solution = x.getValue();
+                    Atom atom = expressionFromList(env, originalExpression.getArgs(), differential, solution);
+                    list.add(atom);
+                }
+            }
+            return new Atom(list);
         }
     }
 

@@ -50,7 +50,7 @@ public class Nabla extends PrimitiveFunction implements Lambda {
             if (a.size() == 0) {
                 throw new RuntimeException("Failed to compute the derivative, CAS result empty.");
             } else if (a.size() == 1) {
-                Atom entry = a.entrySet().stream().findFirst().get().getValue();
+                Atom entry = a.entrySet().iterator().next().getValue();
                 if (entry.getType() == Type.STRING) {
                     if (entry.getString().equals("failed"))
                         throw new RuntimeException("Failed to compute the derivative.");

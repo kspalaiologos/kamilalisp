@@ -5,6 +5,7 @@ import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MfnVariables extends PrimitiveFunction implements Lambda {
@@ -12,7 +13,12 @@ public class MfnVariables extends PrimitiveFunction implements Lambda {
     public Atom apply(Environment env, List<Atom> args) {
         assertArity(args, 1);
         MathExpression f = args.get(0).getUserdata(MathExpression.class);
-        return new Atom(f.getArgs().stream().map(x -> new Atom(x, true)).toList());
+        ArrayList<Atom> list = new ArrayList<>();
+        for (String x : f.getArgs()) {
+            Atom atom = new Atom(x, true);
+            list.add(atom);
+        }
+        return new Atom(list);
     }
 
     @Override

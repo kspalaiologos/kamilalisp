@@ -50,10 +50,10 @@ public class MathExpression implements Userdata {
         this.data = data;
         this.e = e;
 
-        args.forEach(x -> {
+        for (String x : args) {
             if (allowedFunctions.contains(x))
                 throw new RuntimeException("Identifier " + x + " is not allowed as a variable, as it denotes a function already.");
-        });
+        }
 
         stringifyExpression(e, data);
     }
@@ -98,7 +98,12 @@ public class MathExpression implements Userdata {
             }
             return tree;
         } else if (tree.getType() == Type.LIST) {
-            return new Atom(tree.getList().stream().map(x -> expandIdentifiers(e, x)).toList());
+            ArrayList<Atom> list = new ArrayList<>();
+            for (Atom x : tree.getList()) {
+                Atom atom = expandIdentifiers(e, x);
+                list.add(atom);
+            }
+            return new Atom(list);
         } else {
             return tree;
         }
@@ -148,33 +153,113 @@ public class MathExpression implements Userdata {
                         throw new RuntimeException("Invalid arity for function: +");
                     if (tree.getList().size() == 2)
                         return "conj(" + stringifyExpression(e, tree.getList().get(1)) + ")";
-                    return tree.getList().stream().skip(1).map(x -> stringifyExpression(e, x)).reduce((x, y) -> "((" + x + ")+(" + y + "))").get();
+                    boolean seen = false;
+                    String acc = null;
+                    boolean first = true;
+                    for (Atom x : tree.getList()) {
+                        if (first) {
+                            first = false;
+                            continue;
+                        }
+                        String s = stringifyExpression(e, x);
+                        if (!seen) {
+                            seen = true;
+                            acc = s;
+                        } else {
+                            acc = "((" + acc + ")+(" + s + "))";
+                        }
+                    }
+                    return acc;
                 }
                 case "-" -> {
                     if (tree.getList().size() == 1)
                         throw new RuntimeException("Invalid arity for function: -");
                     if (tree.getList().size() == 2)
                         return "-(" + stringifyExpression(e, tree.getList().get(1)) + ")";
-                    return tree.getList().stream().skip(1).map(x -> stringifyExpression(e, x)).reduce((x, y) -> "((" + x + ")-(" + y + "))").get();
+                    boolean seen = false;
+                    String acc = null;
+                    boolean first = true;
+                    for (Atom x : tree.getList()) {
+                        if (first) {
+                            first = false;
+                            continue;
+                        }
+                        String s = stringifyExpression(e, x);
+                        if (!seen) {
+                            seen = true;
+                            acc = s;
+                        } else {
+                            acc = "((" + acc + ")-(" + s + "))";
+                        }
+                    }
+                    return acc;
                 }
                 case "*" -> {
                     if (tree.getList().size() == 1)
                         throw new RuntimeException("Invalid arity for function: *");
                     if (tree.getList().size() == 2)
                         return "signum(" + stringifyExpression(e, tree.getList().get(1)) + ")";
-                    return tree.getList().stream().skip(1).map(x -> stringifyExpression(e, x)).reduce((x, y) -> "((" + x + ")*(" + y + "))").get();
+                    boolean seen = false;
+                    String acc = null;
+                    boolean first = true;
+                    for (Atom x : tree.getList()) {
+                        if (first) {
+                            first = false;
+                            continue;
+                        }
+                        String s = stringifyExpression(e, x);
+                        if (!seen) {
+                            seen = true;
+                            acc = s;
+                        } else {
+                            acc = "((" + acc + ")*(" + s + "))";
+                        }
+                    }
+                    return acc;
                 }
                 case "/" -> {
                     if (tree.getList().size() == 1)
                         throw new RuntimeException("Invalid arity for function: /");
                     if (tree.getList().size() == 2)
                         return "1/(" + stringifyExpression(e, tree.getList().get(1)) + ")";
-                    return tree.getList().stream().skip(1).map(x -> stringifyExpression(e, x)).reduce((x, y) -> "((" + x + ")/(" + y + "))").get();
+                    boolean seen = false;
+                    String acc = null;
+                    boolean first = true;
+                    for (Atom x : tree.getList()) {
+                        if (first) {
+                            first = false;
+                            continue;
+                        }
+                        String s = stringifyExpression(e, x);
+                        if (!seen) {
+                            seen = true;
+                            acc = s;
+                        } else {
+                            acc = "((" + acc + ")/(" + s + "))";
+                        }
+                    }
+                    return acc;
                 }
                 case "**" -> {
                     if (tree.getList().size() <= 2)
                         throw new RuntimeException("Invalid arity for function: **");
-                    return tree.getList().stream().skip(1).map(x -> stringifyExpression(e, x)).reduce((x, y) -> "((" + x + ")^(" + y + "))").get();
+                    boolean seen = false;
+                    String acc = null;
+                    boolean first = true;
+                    for (Atom x : tree.getList()) {
+                        if (first) {
+                            first = false;
+                            continue;
+                        }
+                        String s = stringifyExpression(e, x);
+                        if (!seen) {
+                            seen = true;
+                            acc = s;
+                        } else {
+                            acc = "((" + acc + ")^(" + s + "))";
+                        }
+                    }
+                    return acc;
                 }
                 case "pi" -> {
                     if (tree.getList().size() == 1)
@@ -209,7 +294,23 @@ public class MathExpression implements Userdata {
                             throw new RuntimeException("Invalid arity for function: " + id);
                         if (primitiveTranslations.containsKey(id))
                             id = primitiveTranslations.get(id);
-                        return id + "(" + tree.getList().stream().skip(1).map(x -> stringifyExpression(e, x)).reduce((x, y) -> x + "," + y).get() + ")";
+                        boolean seen = false;
+                        String acc = null;
+                        boolean first = true;
+                        for (Atom x : tree.getList()) {
+                            if (first) {
+                                first = false;
+                                continue;
+                            }
+                            String s = stringifyExpression(e, x);
+                            if (!seen) {
+                                seen = true;
+                                acc = s;
+                            } else {
+                                acc = acc + "," + s;
+                            }
+                        }
+                        return id + "(" + acc + ")";
                     } else if (e.has(id)) {
                         if (e.get(id).getType() != Type.USERDATA || !(e.get(id).getUserdata() instanceof MathExpression))
                             throw new RuntimeException("Invalid function: " + id);
@@ -305,7 +406,17 @@ public class MathExpression implements Userdata {
 
     @Override
     public String toDisplayString() {
-        return "ƒ(" + args.stream().reduce((x, y) -> x + "," + y).orElse("") + ")=" + data.toString();
+        boolean seen = false;
+        StringBuilder acc = null;
+        for (String arg : args) {
+            if (!seen) {
+                seen = true;
+                acc = new StringBuilder(arg);
+            } else {
+                acc.append(",").append(arg);
+            }
+        }
+        return "ƒ(" + (seen ? acc.toString() : "") + ")=" + data.toString();
     }
 
     @Override

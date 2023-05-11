@@ -12,7 +12,10 @@ public class Fn extends PrimitiveFunction implements SpecialForm {
         LinkedHashSet<String> arguments;
         if (args.get(0).getType() == Type.LIST) {
             arguments = new LinkedHashSet<>();
-            args.get(0).getList().stream().map(Atom::getIdentifier).forEach(arguments::add);
+            for (Atom atom : args.get(0).getList()) {
+                String identifier = atom.getIdentifier();
+                arguments.add(identifier);
+            }
         } else if (args.get(0).getType() == Type.IDENTIFIER) {
             arguments = new LinkedHashSet<>();
             arguments.add(args.get(0).getIdentifier());

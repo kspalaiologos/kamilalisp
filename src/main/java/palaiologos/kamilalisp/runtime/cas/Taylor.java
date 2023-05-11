@@ -59,7 +59,7 @@ public class Taylor extends PrimitiveFunction implements Lambda {
             if (a.size() == 0) {
                 return Atom.NULL;
             } else if (a.size() == 1) {
-                Atom entry = a.entrySet().stream().findFirst().get().getValue();
+                Atom entry = a.entrySet().iterator().next().getValue();
                 return new Atom(new MathExpression(env, expr.getArgs(), entry));
             } else {
                 throw new RuntimeException("Failed to compute the taylor series, CAS arity error.");
