@@ -101,9 +101,10 @@ public class Integral extends PrimitiveFunction implements SpecialForm {
                 indices.add(parseInt);
             }
             indices.sort(null);
-            if(indices.size() != n - 1)
+            if(indices.size() < n - 1)
                 throw new RuntimeException("Invalid result.");
-            for(int i = 1; i < n - 1; i++) {
+            int min = Math.min(n - 1, indices.size());
+            for(int i = 1; i < min; i++) {
                 if (indices.get(i - 1) != i) {
                     throw new RuntimeException("Invalid result.");
                 }
