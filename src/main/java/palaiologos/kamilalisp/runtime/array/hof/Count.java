@@ -12,10 +12,23 @@ public class Count extends PrimitiveFunction implements Lambda {
         Callable reductor = args.get(0).getCallable();
         if (args.get(1).getType() == Type.LIST) {
             List<Atom> list = args.get(1).getList();
-            return new Atom(BigInteger.valueOf(list.stream().filter(x -> Evaluation.evaluate(env, reductor, List.of(x)).coerceBool()).count()));
+            long count = 0L;
+            for (Atom x : list) {
+                if (Evaluation.evaluate(env, reductor, List.of(x)).coerceBool()) {
+                    count++;
+                }
+            }
+            return new Atom(BigInteger.valueOf(count));
         } else if (args.get(1).getType() == Type.STRING) {
             String str = args.get(1).getString();
-            return new Atom(BigInteger.valueOf(str.chars().filter(x -> Evaluation.evaluate(env, reductor, List.of(new Atom(String.valueOf((char) x)))).coerceBool()).count()));
+            int len = str.length();
+            long count = 0L;
+            for(int i = 0; i < len; i++) {
+                if(Evaluation.evaluate(env, reductor, List.of(Atom.fromChar(str.charAt(i)))).coerceBool()) {
+                    count++;
+                }
+            }
+            return new Atom(BigInteger.valueOf(count));
         } else {
             throw new UnsupportedOperationException("count not defined for: " + args.get(1).getType());
         }

@@ -14,7 +14,7 @@ public class FilterIdx extends PrimitiveFunction implements Lambda {
         Callable reductor = args.get(0).getCallable();
         if (args.get(1).getType() == Type.LIST) {
             List<Atom> list = args.get(1).getList();
-            List<Atom> dest = new ArrayList<>();
+            ArrayList<Atom> dest = new ArrayList<>();
             for (int i = 0; i < list.size(); i++) {
                 if (Evaluation.evaluate(env, reductor, List.of(new Atom(BigInteger.valueOf(i)), list.get(i))).coerceBool())
                     dest.add(list.get(i));
@@ -24,7 +24,7 @@ public class FilterIdx extends PrimitiveFunction implements Lambda {
             String str = args.get(1).getString();
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < str.length(); i++) {
-                if (Evaluation.evaluate(env, reductor, List.of(new Atom(BigInteger.valueOf(i)), new Atom(String.valueOf(str.charAt(i))))).coerceBool())
+                if (Evaluation.evaluate(env, reductor, List.of(new Atom(BigInteger.valueOf(i)), Atom.fromChar(str.charAt(i)))).coerceBool())
                     sb.append(str.charAt(i));
             }
             return new Atom(sb.toString());

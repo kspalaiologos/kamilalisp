@@ -13,7 +13,10 @@ public class Foldl extends PrimitiveFunction implements Lambda {
         List<Atom> list = args.get(2).getList();
         if (list.isEmpty())
             return identity;
-        return list.stream().reduce(identity, (acc, x) -> Evaluation.evaluate(env, reductor, List.of(acc, x)));
+        Atom acc = identity;
+        for (Atom atom : list)
+            acc = Evaluation.evaluate(env, reductor, List.of(acc, atom));
+        return acc;
     }
 
     @Override

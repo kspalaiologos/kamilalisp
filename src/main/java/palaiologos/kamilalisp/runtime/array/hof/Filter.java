@@ -3,6 +3,7 @@ package palaiologos.kamilalisp.runtime.array.hof;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.TypeError;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Filter extends PrimitiveFunction implements Lambda {
@@ -12,12 +13,19 @@ public class Filter extends PrimitiveFunction implements Lambda {
         Callable reductor = args.get(0).getCallable();
         if (args.get(1).getType() == Type.LIST) {
             List<Atom> list = args.get(1).getList();
-            return new Atom(list.stream().filter(x -> Evaluation.evaluate(env, reductor, List.of(x)).coerceBool()).toList());
+            ArrayList<Atom> result = new ArrayList<>();
+            for (Atom x : list)
+                if (Evaluation.evaluate(env, reductor, List.of(x)).coerceBool())
+                    result.add(x);
+            return new Atom(result);
         } else if (args.get(1).getType() == Type.STRING) {
             String string = args.get(1).getString();
-            return new Atom(string.chars().filter(
-                    x -> Evaluation.evaluate(env, reductor, List.of(new Atom(String.valueOf((char) x)))).coerceBool()
-            ).mapToObj(x -> (char) x).collect(StringBuilder::new, StringBuilder::append, StringBuilder::append).toString());
+            int len = string.length();
+            StringBuilder result = new StringBuilder();
+            for(int i = 0; i < len; i++)
+                if(Evaluation.evaluate(env, reductor, List.of(Atom.fromChar(string.charAt(i)))).coerceBool())
+                    result.append(string.charAt(i));
+            return new Atom(result.toString());
         } else {
             throw new TypeError("Expected a list or a string as the second argument to `filter'.");
         }

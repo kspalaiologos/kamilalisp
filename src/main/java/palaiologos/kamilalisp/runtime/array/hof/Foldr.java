@@ -14,7 +14,11 @@ public class Foldr extends PrimitiveFunction implements Lambda {
         List<Atom> list = args.get(2).getList();
         if (list.isEmpty())
             return identity;
-        return Lists.reverse(list).stream().reduce(identity, (acc, x) -> Evaluation.evaluate(env, reductor, List.of(x, acc)));
+        Atom acc = identity;
+        for (Atom atom : Lists.reverse(list)) {
+            acc = Evaluation.evaluate(env, reductor, List.of(atom, acc));
+        }
+        return acc;
     }
 
     @Override

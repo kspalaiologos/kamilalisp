@@ -14,7 +14,10 @@ public class Foldr1 extends PrimitiveFunction implements Lambda {
         List<Atom> list = args.get(1).getList();
         if (list.size() < 1)
             throw new TypeError("foldr1: list of size " + list.size() + " can not be folded.");
-        return Lists.reverse(list).stream().reduce((acc, x) -> Evaluation.evaluate(env, reductor, List.of(x, acc))).get();
+        Atom acc = list.get(list.size() - 1);
+        for (int i = list.size() - 2; i >= 0; i--)
+            acc = Evaluation.evaluate(env, reductor, List.of(list.get(i), acc));
+        return acc;
     }
 
     @Override
