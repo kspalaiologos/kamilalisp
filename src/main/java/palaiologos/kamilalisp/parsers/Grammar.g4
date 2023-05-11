@@ -16,7 +16,7 @@ form_rem: literal
         | obj
         | form_rem DOLLAR sqlist
         | form_rem PERCENT sqlist
-        | form_rem BIND sqlist
+        | form_rem SELF sqlist
         | form_rem DOT (number | symbol)
         | bind
         | any_list
