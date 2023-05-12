@@ -3,6 +3,7 @@ package palaiologos.kamilalisp.runtime.math.bit;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.TypeError;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,7 +13,12 @@ public class BitNot extends PrimitiveFunction implements Lambda {
         if (a.getType() == Type.INTEGER) {
             return new Atom(a.getInteger().not());
         } else if (a.getType() == Type.LIST) {
-            return new Atom(a.getList().stream().map(BitNot::sgn1).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>();
+            for (Atom atom : a.getList()) {
+                Atom sgn1 = sgn1(atom);
+                list.add(sgn1);
+            }
+            return new Atom(list);
         } else {
             throw new TypeError("`bit:not' not defined for: " + a.getType());
         }
@@ -25,7 +31,12 @@ public class BitNot extends PrimitiveFunction implements Lambda {
         } else if (args.isEmpty()) {
             throw new TypeError("Expected 1 or more arguments to `bit:not'.");
         } else {
-            return new Atom(args.stream().map(BitNot::sgn1).toList());
+            ArrayList<Atom> list = new ArrayList<>();
+            for (Atom arg : args) {
+                Atom atom = sgn1(arg);
+                list.add(atom);
+            }
+            return new Atom(list);
         }
     }
 

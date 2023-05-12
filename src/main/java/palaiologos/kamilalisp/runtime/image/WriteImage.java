@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class WriteImage extends PrimitiveFunction implements Lambda {
@@ -27,13 +28,23 @@ public class WriteImage extends PrimitiveFunction implements Lambda {
             if (rank != 2) {
                 throw new RuntimeException("Expected rank 2 argument (RGBA matrix).");
             }
-            imageData = args.get(2).getList().stream().map(Atom::getList).toList();
+            ArrayList<List<Atom>> result = new ArrayList<>();
+            for (Atom atom : args.get(2).getList()) {
+                List<Atom> list = atom.getList();
+                result.add(list);
+            }
+            imageData = result;
         } else {
             rank = Rank.computeRank(args.get(1));
             if (rank != 2) {
                 throw new RuntimeException("Expected rank 2 argument (RGBA matrix).");
             }
-            imageData = args.get(1).getList().stream().map(Atom::getList).toList();
+            ArrayList<List<Atom>> result = new ArrayList<>();
+            for (Atom atom : args.get(1).getList()) {
+                List<Atom> list = atom.getList();
+                result.add(list);
+            }
+            imageData = result;
         }
         BufferedImage img = new BufferedImage(imageData.get(0).size(), imageData.size(), BufferedImage.TYPE_INT_ARGB);
         for (int y = 0; y < imageData.size(); y++) {

@@ -4,6 +4,7 @@ import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.TypeError;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,7 +14,12 @@ public class BitPopcount extends PrimitiveFunction implements Lambda {
         if (a.getType() == Type.INTEGER) {
             return new Atom(BigInteger.valueOf(a.getInteger().bitCount()));
         } else if (a.getType() == Type.LIST) {
-            return new Atom(a.getList().stream().map(BitPopcount::sgn1).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>();
+            for (Atom atom : a.getList()) {
+                Atom sgn1 = sgn1(atom);
+                list.add(sgn1);
+            }
+            return new Atom(list);
         } else {
             throw new TypeError("`bit:popcount' not defined for: " + a.getType());
         }
@@ -26,7 +32,12 @@ public class BitPopcount extends PrimitiveFunction implements Lambda {
         } else if (args.isEmpty()) {
             throw new TypeError("Expected 1 or more arguments to `bit:popcount'.");
         } else {
-            return new Atom(args.stream().map(BitPopcount::sgn1).toList());
+            ArrayList<Atom> list = new ArrayList<>();
+            for (Atom arg : args) {
+                Atom atom = sgn1(arg);
+                list.add(atom);
+            }
+            return new Atom(list);
         }
     }
 

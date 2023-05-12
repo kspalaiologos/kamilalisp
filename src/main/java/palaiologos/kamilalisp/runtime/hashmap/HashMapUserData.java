@@ -12,7 +12,16 @@ public record HashMapUserData(HashPMap<Atom, Atom> value) implements Userdata {
     @Override
     public Atom field(Object key) {
         if (key instanceof BigDecimal) {
-            Optional<Map.Entry<Atom, Atom>> a = value.entrySet().stream().skip(((BigDecimal) key).longValue()).findFirst();
+            Optional<Map.Entry<Atom, Atom>> a = Optional.empty();
+            long toSkip = ((BigDecimal) key).longValue();
+            for (Map.Entry<Atom, Atom> atomAtomEntry : value.entrySet()) {
+                if (toSkip > 0) {
+                    toSkip--;
+                    continue;
+                }
+                a = Optional.of(atomAtomEntry);
+                break;
+            }
             if (a.isPresent())
                 return a.get().getValue();
             else

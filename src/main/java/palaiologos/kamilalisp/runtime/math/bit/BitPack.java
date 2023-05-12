@@ -22,10 +22,10 @@ public class BitPack extends PrimitiveFunction implements Lambda {
             return new Atom(value.shiftLeft(start.intValue()));
         } else {
             BigInteger result = BigInteger.ZERO;
-            for (int i = 0; i < args.size(); i++) {
-                BigInteger start = args.get(i).getList().get(0).getInteger();
-                BigInteger end = args.get(i).getList().get(1).getInteger();
-                BigInteger value = args.get(i).getList().get(2).getInteger();
+            for (Atom arg : args) {
+                BigInteger start = arg.getList().get(0).getInteger();
+                BigInteger end = arg.getList().get(1).getInteger();
+                BigInteger value = arg.getList().get(2).getInteger();
                 BigInteger noBits = end.subtract(start);
                 value = value.and(BigInteger.ONE.shiftLeft(noBits.intValue()).subtract(BigInteger.ONE));
                 result = result.or(value.shiftLeft(start.intValue()));
