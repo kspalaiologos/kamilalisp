@@ -7,6 +7,7 @@ import palaiologos.kamilalisp.atom.PrimitiveFunction;
 import palaiologos.kamilalisp.runtime.array.Rank;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Flt64Trace extends PrimitiveFunction implements Lambda {
@@ -18,7 +19,11 @@ public class Flt64Trace extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("Expected a matrix of rank 2.");
         }
 
-        List<List<Atom>> l1 = a1.getList().stream().map(Atom::getList).toList();
+        ArrayList<List<Atom>> l1 = new ArrayList<>();
+        for (Atom atom : a1.getList()) {
+            List<Atom> list = atom.getList();
+            l1.add(list);
+        }
         int diagonalLen = Math.min(l1.size(), l1.get(0).size());
         if (diagonalLen == 0)
             return new Atom(BigInteger.ZERO);

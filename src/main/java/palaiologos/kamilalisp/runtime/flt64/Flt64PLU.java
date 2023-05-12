@@ -6,6 +6,7 @@ import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 import palaiologos.kamilalisp.runtime.array.Rank;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -95,17 +96,60 @@ public class Flt64PLU extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("Expected a matrix of rank 2.");
         }
 
-        List<List<Atom>> l1 = a1.getList().stream().map(Atom::getList).toList();
-        if (l1.stream().anyMatch(x -> x.size() != l1.get(0).size())) {
-            throw new RuntimeException("Expected a square matrix.");
+        ArrayList<List<Atom>> l1 = new ArrayList<>();
+        for (Atom atom : a1.getList()) {
+            List<Atom> list = atom.getList();
+            l1.add(list);
+        }
+        for (List<Atom> atoms : l1) {
+            if (atoms.size() != l1.get(0).size()) {
+                throw new RuntimeException("Expected a square matrix.");
+            }
         }
 
-        double[][] A = l1.stream().map(x -> x.stream().mapToDouble(Flt64AtomThunk::toFloat).toArray()).toArray(double[][]::new);
+        double[][] A = new double[l1.size()][l1.get(0).size()];
+        for (int i = 0; i < l1.size(); i++) {
+            for (int j = 0; j < l1.get(0).size(); j++) {
+                A[i][j] = Flt64AtomThunk.toFloat(l1.get(i).get(j));
+            }
+        }
         double[][][] data = lu(A);
+
+        ArrayList<Atom> a = new ArrayList<>();
+        for (double[] doubles : data[0]) {
+            ArrayList<Atom> list = new ArrayList<>();
+            for (double v : doubles) {
+                Atom toAtom = Flt64AtomThunk.toAtom(v);
+                list.add(toAtom);
+            }
+            Atom atom = new Atom(list);
+            a.add(atom);
+        }
+        ArrayList<Atom> b = new ArrayList<>();
+        for (double[] doubles : data[1]) {
+            ArrayList<Atom> list = new ArrayList<>();
+            for (double v : doubles) {
+                Atom toAtom = Flt64AtomThunk.toAtom(v);
+                list.add(toAtom);
+            }
+            Atom atom = new Atom(list);
+            b.add(atom);
+        }
+        ArrayList<Atom> c = new ArrayList<>();
+        for (double[] x : data[2]) {
+            ArrayList<Atom> list = new ArrayList<>();
+            for (double v : x) {
+                Atom toAtom = Flt64AtomThunk.toAtom(v);
+                list.add(toAtom);
+            }
+            Atom atom = new Atom(list);
+            c.add(atom);
+        }
+
         return new Atom(List.of(
-                new Atom(Arrays.stream(data[0]).map(x -> new Atom(Arrays.stream(x).mapToObj(Flt64AtomThunk::toAtom).toList())).toList()),
-                new Atom(Arrays.stream(data[1]).map(x -> new Atom(Arrays.stream(x).mapToObj(Flt64AtomThunk::toAtom).toList())).toList()),
-                new Atom(Arrays.stream(data[2]).map(x -> new Atom(Arrays.stream(x).mapToObj(Flt64AtomThunk::toAtom).toList())).toList())
+                new Atom(a),
+                new Atom(b),
+                new Atom(c)
         ));
     }
 

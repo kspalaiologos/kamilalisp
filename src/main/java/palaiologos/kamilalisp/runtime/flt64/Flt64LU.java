@@ -6,6 +6,7 @@ import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 import palaiologos.kamilalisp.runtime.array.Rank;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -53,17 +54,44 @@ public class Flt64LU extends PrimitiveFunction implements Lambda {
         }
 
         List<List<Atom>> l1 = a1.getList().stream().map(Atom::getList).toList();
-        if (l1.stream().anyMatch(x -> x.size() != l1.get(0).size())) {
-            throw new RuntimeException("Expected a square matrix.");
+        for (List<Atom> atoms : l1) {
+            if (atoms.size() != l1.get(0).size()) {
+                throw new RuntimeException("Expected a square matrix.");
+            }
         }
 
-        double[][] A = l1.stream().map(x -> x.stream().mapToDouble(Flt64AtomThunk::toFloat).toArray()).toArray(double[][]::new);
+        double[][] A = new double[l1.size()][l1.get(0).size()];
+        for (int i = 0; i < l1.size(); i++) {
+            for (int j = 0; j < l1.get(0).size(); j++) {
+                A[i][j] = Flt64AtomThunk.toFloat(l1.get(i).get(j));
+            }
+        }
         double[][] L = new double[A.length][A.length];
         double[][] U = new double[A.length][A.length];
         realLU(A, L, U);
+        ArrayList<Atom> a = new ArrayList<>();
+        for (double[] doubles : L) {
+            ArrayList<Atom> list = new ArrayList<>();
+            for (double v : doubles) {
+                Atom toAtom = Flt64AtomThunk.toAtom(v);
+                list.add(toAtom);
+            }
+            Atom atom = new Atom(list);
+            a.add(atom);
+        }
+        ArrayList<Atom> b = new ArrayList<>();
+        for (double[] x : U) {
+            ArrayList<Atom> list = new ArrayList<>();
+            for (double v : x) {
+                Atom toAtom = Flt64AtomThunk.toAtom(v);
+                list.add(toAtom);
+            }
+            Atom atom = new Atom(list);
+            b.add(atom);
+        }
         return new Atom(List.of(
-                new Atom(Arrays.stream(L).map(x -> new Atom(Arrays.stream(x).mapToObj(Flt64AtomThunk::toAtom).toList())).toList()),
-                new Atom(Arrays.stream(U).map(x -> new Atom(Arrays.stream(x).mapToObj(Flt64AtomThunk::toAtom).toList())).toList())
+                new Atom(a),
+                new Atom(b)
         ));
     }
 

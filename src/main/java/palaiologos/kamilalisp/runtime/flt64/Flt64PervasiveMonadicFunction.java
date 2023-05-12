@@ -2,6 +2,7 @@ package palaiologos.kamilalisp.runtime.flt64;
 
 import palaiologos.kamilalisp.atom.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static palaiologos.kamilalisp.runtime.flt64.Flt64AtomThunk.*;
@@ -22,11 +23,14 @@ public abstract class Flt64PervasiveMonadicFunction extends PrimitiveFunction im
     public Atom apply(Environment env, List<Atom> args) {
         if(args.size() == 0)
             return toAtom(apply());
-        return new Atom(args.stream().map(x -> {
+        ArrayList<Atom> list = new ArrayList<>(args.size());
+        for(Atom x : args) {
             if(x.getType() == Type.LIST)
-                return apply(env, x.getList());
-            return toAtom(apply(toFloat(x)));
-        }).toList());
+                list.add(apply(env, x.getList()));
+            else
+                list.add(toAtom(apply(toFloat(x))));
+        }
+        return new Atom(list);
     }
 
     @Override

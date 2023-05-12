@@ -6,6 +6,7 @@ import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 import palaiologos.kamilalisp.runtime.array.Rank;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,12 +18,23 @@ public class Flt64Inv extends PrimitiveFunction implements Lambda {
             throw new RuntimeException("Expected a matrix of rank 2.");
         }
 
-        List<List<Atom>> l1 = a1.getList().stream().map(Atom::getList).toList();
-        if (l1.stream().anyMatch(x -> x.size() != l1.get(0).size())) {
-            throw new RuntimeException("Expected a square matrix.");
+        List<List<Atom>> l1 = new ArrayList<>();
+        for (Atom atom : a1.getList()) {
+            List<Atom> list = atom.getList();
+            l1.add(list);
+        }
+        for (List<Atom> atoms : l1) {
+            if (atoms.size() != l1.get(0).size()) {
+                throw new RuntimeException("Expected a square matrix.");
+            }
         }
 
-        double[][] A = l1.stream().map(x -> x.stream().mapToDouble(Flt64AtomThunk::toFloat).toArray()).toArray(double[][]::new);
+        double[][] A = new double[l1.size()][l1.get(0).size()];
+        for (int i = 0; i < l1.size(); i++) {
+            for (int j = 0; j < l1.get(0).size(); j++) {
+                A[i][j] = Flt64AtomThunk.toFloat(l1.get(i).get(j));
+            }
+        }
 
         double invdet = 1 / Flt64Det.det(A);
         for (int i = 0; i < A.length; i++) {
