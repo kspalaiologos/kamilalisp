@@ -7,7 +7,9 @@ import palaiologos.kamilalisp.error.ArrayError;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Gcd extends PrimitiveFunction implements Lambda {
     private static BigComplex gaussianRem(Environment env, BigComplex a, BigComplex b) {
@@ -37,7 +39,12 @@ public class Gcd extends PrimitiveFunction implements Lambda {
         a.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
         b.assertTypes(Type.INTEGER, Type.REAL, Type.COMPLEX, Type.LIST);
         if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
-            return new Atom(Streams.zip(a.getList().stream(), b.getList().stream(), (x, y) -> gcd2(e, x, y)).toList());
+            int min = Math.min(a.getList().size(), b.getList().size());
+            ArrayList<Atom> result = new ArrayList<>(min);
+            for (int i = 0; i < min; i++) {
+                result.add(gcd2(e, a.getList().get(i), b.getList().get(i)));
+            }
+            return new Atom(result);
         } else if (a.getType() == Type.INTEGER && b.getType() == Type.INTEGER) {
             return new Atom(a.getInteger().gcd(b.getInteger()));
         } else if ((a.getType() == Type.REAL || a.getType() == Type.INTEGER) && (b.getType() == Type.REAL || b.getType() == Type.INTEGER)) {
@@ -60,9 +67,19 @@ public class Gcd extends PrimitiveFunction implements Lambda {
             }
             return new Atom(new BigDecimal(aD.toBigInteger().gcd(bD.toBigInteger())).divide(base, e.getMathContext()));
         } else if (a.getType() == Type.LIST && b.isNumeric()) {
-            return new Atom(a.getList().stream().map(x -> gcd2(e, x, b)).toList());
+            ArrayList<Atom> list = new ArrayList<>(a.getList().size());
+            for (Atom x : a.getList()) {
+                Atom atom = gcd2(e, x, b);
+                list.add(atom);
+            }
+            return new Atom(list);
         } else if (a.isNumeric() && b.getType() == Type.LIST) {
-            return new Atom(b.getList().stream().map(x -> gcd2(e, a, x)).toList());
+            ArrayList<Atom> list = new ArrayList<>(b.getList().size());
+            for (Atom x : b.getList()) {
+                Atom atom = gcd2(e, a, x);
+                list.add(atom);
+            }
+            return new Atom(list);
         } else {
             BigComplex aD = a.getComplex(), bD = b.getComplex();
             // Scale aD and bD to integers
@@ -92,11 +109,32 @@ public class Gcd extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if (args.size() == 1 && args.get(0).getType() == Type.LIST)
-            return args.get(0).getList().stream().reduce((a, b) -> gcd2(env, a, b)).orElseThrow(() -> new ArrayError("can't fold a list with gcd."));
+        if (args.size() == 1 && args.get(0).getType() == Type.LIST) {
+            boolean seen = false;
+            Atom acc = null;
+            for (Atom atom : args.get(0).getList()) {
+                if (!seen) {
+                    seen = true;
+                    acc = atom;
+                } else {
+                    acc = gcd2(env, acc, atom);
+                }
+            }
+            return (seen ? Optional.of(acc) : Optional.<Atom>empty()).orElseThrow(() -> new ArrayError("can't fold a list with gcd."));
+        }
         else if (args.size() <= 1)
             throw new RuntimeException("gcd called with too few arguments.");
 
-        return args.stream().reduce((a, b) -> gcd2(env, a, b)).orElseThrow(() -> new ArrayError("can't fold a list with gcd."));
+        boolean seen = false;
+        Atom acc = null;
+        for (Atom arg : args) {
+            if (!seen) {
+                seen = true;
+                acc = arg;
+            } else {
+                acc = gcd2(env, acc, arg);
+            }
+        }
+        return acc;
     }
 }
