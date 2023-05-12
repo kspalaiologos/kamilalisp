@@ -4,12 +4,20 @@ import com.google.common.collect.Streams;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.TypeError;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Or extends PrimitiveFunction implements Lambda {
     private static Atom or2(Atom a, Atom b) {
         if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
-            return new Atom(Streams.zip(a.getList().stream(), b.getList().stream(), Or::or2).toList());
+            int len = Math.min(a.getList().size(), b.getList().size());
+            ArrayList<Atom> list = new ArrayList<>(len);
+            for (int i = 0; i < len; i++) {
+                Atom atom = or2(a.getList().get(i), b.getList().get(i));
+                list.add(atom);
+            }
+            return new Atom(list);
         } else {
             return new Atom(a.coerceBool() || b.coerceBool());
         }
@@ -27,7 +35,17 @@ public class Or extends PrimitiveFunction implements Lambda {
         } else if (args.size() <= 1) {
             throw new TypeError("Expected 2 or more arguments to `or'.");
         } else {
-            return args.stream().reduce(Or::or2).get();
+            boolean seen = false;
+            Atom acc = null;
+            for (Atom arg : args) {
+                if (!seen) {
+                    seen = true;
+                    acc = arg;
+                } else {
+                    acc = or2(acc, arg);
+                }
+            }
+            return acc;
         }
     }
 }

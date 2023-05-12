@@ -6,7 +6,9 @@ import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.ArrayError;
 import palaiologos.kamilalisp.error.TypeError;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Plus extends PrimitiveFunction implements Lambda {
@@ -42,11 +44,26 @@ public class Plus extends PrimitiveFunction implements Lambda {
             List<Atom> B = b.getList();
             if (A.size() != B.size())
                 throw new ArrayError("Mismatched input shapes: Adding vectors of length " + A.size() + " and " + B.size() + ".");
-            return new Atom(Streams.zip(A.stream(), B.stream(), Plus::add2).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>(A.size());
+            for (int i = 0; i < A.size(); i++) {
+                Atom atom = add2(A.get(i), B.get(i));
+                list.add(atom);
+            }
+            return new Atom(list);
         } else if (a.getType() == Type.LIST && b.isNumeric()) {
-            return new Atom(a.getList().stream().map(x -> add2(x, b)).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>(a.getList().size());
+            for (Atom x : a.getList()) {
+                Atom atom = add2(x, b);
+                list.add(atom);
+            }
+            return new Atom(list);
         } else if (a.isNumeric() && b.getType() == Type.LIST) {
-            return new Atom(b.getList().stream().map(x -> add2(a, x)).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>(b.getList().size());
+            for (Atom x : b.getList()) {
+                Atom atom = add2(a, x);
+                list.add(atom);
+            }
+            return new Atom(list);
         } else {
             throw new TypeError("+ not defined for: " + a.getType() + " and " + b.getType());
         }
@@ -59,7 +76,12 @@ public class Plus extends PrimitiveFunction implements Lambda {
         } else if (a.getType() == Type.REAL || a.getType() == Type.INTEGER) {
             return a;
         } else if (a.getType() == Type.LIST) {
-            return new Atom(a.getList().stream().map(Plus::add1).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>(a.getList().size());
+            for (Atom atom : a.getList()) {
+                Atom add1 = add1(atom);
+                list.add(add1);
+            }
+            return new Atom(list);
         } else {
             throw new TypeError("+ not defined for: " + a.getType());
         }
@@ -74,7 +96,17 @@ public class Plus extends PrimitiveFunction implements Lambda {
         } else if (args.isEmpty()) {
             throw new TypeError("Expected 1 or more arguments to `+'.");
         } else {
-            return args.stream().reduce(Plus::add2).get();
+            boolean seen = false;
+            Atom acc = null;
+            for (Atom arg : args) {
+                if (!seen) {
+                    seen = true;
+                    acc = arg;
+                } else {
+                    acc = add2(acc, arg);
+                }
+            }
+            return acc;
         }
     }
 

@@ -5,13 +5,19 @@ import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Re extends PrimitiveFunction implements Lambda {
     private static Atom ln(Environment e, Atom a) {
         switch (a.getType()) {
             case LIST:
-                return new Atom(a.getList().stream().map(x -> ln(e, x)).toList());
+                ArrayList<Atom> list = new ArrayList<>(a.getList().size());
+                for (Atom x : a.getList()) {
+                    Atom ln = ln(e, x);
+                    list.add(ln);
+                }
+                return new Atom(list);
             case REAL:
             case INTEGER:
                 return a;
@@ -37,6 +43,11 @@ public class Re extends PrimitiveFunction implements Lambda {
             return ln(env, args.get(0));
         }
 
-        return new Atom(args.stream().map(x -> ln(env, x)).toList());
+        List<Atom> list = new ArrayList<>(args.size());
+        for (Atom x : args) {
+            Atom ln = ln(env, x);
+            list.add(ln);
+        }
+        return new Atom(list);
     }
 }

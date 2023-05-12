@@ -8,8 +8,10 @@ import palaiologos.kamilalisp.error.ArrayError;
 import palaiologos.kamilalisp.error.TypeError;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Slash extends PrimitiveFunction implements Lambda {
@@ -25,7 +27,12 @@ public class Slash extends PrimitiveFunction implements Lambda {
         } else if (a.getType() == Type.COMPLEX && (b.getType() == Type.REAL || b.getType() == Type.INTEGER)) {
             return new Atom(a.getComplex().divide(b.getReal(), e.getMathContext()));
         } else if (a.getType() == Type.STRING && b.getType() == Type.STRING) {
-            return new Atom(Arrays.stream(StringUtils.splitByWholeSeparator(a.getString(), b.getString())).map(Atom::new).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>();
+            for (String s : StringUtils.splitByWholeSeparator(a.getString(), b.getString())) {
+                Atom atom = new Atom(s);
+                list.add(atom);
+            }
+            return new Atom(list);
         } else if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
             List<Atom> A = a.getList();
             List<Atom> B = b.getList();
@@ -33,9 +40,19 @@ public class Slash extends PrimitiveFunction implements Lambda {
                 throw new ArrayError("Mismatched input shapes: Dividing vectors of length " + A.size() + " and " + B.size() + ".");
             return new Atom(Streams.zip(A.stream(), B.stream(), (x, y) -> quot2(e, x, y)).collect(Collectors.toList()));
         } else if (a.getType() == Type.LIST && b.isNumeric()) {
-            return new Atom(a.getList().stream().map(x -> quot2(e, x, b)).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>(a.getList().size());
+            for (Atom x : a.getList()) {
+                Atom atom = quot2(e, x, b);
+                list.add(atom);
+            }
+            return new Atom(list);
         } else if (a.isNumeric() && b.getType() == Type.LIST) {
-            return new Atom(b.getList().stream().map(x -> quot2(e, a, x)).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>(b.getList().size());
+            for (Atom x : b.getList()) {
+                Atom atom = quot2(e, a, x);
+                list.add(atom);
+            }
+            return new Atom(list);
         } else {
             throw new TypeError("/ not defined for: " + a.getType() + " and " + b.getType());
         }
@@ -48,7 +65,12 @@ public class Slash extends PrimitiveFunction implements Lambda {
         } else if (a.getType() == Type.REAL || a.getType() == Type.INTEGER) {
             return new Atom(BigDecimal.ONE.divide(a.getReal(), e.getMathContext()));
         } else if (a.getType() == Type.LIST) {
-            return new Atom(a.getList().stream().map(x -> quot1(e, x)).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>(a.getList().size());
+            for (Atom x : a.getList()) {
+                Atom atom = quot1(e, x);
+                list.add(atom);
+            }
+            return new Atom(list);
         } else {
             throw new TypeError("/ not defined for: " + a.getType());
         }
@@ -63,7 +85,17 @@ public class Slash extends PrimitiveFunction implements Lambda {
         } else if (args.isEmpty()) {
             throw new TypeError("Expected 1 or more arguments to `/'.");
         } else {
-            return args.stream().reduce((x, y) -> quot2(env, x, y)).get();
+            boolean seen = false;
+            Atom acc = null;
+            for (Atom arg : args) {
+                if (!seen) {
+                    seen = true;
+                    acc = arg;
+                } else {
+                    acc = quot2(env, acc, arg);
+                }
+            }
+            return acc;
         }
     }
 

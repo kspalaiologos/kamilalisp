@@ -7,7 +7,9 @@ import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.ArrayError;
 import palaiologos.kamilalisp.error.TypeError;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Star extends PrimitiveFunction implements Lambda {
@@ -31,11 +33,25 @@ public class Star extends PrimitiveFunction implements Lambda {
             List<Atom> B = b.getList();
             if (A.size() != B.size())
                 throw new ArrayError("Mismatched input shapes: Multiplying vectors of length " + A.size() + " and " + B.size() + ".");
-            return new Atom(Streams.zip(A.stream(), B.stream(), Star::multiply2).collect(Collectors.toList()));
+            ArrayList<Atom> result = new ArrayList<>(A.size());
+            for (int i = 0; i < A.size(); i++) {
+                result.add(multiply2(A.get(i), B.get(i)));
+            }
+            return new Atom(result);
         } else if (a.getType() == Type.LIST && b.isNumeric()) {
-            return new Atom(a.getList().stream().map(x -> multiply2(x, b)).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>(a.getList().size());
+            for (Atom x : a.getList()) {
+                Atom atom = multiply2(x, b);
+                list.add(atom);
+            }
+            return new Atom(list);
         } else if (a.isNumeric() && b.getType() == Type.LIST) {
-            return new Atom(b.getList().stream().map(x -> multiply2(a, x)).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>(b.getList().size());
+            for (Atom x : b.getList()) {
+                Atom atom = multiply2(a, x);
+                list.add(atom);
+            }
+            return new Atom(list);
         } else {
             throw new TypeError("* not defined for: " + a.getType() + " and " + b.getType());
         }
@@ -48,7 +64,17 @@ public class Star extends PrimitiveFunction implements Lambda {
         } else if (args.size() <= 1) {
             throw new TypeError("Expected 2 or more arguments to `*'.");
         } else {
-            return args.stream().reduce(Star::multiply2).get();
+            boolean seen = false;
+            Atom acc = null;
+            for (Atom arg : args) {
+                if (!seen) {
+                    seen = true;
+                    acc = arg;
+                } else {
+                    acc = multiply2(acc, arg);
+                }
+            }
+            return acc;
         }
     }
 
