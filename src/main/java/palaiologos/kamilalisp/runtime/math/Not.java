@@ -5,6 +5,7 @@ import palaiologos.kamilalisp.error.TypeError;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,7 +17,12 @@ public class Not extends PrimitiveFunction implements Lambda {
         } else if (a.getType() == Type.INTEGER) {
             return new Atom(a.getInteger().equals(BigInteger.ZERO) ? BigInteger.ONE : BigInteger.ZERO);
         } else if (a.getType() == Type.LIST) {
-            return new Atom(a.getList().stream().map(Not::not1).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>(a.getList().size());
+            for (Atom atom : a.getList()) {
+                Atom not1 = not1(atom);
+                list.add(not1);
+            }
+            return new Atom(list);
         } else {
             throw new TypeError("`not' not defined for: " + a.getType());
         }
@@ -29,7 +35,12 @@ public class Not extends PrimitiveFunction implements Lambda {
         } else if (args.isEmpty()) {
             throw new TypeError("Expected 1 or more arguments to `not'.");
         } else {
-            return new Atom(args.stream().map(Not::not1).toList());
+            ArrayList<Atom> list = new ArrayList<>(args.size());
+            for (Atom arg : args) {
+                Atom atom = not1(arg);
+                list.add(atom);
+            }
+            return new Atom(list);
         }
     }
 

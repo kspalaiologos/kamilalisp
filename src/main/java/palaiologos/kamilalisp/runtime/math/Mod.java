@@ -7,7 +7,9 @@ import palaiologos.kamilalisp.error.ArrayError;
 import palaiologos.kamilalisp.error.TypeError;
 
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Mod extends PrimitiveFunction implements Lambda {
@@ -44,11 +46,26 @@ public class Mod extends PrimitiveFunction implements Lambda {
             List<Atom> B = b.getList();
             if (A.size() != B.size())
                 throw new ArrayError("Mismatched input shapes: Dividing vectors of length " + A.size() + " and " + B.size() + ".");
-            return new Atom(Streams.zip(A.stream(), B.stream(), (x, y) -> quot2(e, x, y)).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>(A.size());
+            for (int i = 0; i < A.size(); i++) {
+                Atom atom = quot2(e, A.get(i), B.get(i));
+                list.add(atom);
+            }
+            return new Atom(list);
         } else if (a.getType() == Type.LIST && b.isNumeric()) {
-            return new Atom(a.getList().stream().map(x -> quot2(e, x, b)).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>(a.getList().size());
+            for (Atom x : a.getList()) {
+                Atom atom = quot2(e, x, b);
+                list.add(atom);
+            }
+            return new Atom(list);
         } else if (a.isNumeric() && b.getType() == Type.LIST) {
-            return new Atom(b.getList().stream().map(x -> quot2(e, a, x)).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>(b.getList().size());
+            for (Atom x : b.getList()) {
+                Atom atom = quot2(e, a, x);
+                list.add(atom);
+            }
+            return new Atom(list);
         } else {
             throw new TypeError("mod not defined for: " + a.getType() + " and " + b.getType());
         }
@@ -61,7 +78,12 @@ public class Mod extends PrimitiveFunction implements Lambda {
         } else if (a.getType() == Type.REAL) {
             return new Atom(a.getReal().abs(e.getMathContext()));
         } else if (a.getType() == Type.LIST) {
-            return new Atom(a.getList().stream().map(x -> quot1(e, x)).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>(a.getList().size());
+            for (Atom x : a.getList()) {
+                Atom atom = quot1(e, x);
+                list.add(atom);
+            }
+            return new Atom(list);
         } else {
             throw new TypeError("mod not defined for: " + a.getType());
         }
@@ -76,7 +98,17 @@ public class Mod extends PrimitiveFunction implements Lambda {
         } else if (args.isEmpty()) {
             throw new TypeError("Expected 1 or more arguments to `mod'.");
         } else {
-            return args.stream().reduce((x, y) -> quot2(env, x, y)).get();
+            boolean seen = false;
+            Atom acc = null;
+            for (Atom arg : args) {
+                if (!seen) {
+                    seen = true;
+                    acc = arg;
+                } else {
+                    acc = quot2(env, acc, arg);
+                }
+            }
+            return acc;
         }
     }
 
