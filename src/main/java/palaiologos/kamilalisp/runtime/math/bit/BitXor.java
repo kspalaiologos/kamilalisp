@@ -23,7 +23,12 @@ public class BitXor extends PrimitiveFunction implements Lambda {
             List<Atom> B = b.getList();
             if (A.size() != B.size())
                 throw new ArrayError("Mismatched input shapes: `" + name + "'-ing vectors of length " + A.size() + " and " + B.size() + ".");
-            return new Atom(Streams.zip(A.stream(), B.stream(), BitXor::bitop2).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>(A.size());
+            for (int i = 0; i < A.size(); i++) {
+                Atom atom = bitop2(A.get(i), B.get(i));
+                list.add(atom);
+            }
+            return new Atom(list);
         } else if (a.getType() == Type.LIST && b.getType() == Type.INTEGER) {
             ArrayList<Atom> list = new ArrayList<>(a.getList().size());
             for (Atom x : a.getList()) {
