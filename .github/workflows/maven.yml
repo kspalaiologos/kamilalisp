@@ -19,6 +19,8 @@ jobs:
         mvn -B package --file pom.xml
     - name: Codecov
       uses: codecov/codecov-action@v3.1.1
+      with:
+        os: aarch64
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.1
       with:
