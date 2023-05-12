@@ -6,6 +6,7 @@ import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.TypeError;
 
 import java.math.MathContext;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,12 @@ public class Coth extends PrimitiveFunction implements Lambda {
             else
                 return new Atom(result);
         } else if (a.getType() == Type.LIST) {
-            return new Atom(a.getList().stream().map(x -> trig1(env, a)).collect(Collectors.toList()));
+            ArrayList<Atom> list = new ArrayList<>();
+            for (Atom x : a.getList()) {
+                Atom atom = trig1(env, a);
+                list.add(atom);
+            }
+            return new Atom(list);
         } else {
             throw new TypeError("`" + name + "' not defined for: " + a.getType());
         }
@@ -43,7 +49,12 @@ public class Coth extends PrimitiveFunction implements Lambda {
         } else if (args.isEmpty()) {
             throw new TypeError("Expected 1 or more arguments to `" + name + "'.");
         } else {
-            return new Atom(args.stream().map(x -> trig1(env, x)).toList());
+            ArrayList<Atom> list = new ArrayList<>();
+            for (Atom x : args) {
+                Atom atom = trig1(env, x);
+                list.add(atom);
+            }
+            return new Atom(list);
         }
     }
 

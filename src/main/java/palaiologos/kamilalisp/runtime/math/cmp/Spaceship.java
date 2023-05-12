@@ -2,6 +2,9 @@ package palaiologos.kamilalisp.runtime.math.cmp;
 
 import com.google.common.collect.Streams;
 import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.runtime.flt64.Cmplx64AtomThunk;
+import palaiologos.kamilalisp.runtime.flt64.Flt64AtomThunk;
+import rocks.palaiologos.maja.Maja;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -11,7 +14,9 @@ public class Spaceship extends PrimitiveFunction implements Lambda {
     private static final String name = "<=>";
 
     private static Atom cmp2(Environment e, Atom a, Atom b) {
-        if (a.getType() == Type.REAL && b.getType() == Type.REAL) {
+        if (a instanceof Flt64AtomThunk a1 && b instanceof Flt64AtomThunk b1) {
+            return new Atom(BigInteger.valueOf(Maja.compare(a1.val, b1.val)));
+        } else if (a.getType() == Type.REAL && b.getType() == Type.REAL) {
             return new Atom(BigInteger.valueOf(a.getReal().compareTo(b.getReal())));
         } else if (a.getType() == Type.REAL && b.getType() == Type.INTEGER) {
             return new Atom(BigInteger.valueOf(a.getReal().compareTo(new BigDecimal(b.getInteger()))));
