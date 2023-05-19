@@ -282,9 +282,9 @@ public class MathExpression implements Userdata {
                 }
                 case "gamma" -> {
                     if (tree.getList().size() == 2)
-                        return "gamma(" + stringifyExpression(e, tree.getList().get(1)) + ")";
+                        return "Gamma(" + stringifyExpression(e, tree.getList().get(1)) + ")";
                     else if (tree.getList().size() == 3)
-                        return "gamma(" + stringifyExpression(e, tree.getList().get(1)) + "," + stringifyExpression(e, tree.getList().get(2)) + ")";
+                        return "Gamma(" + stringifyExpression(e, tree.getList().get(1)) + "," + stringifyExpression(e, tree.getList().get(2)) + ")";
                     else
                         throw new RuntimeException("Invalid arity for function: gamma");
                 }
