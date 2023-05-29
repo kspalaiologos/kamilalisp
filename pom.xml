@@ -151,7 +151,7 @@
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
-                <version>4.12.0</version>
+                <version>4.13.0</version>
                 <configuration>
                     <listener>true</listener>
                     <visitor>true</visitor>
