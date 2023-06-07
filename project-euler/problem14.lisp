@@ -5,6 +5,6 @@
     ((= 0 \mod x 2) (+ 1 \f \/ x 2))
 ))))
 
-(def a \$:f \range 100000 1000000)
+(def a \$:f \range 1000000 100000)
 
 (= 837799 \+ 100000 \index-of (foldl1 max a) a)
