@@ -57,18 +57,26 @@ public class OuterProduct extends PrimitiveFunction implements Lambda {
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        if (args.size() <= 1) {
+        if (args.size() == 1) {
+            return new Atom(new OuterProductThunk(args.get(0), env));
+        }
+
+        if (args.size() == 0) {
             throw new TypeError("outer-product called with too few arguments.");
         }
 
-        if (args.get(0).getType() == Type.CALLABLE) {
-            if (args.size() <= 2) {
+        return doOuter(env, args.get(0), args.subList(1, args.size()));
+    }
+
+    private static Atom doOuter(Environment env, Atom fn, List<Atom> args) {
+        if (fn.getType() == Type.CALLABLE) {
+            if (args.size() < 2) {
                 throw new TypeError("outer-product called with too few arguments.");
             }
 
             boolean seen = false;
             Atom acc = null;
-            for (Atom atom : args.subList(1, args.size())) {
+            for (Atom atom : args) {
                 if (!seen) {
                     seen = true;
                     acc = atom;
@@ -76,7 +84,7 @@ public class OuterProduct extends PrimitiveFunction implements Lambda {
                     acc = op2(args.get(0).getCallable(), env, acc, atom);
                 }
             }
-            return (seen ? Optional.of(acc) : Optional.<Atom>empty()).get();
+            return acc;
         } else {
             boolean seen = false;
             Atom acc = null;
@@ -89,6 +97,26 @@ public class OuterProduct extends PrimitiveFunction implements Lambda {
                 }
             }
             return (seen ? Optional.of(acc) : Optional.<Atom>empty()).get();
+        }
+    }
+
+    private static class OuterProductThunk extends PrimitiveFunction implements Lambda {
+        private final Atom fn;
+        private final Environment env;
+
+        public OuterProductThunk(Atom fn, Environment env) {
+            this.fn = fn;
+            this.env = env;
+        }
+
+        @Override
+        public Atom apply(Environment _env, List<Atom> args) {
+            return doOuter(env, fn, args);
+        }
+
+        @Override
+        protected String name() {
+            return "outer-product (" + fn.toString() + ")";
         }
     }
 
