@@ -3,11 +3,12 @@ package palaiologos.kamilalisp.runtime.math.prime;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 class PollardRho {
     private static final SecureRandom random = new SecureRandom();
-    private List<BigInteger> factors = new ArrayList<>();
+    private HashMap<BigInteger, BigInteger> factors = new HashMap<>();
 
     private static BigInteger rho(BigInteger N) {
         BigInteger divisor;
@@ -30,7 +31,7 @@ class PollardRho {
     public void factor(BigInteger N) {
         if (N.compareTo(BigInteger.ONE) == 0) return;
         if (N.isProbablePrime(100)) {
-            factors.add(N);
+            factors.put(N, factors.getOrDefault(N, BigInteger.ZERO).add(BigInteger.ONE));
             return;
         }
         BigInteger divisor = rho(N);
@@ -38,11 +39,11 @@ class PollardRho {
         factor(N.divide(divisor));
     }
 
-    public List<BigInteger> getFactors() {
+    public HashMap<BigInteger, BigInteger> getFactors() {
         return factors;
     }
 
     public void reset() {
-        factors = new ArrayList<>();
+        factors = new HashMap<>();
     }
 }

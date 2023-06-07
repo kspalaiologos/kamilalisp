@@ -119,6 +119,7 @@ public class BaseLib {
         env.setPrimitive("transpose", "⎕⍉", new Atom(new Transpose()));
 
         env.setPrimitive("prime:factors", "⋔⌹", new Atom(new PrimeFactors()));
+        env.setPrimitive("prime:factor-map", "⋔⍔", new Atom(new PrimeMap()));
         env.setPrimitive("prime:is?", "⋔?", new Atom(new IsPrime()));
         env.setPrimitive("prime:next", "⋔↑", new Atom(new NextPrime()));
         env.setPrimitive("prime:nth", "⋔→", new Atom(new PrimeNo()));

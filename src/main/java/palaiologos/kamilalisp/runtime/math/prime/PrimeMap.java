@@ -1,23 +1,27 @@
 package palaiologos.kamilalisp.runtime.math.prime;
 
+import org.pcollections.HashTreePMap;
 import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-public class PrimeFactors extends PrimitiveFunction implements Lambda {
+public class PrimeMap extends PrimitiveFunction implements Lambda {
     private static Atom factor(Atom a) {
         if (a.getType() == Type.INTEGER) {
             if (a.getInteger().compareTo(BigInteger.TWO) < 0)
-                throw new ArithmeticException("prime:factors not defined for integers less than 2");
-            List<Atom> list = new ArrayList<>();
-            var x = PollardRhoStateManager.factorList(a.getInteger());
-            for (BigInteger bigInteger : x) {
-                Atom atom = new Atom(bigInteger);
-                list.add(atom);
+                throw new ArithmeticException("prime:factor-map not defined for integers less than 2");
+            var x = PollardRhoStateManager.factorMap(a.getInteger());
+            HashMap<Atom, Atom> map = new HashMap<>();
+            for (BigInteger bigInteger : x.keySet()) {
+                Atom key = new Atom(bigInteger);
+                Atom value = new Atom(x.get(bigInteger));
+                map.put(key, value);
             }
-            return new Atom(list);
+            return new Atom(new HashMapUserData(HashTreePMap.from(map)));
         } else if (a.getType() == Type.LIST) {
             List<Atom> list = new ArrayList<>();
             for (Atom atom : a.getList()) {
@@ -26,14 +30,14 @@ public class PrimeFactors extends PrimitiveFunction implements Lambda {
             }
             return new Atom(list);
         } else {
-            throw new UnsupportedOperationException("prime:factors not defined for: " + a.getType());
+            throw new UnsupportedOperationException("prime:factor-map not defined for: " + a.getType());
         }
     }
 
     @Override
     public Atom apply(Environment env, List<Atom> args) {
         if (args.isEmpty()) {
-            throw new RuntimeException("prime:factors called with no arguments.");
+            throw new RuntimeException("prime:factor-map called with no arguments.");
         }
 
         if (args.size() == 1) {
@@ -50,6 +54,6 @@ public class PrimeFactors extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "prime:factors";
+        return "prime:factor-map";
     }
 }
