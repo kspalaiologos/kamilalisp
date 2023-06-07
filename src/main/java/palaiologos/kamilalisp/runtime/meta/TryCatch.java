@@ -15,6 +15,7 @@ public class TryCatch extends PrimitiveFunction implements SpecialForm {
         return Evaluation.safeEvaluate(env, tryBlock, (str, t) -> {
             Environment catchEnv = new Environment(env);
             catchEnv.set("error", new Atom(str));
+            catchEnv.set("error-msg", new Atom(t.getMessage()));
             if (t instanceof RaiseError) {
                 catchEnv.set("error-id", new Atom(((RaiseError) t).id));
             } else {

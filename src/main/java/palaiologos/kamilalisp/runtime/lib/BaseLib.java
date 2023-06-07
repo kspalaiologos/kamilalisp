@@ -11,10 +11,7 @@ import palaiologos.kamilalisp.runtime.array.hof.*;
 import palaiologos.kamilalisp.runtime.math.FromDigits;
 import palaiologos.kamilalisp.runtime.math.ToDigits;
 import palaiologos.kamilalisp.runtime.math.Transpose;
-import palaiologos.kamilalisp.runtime.math.prime.IsPrime;
-import palaiologos.kamilalisp.runtime.math.prime.NextPrime;
-import palaiologos.kamilalisp.runtime.math.prime.PrimeFactors;
-import palaiologos.kamilalisp.runtime.math.prime.PrimeNo;
+import palaiologos.kamilalisp.runtime.math.prime.*;
 import palaiologos.kamilalisp.runtime.meta.*;
 import palaiologos.kamilalisp.runtime.string.*;
 
@@ -125,6 +122,7 @@ public class BaseLib {
         env.setPrimitive("prime:is?", "⋔?", new Atom(new IsPrime()));
         env.setPrimitive("prime:next", "⋔↑", new Atom(new NextPrime()));
         env.setPrimitive("prime:nth", "⋔→", new Atom(new PrimeNo()));
+        env.setPrimitive("prime:below", "⋔↓", new Atom(new PrimesBelow()));
 
         env.setPrimitive("str:format", "⍫∊", new Atom(new Format()));
         env.setPrimitive("str:lines", "⍫↩", new Atom(new Lines()));
