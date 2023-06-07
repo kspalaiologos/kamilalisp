@@ -81,7 +81,7 @@ public class OuterProduct extends PrimitiveFunction implements Lambda {
                     seen = true;
                     acc = atom;
                 } else {
-                    acc = op2(args.get(0).getCallable(), env, acc, atom);
+                    acc = op2(fn, env, acc, atom);
                 }
             }
             return acc;
