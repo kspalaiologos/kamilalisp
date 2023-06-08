@@ -7,4 +7,4 @@
 
 (def a \$:f \range 999999 100001)
 
-(= 837799 (- 1000000 \+ 100000 \index-of (foldl1 max a) a))
+(= 837799 (- 999999 \index-of (foldl1 max a) a))
