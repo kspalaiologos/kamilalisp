@@ -48,6 +48,6 @@ public class RegexReplaceAll extends PrimitiveFunction implements Lambda {
 
     @Override
     protected String name() {
-        return "regex:match-all";
+        return "regex:replace-all";
     }
 }
