@@ -21,10 +21,7 @@ import palaiologos.kamilalisp.runtime.meta.*;
 import palaiologos.kamilalisp.runtime.parallel.Daemon;
 import palaiologos.kamilalisp.runtime.parallel.Task;
 import palaiologos.kamilalisp.runtime.parallel.actor.ActorCreate;
-import palaiologos.kamilalisp.runtime.regex.RegexMatchAll;
-import palaiologos.kamilalisp.runtime.regex.RegexMatches;
-import palaiologos.kamilalisp.runtime.regex.RegexReplace;
-import palaiologos.kamilalisp.runtime.regex.RegexSplit;
+import palaiologos.kamilalisp.runtime.regex.*;
 
 public class AlgorithmLib {
     public static void register(Environment env) {
@@ -165,6 +162,7 @@ public class AlgorithmLib {
         env.setPrimitive("regex:matches?", "⍫⊖∊?", new Atom(new RegexMatches()));
         env.setPrimitive("regex:match-all", "⍫⊖∊∧", new Atom(new RegexMatchAll()));
         env.setPrimitive("regex:replace", "⍫⊖⍆", new Atom(new RegexReplace()));
+        env.setPrimitive("regex:replace-all", "⍫⊖⍆∧", new Atom(new RegexReplaceAll()));
         env.setPrimitive("regex:split", "⍫⊖⍭", new Atom(new RegexSplit()));
 
         env.setPrimitive("date:from", new Atom(new DateTimeFrom()));
