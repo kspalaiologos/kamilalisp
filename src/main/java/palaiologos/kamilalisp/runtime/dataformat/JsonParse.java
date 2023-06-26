@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.parsers.DefaultGrammarVisitor;
+import palaiologos.kamilalisp.parsers.DefaultJSONVisitor;
 import palaiologos.kamilalisp.parsers.JSONLexer;
 import palaiologos.kamilalisp.parsers.JSONParser;
 
@@ -39,7 +40,7 @@ public class JsonParse extends PrimitiveFunction implements Lambda {
         parser.removeErrorListeners();
         parser.addErrorListener(new Parser.ThrowingErrorListener(0));
         ParseTree tree = parser.json();
-        DefaultGrammarVisitor visitor = new DefaultGrammarVisitor(0);
+        DefaultJSONVisitor visitor = new DefaultJSONVisitor();
         return visitor.visit(tree);
     }
 
