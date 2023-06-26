@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 
 public class DefaultJSONVisitor extends JSONBaseVisitor<Atom> {
+    @Override public Atom visitJson(JSONParser.JsonContext ctx) { return visit(ctx.value()); }
 
     @Override
     public Atom visitObj(JSONParser.ObjContext ctx) {
