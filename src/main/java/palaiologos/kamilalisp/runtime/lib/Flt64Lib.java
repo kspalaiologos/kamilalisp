@@ -622,6 +622,7 @@ public class Flt64Lib {
         env.setPrimitive("flt64:permanent", new Atom(new Flt64Permanent()));
         env.setPrimitive("flt64:invert", new Atom(new Flt64Inv()));
         env.setPrimitive("flt64:trace", new Atom(new Flt64Trace()));
+        env.setPrimitive("flt64:solve", new Atom(new Flt64Solve()));
 
         // Complex numbers from the cmplx64 package.
         env.setPrimitive("cmplx64:ceil", new Atom(new Cmplx64PervasiveMonadicFunction("cmplx64:ceil") {
@@ -991,5 +992,6 @@ public class Flt64Lib {
             @Override
             public Complex apply(Complex x, Complex y, Complex z) { return Maja.legendrePi(x, y, z); }
         }));
+        env.setPrimitive("cmplx64:solve", new Atom(new Cmplx64Solve()));
     }
 }
