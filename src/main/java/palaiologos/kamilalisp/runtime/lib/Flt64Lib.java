@@ -20,6 +20,10 @@ public class Flt64Lib {
             @Override
             public double apply(double x, double y) { return Maja.mul(x, y); }
         }));
+        env.setPrimitive("flt64:**", new Atom(new Flt64PervasiveDyadicFunction("flt64:**") {
+            @Override
+            public double apply(double x, double y) { return Maja.pow(x, y); }
+        }));
         env.setPrimitive("flt64:/", new Atom(new Flt64PervasiveDyadicFunction("flt64:/") {
             @Override
             public double apply(double x, double y) { return Maja.div(x, y); }
@@ -680,6 +684,10 @@ public class Flt64Lib {
         env.setPrimitive("cmplx64:*", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:*") {
             @Override
             public Complex apply(Complex x, Complex y) { return Maja.mul(x, y); }
+        }));
+        env.setPrimitive("cmplx64:**", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:**") {
+            @Override
+            public Complex apply(Complex x, Complex y) { return Maja.pow(x, y); }
         }));
         env.setPrimitive("cmplx64:/", new Atom(new Cmplx64PervasiveDyadicFunction("cmplx64:/") {
             @Override
