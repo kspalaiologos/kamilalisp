@@ -12,12 +12,12 @@ public class Flt64AtomThunk extends AtomicThunk {
     public Flt64AtomThunk(double val) {
         super();
         this.val = val;
+        setType(Type.REAL);
     }
 
     public void force() {
         if(forced)
             return;
-        setType(Type.REAL);
         setData(BigDecimal.valueOf(val));
         forced = true;
     }

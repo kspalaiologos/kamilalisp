@@ -109,9 +109,13 @@ public class Main {
                             System.err.println(s);
                             throw new InterruptionError();
                         });
-                        if (a.equals(Atom.NULL))
-                            continue;
-                        System.out.println(a.toDisplayString());
+                        try {
+                            if (a.equals(Atom.NULL))
+                                continue;
+                            System.out.println(a.toDisplayString());
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                        }
                     }
                 } catch (InterruptionError e) {
                     // Ignore, we just wanted to unwind the stack.

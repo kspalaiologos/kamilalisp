@@ -15,12 +15,12 @@ public class Cmplx64AtomThunk extends AtomicThunk {
     public Cmplx64AtomThunk(Complex val) {
         super();
         this.val = val;
+        setType(Type.COMPLEX);
     }
 
     public void force() {
         if(forced)
             return;
-        setType(Type.COMPLEX);
         setData(BigComplex.valueOf(val.re(), val.im()));
         forced = true;
     }

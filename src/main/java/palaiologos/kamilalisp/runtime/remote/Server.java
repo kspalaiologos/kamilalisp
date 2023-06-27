@@ -9,9 +9,7 @@ import palaiologos.kamilalisp.error.InterruptionError;
 import palaiologos.kamilalisp.repl.Main;
 import palaiologos.kamilalisp.runtime.remote.packet.*;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
@@ -67,10 +65,17 @@ public class Server {
                             }
                             throw new InterruptionError();
                         });
-                        if (a.equals(Atom.NULL))
-                            continue;
-                        out.writeObject(new StringPacket(a.toDisplayString() + "\n"));
-                        out.flush();
+                        try {
+                            if (a.equals(Atom.NULL))
+                                continue;
+                            out.writeObject(new StringPacket(a.toDisplayString() + "\n"));
+                            out.flush();
+                        } catch (Throwable e) {
+                            StringWriter o = new StringWriter();
+                            PrintWriter pw = new PrintWriter(o);
+                            e.printStackTrace(pw);
+                            out.writeObject(new StringPacket(o.toString()));
+                        }
                     }
                 } catch (InterruptionError e) {
                     // Ignore, we just wanted to unwind the stack.

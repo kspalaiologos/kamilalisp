@@ -316,6 +316,9 @@ public class Atom implements Comparable<Atom> {
                 for (Atom atom : getList()) {
                     if (atom.type != Type.LIST)
                         allList = false;
+                    else {
+                        System.out.println("");
+                    }
                     if (atom.type != Type.STRING)
                         allString = false;
                 }

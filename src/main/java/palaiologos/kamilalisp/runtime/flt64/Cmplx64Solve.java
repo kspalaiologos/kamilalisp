@@ -18,7 +18,7 @@ public class Cmplx64Solve extends PrimitiveFunction implements Lambda {
         boolean[] mask = Maja.aberth(coeffs);
         List<Atom> results = new ArrayList<>();
         for(int i = 0; i < mask.length; i++) {
-            if(mask[i]) {
+            if(!mask[i]) {
                 results.add(Cmplx64AtomThunk.toAtom(coeffs[i]));
             }
         }

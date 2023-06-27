@@ -683,6 +683,7 @@ public class TerminalPanel extends TilingWMComponent {
                         }
                     }
                 } catch (Throwable t) {
+                    t.printStackTrace();
                     if (localProcess != null && localProcess.isAlive())
                         localProcess.destroyForcibly();
                     SwingUtilities.invokeLater(() -> quit());
