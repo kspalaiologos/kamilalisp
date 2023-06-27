@@ -98,7 +98,7 @@ public class TerminalPanel extends TilingWMComponent {
                     int lastLineStart = area.getLineStartOffset(lastLine);
                     int lastLineEnd = area.getLineEndOffset(lastLine);
                     String lastLineText = area.getText(lastLineStart, lastLineEnd - lastLineStart);
-                    if (readingInput.get() && lastLineText.trim().isEmpty() && !(area.getDocument().getLength() == r.byteOffset)) {
+                    if (readingInput.get() && lastLineText.trim().isEmpty() && !area.getText().trim().isEmpty() && !(area.getDocument().getLength() == r.byteOffset)) {
                         // Maybe it's time to finish reading?
                         // Check if quotes are balanced.
                         String text = area.getText(r.byteOffset, area.getDocument().getLength() - r.byteOffset);
@@ -112,7 +112,7 @@ public class TerminalPanel extends TilingWMComponent {
                         } else {
                             insertFixGutter();
                         }
-                    } else if (readingRawInput.get() && lastLineText.trim().isEmpty() && !(area.getDocument().getLength() == r.byteOffset)) {
+                    } else if (readingRawInput.get() && lastLineText.trim().isEmpty() && !area.getText().trim().isEmpty() && !(area.getDocument().getLength() == r.byteOffset)) {
                         readingRawInput.set(false);
                         insertFixGutter();
                         synchronized (readingRawInput) {
