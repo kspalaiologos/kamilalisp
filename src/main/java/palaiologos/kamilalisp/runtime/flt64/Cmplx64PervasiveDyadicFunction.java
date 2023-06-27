@@ -27,21 +27,21 @@ public abstract class Cmplx64PervasiveDyadicFunction extends PrimitiveFunction i
             for(int i = 0; i < Math.min(args.get(0).getList().size(), args.get(1).getList().size()); i++) {
                 Atom a = args.get(0).getList().get(i);
                 Atom b = args.get(1).getList().get(i);
-                result.add(new Atom(apply(env, List.of(a, b)).getList()));
+                result.add(apply(env, List.of(a, b)));
             }
             return new Atom(result);
         } else if(args.get(0).getType() == Type.LIST) {
             List<Atom> result = new ArrayList<>();
             for(int i = 0; i < args.get(0).getList().size(); i++) {
                 Atom a = args.get(0).getList().get(i);
-                result.add(new Atom(apply(env, List.of(a, args.get(1))).getList()));
+                result.add(apply(env, List.of(a, args.get(1))));
             }
             return new Atom(result);
         } else if(args.get(1).getType() == Type.LIST) {
             List<Atom> result = new ArrayList<>();
             for(int i = 0; i < args.get(1).getList().size(); i++) {
                 Atom b = args.get(1).getList().get(i);
-                result.add(new Atom(apply(env, List.of(args.get(0), b)).getList()));
+                result.add(apply(env, List.of(args.get(0), b)));
             }
             return new Atom(result);
         }
