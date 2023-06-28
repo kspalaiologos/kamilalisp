@@ -85,6 +85,7 @@ public class MathLib {
         env.setPrimitive("gamma", "Γ", new Atom(new Gamma()));
         env.setPrimitive("digamma", "∇Γ", new Atom(new Digamma()));
         env.setPrimitive("zeta", "ζ", new Atom(new Zeta()));
+        env.setPrimitive("lambert-w0", new Atom(new Lambert()));
         env.setPrimitive("not", "¬", new Atom(new Not()));
         env.setPrimitive("fib", new Atom(new Fib()));
         env.setPrimitive("ceil", "⌈", new Atom(new Ceil()));
