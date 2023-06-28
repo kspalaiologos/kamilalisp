@@ -214,6 +214,8 @@
                         <option>-keep class org.tukaani.xz.LZMA2Options { *; }</option>
                         <option>-keep class org.armedbear.lisp.** { }</option>
                         <option>-keep class com.formdev.** { *; }</option>
+                        <option>-keep class org.apfloat.** { *; }</option>
+                        <option>-keep class apfloat { *; }</option>
                         <option>-optimizationpasses 9</option>
                         <option>-allowaccessmodification</option>
                         <option>-repackageclasses ''</option>
