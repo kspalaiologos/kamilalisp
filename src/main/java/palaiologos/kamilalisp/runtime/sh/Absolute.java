@@ -4,6 +4,7 @@ import palaiologos.kamilalisp.atom.Atom;
 
 import java.io.File;
 import java.util.List;
+import java.io.IOException;
 
 public class Absolute extends ShellFunction {
     @Override
