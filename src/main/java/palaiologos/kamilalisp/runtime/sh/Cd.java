@@ -20,7 +20,7 @@ public class Cd extends ShellFunction {
             throw new RuntimeException("Directory " + dir + " does not exist");
         if (!dest.isDirectory())
             throw new RuntimeException(dir + " is not a directory");
-        System.setProperty("user.dir", dest.getAbsolutePath());
+        System.setProperty("user.dir", dest.getCanonicalFile().getAbsolutePath());
         return Atom.NULL;
     }
 }
