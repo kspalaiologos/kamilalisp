@@ -4,6 +4,7 @@ import palaiologos.kamilalisp.atom.Atom;
 
 import java.io.File;
 import java.util.List;
+import java.io.IOException;
 
 public class Cd extends ShellFunction {
     @Override
@@ -20,7 +21,9 @@ public class Cd extends ShellFunction {
             throw new RuntimeException("Directory " + dir + " does not exist");
         if (!dest.isDirectory())
             throw new RuntimeException(dir + " is not a directory");
-        System.setProperty("user.dir", dest.getAbsolutePath());
+        try {
+            System.setProperty("user.dir", dest.getCanonicalFile().getAbsolutePath());
+        } catch(IOException e) { throw new RuntimeException(e); }
         return Atom.NULL;
     }
 }
