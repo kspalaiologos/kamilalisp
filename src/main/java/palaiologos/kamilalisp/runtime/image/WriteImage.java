@@ -5,6 +5,7 @@ import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 import palaiologos.kamilalisp.runtime.array.Rank;
+import palaiologos.kamilalisp.runtime.sh.Wd;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -54,7 +55,7 @@ public class WriteImage extends PrimitiveFunction implements Lambda {
             }
         }
         try {
-            ImageIO.write(img, fileFormat, new File(fileName).getAbsoluteFile());
+            ImageIO.write(img, fileFormat, Wd.relativeTo(fileName));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

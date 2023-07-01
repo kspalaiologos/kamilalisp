@@ -14,7 +14,7 @@ public class Process extends PrimitiveFunction implements Lambda {
         if (args.isEmpty())
             throw new IllegalArgumentException("sh:process requires at least one argument");
         try {
-            var process = Runtime.getRuntime().exec(args.stream().map(Atom::getString).toArray(String[]::new));
+            var process = Runtime.getRuntime().exec(args.stream().map(Atom::getString).toArray(String[]::new), null, Wd.get());
             return new Atom(new ProcessUserdata(args.get(0).getString(), process));
         } catch (Exception e) {
             throw new RuntimeException(e);

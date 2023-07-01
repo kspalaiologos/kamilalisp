@@ -51,8 +51,8 @@ public class Cp extends ShellFunction {
     }
 
     private void copy(String src, String dest, boolean recursive, boolean force) {
-        File srcFile = new File(src).getAbsoluteFile();
-        File destFile = new File(dest).getAbsoluteFile();
+        File srcFile = Wd.relativeTo(src);
+        File destFile = Wd.relativeTo(dest);
 
         if (!srcFile.exists() && !force)
             throw new RuntimeException("File " + src + " does not exist");
@@ -65,7 +65,7 @@ public class Cp extends ShellFunction {
             if (files == null)
                 throw new RuntimeException("Could not list files in " + src);
             for (File file : files) {
-                copy(file.getAbsolutePath(), destFile.getAbsolutePath() + File.pathSeparator + file.getName(), true, force);
+                copy(file.getAbsolutePath(), destFile.getAbsolutePath() + File.separator + file.getName(), true, force);
             }
         } else {
             if (destFile.exists() && !force)

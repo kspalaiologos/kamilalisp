@@ -46,7 +46,6 @@ public class Ls extends ShellFunction {
         }
 
         List<Atom> output = new ArrayList<>();
-        File cwd = new File(".").getAbsoluteFile();
         if (l) {
             for (File file : files) {
                 String name = file.getName();
@@ -128,7 +127,7 @@ public class Ls extends ShellFunction {
     }
 
     private void listFiles(List<File> files, String s) {
-        File file = new File(s);
+        File file = Wd.relativeTo(s);
         if (!file.exists())
             throw new RuntimeException("File " + s + " does not exist");
         if (file.isDirectory()) {

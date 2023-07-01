@@ -3,6 +3,7 @@ package palaiologos.kamilalisp.runtime.meta;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.repl.Main;
 import palaiologos.kamilalisp.runtime.ide.project.ProjectDataRegistry;
+import palaiologos.kamilalisp.runtime.sh.Wd;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -14,7 +15,7 @@ import java.util.List;
 public class Import extends PrimitiveFunction implements Lambda {
     private boolean isProjectFile(String fileName) {
         try {
-            FileInputStream fis = new FileInputStream(fileName);
+            FileInputStream fis = new FileInputStream(Wd.relativeTo(fileName));
             byte[] magic = new byte[8];
             fis.read(magic);
             fis.close();
@@ -33,7 +34,7 @@ public class Import extends PrimitiveFunction implements Lambda {
             String fileName = arg.getString();
             String code;
             if (!isProjectFile(fileName)) {
-                code = Files.readString(new File(fileName).getAbsoluteFile().toPath());
+                code = Files.readString(Wd.relativeTo(fileName).toPath());
             } else {
                 ProjectDataRegistry registry = new ProjectDataRegistry(null);
                 registry.readFrom(new FileInputStream(fileName));

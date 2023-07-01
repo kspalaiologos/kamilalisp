@@ -15,8 +15,6 @@ public class Absolute extends ShellFunction {
     @Override
     protected Atom execute(String flags, List<Atom> args) {
         String p = args.get(0).getString();
-        try {
-            return new Atom(new File(p).getCanonicalFile().getAbsolutePath());
-        } catch(IOException e) { throw new RuntimeException(e); }
+        return new Atom(Wd.relativeTo(p).getAbsolutePath());
     }
 }

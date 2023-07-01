@@ -4,6 +4,7 @@ import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
+import palaiologos.kamilalisp.runtime.sh.Wd;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,7 +17,7 @@ public class FileOutputStreamWrapper extends PrimitiveFunction implements Lambda
         assertArity(args, 1);
         String name = args.get(0).getString();
         try {
-            FileOutputStream fos = new FileOutputStream(new File(name).getAbsoluteFile());
+            FileOutputStream fos = new FileOutputStream(Wd.relativeTo(name));
             return new Atom(new StreamWrapper.OutputStreamUserdata(fos) {
                 @Override
                 public String toDisplayString() {

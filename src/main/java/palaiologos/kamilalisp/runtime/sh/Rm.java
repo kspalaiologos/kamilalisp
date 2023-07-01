@@ -18,13 +18,13 @@ public class Rm extends ShellFunction {
         boolean force = flags.contains("f");
         String path = args.get(0).getString();
         if (!recursive) {
-            File file = new File(path).getAbsoluteFile();
+            File file = Wd.relativeTo(path);
             if (!file.exists() && !force)
                 throw new RuntimeException("File " + path + " does not exist");
             if (!file.delete() && !force)
                 throw new RuntimeException("Could not delete file " + path);
         } else {
-            recursiveDelete(force, new File(path).getAbsoluteFile());
+            recursiveDelete(force, Wd.relativeTo(path));
         }
         return Atom.NULL;
     }

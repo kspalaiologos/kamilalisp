@@ -1,6 +1,7 @@
 package palaiologos.kamilalisp.runtime.IO;
 
 import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.runtime.sh.Wd;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +21,7 @@ public class GetFile extends PrimitiveFunction implements Lambda {
         arg.assertTypes(Type.STRING);
         String fileName = arg.getString();
         try {
-            return new Atom(Files.readString(new File(fileName).getAbsoluteFile().toPath()));
+            return new Atom(Files.readString(Wd.relativeTo(fileName).toPath()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

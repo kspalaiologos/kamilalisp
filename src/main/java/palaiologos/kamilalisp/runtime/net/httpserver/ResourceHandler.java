@@ -4,6 +4,7 @@ import io.undertow.Handlers;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.resource.PathResourceManager;
 import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.runtime.sh.Wd;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -26,7 +27,7 @@ public class ResourceHandler extends PrimitiveFunction implements Lambda {
         private final io.undertow.server.handlers.resource.ResourceHandler handler;
 
         public ResourceHandlerUserdata(String directory) {
-            this.handler = new io.undertow.server.handlers.resource.ResourceHandler(new PathResourceManager(new File(directory).getAbsoluteFile().toPath(), 100));
+            this.handler = new io.undertow.server.handlers.resource.ResourceHandler(new PathResourceManager(Wd.relativeTo(directory).toPath(), 100));
             handler.setDirectoryListingEnabled(false);
         }
 

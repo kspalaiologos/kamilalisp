@@ -16,14 +16,12 @@ public class Cd extends ShellFunction {
     protected Atom execute(String flags, List<Atom> args) {
         assertArity(args, 1);
         String dir = args.get(0).getString();
-        File dest = new File(dir);
+        File dest = Wd.relativeTo(dir);
         if (!dest.exists())
             throw new RuntimeException("Directory " + dir + " does not exist");
         if (!dest.isDirectory())
             throw new RuntimeException(dir + " is not a directory");
-        try {
-            System.setProperty("user.dir", dest.getCanonicalFile().getAbsolutePath());
-        } catch(IOException e) { throw new RuntimeException(e); }
+        Wd.set(dest);
         return Atom.NULL;
     }
 }
