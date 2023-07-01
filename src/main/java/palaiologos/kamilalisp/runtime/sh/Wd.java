@@ -12,7 +12,7 @@ public class Wd {
 
     public static File relativeTo(File relativePath) {
         try {
-            return new File(wd, relativePath.getPath()).getCanonicalFile();
+            return wd.toPath().resolve(relativePath.toPath()).toFile().getCanonicalFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
