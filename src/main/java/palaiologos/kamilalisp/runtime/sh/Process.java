@@ -81,6 +81,7 @@ public class Process extends PrimitiveFunction implements Lambda {
                 case "exit-value" -> new Atom(BigInteger.valueOf(process.exitValue()));
                 case "kill" -> new Atom(new Kill());
                 case "force-kill" -> new Atom(new ForceKill());
+                case "join" -> new Atom(new Join());
                 case "stdout" -> stdout;
                 case "stdin" -> stdin;
                 case "stderr" -> stderr;
@@ -140,6 +141,32 @@ public class Process extends PrimitiveFunction implements Lambda {
             @Override
             public Atom apply(Environment env, List<Atom> args) {
                 process.destroy();
+                return Atom.NULL;
+            }
+
+            @Override
+            protected String name() {
+                return "sh:process.kill";
+            }
+        }
+
+        private class Join extends PrimitiveFunction implements SpecialForm, ReactiveFunction {
+            @Override
+            public Atom apply(Environment env, List<Atom> args) {
+                if(args.size() == 1) {
+                    int time = args.get(0).getInteger().intValue();
+                    try {
+                        process.waitFor(time, java.util.concurrent.TimeUnit.MILLISECONDS);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    try {
+                        process.waitFor();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 return Atom.NULL;
             }
 
