@@ -7,9 +7,15 @@ import java.util.List;
 
 public class ParseNumber extends PrimitiveFunction implements Lambda {
     private static Atom parse(Atom a) {
-        a.assertTypes(Type.STRING);
-        String str = a.getString();
-        return Parser.parseNumber(str);
+        a.assertTypes(Type.STRING, Type.LIST);
+        if(a.getType().equals(Type.STRING)) {
+            String str = a.getString();
+            return Parser.parseNumber(str);
+        } else if(a.getType().equals(Type.LIST)) {
+            List<Atom> list = a.getList();
+            return new Atom(list.stream().map(ParseNumber::parse).toList());
+        }
+        return null;
     }
 
     protected String name() {
