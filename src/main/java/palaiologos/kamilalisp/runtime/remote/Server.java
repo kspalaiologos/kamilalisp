@@ -51,7 +51,7 @@ public class Server {
                             cc = "(" + code + "\n)";
                         }
                         data = Parser.parse(lineNumberOffset, cc);
-                    } catch (ParseCancellationException e) {
+                    } catch (Exception e) {
                         out.writeObject(new StringPacket("Syntax error: " + e.getMessage() + "\n"));
                         out.flush();
                         continue;
