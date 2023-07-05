@@ -209,15 +209,6 @@ The indexing function loops over the list it has received and returns respective
     3
 \end{Verbatim}
 
-Another closely related functionality related to indexing is searching. The \verb|index-of| takes a value and a list and returns the index of the first occurrence of the value in the list:
-
-\begin{Verbatim}
-    --> index-of 5 '(9 8 6 5 4 7 2 3)
-    3
-    --> index-of 5 '(9 8 6 4 7 2 3)
-    -1
-\end{Verbatim}
-
 \section{Rank}
 
 KamilaLisp lists have \textit{rank}, which is a measure of their nesting, usually interpreted in the context of how many dimensions they could have. For example, a doubly nested list can be interpreted as a matrix:
