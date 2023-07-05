@@ -18,17 +18,26 @@ public class IndexOf extends PrimitiveFunction implements Lambda {
                 index = haystack.indexOf(needle, index + 1);
             }
             return new Atom(list);
-        } else if (b.getType() == Type.LIST) {
+        } else if (a.getType() == Type.LIST && b.getType() == Type.LIST) {
             List<Atom> haystack = b.getList();
-            int index = haystack.indexOf(a);
-            List<Atom> list = new ArrayList<>();
-            while (index >= 0) {
-                list.add(new Atom(BigInteger.valueOf(index)));
-                index = haystack.subList(index + 1, haystack.size()).indexOf(a);
+            List<Atom> needle = a.getList();
+            // Find instances of needle in haystack using a sliding window.
+            List<Atom> instances = new ArrayList<>();
+            for (int i = 0; i < haystack.size() - needle.size() + 1; i++) {
+                boolean found = true;
+                for (int j = 0; j < needle.size(); j++) {
+                    if (!haystack.get(i + j).equals(needle.get(j))) {
+                        found = false;
+                        break;
+                    }
+                }
+                if (found) {
+                    instances.add(new Atom(BigInteger.valueOf(i)));
+                }
             }
-            return new Atom(list);
+            return new Atom(instances);
         } else {
-            throw new RuntimeException("index-of takes an atom and a list or two strings as arguments");
+            throw new RuntimeException("index-of takes two lists or two strings as arguments");
         }
     }
 
