@@ -13,6 +13,7 @@ import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.InterruptionError;
 import palaiologos.kamilalisp.runtime.ide.DarkTheme;
 import palaiologos.kamilalisp.runtime.ide.IDE;
+import palaiologos.kamilalisp.runtime.meta.Import;
 import palaiologos.kamilalisp.runtime.remote.Server;
 
 import javax.swing.*;
@@ -51,9 +52,12 @@ public class Main {
         }
     }
 
-    private static void terminalTTY() throws IOException {
+    private static void terminalTTY(String preload) throws IOException {
         banner();
         Environment env = new Environment(defaultRegistry);
+        if (preload != null) {
+            env.get("import").getCallable().apply(env, List.of(new Atom(preload)));
+        }
         DefaultParser parser = new JLineParser();
         Terminal t = TerminalBuilder.builder().dumb(true).build();
         // Bug workaround for JLine3.
@@ -133,7 +137,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         if (args.length == 0) {
             defaultRegistry = Environment.defaultEnvironment(false);
-            terminalTTY();
+            terminalTTY(null);
         }
         if (args.length >= 1) {
             if (args[0].equalsIgnoreCase("--ide")) {
@@ -149,7 +153,12 @@ public class Main {
                         UIManager.put(key, fr);
                 }
                 IDE ide = new IDE();
-                // TODO: Run scripts.
+            } else if (args[0].equalsIgnoreCase("--preload")) {
+                defaultRegistry = Environment.defaultEnvironment(false);
+                terminalTTY(args[1]);
+            } else if (args[0].equalsIgnoreCase("--preload-sandboxed")) {
+                defaultRegistry = Environment.defaultEnvironment(true);
+                terminalTTY(args[1]);
             } else if (args[0].equalsIgnoreCase("--remote")) {
                 defaultRegistry = Environment.defaultEnvironment(false);
                 int port = 0;
