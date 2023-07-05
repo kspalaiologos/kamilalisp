@@ -14,6 +14,10 @@ public class Getenv extends ShellFunction {
     protected Atom execute(String flags, List<Atom> args) {
         assertArity(args, 1);
         String name = args.get(0).getString();
-        return new Atom(System.getenv(name));
+        String value = System.getenv(name);
+        if (value != null)
+            return new Atom(value);
+        else
+            return Atom.NULL;
     }
 }
