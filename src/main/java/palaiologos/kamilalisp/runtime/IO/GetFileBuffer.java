@@ -2,6 +2,7 @@ package palaiologos.kamilalisp.runtime.IO;
 
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.runtime.dataformat.BufferAtomList;
+import palaiologos.kamilalisp.runtime.sh.Wd;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +22,7 @@ public class GetFileBuffer extends PrimitiveFunction implements Lambda {
         arg.assertTypes(Type.STRING);
         String fileName = arg.getString();
         try {
-            byte[] data = Files.readAllBytes(new File(fileName).getAbsoluteFile().toPath());
+            byte[] data = Files.readAllBytes(Wd.relativeTo(fileName).toPath());
             return new Atom(BufferAtomList.from(data));
         } catch (IOException e) {
             throw new RuntimeException(e);

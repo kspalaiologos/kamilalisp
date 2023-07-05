@@ -1,6 +1,7 @@
 package palaiologos.kamilalisp.runtime.IO;
 
 import palaiologos.kamilalisp.atom.*;
+import palaiologos.kamilalisp.runtime.sh.Wd;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +22,7 @@ public class PutFile extends PrimitiveFunction implements Lambda {
         if (args.get(1).getType() == Type.STRING) {
             String content = args.get(1).getString();
             try {
-                Files.writeString(new File(fileName).getAbsoluteFile().toPath(), content);
+                Files.writeString(Wd.relativeTo(fileName).toPath(), content);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -31,7 +32,7 @@ public class PutFile extends PrimitiveFunction implements Lambda {
             for (int i = 0; i < content.size(); i++)
                 data[i] = content.get(i).byteValueExact();
             try {
-                Files.write(new File(fileName).getAbsoluteFile().toPath(), data);
+                Files.write(Wd.relativeTo(fileName).toPath(), data);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

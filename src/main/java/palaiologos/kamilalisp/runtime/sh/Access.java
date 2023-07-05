@@ -13,7 +13,8 @@ public class Access extends ShellFunction {
 
     @Override
     protected Atom execute(String flags, List<Atom> args) {
-        File f = new File(args.get(0).getString()).getAbsoluteFile();
+        assertArity(args, 1);
+        File f = Wd.relativeTo(args.get(0).getString()).getAbsoluteFile();
         String sb = (f.exists() ? "e" : "-") +
                 (f.canRead() ? "r" : "-") +
                 (f.canWrite() ? "w" : "-") +

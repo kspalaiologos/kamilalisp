@@ -4,6 +4,7 @@ import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
+import palaiologos.kamilalisp.runtime.sh.Wd;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -22,7 +23,7 @@ public class LoadImage extends PrimitiveFunction implements Lambda {
         BufferedImage image;
 
         try {
-            image = ImageIO.read(new File(fileName).getAbsoluteFile());
+            image = ImageIO.read(Wd.relativeTo(fileName));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

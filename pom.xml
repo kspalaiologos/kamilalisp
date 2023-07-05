@@ -170,7 +170,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.4.1</version>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -214,6 +214,8 @@
                         <option>-keep class org.tukaani.xz.LZMA2Options { *; }</option>
                         <option>-keep class org.armedbear.lisp.** { }</option>
                         <option>-keep class com.formdev.** { *; }</option>
+                        <option>-keep class org.apfloat.** { *; }</option>
+                        <option>-keep class apfloat { *; }</option>
                         <option>-optimizationpasses 9</option>
                         <option>-allowaccessmodification</option>
                         <option>-repackageclasses ''</option>

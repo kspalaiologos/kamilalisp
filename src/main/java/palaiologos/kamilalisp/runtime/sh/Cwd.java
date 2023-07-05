@@ -7,7 +7,7 @@ import java.util.List;
 public class Cwd extends PrimitiveFunction implements SpecialForm, ReactiveFunction {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        return new Atom(System.getProperty("user.dir"));
+        return new Atom(Wd.get().getAbsolutePath());
     }
 
     @Override
