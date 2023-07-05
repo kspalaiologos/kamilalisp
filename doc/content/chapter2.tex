@@ -209,7 +209,7 @@ The indexing function loops over the list it has received and returns respective
     3
 \end{Verbatim}
 
-Another closely related functionality related to indexing is searching. The \verb|index-of| takes a value and a list and returns the index of the first occurrence of the value in the 
+Another closely related functionality related to indexing is searching. The \verb|index-of| takes a value and a list and returns the index of the first occurrence of the value in the list:
 
 \begin{Verbatim}
     --> index-of 5 '(9 8 6 5 4 7 2 3)
@@ -239,7 +239,7 @@ Since a matrix usually has two axes, matrices (lists of lists of scalars) have r
     0
 \end{Verbatim}
 
-One interesting case to consider is a \textit{ragged list} - a list whose elements have different ranks. For example, the following list is a ragged 
+One interesting case to consider is a \textit{ragged list} - a list whose elements have different ranks. For example, the following list is a ragged list:
 
 \begin{Verbatim}
     --> ?'((1 2) (3 4) 5)
@@ -265,7 +265,7 @@ The most used function is a built-in operator takes a function and a list and ap
     (2 3 4 5 6)
 \end{Verbatim}
 
-The \verb|map| function (which is the more familiar name of this construct, predominantly called that in Haskell and OCaml) has a few nuances that are worth mentioning. First, it is possible to apply it to a non-list argument and an empty 
+The \verb|map| function (which is the more familiar name of this construct, predominantly called that in Haskell and OCaml) has a few nuances that are worth mentioning. First, it is possible to apply it to a non-list argument and an empty value:
 
 \begin{Verbatim}
     --> :s 5
@@ -453,7 +453,7 @@ The relation between \verb|filter| and \verb|map| (the colon operator) can be ob
 
 \verb|filter| allows for an elegant yet inefficient implementation\footnote{Compared to the prime number-related primitive functions already supplied by KamilaLisp} of a prime sieve. The sieve of Eratosthenes is an algorithm for finding all prime numbers up to a given limit. It works by iteratively marking the multiples of each prime number as composite. To implement this in KamilaLisp, it is needed to use recursion and two lists of numbers: one for the primes that have been already found, and one for the numbers that have not been classified yet.
 
-Firstly, define the iteration step function that takes the prime and unclassified lists in a pair, adds the first element from the unclassified list to the prime list and removes all its multiples from the unclassified 
+Firstly, define the iteration step function that takes the prime and unclassified lists in a pair, adds the first element from the unclassified list to the prime list and removes all its multiples from the unclassified list:
 
 \begin{Verbatim}
     --> defun step data (let-seq
