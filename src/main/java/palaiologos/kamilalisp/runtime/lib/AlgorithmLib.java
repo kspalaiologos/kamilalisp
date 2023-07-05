@@ -161,8 +161,8 @@ public class AlgorithmLib {
 
         env.setPrimitive("regex:matches?", "⍫⊖∊?", new Atom(new RegexMatches()));
         env.setPrimitive("regex:match-all", "⍫⊖∊∧", new Atom(new RegexMatchAll()));
-        env.setPrimitive("regex:replace", "⍫⊖⍆", new Atom(new RegexReplace()));
-        env.setPrimitive("regex:replace-all", "⍫⊖⍆∧", new Atom(new RegexReplaceAll()));
+        env.setPrimitive("regex:replace-first", "⍫⊖⍆", new Atom(new RegexReplace()));
+        env.setPrimitive("regex:replace", "⍫⊖⍆∧", new Atom(new RegexReplaceAll()));
         env.setPrimitive("regex:split", "⍫⊖⍭", new Atom(new RegexSplit()));
         env.setPrimitive("regex:escape-pattern", "⍫⊖⑊", new Atom(new RegexEscapePattern()));
         env.setPrimitive("regex:escape-replacement", "⍫⊖⑊⍆", new Atom(new RegexEscapeReplacement()));

@@ -139,6 +139,8 @@ public class BaseLib {
         env.setPrimitive("str:contains", "⍫⊂←", new Atom(new Contains()));
         env.setPrimitive("str:levenshtein", "⍫≉", new Atom(new Levenshtein()));
         env.setPrimitive("str:wrap", "⍫⑊↩", new Atom(new Wrap()));
+        env.setPrimitive("str:replace", new Atom(new Replace()));
+        env.setPrimitive("str:replace-first", new Atom(new ReplaceFirst()));
 
         env.setPrimitive("io:writeln", "↑⍫", new Atom(new Writeln()));
         env.setPrimitive("io:readln", "↓⍫", new Atom(new Readln()));
