@@ -44,6 +44,9 @@ public record Time(Duration value) implements Userdata {
     }
 
     @Override
+    public String toString() { return value.toString(); }
+
+    @Override
     public String toDisplayString() {
         return value.toString();
     }
