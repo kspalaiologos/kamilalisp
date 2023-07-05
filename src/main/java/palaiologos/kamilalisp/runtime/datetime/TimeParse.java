@@ -13,8 +13,8 @@ public class TimeParse extends PrimitiveFunction implements Lambda {
         if (a.getType() == Type.LIST) {
             return new Atom(a.getList().stream().map(this::parseTimeFrom).toList());
         } else {
-            LocalTime t = LocalTime.parse(a.getString());
-            return new Atom(new Time(Duration.ofHours(t.getHour()).plusMinutes(t.getMinute()).plusSeconds(t.getSecond()).plusNanos(t.getNano())));
+            Duration t = Duration.parse(a.getString());
+            return new Atom(new Time(t));
         }
     }
 
