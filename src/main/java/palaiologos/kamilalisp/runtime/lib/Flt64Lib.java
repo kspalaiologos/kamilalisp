@@ -8,6 +8,7 @@ import rocks.palaiologos.maja.Maja;
 
 public class Flt64Lib {
     public static void register(Environment env) {
+        env.setPrimitive("flt64:maja", new Atom(new MajaExpression()));
         env.setPrimitive("flt64:+", new Atom(new Flt64PervasiveDyadicFunction("flt64:+") {
             @Override
             public double apply(double x, double y) { return Maja.add(x, y); }
