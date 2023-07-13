@@ -424,7 +424,7 @@ Using partial application, the example can be rewritten as follows:
     --> defun add-x n $(+ n)
     (λ n . $(+ n))
     --> def add-5 (add-x 5)
-    $(+ n)
+    $[+, 5]
     --> add-5 6
     11
 \end{Verbatim}
