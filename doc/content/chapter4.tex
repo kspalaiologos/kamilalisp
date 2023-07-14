@@ -1,16 +1,128 @@
 
 \chapter{Applied mathematics}
 
-\section{Fast Foruier Transform}
+\section{Numerically evaluating rational sums and integrals}
 
-\section{Discrete Cosine Transform}
+Suppose that we want to compute the values of the following expressions, given some polynomial functions $P(x)$ and $Q(x)$:
 
-\section{Run length encoding}
+$$
+\sum_{i=0}^\infty \frac{P(i)}{Q(i)}
+$$
 
-\section{Lempel-Ziv algorithm}
+$$
+\int_0^\infty \frac{P(x)}{Q(x)} dx
+$$
 
-\section{Arithmetic coding}
+\noindent The problem is that these expressions may not converge, or may converge very slowly. Precisely, $\deg P(x) - \deg Q(x) < -1$ is a sufficient condition for divergence. To demonstrate a particular case of performing the summation, consider the following:
 
-\section{Suffix sorting and the Burrows-Wheeler transform}
+$$\sum_{k=1}^\infty \frac{1}{k^2 - a}$$
 
-\section{Machine floating point numerics}
+\noindent where $a$ is a constant. The following equalities hold:
+
+$$\sum_{k=1}^\infty \frac{1}{k^2 - a} = \frac{1-\sqrt{a}\pi\cot(\sqrt{a}\pi)}{2a} = \frac{1}{2\sqrt{a}}\left(\psi\left(1+\sqrt{a}\right)-\psi\left(1-\sqrt{a}\right)\right)$$
+
+\noindent To attempt at understanding why is this happening, recall the following identity due to Euler (1770) for $z \in \mathbb{C} \setminus \mathbb{Z}$:
+
+$$
+\pi \cot(\pi z) = z^{-1} + \sum_{v=1}^\infty \frac{2z}{z^2 - v^2}
+$$
+
+\noindent A concise proof using Mittag-Leffler's theorem follows. Given $b_n$ as the residues:
+
+$$
+f(z) = f(0) + \sum_{n=1}^\infty b_n \left(\frac{1}{z-z_n} + \frac{1}{z_n}\right) = f(0) + \sum_{n=1}^\infty \frac{zb_n}{z_n(z_n-z)}
+$$
+
+\noindent Using the contour integral where $C_N$ is a circle enclosing first $N$ poles of $f$:
+
+$$
+I_N = \oint_{C_N} \frac{f(\omega)d\omega}{\omega(\omega - z)}
+$$
+
+\noindent Using the residue theorem we find:
+
+$$
+I_N = -2\pi i \frac{f(0)}{f(z)} + 2\pi i \frac{f(z)}{z} + \sum_{n=1}^N \frac{2\pi i b_n}{z_n(z_n - z)}
+$$
+
+\noindent Consider $\cot z - z^{-1}$ to remove a singularity. $b_n$ is found using the residue theorem as follows:
+
+$$
+b_n = \lim_{z \to n\pi} (z-n\pi)\cot z = \lim_{z \to n\pi} (z-n\pi) \frac{z \cos z - \sin z}{z \sin z} = 1
+$$
+
+\noindent Hence:
+
+$$
+\cot z - z^{-1} = \sum_{n=1}^N \frac{1}{z-n\pi} + \frac{1}{n\pi} + \frac{1}{z+n\pi} - \frac{1}{n\pi}
+$$
+
+\noindent Substitute and rearrange:
+
+$$
+\pi \cot(\pi z) = z^{-1} + \sum_{n=1}^N \left(\frac{1}{z-n} + \frac{1}{z+n}\right) = z^{-1} + \sum_{n=1}^N \frac{2z}{z^2-n^2}
+$$
+
+\noindent Knowing where the first part of the equality comes from, the next logical step is reasoning about the second equality:
+
+$$
+\frac{1-\sqrt{a}\pi\cot(\sqrt{a}\pi)}{2a} = \frac{1}{2\sqrt{a}}\left(\psi\left(1+\sqrt{a}\right)-\psi\left(1-\sqrt{a}\right)\right)
+$$
+
+\noindent Use the recurrence relation of the digamma function once:
+
+$$
+\frac{1-\sqrt{a}\pi\cot(\sqrt{a}\pi)}{2a} = \frac{1}{2\sqrt{a}}\left(\frac{1}{\sqrt{a}}+\psi\left(\sqrt{a}\right)-\psi\left(1-\sqrt{a}\right)\right)
+$$
+
+\noindent Now it is possible to apply the digamma reflection formula given as follows:
+
+$$
+\psi (1-x)-\psi (x)=\pi \cot \pi x
+$$
+
+\noindent The problem hence reduces to:
+
+$$
+\frac{1}{2\sqrt{a}}\left(\frac{1}{\sqrt{a}}-\pi\cot\pi\sqrt{a}\right) = \frac{1}{2\sqrt{a}}\left(\frac{1-\sqrt{a}\pi\cot\pi\sqrt{a}}{\sqrt{a}}\right) = \frac{1-\sqrt{a}\pi\cot\pi\sqrt{a}}{2a}
+$$
+
+The general algorithm for convergent series implemented below is as follows. Denote the roots of the polynomial $Q(x+1)$ (obtained using the most convenient means; counting multiplicity) as $R_0 \dots R_m$. The following equality holds if $P(x)=1$:
+
+$$
+\sum_{n=1}^\infty \frac{1}{Q(n)} = -\sum_{\omega \in R} \frac{\psi(-\omega)}{Q'(\omega + 1)}
+$$
+
+If $P(x) \ne 1$ (i.e. the rational function is not an inverse of some polynomial), the formula is as follows:
+
+$$
+\sum_{n=1}^\infty \frac{P(n)}{Q(n)} = -\sum_{\omega \in R} \frac{P(\omega + 1) \psi(-\omega)}{Q'(\omega + 1)}
+$$
+
+To start, define a few helper functions - evaluating a polynomial at a point, computing the symbolic derivative of a polynomial and substituting $x+1$ into the polynomial to transform the \textit{litte-endian} coefficient list:
+
+\begin{Verbatim}
+    (def polyevl
+      [(inner-product cmplx64:+ cmplx64:*) #0 ^cmplx64:**&[#0 range@tally]])
+
+    (def polyderv cdr@[* #0 range@tally])
+
+    (defun poly+1 (c)
+      (let-seq
+        (def bin-mat (:[:^binomial #0 \range $(+ 1)]@range@tally c))
+        (def coeff-mat (:$(take (tally c)) (* c bin-mat)))
+        (:$(foldl1 +)@transpose coeff-mat)))
+\end{Verbatim}
+
+The function is trivially defined as follows:
+
+\begin{Verbatim}
+    (defun rsum (p q) (let-seq
+      (def q+1 (poly+1 q))
+      (def p+1 $(polyevl (poly+1 p)))
+      (def q+1p $(polyevl (polyderv q+1)))
+      (def R (cmplx64:solve q+1))
+      (def V [/ [* p+1 cmplx64:digamma@-] q+1p])
+      (cmplx64:neg (foldl + 0 (:V R)))))
+\end{Verbatim}
+

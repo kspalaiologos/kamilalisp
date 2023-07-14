@@ -11,7 +11,7 @@ public class InnerProduct extends PrimitiveFunction implements Lambda {
     private static Atom prod2(Environment env, Callable c1, Callable c2, List<Atom> a, List<Atom> b) {
         int len = Math.min(a.size(), b.size());
         if (len < 2) {
-            throw new TypeError("Inner product requires at least two common elements.");
+            return c2.apply(env, List.of(a.get(0), b.get(0)));
         }
 
         Atom result = c2.apply(env, List.of(a.get(0), b.get(0)));
@@ -33,7 +33,7 @@ public class InnerProduct extends PrimitiveFunction implements Lambda {
         }
 
         if (len < 2) {
-            throw new TypeError("Inner product requires at least two common elements.");
+            return c2.apply(env, a.stream().map(l -> l.get(0)).toList());
         }
 
         boolean seen = false;
