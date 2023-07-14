@@ -126,3 +126,15 @@ The function is trivially defined as follows:
       (cmplx64:neg (foldl + 0 (:V R)))))
 \end{Verbatim}
 
+The integral case is defined similarly; except the digamma factor is replaced with a logarithm factor such that we sum $\displaystyle \frac{P(w) \log(x-w)}{Q'(w)}$ for roots $w$; the \verb|rat-int| function returns the numeric antiderivative of the specified rational function. 
+
+\begin{Verbatim}
+    (defun rat-int (p q)
+      (let-seq
+        (def evl [(⌻ + *) #0 ^**&[#0 ⍳∘⍴]])
+        (def qp \⍕@[* #0 ⍳∘⍴] q)
+        (def qr \cmplx64:solve q)
+        (def q' \:$(evl qp) qr)
+        (λ x \-@foldl + 0 \^/ q' \:(λ r \^evl r \* p \ln@- x r) qr)))
+\end{Verbatim}
+
