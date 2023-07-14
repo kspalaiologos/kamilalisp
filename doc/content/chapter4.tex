@@ -224,3 +224,26 @@ The algorithm starts by computing the cartesian product of the roots of the poly
     ...   (** (outer-product - p p) 2))))
 \end{Verbatim}
 
+\section{Integer arithmetic coding}
+
+Integer arithmetic coding is a form of entropy encoding used in lossless data compression. A string of characters is usually represented using a fixed number of bits per character (e.g. using ASCII). When a string is compressed using arithmetic coding, frequently used characters will be stored using fewer bits and less frequently occurring characters will be stored with more bits, resulting in fewer bits used in total. Unlike Huffman coding presented previously in the book, integer arithmetic coding is optimal.
+
+The algorithm behind integer arithmetic coding is as follows:
+
+\begin{itemize}
+  \item Pick a large integer which is a multiple of 4 and call it $M$ (the maximum).
+  \item Define the interval $[L, H) = [0, M)$ and $k=0$ (the underflow count).
+  \item Perform underflow expansion: While $M/4 \leq L \leq M/2 \leq H \leq 3M/4$, update the interval by reassigning $L$ to $2L-M/2$ and $H$ to $2H-M/2$.
+  \item Perform rescaling: If $H \le M/2$, then double $L$ and $H$, add $01^k$ to the code word, reset $k$ to 0 and go back to the underflow expansion step.
+  \item Perform rescaling: If $L \ge M/2$, then update the interval by reassigning $L$ as $2L-M$ and $H$ as $2H-M$. Add $10^k$ to the code word, reset $k$ to 0 and go back to the underflow expansion step.
+  \item If all symbols are encoded:
+  \begin{itemize}
+    \item If $L < M/4$ add $01^{k+1}$ to the code word.
+    \item Otherwise add $10^{k+1}$ to the code word.
+  \end{itemize}
+  and terminate.
+  \item Encode the symbol by reassigning the range as follows:
+  $$
+  [L, H) \Rightarrow \left[L+\left\lfloor\sum_{j=1}^{i-1} p_j(H-L)\right\rfloor, L+\left\lfloor\sum_{j=1}^{i} p_j(H-L)\right\rfloor\right]
+  $$
+\end{itemize}
