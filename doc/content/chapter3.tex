@@ -1006,7 +1006,41 @@ Which is represented as the following tree:
       child { node {D} child { node {I} child { node {J} } child { node {K} } }};
 \end{tikzpicture}
 
+Breadth-first and depth-first search functions require three or four arguments. The first argument is the graph to be searched. The second argument is the vertex from which the search will start. The third argument is a function that will be applied to each vertex as it is visited. The fourth argument is optional and is a function that will be applied to each edge as it is visited.
 
+The pseudocode for the search functions is as follows:
+
+\begin{Verbatim}
+    vertex_iterator = ...
+    result = '()
+    while(vertex_iterator.hasNext()):
+        vertex = vertex_iterator.next()
+        result, stop = visit(vertex, result)
+        if(stop)
+            break
+    return result
+\end{Verbatim}
+
+Breadth-first and depth-first search starting from the edge \verb|'a| shows the following access sequences:
+
+\begin{Verbatim}
+    --> reverse@graph:bfs my-graph 'a [tie cons 0] 'nil
+    (a b c d e f i g h j k)
+    --> reverse@graph:dfs my-graph 'a [tie cons 0] 'nil
+    (a d i k j c b f e h g)
+\end{Verbatim}
+
+In the breadth-first case, incidentally the edges are traversed in the same order in which they were defined. In the depth-first case, the algorithm descends to the deepest vertices before visiting the next sibling:
+
+\begin{tikzpicture}[sibling distance=10em,
+    every node/.style = {shape=rectangle, rounded corners,
+      draw, align=center,
+      top color=white, bottom color=blue!20}]
+    \node {1}
+      child { node {7} child { node{9} child { node{11} } child { node{10} } } child { node {8} } }
+      child { node {6} }
+      child { node {2} child { node {3} child { node {5} } child { node {4} } }};
+\end{tikzpicture}
 
 
 

@@ -10,10 +10,7 @@ import palaiologos.kamilalisp.error.TypeError;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -347,6 +344,36 @@ public class GraphWrapper implements Userdata {
         }
     }
 
+    public class Process extends PrimitiveFunction implements Lambda {
+        @Override
+        public Atom apply(Environment env, List<Atom> args) {
+            assertArity(args, 1);
+            ArrayList<Atom> vertexSet = new ArrayList<>(graph.vertexSet());
+            Set<DefaultEdge> edges = graph.edgeSet();
+            ArrayList<Atom> edgeSet = new ArrayList<>();
+            for (DefaultEdge edge : edges) {
+                List<Atom> edgeList = new ArrayList<>(2);
+                edgeList.add(graph.getEdgeSource(edge));
+                edgeList.add(graph.getEdgeTarget(edge));
+                edgeSet.add(new Atom(edgeList));
+            }
+            List<Atom> r = Evaluation.evaluate(env, args.get(0).getCallable(), List.of(new Atom(vertexSet), new Atom(edgeSet))).getList();
+            Graph<Atom, DefaultEdge> empty = emptyGraphFactory.get();
+            for (Atom vertex : r.get(0).getList())
+                empty.addVertex(vertex);
+            for (Atom edge : r.get(1).getList()) {
+                List<Atom> edgeList = edge.getList();
+                empty.addEdge(edgeList.get(0), edgeList.get(1));
+            }
+            return new Atom(new GraphWrapper(empty, emptyGraphFactory, extraOperations, name));
+        }
+
+        @Override
+        protected String name() {
+            return "graph.process";
+        }
+    }
+
     public Atom adjoin(Consumer<Graph<Atom, DefaultEdge>> process) {
         Graph<Atom, DefaultEdge> empty = emptyGraphFactory.get();
         Graphs.addGraph(empty, graph);
@@ -535,6 +562,9 @@ public class GraphWrapper implements Userdata {
             }
             case "is-tree?" -> {
                 return GraphTests.isTree(graph) ? Atom.TRUE : Atom.FALSE;
+            }
+            case "process" -> {
+                return new Atom(new Process());
             }
             default -> {
                 if(extraOperations.containsKey(key))
