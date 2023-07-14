@@ -85,11 +85,11 @@ public class Atop implements SpecialForm, ReactiveFunction {
 
     @Override
     public String stringify() {
-        return form.toString() + "@" + processors.toString();
+        return form.toString() + "&" + processors.toString();
     }
 
     @Override
     public String frameString() {
-        return "@[]/syn";
+        return "&[]/syn";
     }
 }

@@ -569,7 +569,7 @@ Providing a formal proof of the Collatz conjecture is beyond the scope of this b
     --> defun collatz (n) (if (= (mod n 2) 0) (/ n 2) (+ (* 3 n) 1))
     (λ n . (if (= (mod n 2) 0) (/ n 2) (+ (* 3 n) 1)))
     --> defun collatz-rec (n) (if (= n 1) 1 (collatz-rec (collatz n)))
-    (λ n . (if (= n 1) 1 (collatz-iter (collatz n))))
+    (λ n . (if (= n 1) 1 (collatz-rec (collatz n))))
     --> defun collatz-tail (n) (if (= n 1) 1 (&0 (collatz n)))
     (λ n . (if (= n 1) 1 (&0 (collatz n))))
 \end{Verbatim}
