@@ -17,7 +17,7 @@ $$
 
 $$\sum_{k=1}^\infty \frac{1}{k^2 - a}$$
 
-\noindent where $a$ is a constant. The following equalities hold:
+\noindent where $a$ is a constant. The following equalities hold (the first equality: only for $\sqrt{a} \in \mathbb{C} \setminus \mathbb{Z}$):
 
 $$\sum_{k=1}^\infty \frac{1}{k^2 - a} = \frac{1-\sqrt{a}\pi\cot(\sqrt{a}\pi)}{2a} = \frac{1}{2\sqrt{a}}\left(\psi\left(1+\sqrt{a}\right)-\psi\left(1-\sqrt{a}\right)\right)$$
 
@@ -87,7 +87,7 @@ $$
 \frac{1}{2\sqrt{a}}\left(\frac{1}{\sqrt{a}}-\pi\cot\pi\sqrt{a}\right) = \frac{1}{2\sqrt{a}}\left(\frac{1-\sqrt{a}\pi\cot\pi\sqrt{a}}{\sqrt{a}}\right) = \frac{1-\sqrt{a}\pi\cot\pi\sqrt{a}}{2a}
 $$
 
-The general algorithm for convergent series implemented below is as follows. Denote the roots of the polynomial $Q(x+1)$ (obtained using the most convenient means; counting multiplicity) as $R_0 \dots R_m$. The following equality holds if $P(x)=1$:
+The general algorithm for convergent series implemented below is as follows. Consider polynomials $P(x)$ and $Q(x)$ that are not a natural power of another polynomial. Denote the roots of the polynomial $Q(x+1)$ (obtained using the most convenient means; counting multiplicity) as $R_0 \dots R_m$. The following equality holds if $P(x)=1$:
 
 $$
 \sum_{n=1}^\infty \frac{1}{Q(n)} = -\sum_{\omega \in R} \frac{\psi(-\omega)}{Q'(\omega + 1)}
@@ -131,10 +131,63 @@ The integral case is defined similarly; except the digamma factor is replaced wi
 \begin{Verbatim}
     (defun rat-int (p q)
       (let-seq
-        (def evl [(⌻ + *) #0 ^**&[#0 ⍳∘⍴]])
-        (def qp \⍕@[* #0 ⍳∘⍴] q)
+        (def qp \polyderv q)
         (def qr \cmplx64:solve q)
-        (def q' \:$(evl qp) qr)
-        (λ x \-@foldl + 0 \^/ q' \:(λ r \^evl r \* p \ln@- x r) qr)))
+        (def q' \:$(polyevl qp) qr)
+        (λ x \-@foldl + 0 \^/ q' \:(λ r \^polyevl r \* p \ln@- x r) qr)))
 \end{Verbatim}
+
+Using \verb|rsum| we estimate the value of $\displaystyle \sum_{k=1}^{\infty} \frac{1}{k^2-2}$ as follows:
+
+\begin{Verbatim}
+    --> rsum '(1) '(-2 0 1)
+    -0.056810407700620236J4.879779454488352E-17
+\end{Verbatim}
+
+The result is correct to approximately 17 decimal places, as seen by the imaginary part of the result, which in reality is zero. To compute the value of this sum, use the previously proven identity:
+
+$$\sum_{k=1}^\infty \frac{1}{k^2 - 2} = \frac{1-\sqrt{2}\pi\cot(\sqrt{2}\pi)}{4} = \frac{1}{2\sqrt{2}}\left(\psi\left(1+\sqrt{2}\right)-\psi\left(1-\sqrt{2}\right)\right)$$
+
+Verifying the result using KamilaLisp yields:
+
+\begin{Verbatim}
+    --> flt64:* 0.25 (flt64:- 1 ([flt64:* #0 flt64:cot] (flt64:pi@flt64:sqrt 2)))
+    -0.056810407700620236
+
+    --> (flt64:/
+    ...   (foldl1 - (:flt64:digamma ([tie flt64:+ flt64:-] 1 (flt64:sqrt 2))))
+    ...   ([flt64:* #0 flt64:sqrt] 2))
+    -0.05681040770062016
+\end{Verbatim}
+
+For a practical application of this property, consider the Catalan constant defined as follows:
+
+$$
+K = \sum_{k=0}^\infty \frac{(-1)^k}{(2k+1)^2}
+$$
+
+Splitting the even and odd terms yields the following two sums:
+
+$$
+K = 1 + \sum_{n=1}^\infty \frac{1}{(4n+1)^2} - \frac{1}{9} - \sum_{n=1}^\infty \frac{1}{(4n+3)^2}
+$$
+
+Before the sum can be computed, a limitation of the algorithm must be taken care of. The polynomial is modified by adding and subtracting a known constant factor and taking the average:
+
+\begin{Verbatim}
+    --> (defun rsum-avg (p q c)
+    ...   (flt64:* 0.5 (foldl1 flt64:+
+    ...     (:rsum (tie p) (:cons ([tie flt64:+ flt64:-] (car q) c) (tie@cdr q))))))
+\end{Verbatim}
+
+Hence the Catalan constant is defined in KamilaLisp using \verb|rsum-avg| as follows:
+
+\begin{Verbatim}
+    --> (def K (flt64:+ (/ 8 9)
+    ...   (- (rsum-avg '(1) '(1 8 16) 0.0001) (rsum-avg '(1) '(9 24 16) 0.0001))))
+    0.9159655942089728
+\end{Verbatim}
+
+The value obtained has 11 correct digits.
+
 
