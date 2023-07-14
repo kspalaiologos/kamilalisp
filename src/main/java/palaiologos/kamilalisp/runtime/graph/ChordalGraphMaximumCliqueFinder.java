@@ -6,9 +6,7 @@ import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
 import java.util.AbstractList;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class ChordalGraphMaximumCliqueFinder extends PrimitiveFunction implements Lambda {
     @Override

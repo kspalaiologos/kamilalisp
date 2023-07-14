@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime.graph;
 
-import org.jgrapht.alg.matching.KuhnMunkresMinimalWeightBipartitePerfectMatching;
 import org.jgrapht.alg.matching.MaximumWeightBipartiteMatching;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;

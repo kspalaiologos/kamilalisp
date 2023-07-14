@@ -1,9 +1,7 @@
 package palaiologos.kamilalisp.runtime.graph.type;
 
-import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
-import org.jgrapht.graph.SimpleWeightedGraph;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.runtime.graph.GraphWrapper;
 

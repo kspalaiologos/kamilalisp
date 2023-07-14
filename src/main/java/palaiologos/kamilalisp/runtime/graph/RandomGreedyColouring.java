@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime.graph;
 
-import org.jgrapht.alg.color.GreedyColoring;
 import org.jgrapht.alg.color.RandomGreedyColoring;
 import org.pcollections.HashTreePMap;
 import palaiologos.kamilalisp.atom.Atom;

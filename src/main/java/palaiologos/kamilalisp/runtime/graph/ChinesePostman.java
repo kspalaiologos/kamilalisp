@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime.graph;
 
-import org.jgrapht.alg.cycle.BergeGraphInspector;
 import org.jgrapht.graph.DefaultEdge;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;

@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime.graph;
 
-import org.jgrapht.traverse.MaximumCardinalityIterator;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 import palaiologos.kamilalisp.atom.*;
 

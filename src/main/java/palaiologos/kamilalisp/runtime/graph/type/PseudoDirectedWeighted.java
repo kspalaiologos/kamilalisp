@@ -1,7 +1,6 @@
 package palaiologos.kamilalisp.runtime.graph.type;
 
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.DirectedWeightedPseudograph;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.TypeError;

@@ -7,7 +7,6 @@ import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
 
-import java.util.AbstractList;
 import java.util.List;
 
 public class BergeGraphTest extends PrimitiveFunction implements Lambda {

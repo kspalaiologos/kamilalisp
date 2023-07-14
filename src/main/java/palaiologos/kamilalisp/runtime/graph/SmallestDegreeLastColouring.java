@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime.graph;
 
-import org.jgrapht.alg.color.LargestDegreeFirstColoring;
 import org.jgrapht.alg.color.SmallestDegreeLastColoring;
 import org.pcollections.HashTreePMap;
 import palaiologos.kamilalisp.atom.Atom;

@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime.graph;
 
-import org.jgrapht.alg.flow.BoykovKolmogorovMFImpl;
 import org.jgrapht.alg.flow.DinicMFImpl;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;

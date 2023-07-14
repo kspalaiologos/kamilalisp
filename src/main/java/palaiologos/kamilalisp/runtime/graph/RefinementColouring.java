@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime.graph;
 
-import org.jgrapht.alg.color.BrownBacktrackColoring;
 import org.jgrapht.alg.color.ColorRefinementAlgorithm;
 import org.pcollections.HashTreePMap;
 import palaiologos.kamilalisp.atom.Atom;

@@ -4,7 +4,6 @@ import org.jgrapht.Graph;
 import org.jgrapht.GraphMetrics;
 import org.jgrapht.GraphTests;
 import org.jgrapht.Graphs;
-import org.jgrapht.graph.AsUnmodifiableGraph;
 import org.jgrapht.graph.DefaultEdge;
 import palaiologos.kamilalisp.atom.*;
 import palaiologos.kamilalisp.error.TypeError;

@@ -1,7 +1,6 @@
 package palaiologos.kamilalisp.runtime.graph;
 
 import org.jgrapht.alg.matching.GreedyMaximumCardinalityMatching;
-import org.jgrapht.alg.matching.SparseEdmondsMaximumCardinalityMatching;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;

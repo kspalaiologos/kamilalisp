@@ -1,6 +1,5 @@
 package palaiologos.kamilalisp.runtime.graph;
 
-import org.jgrapht.traverse.MaximumCardinalityIterator;
 import org.jgrapht.traverse.RandomWalkVertexIterator;
 import palaiologos.kamilalisp.atom.*;
 

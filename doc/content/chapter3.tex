@@ -984,3 +984,29 @@ The following elementary operations are defined on all graphs, regardless of the
 
 \vspace{0.25cm} \par \noindent \verb|.adjoin-edge-set|, \verb|.adjoin-vertex-set|, \verb|.minus-vertex-set|, \verb|.minus-edge-set| perform operations analogical to the ones described above, but work in batches by adjoining multiple edges or vertices, or removing multiple edges or vertices.
 
+\subsection{Breadth-First and Depth-First Search}
+
+Define a graph object that will be subsequently searched:
+
+\begin{Verbatim}
+    --> def my-graph \graph:simple-directed
+        '(a b c d e f g h i j k)
+        '((a b) (a c) (a d) (b e) (b f) (e g) (e h) (d i) (i j) (i k))
+\end{Verbatim}
+
+Which is represented as the following tree:
+
+\begin{tikzpicture}[sibling distance=10em,
+    every node/.style = {shape=rectangle, rounded corners,
+      draw, align=center,
+      top color=white, bottom color=blue!20}]
+    \node {A}
+      child { node {B} child { node{E} child { node{G} } child { node{H} } } child { node {F} } }
+      child { node {C} }
+      child { node {D} child { node {I} child { node {J} } child { node {K} } }};
+\end{tikzpicture}
+
+
+
+
+

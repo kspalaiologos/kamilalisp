@@ -7,8 +7,6 @@ import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.function.ToDoubleBiFunction;
-import java.util.function.ToDoubleFunction;
 
 public class ZhangShashaTreeEditDistance extends PrimitiveFunction implements Lambda {
     @Override

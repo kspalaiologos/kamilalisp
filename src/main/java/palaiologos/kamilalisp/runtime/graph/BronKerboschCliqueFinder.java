@@ -1,15 +1,13 @@
 package palaiologos.kamilalisp.runtime.graph;
 
-import org.jgrapht.alg.color.BrownBacktrackColoring;
-import org.pcollections.HashTreePMap;
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
 import palaiologos.kamilalisp.atom.Lambda;
 import palaiologos.kamilalisp.atom.PrimitiveFunction;
-import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
-import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class BronKerboschCliqueFinder extends PrimitiveFunction implements Lambda {
     @Override

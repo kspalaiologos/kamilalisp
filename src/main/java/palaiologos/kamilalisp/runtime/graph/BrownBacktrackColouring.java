@@ -9,7 +9,10 @@ import palaiologos.kamilalisp.atom.PrimitiveFunction;
 import palaiologos.kamilalisp.runtime.hashmap.HashMapUserData;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BrownBacktrackColouring extends PrimitiveFunction implements Lambda {
     @Override
