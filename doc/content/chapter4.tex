@@ -1,7 +1,13 @@
 
 \chapter{Applied mathematics}
 
-\section{Numerically evaluating rational sums and integrals}
+This chapter describes the usage of KamilaLisp to achieve various results in applied mathematics.
+
+\section{Polynomials}
+
+KamilaLisp does not support a native polynomial data type, however, throughout the section a \textit{litte-endian} representation is assumed, such that for instance the polynomial $P(x) = 2x^2 + 3x + 1$ is represented as the list $(1, 3, 2)$.
+
+\subsection{Numerically evaluating rational sums and integrals}
 
 Suppose that we want to compute the values of the following expressions, given some polynomial functions $P(x)$ and $Q(x)$:
 
@@ -190,4 +196,31 @@ Hence the Catalan constant is defined in KamilaLisp using \verb|rsum-avg| as fol
 
 The value obtained has 11 correct digits.
 
+\subsection{Polynomial discriminants}
+
+Let $K$ be a field. Let $P(x)$ denote general monic polynomial of degree $n$ i.e. of the form
+
+$$
+P(x) = (x-x_1)(x-x_2) \cdots (x-x_n)
+$$
+
+Let $V(x_1,x_2, \cdots, x_n)$ denote the Vandermonde deteminant in $x_1,x_2, \cdots, x_n$
+
+$$
+V(x_1,x_2, \cdots , x_n) = \prod\limits_{1 \leq i < j \leq n} (x_j - x_i)
+$$
+
+The discriminant of $P(x)$ is denoted by $\Delta_P$ and it is defined as:
+
+$$
+\Delta_P = V(x_1,x_2, \cdots , x_n)^2 = \prod\limits_{1 \leq i < j \leq n} (x_j - x_i)^2
+$$
+
+The algorithm starts by computing the cartesian product of the roots of the polynomial and subtracting them. Then, a triangular matrix is built as a mask for the product of the roots. After multiplying the product and the mask, the result is flattened and multiplied together:
+
+\begin{Verbatim}
+    --> defun Δ (p) (re (foldl1 * (flatten@replicate
+    ...   ([(outer-product <) #0 #0] (range@tally p))
+    ...   (** (outer-product - p p) 2))))
+\end{Verbatim}
 
