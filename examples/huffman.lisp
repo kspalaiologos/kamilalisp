@@ -23,7 +23,7 @@
                 (tag (cadr t) (cons 1 code)))))
     (def huffman-tab \bipartition rank \tag huffman-tree 'nil)
     (def encoding-ids
-        \flatten (car huffman-tab)$[$(car@index-of)%[0 1] (tie buf) (cdr huffman-tab)])
+        \flatten (car huffman-tab)$[$(car@index-of)%[1 1] (tie buf) (cdr huffman-tab)])
     (def padded \take (bit:and (+ (tally encoding-ids) 7) -8) encoding-ids)
     (tie (tally encoding-ids) huffman-tab
         \:$(- _ 128)@:$(decode 2) \partition (cycle (tally padded) (take 8 '(1))) padded)

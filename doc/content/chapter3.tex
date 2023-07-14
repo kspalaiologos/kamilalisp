@@ -631,7 +631,8 @@ Given the Huffman table, it is now possible to encode the buffer. Because Huffma
 
 \begin{Verbatim}
     --> (def encoding-ids
-          \flatten (car huffman-tab)$[$(car@index-of)%[0 1] (tie buf) (cdr huffman-tab)])
+          \flatten (car huffman-tab)$[
+            $(car@index-of)%[1 1] (tie buf) (cdr huffman-tab)])
     --> def padded \take (bit:and (+ (tally encoding-ids) 7) -8) encoding-ids
 \end{Verbatim}
 
