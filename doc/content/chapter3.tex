@@ -593,7 +593,7 @@ The implementation of a priority queue is a bit more involved. While insertion i
 
 This function takes a priority queue \verb|q| and an element \verb|el| and inserts \verb|el| into \verb|q| at the correct position. The \verb|insert| function is a generic function that takes a list, an element and a position and inserts the element at the given position. The \verb|count| function in this scenario counts elements with priority smaller than the priority of \verb|el|.
 
-One algorithm that particularly benefits from priority queues is \textit{Huffman coding}. Huffman coding is a lossless compression algorithm that uses a variable-length code to represent the most common symbols in a file. The algorithm is based on the observation that symbols that occur more frequently in a file can be represented with fewer bits than symbols that occur less frequently. The algorithm works by building a binary tree, where the leaves are the symbols in the file and the internal nodes are the sums of the frequencies of the symbols in the leaves below them. To implement Huffman coding, start by computing the frequencies of each symbol in a buffer \verb|buf| and sorting the symbols by the frequencies in descending order:
+One algorithm that particularly benefits from priority queues is \textit{Huffman coding}. Huffman coding is a lossless compression algorithm that uses a variable-length code to represent the most common symbols in a file. The algorithm is based on the observation that symbols that occur more frequently in a file can be represented with fewer bits than symbols that occur less frequently. The algorithm works by building a binary tree, where the leaves are the symbols in the file and the internal nodes are the sums of the frequencies of the symbols in the leaves below them. To implement Huffman coding, start by computing the frequencies of each symbol in a buffer \verb|buf| and sorting the symbols by the frequencies in ascending order:
 
 \begin{Verbatim}
     --> def freq-tab \:[tie tally@cadr car] \group buf
@@ -631,8 +631,8 @@ Given the Huffman table, it is now possible to encode the buffer. Because Huffma
 
 \begin{Verbatim}
     --> (def encoding-ids
-          \flatten (car huffman-tab)$[
-            $(car@index-of)%[1 1] (tie buf) (cdr huffman-tab)])
+    ...   \flatten (car huffman-tab)$[
+    ...      $(car@index-of&[tie #0])%[0 1] buf (cdr huffman-tab)])
     --> def padded \take (bit:and (+ (tally encoding-ids) 7) -8) encoding-ids
 \end{Verbatim}
 

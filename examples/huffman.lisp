@@ -2,7 +2,7 @@
 (defun public:huffman-encode (buf) (let-seq
     ; Compute the frequencies of each symbol in the file.
     (def freq-tab \:[tie tally@cadr car] \group buf)
-    ; Sort by the frequencies in descending order.
+    ; Sort by the frequencies in ascending order.
     (def freq-pq freq-tab$[grade-up \car%[1] freq-tab])
     ; Helper: Insert an element into a priority queue.
     (defun insert-pq (pq el)
@@ -23,7 +23,7 @@
                 (tag (cadr t) (cons 1 code)))))
     (def huffman-tab \bipartition rank \tag huffman-tree 'nil)
     (def encoding-ids
-        \flatten (car huffman-tab)$[$(car@index-of)%[1 1] (tie buf) (cdr huffman-tab)])
+        \flatten (car huffman-tab)$[$(car@index-of&[tie #0])%[0 1] buf (cdr huffman-tab)])
     (def padded \take (bit:and (+ (tally encoding-ids) 7) -8) encoding-ids)
     (tie (tally encoding-ids) huffman-tab
         \:$(- _ 128)@:$(decode 2) \partition (cycle (tally padded) (take 8 '(1))) padded)
