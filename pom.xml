@@ -6,7 +6,7 @@
 
     <groupId>palaiologos</groupId>
     <artifactId>kamilalisp</artifactId>
-    <version>0.2</version>
+    <version>0.3</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
