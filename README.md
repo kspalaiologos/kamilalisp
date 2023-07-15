@@ -38,7 +38,7 @@ mkdir kamilalisp && cd kamilalisp
 curl -L -O https://github.com/kspalaiologos/kamilalisp/releases/download/$VERSION/kamilalisp-0.2.jar
 # Verify the signature
 curl -L -O https://github.com/kspalaiologos/kamilalisp/releases/download/$VERSION/kamilalisp-0.2.jar.asc
-curl https://palaiologos.rocks/pub.pgp | gpg --import
+curl https://palaiologos.rocks/pub.pgp | gpg --import # Or alternatively: gpg --recv-keys C868F0B6DE38409D
 gpg --verify kamilalisp-0.2.jar.asc kamilalisp-0.2.jar
 ```
 
@@ -138,6 +138,12 @@ KamilaLisp is distributed under the GNU General Public License v3. See [LICENSE]
 ## Lisp Roadmap
 
 - MalbolgeLISP v1.0-v1.2 - initial prototypes.
-- KamilaLisp v0.1 - initial Java prototype, concept exploration.
-- KamilaLisp v0.2 - design solidifying, API documentation.
-- KamilaLisp v0.3 - a compiler and bytecode virtual machine.
+- KamilaLisp v0.1 (beta) - initial Java prototype, concept exploration.
+- KamilaLisp v0.2 (beta) - design solidifying, API documentation.
+- KamilaLisp v0.3 (release) - polishing more features, improved non-beta versioning scheme.
+- KamilaLisp v0.4 (WIP) - a compiler and bytecode virtual machine.
+
+# v0.3 versioning guide
+
+Every KamilaLisp v0.3 release will be signed with PGP and package maintainers are advised to verify the signature. Every release will be tagged as `0.3.x.y` where a bump of `x` signifies a breaking change, while the bump of `y` signifies a non-breaking change.
+
