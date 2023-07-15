@@ -2,6 +2,7 @@ package palaiologos.kamilalisp.runtime.lib;
 
 import palaiologos.kamilalisp.atom.Atom;
 import palaiologos.kamilalisp.atom.Environment;
+import palaiologos.kamilalisp.atom.Version;
 import palaiologos.kamilalisp.runtime.array.hof.ParallelFilter;
 import palaiologos.kamilalisp.runtime.array.hof.ParallelMapIdx;
 import palaiologos.kamilalisp.runtime.array.sais.SacaBwt;
@@ -31,6 +32,7 @@ public class AlgorithmLib {
         env.setPrimitive("meta:type-name", "⊚?", new Atom(new TypeName()));
         env.setPrimitive("meta:atom", "→⊚", new Atom(new MetaAtom()));
         env.setPrimitive("meta:state-manager", new Atom(new StateManager()));
+        env.setPrimitive("meta:version", new Atom(Version.version));
 
         env.setPrimitive("digest:md2", new Atom(new Md2Digest()));
         env.setPrimitive("digest:md5", new Atom(new Md5Digest()));

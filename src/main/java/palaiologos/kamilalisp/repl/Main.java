@@ -32,7 +32,7 @@ public class Main {
     }
 
     private static void banner() {
-        System.out.println("KamilaLisp v 0.2 - Copyright (C) Kamila Szewczyk, 2021 - 2023.");
+        System.out.println("KamilaLisp v " + Version.version + " - Copyright (C) Kamila Szewczyk, 2021 - 2023.");
         System.out.println("Interactive mode.");
         System.out.println();
     }
