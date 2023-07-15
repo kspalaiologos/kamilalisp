@@ -138,6 +138,7 @@ KamilaLisp is distributed under the GNU General Public License v3. See [LICENSE]
 ## Lisp Roadmap
 
 - MalbolgeLISP v1.0-v1.2 - initial prototypes.
-- KamilaLisp v0.1 - initial Java prototype, concept exploration.
-- KamilaLisp v0.2 - design solidifying, API documentation.
-- KamilaLisp v0.3 - a compiler and bytecode virtual machine.
+- KamilaLisp v0.1 (beta) - initial Java prototype, concept exploration.
+- KamilaLisp v0.2 (beta) - design solidifying, API documentation.
+- KamilaLisp v0.3 (release) - polishing more features, improved non-beta versioning scheme.
+- KamilaLisp v0.4 (WIP) - a compiler and bytecode virtual machine.
