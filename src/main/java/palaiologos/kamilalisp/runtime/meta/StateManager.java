@@ -8,9 +8,10 @@ import java.util.List;
 public class StateManager extends PrimitiveFunction implements Lambda {
     @Override
     public Atom apply(Environment env, List<Atom> args) {
-        assertArity(args, 1);
-        Callable callable = (Callable) args.get(0);
-        return new Atom(new State(callable, env));
+        assertArity(args, 2);
+        Callable callable = args.get(0).getCallable();
+        Atom state = args.get(1);
+        return new Atom(new State(callable, state, env));
     }
 
     @Override
@@ -21,11 +22,12 @@ public class StateManager extends PrimitiveFunction implements Lambda {
     private static class State extends PrimitiveFunction implements Lambda {
         private final Callable callable;
         private final Environment env;
-        private Atom state = Atom.NULL;
+        private Atom state;
 
-        public State(Callable callable, Environment env) {
+        public State(Callable callable, Atom state, Environment env) {
             this.callable = callable;
             this.env = env;
+            this.state = state;
         }
 
 
