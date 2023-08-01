@@ -32,14 +32,14 @@ mvn package
 Alternatively, you could download a pre-compiled JAR file for use with **Java 17 or newer**:
 
 ```
-export VERSION=v0.2p
+export VERSION=0.3.0.1
 mkdir kamilalisp && cd kamilalisp
 # Download the KamilaLisp JAR
-curl -L -O https://github.com/kspalaiologos/kamilalisp/releases/download/$VERSION/kamilalisp-0.2.jar
+curl -L -O https://github.com/kspalaiologos/kamilalisp/releases/download/v$VERSION/kamilalisp-$VERSION.jar
 # Verify the signature
-curl -L -O https://github.com/kspalaiologos/kamilalisp/releases/download/$VERSION/kamilalisp-0.2.jar.asc
+curl -L -O https://github.com/kspalaiologos/kamilalisp/releases/download/v$VERSION/kamilalisp-$VERSION.jar.asc
 curl https://palaiologos.rocks/pub.pgp | gpg --import # Or alternatively: gpg --recv-keys C868F0B6DE38409D
-gpg --verify kamilalisp-0.2.jar.asc kamilalisp-0.2.jar
+gpg --verify kamilalisp-$VERSION.jar.asc kamilalisp-$VERSION.jar
 ```
 
 ## Features
