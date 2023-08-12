@@ -16,13 +16,13 @@ public class Mkdir extends ShellFunction {
         if (flags.contains("s")) {
             args.stream().map(Atom::getString).forEach(s -> {
                 if (!Wd.relativeTo(s).mkdirs()) {
-                    throw new RuntimeException("mkdir: failed to create directory '" + s + "'");
+                    if (!flags.contains("f")) throw new RuntimeException("mkdir: failed to create directory '" + s + "'");
                 }
             });
         } else {
             args.stream().map(Atom::getString).forEach(s -> {
                 if (!Wd.relativeTo(s).mkdir()) {
-                    throw new RuntimeException("mkdir: failed to create directory '" + s + "'");
+                    if (!flags.contains("f")) throw new RuntimeException("mkdir: failed to create directory '" + s + "'");
                 }
             });
         }
