@@ -31,7 +31,7 @@ public class RegexMatchAll extends PrimitiveFunction implements Lambda {
             bindings.put(offset, new Atom(BigInteger.valueOf(matcher.start())));
             bindings.put(length, new Atom(BigInteger.valueOf(matcher.end() - matcher.start())));
             List<Atom> matchGroups = new ArrayList<>();
-            for(int i = 0; i < matcher.groupCount(); i++) {
+            for(int i = 0; i < matcher.groupCount() + 1; i++) {
                 HashMap<Atom, Atom> group = new HashMap<>();
                 group.put(offset, new Atom(BigInteger.valueOf(matcher.start(i))));
                 group.put(length, new Atom(BigInteger.valueOf(matcher.end(i) - matcher.start(i))));
