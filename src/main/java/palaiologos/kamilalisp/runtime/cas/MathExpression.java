@@ -14,12 +14,15 @@ public class MathExpression implements Userdata {
     private static final Set<String> allowedFunctions = Set.of(
             "sin", "cos", "tan", "cot", "asin", "acos", "atan", "acot",
             "exp", "ln", "log2", "log10", "sqrt", "sec", "csc", "asec", "acsc",
-            "dilog", "polylog"
+            "dilog", "polylog", "sinh", "cosh", "tanh"
     );
     private static final Map<String, Integer> expectedArities = Map.ofEntries(
             Map.entry("sin", 1),
             Map.entry("cos", 1),
             Map.entry("tan", 1),
+            Map.entry("sinh", 1),
+            Map.entry("cosh", 1),
+            Map.entry("tanh", 1),
             Map.entry("cot", 1),
             Map.entry("asin", 1),
             Map.entry("acos", 1),
