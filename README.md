@@ -16,7 +16,6 @@ A functional, flexible and concise Lisp inspired by Haskell and APL, among other
 
 Useful links:
 
-- A public channel to track the development of KamilaLisp: `#kamilalisp:coven.palaiologos.rocks`
 - Read the book: [An introduction to functional and array programming](https://raw.githubusercontent.com/kspalaiologos/kamilalisp/v0.2/doc/main.pdf).
 
 ## Setup
