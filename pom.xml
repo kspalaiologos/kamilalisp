@@ -47,7 +47,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>32.1.2-jre</version>
+            <version>32.1.3-jre</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.jline/jline-reader -->
