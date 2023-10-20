@@ -247,3 +247,28 @@ The algorithm behind integer arithmetic coding is as follows:
   [L, H) \Rightarrow \left[L+\left\lfloor\sum_{j=1}^{i-1} p_j(H-L)\right\rfloor, L+\left\lfloor\sum_{j=1}^{i} p_j(H-L)\right\rfloor\right]
   $$
 \end{itemize}
+
+A KamilaLisp implementation follows:
+
+\begin{Verbatim}
+(defun ari-enc (b M p) ((lambda (b M L H k p)
+  ; Step 1: Underflow Expansion
+  (if (and (<= (/ M 4) L) (< L (/ M 2)) (< (/ M 2) H) (<= H (/ (* 3 M) 4)))
+    (&0 b M (- (* 2 L) (/ M 2)) (- (* 2 H) (/ M 2)) (+ k 1) p)
+  ; Step 2: Rescaling (pt 1.)
+  (if (<= H (/ M 2))
+    (append (cons 0 (replicate k 1)) (&0 b M (* 2 L) (* 2 H) 0 p))
+  ; Step 3: Rescaling (pt 2.)
+  (if (>= L (/ M 2))
+    (append (cons 1 (replicate k 0)) (&0 b M (- (* 2 L) M) (- (* 2 H) M) 0 p))
+  ; Step 4: All symbols encoded?
+  (if (empty? b)
+    (if (<= L (/ M 4))
+      (cons 0 (replicate (+ k 1) 1)) ; L <= M/4
+      (cons 1 (replicate (+ k 1) 0))) ; H >= 3M/4
+  (let ((HL (- H L)) (h (car b)))
+    (&0 (cdr b) M
+      (+ L (floor (foldl + 0 (* HL (take h p)))))
+      (+ L (floor (foldl + 0 (* HL (take (+ h 1) p)))))
+      k p))))))) b M 0 M 0 p))
+\end{Verbatim}
