@@ -12,11 +12,11 @@ KamilaLisp does not support a native polynomial data type, however, throughout t
 Suppose that we want to compute the values of the following expressions, given some polynomial functions $P(x)$ and $Q(x)$:
 
 $$
-\sum_{i=0}^\infty \frac{P(i)}{Q(i)}
+\sum_{i=1}^\infty \frac{P(i)}{Q(i)}
 $$
 
 $$
-\int_0^\infty \frac{P(x)}{Q(x)} dx
+\int_1^\infty \frac{P(x)}{Q(x)} dx
 $$
 
 \noindent The problem is that these expressions may not converge, or may converge very slowly. Precisely, $\deg P(x) - \deg Q(x) < -1$ is a sufficient condition for divergence. To demonstrate a particular case of performing the summation, consider the following:
@@ -93,7 +93,7 @@ $$
 \frac{1}{2\sqrt{a}}\left(\frac{1}{\sqrt{a}}-\pi\cot\pi\sqrt{a}\right) = \frac{1}{2\sqrt{a}}\left(\frac{1-\sqrt{a}\pi\cot\pi\sqrt{a}}{\sqrt{a}}\right) = \frac{1-\sqrt{a}\pi\cot\pi\sqrt{a}}{2a}
 $$
 
-The general algorithm for convergent series implemented below is as follows. Consider polynomials $P(x)$ and $Q(x)$ that are not a natural power of another polynomial. Denote the roots of the polynomial $Q(x+1)$ (obtained using the most convenient means; counting multiplicity) as $R_0 \dots R_m$. The following equality holds if $P(x)=1$:
+The general algorithm for convergent series implemented below is as follows. Consider polynomials $P(x)$ and $Q(x)$ that have only unique roots (i.e. the multiplicity of each is 1). Denote the roots of the polynomial $Q(x+1)$ (obtained using the most convenient means) as $R_0 \dots R_m$. The following equality holds if $P(x)=1$:
 
 $$
 \sum_{n=1}^\infty \frac{1}{Q(n)} = -\sum_{\omega \in R} \frac{\psi(-\omega)}{Q'(\omega + 1)}
