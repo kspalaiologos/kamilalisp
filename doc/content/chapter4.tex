@@ -248,7 +248,19 @@ The algorithm behind integer arithmetic coding is as follows:
   $$
 \end{itemize}
 
-A KamilaLisp implementation follows:
+Notice that due to the behaviour of the floor function, the following situation may occur:
+
+$$
+\left\lfloor\sum_{j=1}^{i-1} p_j(H-L)\right\rfloor = \left\lfloor\sum_{j=1}^{i} p_j(H-L)\right\rfloor
+$$
+
+This situation is prevented by approperiately choosing $M$, such that it is divisible by 4. Further, the following must hold:
+
+$$
+M \geq \frac{4}{p_\text{min}} - 8 \text{  , where  } p_\text{min} = \min_{i} p_i
+$$
+
+A KamilaLisp implementation (obtained by directly translating the procedure above) follows:
 
 \begin{Verbatim}
 (defun ari-enc (b M p) ((lambda (b M L H k p)
@@ -272,3 +284,14 @@ A KamilaLisp implementation follows:
       (+ L (floor (foldl + 0 (* HL (take (+ h 1) p)))))
       k p))))))) b M 0 M 0 p))
 \end{Verbatim}
+
+Consider the alphabet $\Sigma = \{\text{A}, \text{B}, \text{EOF}\}$ with the probabilities $p_\text{A} = 0.6$, $p_\text{B} = 0.3$ and $p_\text{EOF} = 0.1$. The message $\text{A B A EOF}$ is thus encoded considering $M = 16$ as follows:
+
+\begin{Verbatim}
+    --> ari-enc '(0 1 0 2) 16 '(0.6 0.3 0.1)
+    (0 1 1 0 1 0 0 1)
+\end{Verbatim}
+
+\section{Finite-precision arithmetic}
+
+KamilaLisp offers a wide range of finite precision (\verb|flt64| and \verb|cmplx64|) functions. Outside of the functions that correspond to existing, arbitrary precision primitives (e.g. \verb|log2|, \verb|sqrt|, \verb|**|, \verb|sin|), KamilaLisp also offers the evaluation of various special functions in the finite precision domain. 
