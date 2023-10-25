@@ -93,7 +93,7 @@ $$
 \frac{1}{2\sqrt{a}}\left(\frac{1}{\sqrt{a}}-\pi\cot\pi\sqrt{a}\right) = \frac{1}{2\sqrt{a}}\left(\frac{1-\sqrt{a}\pi\cot\pi\sqrt{a}}{\sqrt{a}}\right) = \frac{1-\sqrt{a}\pi\cot\pi\sqrt{a}}{2a}
 $$
 
-The general algorithm for convergent series implemented below is as follows. Consider polynomials $P(x)$ and $Q(x)$ that have only unique roots (i.e. the multiplicity of each is 1). Denote the roots of the polynomial $Q(x+1)$ (obtained using the most convenient means) as $R_0 \dots R_m$. The following equality holds if $P(x)=1$:
+The basic algorithm for convergent series implemented below is as follows. Consider polynomials $P(x)$ and $Q(x)$ that have only unique roots (i.e. the multiplicity of each is 1). Denote the roots of the polynomial $Q(x+1)$ (obtained using the most convenient means) as $\omega_0 \dots \Omega_m$. The following equality holds if $P(x)=1$:
 
 $$
 \sum_{n=1}^\infty \frac{1}{Q(n)} = -\sum_{\omega \in R} \frac{\psi(-\omega)}{Q'(\omega + 1)}
@@ -166,6 +166,40 @@ Verifying the result using KamilaLisp yields:
     -0.05681040770062016
 \end{Verbatim}
 
+The general formula in the case when the denominator has a root of multiplicity greater than one is taken care of as follows by performing partial fraction decomposition in the complex field:
+
+$$
+\sum_{n=0}^{\infty }\frac{P(n)}{Q(n)}=\sum _{n=0}^{\infty }\sum
+_{k=1}^{m}{\frac {a_{k}}{(n+b_{k})^{r_{k}}}}=\sum _{k=1}^{m}{\frac
+{(-1)^{r_{k}}}{(r_{k}-1)!}}a_{k}\psi ^{(r_{k}-1)}(b_{k})
+$$
+
+The basic method presented above is a generalisation of the Heaviside cover-up method. Consider the following expansion of $\frac{P(x)}{Q(x)}$:
+
+$$
+\frac{P(x)}{Q(x)}=\sum _{i}\left({\frac {a_{i1}}{x-x_{i}}}+{\frac {a_{i2}}{(x-x_{i})^{2}}}+\cdots +{\frac {a_{ik_{i}}}{(x-x_{i})^{k_{i}}}}\right)
+$$
+
+Further, let:
+
+$$
+g_{ij}(x)=(x-x_{i})^{j-1}\frac{P(x)}{Q(x)}
+$$
+
+According to the uniqueness of Laurent series, $a_{ij}$ is the coefficient of the term $(x − x_i)^{−1}$ in the Laurent expansion of $g_ij(x)$ about the point $x_i$, i.e., its residue ${\displaystyle a_{ij}=\operatorname {Res} (g_{ij},x_{i})}$.
+
+In the general case, $a_{ij}$ is given by:
+
+$$
+{\displaystyle a_{ij}={\frac {1}{(k_{i}-j)!}}\lim _{x\to x_{i}}{\frac {d^{k_{i}-j}}{dx^{k_{i}-j}}}\left((x-x_{i})^{k_{i}}f(x)\right)}
+$$
+
+In the special case when $x_i$ is a simple root (i.e. has the multiplicity of one, as assumed in the basic scenario):
+
+$$
+a_{i1}={\frac {P(x_{i})}{Q'(x_{i})}}
+$$
+
 For a practical application of this property, consider the Catalan constant defined as follows:
 
 $$
@@ -177,24 +211,6 @@ Splitting the even and odd terms yields the following two sums:
 $$
 K = 1 + \sum_{n=1}^\infty \frac{1}{(4n+1)^2} - \frac{1}{9} - \sum_{n=1}^\infty \frac{1}{(4n+3)^2}
 $$
-
-Before the sum can be computed, a limitation of the algorithm must be taken care of. The polynomial is modified by adding and subtracting a known constant factor and taking the average:
-
-\begin{Verbatim}
-    --> (defun rsum-avg (p q c)
-    ...   (flt64:* 0.5 (foldl1 flt64:+
-    ...     (:rsum (tie p) (:cons ([tie flt64:+ flt64:-] (car q) c) (tie@cdr q))))))
-\end{Verbatim}
-
-Hence the Catalan constant is defined in KamilaLisp using \verb|rsum-avg| as follows:
-
-\begin{Verbatim}
-    --> (def K (flt64:+ (/ 8 9)
-    ...   (- (rsum-avg '(1) '(1 8 16) 0.0001) (rsum-avg '(1) '(9 24 16) 0.0001))))
-    0.9159655942089728
-\end{Verbatim}
-
-The value obtained has 11 correct digits.
 
 \subsection{Polynomial discriminants}
 
