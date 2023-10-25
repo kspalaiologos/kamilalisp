@@ -186,30 +186,16 @@ $$
 g_{ij}(x)=(x-x_{i})^{j-1}\frac{P(x)}{Q(x)}
 $$
 
-According to the uniqueness of Laurent series, $a_{ij}$ is the coefficient of the term $(x − x_i)^{−1}$ in the Laurent expansion of $g_ij(x)$ about the point $x_i$, i.e., its residue ${\displaystyle a_{ij}=\operatorname {Res} (g_{ij},x_{i})}$.
-
-In the general case, $a_{ij}$ is given by:
+According to the uniqueness of Laurent series, $a_{ij}$ is the coefficient of the term $(x − x_i)^{−1}$ in the Laurent expansion of $g_ij(x)$ about the point $x_i$, i.e., its residue ${\displaystyle a_{ij}=\operatorname {Res} (g_{ij},x_{i})}$. In the general case, $a_{ij}$ is given by:
 
 $$
-{\displaystyle a_{ij}={\frac {1}{(k_{i}-j)!}}\lim _{x\to x_{i}}{\frac {d^{k_{i}-j}}{dx^{k_{i}-j}}}\left((x-x_{i})^{k_{i}}f(x)\right)}
+{\displaystyle a_{ij}={\frac {1}{(k_{i}-j)!}}\lim _{x\to x_{i}}{\frac {d^{k_{i}-j}}{dx^{k_{i}-j}}}\left((x-x_{i})^{k_{i}}\frac{P(x)}{Q(x)}\right)}
 $$
 
 In the special case when $x_i$ is a simple root (i.e. has the multiplicity of one, as assumed in the basic scenario):
 
 $$
 a_{i1}={\frac {P(x_{i})}{Q'(x_{i})}}
-$$
-
-For a practical application of this property, consider the Catalan constant defined as follows:
-
-$$
-K = \sum_{k=0}^\infty \frac{(-1)^k}{(2k+1)^2}
-$$
-
-Splitting the even and odd terms yields the following two sums:
-
-$$
-K = 1 + \sum_{n=1}^\infty \frac{1}{(4n+1)^2} - \frac{1}{9} - \sum_{n=1}^\infty \frac{1}{(4n+3)^2}
 $$
 
 \subsection{Polynomial discriminants}
