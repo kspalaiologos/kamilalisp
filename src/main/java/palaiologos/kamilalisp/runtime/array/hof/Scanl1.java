@@ -12,8 +12,10 @@ public class Scanl1 extends PrimitiveFunction implements Lambda {
         assertArity(args, 2);
         Callable reductor = args.get(0).getCallable();
         List<Atom> list = args.get(1).getList();
-        if (list.size() <= 1)
-            throw new TypeError("scanl1: list of size " + list.size() + " can not be scanned.");
+        if (list.size() < 1)
+            throw new TypeError("scanl1: list of size 0 can not be scanned.");
+        if (list.size() == 1)
+            return new Atom(list);
         // Reduce and keep intermediate results.
         List<Atom> result = new ArrayList<>();
         result.add(list.get(0));

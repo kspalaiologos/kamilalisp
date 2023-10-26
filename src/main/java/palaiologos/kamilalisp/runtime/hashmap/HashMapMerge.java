@@ -24,7 +24,7 @@ public class HashMapMerge extends PrimitiveFunction implements Lambda {
             Callable lambda = args.get(2).getCallable();
             for (Atom key : data2.value().keySet()) {
                 if (data.containsKey(key)) {
-                    data = data.plus(key, lambda.apply(env, List.of(data.get(key), data2.value().get(key))));
+                    data = data.plus(key, lambda.apply(env, List.of(key, data.get(key), data2.value().get(key))));
                 } else {
                     data = data.plus(key, data2.value().get(key));
                 }
