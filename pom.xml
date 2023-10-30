@@ -54,7 +54,7 @@
         <dependency>
             <groupId>org.jline</groupId>
             <artifactId>jline-reader</artifactId>
-            <version>3.23.0</version>
+            <version>3.24.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.jline/jline-terminal -->
