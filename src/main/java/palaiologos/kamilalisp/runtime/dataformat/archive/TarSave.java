@@ -50,7 +50,7 @@ public class TarSave extends PrimitiveFunction implements Lambda {
             File f = new File(filename).getAbsoluteFile();
             try {
                 synchronized (zaos) {
-                    ArchiveEntry e = zaos.createArchiveEntry(f, entryName);
+                    TarArchiveEntry e = zaos.createArchiveEntry(f, entryName);
                     zaos.putArchiveEntry(e);
                     FileInputStream fis = new FileInputStream(f);
                     fis.transferTo(zaos);
